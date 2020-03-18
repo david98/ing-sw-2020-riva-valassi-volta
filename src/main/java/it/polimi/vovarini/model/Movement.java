@@ -1,22 +1,23 @@
 package it.polimi.vovarini.model;
 
+import it.polimi.vovarini.model.board.items.Worker;
+
 public class Movement extends Move {
-    private int startX;
-    private int startY;
 
-    private int endX;
-    private int endY;
+    private Worker worker;
 
-    public Movement(int startX, int startY, int endX, int endY){
-        this.startX = startX;
-        this.startY = startY;
-        this.endX = endX;
-        this.endY = endY;
+    private Point start;
+
+    private Point end;
+
+    public Movement(Worker worker, Point start, Point end){
+        this.worker = worker;
+        this.start = new Point(start);
+        this.end = new Point(end);
     }
 
     @Override
     public Move reverse() {
-        return new Movement(endX, endY, startX, startY);
+        return new Movement(worker, end, start);
     }
-
 }

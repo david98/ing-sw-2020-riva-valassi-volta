@@ -1,7 +1,7 @@
 package it.polimi.vovarini.model;
 
-import it.polimi.vovarini.model.board.Worker;
 import it.polimi.vovarini.model.board.items.Sex;
+import it.polimi.vovarini.model.board.items.Worker;
 import it.polimi.vovarini.model.godcards.GodCard;
 
 
@@ -25,8 +25,8 @@ public class Player {
         this.hasMoved = false;
         this.hasBuilt = false;
         this.workers = new Worker[2];
-        this.workers[0] = new Worker(/*Sex.Female*/);
-        this.workers[1] = new Worker(/*Sex.Male*/);
+        this.workers[0] = new Worker(Sex.Female);
+        this.workers[1] = new Worker(Sex.Male);
         this.currentWorkerIndex = 0;
         this.card = assignedCard;
         //possibile che serva un controllo da parte di Game per vedere che il nick non sia già usato?
