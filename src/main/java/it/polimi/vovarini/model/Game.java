@@ -26,11 +26,16 @@ public class Game {
         performMove(moves.pop().reverse());
     }
 
-    public void nextPlayer(){
+    public Player getCurrentPlayer(){
+        return players[currentPlayerIndex];
+    }
+
+    public Player nextPlayer(){
         currentPlayerIndex++;
         if (currentPlayerIndex >= players.length){
             currentPlayerIndex = 0;
         }
+        return players[currentPlayerIndex];
     }
 
     private void performMove(Move move){
