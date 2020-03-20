@@ -19,4 +19,9 @@ public class Construction extends Move {
     public Move reverse() {
         return new Destruction(block, x, y);
     }
+
+    @Override
+    public void execute() {
+
+    }
 }

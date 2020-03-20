@@ -1,50 +1,59 @@
 package it.polimi.vovarini.model;
 
+import it.polimi.vovarini.model.board.Board;
+import it.polimi.vovarini.model.board.ItemNotFoundException;
 import it.polimi.vovarini.model.board.items.Sex;
 import it.polimi.vovarini.model.board.items.Worker;
 import it.polimi.vovarini.model.godcards.GodCard;
 
+import java.util.EnumMap;
+
 
 public class Player {
+
+    private Game game;
 
     private int movementsLeft;
     private boolean hasMoved;
     private boolean hasBuilt;
 
-    private Worker[] workers;
-    private int currentWorkerIndex;
+    private EnumMap<Sex, Worker> workers;
+    private Sex currentSex;
 
     private GodCard card;
     private String nickname;
 
 
-    public Player (GodCard assignedCard, String nickname){
-
-        //che valore dovrei mettere qui di default?
-        this.movementsLeft = 0;
-        this.hasMoved = false;
-        this.hasBuilt = false;
-        this.workers = new Worker[2];
-        this.workers[0] = new Worker(Sex.Female);
-        this.workers[1] = new Worker(Sex.Male);
-        this.currentWorkerIndex = 0;
-        this.card = assignedCard;
-        //possibile che serva un controllo da parte di Game per vedere che il nick non sia già usato?
+    public Player (Game game, GodCard assignedCard, String nickname){
+        this.game = game;
+        movementsLeft = 0;
+        hasMoved = false;
+        hasBuilt = false;
+        workers = new EnumMap<>(Sex.class);
+        workers.put(Sex.Female, new Worker(Sex.Female));
+        workers.put(Sex.Male, new Worker(Sex.Male));
+        currentSex = Sex.Male;
+        card = assignedCard;
         this.nickname = nickname;
     }
 
+    public void moveCurrentWorker(Point destination){
+        try {
+            Board board = game.getBoard();
+            Point start = board.getItemPosition(getCurrentWorker());
+            Move movement = new Movement(board, start, destination);
+            game.performMove(movement);
+        } catch (ItemNotFoundException ignored){
+
+        }
+    }
+
     public Worker getCurrentWorker(){
-        return workers[currentWorkerIndex];
+        return workers.get(currentSex);
     }
 
-    //permette al giocatore di selezionare quali dei due worker vuole utilizzare
-    public Worker chooseWorker (int i){
-        //serve sicuramente un controllo sull'indice, ed eventualmente un'eccezione
-        currentWorkerIndex = i;
-        return workers[currentWorkerIndex];
+    public void setCurrentSex (Sex sex){
+        currentSex = sex;
     }
-
-
-
 
 }
