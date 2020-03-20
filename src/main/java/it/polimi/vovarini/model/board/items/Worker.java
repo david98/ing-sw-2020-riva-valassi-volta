@@ -1,6 +1,5 @@
 package it.polimi.vovarini.model.board.items;
 
-import it.polimi.vovarini.model.board.items.Item;
 
 public class Worker extends Item {
     private Sex sex;
