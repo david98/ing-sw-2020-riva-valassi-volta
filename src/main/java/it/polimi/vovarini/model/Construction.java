@@ -1,5 +1,6 @@
 package it.polimi.vovarini.model;
 
+import it.polimi.vovarini.model.board.Board;
 import it.polimi.vovarini.model.board.items.Block;
 
 public class Construction extends Move {
@@ -9,7 +10,8 @@ public class Construction extends Move {
     private int x;
     private int y;
 
-    public Construction(Block block, int x, int y){
+    public Construction(Board board, Block block, int x, int y){
+        super(board);
         this.block = block;
         this.x = x;
         this.y = y;
@@ -17,7 +19,7 @@ public class Construction extends Move {
 
     @Override
     public Move reverse() {
-        return new Destruction(block, x, y);
+        return new Destruction(board, block, x, y);
     }
 
     @Override

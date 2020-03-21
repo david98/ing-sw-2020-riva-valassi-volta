@@ -15,15 +15,12 @@ public class Box {
         items = new Stack<>();
     }
 
-    public void place(Item item) throws BoxFullException, IncompatibleItemsException{
+    public void place(Item item) throws BoxFullException{
         if (items.size() >= 4){
             throw new BoxFullException();
         }
-        if (items.size() == 0 || item.canBePlacedOn(items.peek())){
-            items.push(item);
-        } else {
-            throw new IncompatibleItemsException();
-        }
+
+        items.push(item);
     }
 
     public Item getTopmost() throws BoxEmptyException{

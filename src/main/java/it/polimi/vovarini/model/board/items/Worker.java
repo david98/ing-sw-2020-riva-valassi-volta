@@ -8,6 +8,7 @@ public class Worker extends Item {
         this.sex = sex;
     }
 
+    @Override
     public boolean canBePlacedOn(Item item){
         if (item instanceof Block){
             Block block = (Block) item;
@@ -15,6 +16,11 @@ public class Worker extends Item {
         } else { //TODO: gestire il caso in cui ci siano carte divinità
             return super.canBePlacedOn(item);
         }
+    }
+
+    @Override
+    public boolean canBeRemoved() {
+        return true;
     }
 
     @Override

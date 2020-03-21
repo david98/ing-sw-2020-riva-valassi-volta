@@ -7,6 +7,7 @@ import it.polimi.vovarini.model.board.items.Worker;
 import it.polimi.vovarini.model.godcards.GodCard;
 
 import java.util.EnumMap;
+import java.util.Map;
 
 
 public class Player {
@@ -20,7 +21,7 @@ public class Player {
     private EnumMap<Sex, Worker> workers;
     private Sex currentSex;
 
-    private GodCard card;
+    private GodCard godCard;
     private String nickname;
 
 
@@ -33,7 +34,7 @@ public class Player {
         workers.put(Sex.Female, new Worker(Sex.Female));
         workers.put(Sex.Male, new Worker(Sex.Male));
         currentSex = Sex.Male;
-        card = assignedCard;
+        godCard = assignedCard;
         this.nickname = nickname;
     }
 
@@ -48,6 +49,10 @@ public class Player {
         }
     }
 
+    public Map<Sex, Worker> getWorkers(){
+        return workers;
+    }
+
     public Worker getCurrentWorker(){
         return workers.get(currentSex);
     }
@@ -56,4 +61,11 @@ public class Player {
         currentSex = sex;
     }
 
+    public GodCard getGodCard(){
+        return godCard;
+    }
+
+    public String getNickname() {
+        return nickname;
+    }
 }

@@ -6,12 +6,11 @@ import it.polimi.vovarini.model.board.items.Worker;
 
 public class Movement extends Move {
 
-    private Board board;
     private Point start;
     private Point end;
 
     public Movement(Board board, Point start, Point end){
-        this.board = board;
+        super(board);
         this.start = new Point(start);
         this.end = new Point(end);
     }
@@ -25,7 +24,16 @@ public class Movement extends Move {
     public void execute() {
         try {
             Item startItem = board.remove(start);
-            //TODO: gestire Apollo e divinità che fanno scambiare posizione
+            Item endItem = null;
+            try {
+                endItem = board.getTopmostItem(end);
+                if (endItem.canBeRemoved()){
+                    board.remove(end);
+                }
+                board.place(endItem, start);
+            } catch (BoxEmptyException ignored){
+
+            }
             board.place(startItem, end);
         } catch (BoxEmptyException e){
             System.err.println("Start was empty.");
@@ -33,8 +41,6 @@ public class Movement extends Move {
             System.err.println("Invalid start/end");
         } catch (BoxFullException e){
             System.err.println("End box is full.");
-        } catch (IncompatibleItemsException e){
-            System.err.println("Cannot move because of an incompatibility.");
         }
     }
 }
