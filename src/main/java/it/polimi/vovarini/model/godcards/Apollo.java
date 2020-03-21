@@ -15,41 +15,41 @@ import java.util.List;
 
 public class Apollo extends GodCard {
 
-    public Apollo(Game game){
-        super(game);
-        this.name = "Apollo";
-    }
+  public Apollo(Game game) {
+    super(game);
+    this.name = "Apollo";
+  }
 
-    @Override
-    public List<Point> computeReachablePoints() {
-        System.out.println("prova");
-        LinkedList<Point> reachablePoints = new LinkedList<>();
+  @Override
+  public List<Point> computeReachablePoints() {
+    System.out.println("prova");
+    LinkedList<Point> reachablePoints = new LinkedList<>();
 
+    try {
+      Player player = game.getCurrentPlayer();
+      Board board = game.getBoard();
+      Worker selectedWorker = player.getCurrentWorker();
+      Point workerPosition = board.getItemPosition(selectedWorker);
+
+      List<Point> candidatePositions = board.getAdjacentPositions(workerPosition);
+      for (Point candidatePosition : candidatePositions) {
         try {
-            Player player = game.getCurrentPlayer();
-            Board board = game.getBoard();
-            Worker selectedWorker = player.getCurrentWorker();
-            Point workerPosition = board.getItemPosition(selectedWorker);
+          Point p = candidatePosition;
+          Item topmostItem = board.getTopmostItem(p);
+          if (selectedWorker.canBePlacedOn(topmostItem)
+              || (topmostItem.canBeRemoved() && !player.getWorkers().containsValue(topmostItem))) {
+            reachablePoints.add(candidatePosition);
+          }
+        } catch (BoxEmptyException e) {
+          reachablePoints.add(candidatePosition);
+        } catch (InvalidPositionException ignored) {
 
-            List<Point> candidatePositions = board.getAdjacentPositions(workerPosition);
-            for (Point candidatePosition : candidatePositions) {
-                try {
-                    Point p = candidatePosition;
-                    Item topmostItem = board.getTopmostItem(p);
-                    if (selectedWorker.canBePlacedOn(topmostItem) ||
-                            (topmostItem.canBeRemoved() && !player.getWorkers().containsValue(topmostItem))) {
-                        reachablePoints.add(candidatePosition);
-                    }
-                } catch (BoxEmptyException e) {
-                    reachablePoints.add(candidatePosition);
-                } catch (InvalidPositionException ignored) {
-
-                }
-            }
-            player.moveCurrentWorker(new Point(4, 3));
-
-        } catch (ItemNotFoundException ignored) {
         }
-        return reachablePoints;
+      }
+      player.moveCurrentWorker(new Point(4, 3));
+
+    } catch (ItemNotFoundException ignored) {
     }
+    return reachablePoints;
+  }
 }

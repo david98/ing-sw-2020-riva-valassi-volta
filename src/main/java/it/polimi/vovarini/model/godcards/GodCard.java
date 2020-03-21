@@ -14,39 +14,39 @@ import java.util.List;
 
 public abstract class GodCard {
 
-    protected Game game;
-    protected String name;
+  protected Game game;
+  protected String name;
 
-    public GodCard(Game game){
-        this.game = game;
-    }
+  public GodCard(Game game) {
+    this.game = game;
+  }
 
-    public List<Point> computeReachablePoints() {
-        LinkedList<Point> reachablePoints = new LinkedList<>();
+  public List<Point> computeReachablePoints() {
+    LinkedList<Point> reachablePoints = new LinkedList<>();
 
+    try {
+      Player player = game.getCurrentPlayer();
+      Board board = game.getBoard();
+      Worker selectedWorker = player.getCurrentWorker();
+      Point workerPosition = board.getItemPosition(selectedWorker);
+
+      List<Point> candidatePositions = board.getAdjacentPositions(workerPosition);
+
+      for (int i = 0; i < candidatePositions.size(); i++) {
         try {
-            Player player = game.getCurrentPlayer();
-            Board board = game.getBoard();
-            Worker selectedWorker = player.getCurrentWorker();
-            Point workerPosition = board.getItemPosition(selectedWorker);
-
-            List<Point> candidatePositions = board.getAdjacentPositions(workerPosition);
-
-            for (int i = 0; i < candidatePositions.size(); i++){
-                try {
-                    if (selectedWorker.canBePlacedOn(board.getTopmostItem(candidatePositions.get(i)))){
-                        reachablePoints.add(candidatePositions.get(i));
-                    }
-                } catch (BoxEmptyException e){
-                    reachablePoints.add(candidatePositions.get(i));
-                } catch (InvalidPositionException ignored){
-
-                }
-            }
-
-        } catch (ItemNotFoundException ignored) {
+          if (selectedWorker.canBePlacedOn(board.getTopmostItem(candidatePositions.get(i)))) {
+            reachablePoints.add(candidatePositions.get(i));
+          }
+        } catch (BoxEmptyException e) {
+          reachablePoints.add(candidatePositions.get(i));
+        } catch (InvalidPositionException ignored) {
 
         }
-        return reachablePoints;
+      }
+
+    } catch (ItemNotFoundException ignored) {
+
     }
+    return reachablePoints;
+  }
 }
