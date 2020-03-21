@@ -4,7 +4,6 @@ import it.polimi.vovarini.model.board.*;
 import it.polimi.vovarini.model.board.items.InvalidLevelException;
 import it.polimi.vovarini.model.board.items.Sex;
 import it.polimi.vovarini.model.board.items.Worker;
-import it.polimi.vovarini.model.board.items.Block;
 import it.polimi.vovarini.model.godcards.Apollo;
 
 import java.util.EmptyStackException;
