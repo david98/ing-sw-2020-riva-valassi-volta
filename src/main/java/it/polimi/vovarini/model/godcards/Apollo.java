@@ -7,21 +7,22 @@ import it.polimi.vovarini.model.board.Board;
 import it.polimi.vovarini.model.board.BoxEmptyException;
 import it.polimi.vovarini.model.board.InvalidPositionException;
 import it.polimi.vovarini.model.board.ItemNotFoundException;
+import it.polimi.vovarini.model.board.items.Item;
 import it.polimi.vovarini.model.board.items.Worker;
 
 import java.util.LinkedList;
 import java.util.List;
 
-public abstract class GodCard {
+public class Apollo extends GodCard {
 
-    protected Game game;
-    protected String name;
-
-    public GodCard(Game game){
-        this.game = game;
+    public Apollo(Game game){
+        super(game);
+        this.name = "Apollo";
     }
 
+    @Override
     public List<Point> computeReachablePoints() {
+        System.out.println("prova");
         LinkedList<Point> reachablePoints = new LinkedList<>();
 
         try {
@@ -31,21 +32,23 @@ public abstract class GodCard {
             Point workerPosition = board.getItemPosition(selectedWorker);
 
             List<Point> candidatePositions = board.getAdjacentPositions(workerPosition);
-
-            for (int i = 0; i < candidatePositions.size(); i++){
+            for (Point candidatePosition : candidatePositions) {
                 try {
-                    if (selectedWorker.canBePlacedOn(board.getTopmostItem(candidatePositions.get(i)))){
-                        reachablePoints.add(candidatePositions.get(i));
+                    Point p = candidatePosition;
+                    Item topmostItem = board.getTopmostItem(p);
+                    if (selectedWorker.canBePlacedOn(topmostItem) ||
+                            (topmostItem.canBeRemoved() && !player.getWorkers().containsValue(topmostItem))) {
+                        reachablePoints.add(candidatePosition);
                     }
-                } catch (BoxEmptyException e){
-                    reachablePoints.add(candidatePositions.get(i));
-                } catch (InvalidPositionException ignored){
+                } catch (BoxEmptyException e) {
+                    reachablePoints.add(candidatePosition);
+                } catch (InvalidPositionException ignored) {
 
                 }
             }
+            player.moveCurrentWorker(new Point(4, 3));
 
         } catch (ItemNotFoundException ignored) {
-
         }
         return reachablePoints;
     }
