@@ -1,5 +1,6 @@
 package it.polimi.vovarini.model;
 
+import it.polimi.vovarini.model.board.Box;
 import it.polimi.vovarini.model.board.items.Sex;
 import it.polimi.vovarini.model.board.items.Worker;
 import it.polimi.vovarini.model.godcards.GodCard;
@@ -7,30 +8,49 @@ import it.polimi.vovarini.model.godcards.GodCard;
 
 public class Player {
 
-    private int movementsLeft;
-    private boolean hasMoved;
-    private boolean hasBuilt;
+    protected int movementsLeft;
+    protected boolean hasMoved;
+    protected boolean hasBuilt;
 
-    private Worker[] workers;
-    private int currentWorkerIndex;
+    protected Worker[] workers;
+    protected int currentWorkerIndex;
 
-    private GodCard card;
-    private String nickname;
+    protected GodCard card;
+    protected String nickname;
+    protected Box[][] reachableBoxes;
+    protected Box[][] buildableBoxes;
+    protected Phase currentPhase;
 
+    public Box[][] getReachableBoxes() {
+        return reachableBoxes;
+    }
+
+    public Box[][] getBuildableBoxes() {
+        return buildableBoxes;
+    }
+
+    public Phase getCurrentPhase() {
+        return currentPhase;
+    }
+
+    public void setCurrentPhase(Phase currentPhase) {
+        this.currentPhase = currentPhase;
+    }
 
     public Player (GodCard assignedCard, String nickname){
 
         //che valore dovrei mettere qui di default?
-        this.movementsLeft = 0;
-        this.hasMoved = false;
-        this.hasBuilt = false;
-        this.workers = new Worker[2];
-        this.workers[0] = new Worker(Sex.Female);
-        this.workers[1] = new Worker(Sex.Male);
-        this.currentWorkerIndex = 0;
-        this.card = assignedCard;
+        movementsLeft = 0;
+        hasMoved = false;
+        hasBuilt = false;
+        workers = new Worker[2];
+        workers[0] = new Worker(Sex.Female);
+        workers[1] = new Worker(Sex.Male);
+        currentWorkerIndex = 0;
+        card = assignedCard;
         //possibile che serva un controllo da parte di Game per vedere che il nick non sia già usato?
         this.nickname = nickname;
+        currentPhase = Phase.WaitPhase;
     }
 
     public Worker getCurrentWorker(){

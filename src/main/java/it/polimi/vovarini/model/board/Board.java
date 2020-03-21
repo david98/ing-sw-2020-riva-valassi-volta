@@ -9,6 +9,7 @@ public class Board {
 
     private Box[][] boxes;
 
+
     /*
     * Si presuppone che la plancia sia quadrata
     * */
