@@ -1,4 +1,3 @@
 public class Box {
-    private Stack<Item> items;
-
+  private Stack<Item> items;
 }

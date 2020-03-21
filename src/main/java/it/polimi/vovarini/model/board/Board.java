@@ -1,9 +1,9 @@
 package it.polimi.vovarini.model.board;
 
 public class Board {
-    private Box[][] boxes;
+  private Box[][] boxes;
 
-    public Board(int size){
-        boxes = new Box[size][size];
-    }
+  public Board(int size) {
+    boxes = new Box[size][size];
+  }
 }

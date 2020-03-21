@@ -5,5 +5,5 @@ import it.polimi.vovarini.model.board.items.Item;
 import java.util.Stack;
 
 public class Box {
-    private Stack<Item> items;
+  private Stack<Item> items;
 }
