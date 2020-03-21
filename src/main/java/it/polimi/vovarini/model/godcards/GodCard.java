@@ -15,7 +15,7 @@ import java.util.List;
 public abstract class GodCard {
 
     protected Game game;
-    protected String name;
+    protected GodName name;
 
     public GodCard(Game game){
         this.game = game;

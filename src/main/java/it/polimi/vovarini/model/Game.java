@@ -6,8 +6,10 @@ import it.polimi.vovarini.model.board.items.Sex;
 import it.polimi.vovarini.model.board.items.Worker;
 import it.polimi.vovarini.model.board.items.Block;
 import it.polimi.vovarini.model.godcards.Apollo;
+import it.polimi.vovarini.model.godcards.Nobody;
 
 import java.util.EmptyStackException;
+import java.util.Scanner;
 import java.util.Stack;
 
 public class Game {
@@ -82,7 +84,17 @@ public class Game {
 
     public static void main(String[] args){
         try {
-            Game game = new Game(2);
+            Scanner input = new Scanner(System.in);
+            System.out.println("Benvenuti a Santorini! Inserire il numero di Giocatori:");
+            int numberOfPlayers = input.nextInt();
+            Game game = new Game (numberOfPlayers);
+            for (int i = 0; i < game.players.length; i++){
+                System.out.println("Inserisci il Nickname del Giocatore"+(i+1)+":");
+                String nickname = input.nextLine();
+                game.players[i] = new Player(game, new Nobody(game), nickname);
+            }
+
+            //qui va assegnato anche il colore. Marco se ne sta occupando, vedremo quando integrare quella parte
             Player player = game.getCurrentPlayer();
             player.setCurrentSex(Sex.Male);
             Worker maleWorker = player.getCurrentWorker();
