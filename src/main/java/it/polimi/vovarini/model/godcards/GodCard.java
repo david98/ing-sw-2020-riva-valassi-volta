@@ -49,5 +49,4 @@ public abstract class GodCard {
         }
         return reachablePoints;
     }
-
 }
