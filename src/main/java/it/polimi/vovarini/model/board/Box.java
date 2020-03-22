@@ -1,6 +1,7 @@
 package it.polimi.vovarini.model.board;
 
 import it.polimi.vovarini.model.board.items.Item;
+import it.polimi.vovarini.model.board.items.OverwritedWorkerException;
 
 import java.util.EmptyStackException;
 import java.util.Stack;
@@ -15,10 +16,13 @@ public class Box {
         items = new Stack<>();
     }
 
-    public void place(Item item) throws BoxFullException{
+    //prima permetteva di sovrascrivere un worker di un altro giocatore. Magari le carte porteranno a nuove modifiche
+    public void place(Item item) throws BoxFullException, OverwritedWorkerException {
         if (items.size() >= 4){
             throw new BoxFullException();
         }
+
+        //if ( !(items.empty()) && )
 
         items.push(item);
     }
