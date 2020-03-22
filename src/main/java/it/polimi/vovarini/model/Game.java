@@ -84,18 +84,37 @@ public class Game {
 
     public static void main(String[] args){
         try {
+            String cleaner;
             Scanner input = new Scanner(System.in);
             System.out.println("Benvenuti a Santorini! Inserire il numero di Giocatori:");
             int numberOfPlayers = input.nextInt();
             Game game = new Game (numberOfPlayers);
+            input.nextLine();
             for (int i = 0; i < game.players.length; i++){
-                System.out.println("Inserisci il Nickname del Giocatore"+(i+1)+":");
+                System.out.println("Inserisci il Nickname del Giocatore "+(i+1)+":");
                 String nickname = input.nextLine();
                 game.players[i] = new Player(game, new Nobody(game), nickname);
             }
-
+            Board board = game.getBoard();
             //qui va assegnato anche il colore. Marco se ne sta occupando, vedremo quando integrare quella parte
-            Player player = game.getCurrentPlayer();
+            for (int i = 0; i < game.players.length; i++){
+                System.out.println(game.players[i].getNickname() + ", inserisci le Coordinate del tuo MaleWorker:");
+                String numberList = input.nextLine();
+                String[] numberVector = numberList.split(",");
+                Point newPoint = new Point (Integer.parseInt(numberVector[0]), Integer.parseInt(numberVector[1]));
+                game.players[i].setCurrentSex(Sex.Male);
+                board.place(game.players[i].getCurrentWorker(), newPoint);
+                System.out.println(game.players[i].getNickname() + ", inserisci le Coordinate del tuo FemaleWorker:");
+                numberList = input.nextLine();
+                numberVector = numberList.split(",");
+                newPoint = new Point (Integer.parseInt(numberVector[0]), Integer.parseInt(numberVector[1]));
+                game.players[i].setCurrentSex(Sex.Female);
+                board.place(game.players[i].getCurrentWorker(), newPoint);
+            }
+            board.debugPrintToConsole();
+
+
+/*            Player player = game.getCurrentPlayer();
             player.setCurrentSex(Sex.Male);
             Worker maleWorker = player.getCurrentWorker();
             player.setCurrentSex(Sex.Female);
@@ -110,7 +129,9 @@ public class Game {
 
             game.nextPlayer();
 
-            Board board = game.getBoard();
+
+
+
 
             board.place(maleWorker, new Point (0,0));
             board.place(femaleWorker, new Point (4, 4));
@@ -122,7 +143,7 @@ public class Game {
                 System.out.println(p);
             }
             player.moveCurrentWorker(new Point(4, 3));
-            board.debugPrintToConsole();
+            board.debugPrintToConsole();*/
 
         } catch (InvalidPositionException e){
             System.err.println("Invalid position.");
