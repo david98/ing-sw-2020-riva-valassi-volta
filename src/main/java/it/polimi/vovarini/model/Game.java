@@ -80,6 +80,21 @@ public class Game {
         return 0;
     }
 
+    public Point isValidPoint(Scanner input){
+        boolean validPoint = false;
+        while(!validPoint){
+            System.out.println(players[currentPlayerIndex].getNickname() + ", inserisci le Coordinate del tuo " + players[currentPlayerIndex].getCurrentWorker().getSex().toString()+"Worker:");
+            String numberList = input.nextLine();
+            String[] numberVector = numberList.split(",");
+            Point newPoint = new Point (Integer.parseInt(numberVector[0]), Integer.parseInt(numberVector[1]));
+            for (Point point : players[currentPlayerIndex].getGodCard().computeReachablePoints()){
+                if (point.equals(newPoint)) return newPoint;
+            }
+            if (!validPoint) System.out.println("La posizione selezionata non è valida! Reinserisci!");
+        }
+        return new Point(-1,-1);
+    }
+
     public int turn(Scanner input){
 
 
@@ -104,18 +119,17 @@ public class Game {
                 break;
             }
         }
-        boolean validPoint = false;
-        while(!validPoint){
-            System.out.println(players[currentPlayerIndex].getNickname() + ", inserisci le Coordinate del tuo " + players[currentPlayerIndex].getCurrentWorker().getSex().toString()+"Worker:");
-            String numberList = input.nextLine();
-            String[] numberVector = numberList.split(",");
-            Point newPoint = new Point (Integer.parseInt(numberVector[0]), Integer.parseInt(numberVector[1]));
-            for (Point point : players[currentPlayerIndex].getGodCard().computeReachablePoints()){
-                if (point.equals(newPoint)) validPoint = true;
-            }
-            if (!validPoint) System.out.println("La posizione selezionata non è valida! Reinserisci!");
-        }
 
+        Point newPoint = isValidPoint(input);
+        try {
+            board.place(players[currentPlayerIndex].getCurrentWorker(), newPoint);
+        }
+        catch (InvalidPositionException e){
+
+        }
+        catch (BoxFullException e){
+            
+        }
 
 
         return 0;
