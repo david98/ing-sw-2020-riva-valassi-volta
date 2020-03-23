@@ -23,6 +23,7 @@ public class Player {
 
     private GodCard godCard;
     private String nickname;
+    private Phase currentPhase;
 
 
     public Player (Game game, GodCard assignedCard, String nickname){
@@ -36,6 +37,7 @@ public class Player {
         currentSex = Sex.Male;
         godCard = assignedCard;
         this.nickname = nickname;
+        currentPhase = Phase.WaitPhase;
     }
 
     public void moveCurrentWorker(Point destination){
@@ -57,6 +59,11 @@ public class Player {
         return workers.get(currentSex);
     }
 
+    public Worker getOtherWorker(){
+        if(currentSex.equals(Sex.Male)) return workers.get(Sex.Female);
+        else return workers.get(Sex.Male);
+    }
+
     public void setCurrentSex (Sex sex){
         currentSex = sex;
     }
@@ -67,5 +74,9 @@ public class Player {
 
     public String getNickname() {
         return nickname;
+    }
+
+    public void setCurrentPhase(Phase phase){
+        currentPhase = phase;
     }
 }

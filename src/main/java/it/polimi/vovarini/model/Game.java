@@ -13,6 +13,7 @@ public class Game {
     private Player[] players;
     private int currentPlayerIndex;
 
+
     public Board getBoard() {
         return board;
     }
@@ -79,6 +80,48 @@ public class Game {
         return 0;
     }
 
+    public int turn(Scanner input){
+
+
+        players[currentPlayerIndex].setCurrentPhase(Phase.StartPhase);
+        if (players[currentPlayerIndex].getGodCard().computeReachablePoints().isEmpty()) {
+            players[currentPlayerIndex].setCurrentSex(players[currentPlayerIndex].getOtherWorker().getSex());
+            if (players[currentPlayerIndex].getGodCard().computeReachablePoints().isEmpty()){
+                return -1;
+            }
+        }
+
+        players[currentPlayerIndex].setCurrentPhase(Phase.MovementPhase);
+        System.out.println(players[currentPlayerIndex].getNickname() + ", seleziona il tuo Worker inserendo M o F:");
+        String workerChar = input.nextLine();
+        switch (workerChar){
+            case "M": {
+                players[currentPlayerIndex].setCurrentSex(Sex.Male);
+                break;
+            }
+            case "F": {
+                players[currentPlayerIndex].setCurrentSex(Sex.Female);
+                break;
+            }
+        }
+        boolean validPoint = false;
+        while(!validPoint){
+            System.out.println(players[currentPlayerIndex].getNickname() + ", inserisci le Coordinate del tuo " + players[currentPlayerIndex].getCurrentWorker().getSex().toString()+"Worker:");
+            String numberList = input.nextLine();
+            String[] numberVector = numberList.split(",");
+            Point newPoint = new Point (Integer.parseInt(numberVector[0]), Integer.parseInt(numberVector[1]));
+            for (Point point : players[currentPlayerIndex].getGodCard().computeReachablePoints()){
+                if (point.equals(newPoint)) validPoint = true;
+            }
+            if (!validPoint) System.out.println("La posizione selezionata non è valida! Reinserisci!");
+        }
+
+
+
+        return 0;
+
+    }
+
     public void undoLastMove(){
         try {
             Move opposite = moves.pop().reverse();
@@ -127,6 +170,16 @@ public class Game {
                 while (game.startingBoardConfig(i, input, Sex.Male) != 0){};
                 while (game.startingBoardConfig(i, input, Sex.Female) != 0){};
             }
+            System.out.println("Siamo pronti per giocare! Inizia " + game.getCurrentPlayer().getNickname() + "!");
+            switch (game.turn(input)){
+                case -1: {
+                    System.out.println(game.getCurrentPlayer().getNickname()+" ha perso! Questo significa che la vittoria è di " + game.nextPlayer().getNickname()+"!");
+                }
+                case 0:{
+                    game.nextPlayer();
+                }
+            }
+
             board.debugPrintToConsole();
 
 

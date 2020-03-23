@@ -45,7 +45,7 @@ public abstract class GodCard {
             }
 
         } catch (ItemNotFoundException ignored) {
-
+            System.out.println("NOT FOUND!");
         }
         return reachablePoints;
     }

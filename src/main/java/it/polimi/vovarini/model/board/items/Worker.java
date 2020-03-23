@@ -6,6 +6,11 @@ public class Worker extends Item {
 
     public Worker(Sex sex){
         this.sex = sex;
+        //level = -1;
+    }
+
+    public Sex getSex() {
+        return sex;
     }
 
     @Override
@@ -27,4 +32,6 @@ public class Worker extends Item {
     public String toString() {
         return sex == Sex.Male ? "M" : "F";
     }
+
+
 }
