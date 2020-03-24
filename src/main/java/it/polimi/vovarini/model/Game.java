@@ -118,16 +118,20 @@ public class Game {
                 players[currentPlayerIndex].setCurrentSex(Sex.Female);
                 break;
             }
+            default:
+                System.err.println("Non esiste altro sesso!");
         }
 
         Point newPoint = isValidPoint(input);
         try {
             board.place(players[currentPlayerIndex].getCurrentWorker(), newPoint);
         }
-        catch (InvalidPositionException e){
+        //Da riempire
+        catch (InvalidPositionException ignored){
 
         }
-        catch (BoxFullException e){
+        //Da riempire
+        catch (BoxFullException ignored){
             
         }
 
@@ -181,8 +185,12 @@ public class Game {
             //qui va assegnato anche il colore. Marco se ne sta occupando, vedremo quando integrare quella parte
             for (int i = 0; i < game.players.length; i++){
 
-                while (game.startingBoardConfig(i, input, Sex.Male) != 0){};
-                while (game.startingBoardConfig(i, input, Sex.Female) != 0){};
+                while (game.startingBoardConfig(i, input, Sex.Male) != 0){
+                    continue;
+                };
+                while (game.startingBoardConfig(i, input, Sex.Female) != 0){
+                    continue;
+                };
             }
             System.out.println("Siamo pronti per giocare! Inizia " + game.getCurrentPlayer().getNickname() + "!");
             switch (game.turn(input)){
@@ -191,6 +199,10 @@ public class Game {
                 }
                 case 0:{
                     game.nextPlayer();
+                }
+                default:
+                {
+                    System.err.println("ERROR: risultato impossibile. Stato della partita indeterminabile");
                 }
             }
 
