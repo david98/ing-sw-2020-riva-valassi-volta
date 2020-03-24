@@ -98,7 +98,7 @@ public class Game {
     public int turn(Scanner input){
 
 
-        players[currentPlayerIndex].setCurrentPhase(Phase.StartPhase);
+        players[currentPlayerIndex].setCurrentPhase(Phase.Start);
         if (players[currentPlayerIndex].getGodCard().computeReachablePoints().isEmpty()) {
             players[currentPlayerIndex].setCurrentSex(players[currentPlayerIndex].getOtherWorker().getSex());
             if (players[currentPlayerIndex].getGodCard().computeReachablePoints().isEmpty()){
@@ -106,7 +106,7 @@ public class Game {
             }
         }
 
-        players[currentPlayerIndex].setCurrentPhase(Phase.MovementPhase);
+        players[currentPlayerIndex].setCurrentPhase(Phase.Movement);
         System.out.println(players[currentPlayerIndex].getNickname() + ", seleziona il tuo Worker inserendo M o F:");
         String workerChar = input.nextLine();
         switch (workerChar){

@@ -1,5 +1,5 @@
 package it.polimi.vovarini.model;
 
 public enum Phase {
-    StartPhase, MovementPhase, CheckWinPhase, ConstructionPhase, EndPhase, WaitPhase;
+    Start, Movement, CheckWin, Construction, End, Wait;
 }

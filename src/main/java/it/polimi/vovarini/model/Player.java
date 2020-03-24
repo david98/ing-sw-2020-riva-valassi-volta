@@ -37,7 +37,7 @@ public class Player {
         currentSex = Sex.Male;
         godCard = assignedCard;
         this.nickname = nickname;
-        currentPhase = Phase.WaitPhase;
+        currentPhase = Phase.Wait;
     }
 
     public void moveCurrentWorker(Point destination){
