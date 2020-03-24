@@ -185,12 +185,8 @@ public class Game {
             //qui va assegnato anche il colore. Marco se ne sta occupando, vedremo quando integrare quella parte
             for (int i = 0; i < game.players.length; i++){
 
-                while (game.startingBoardConfig(i, input, Sex.Male) != 0){
-                    continue;
-                };
-                while (game.startingBoardConfig(i, input, Sex.Female) != 0){
-                    continue;
-                };
+                while (game.startingBoardConfig(i, input, Sex.Male) != 0){}
+                while (game.startingBoardConfig(i, input, Sex.Female) != 0){}
             }
             System.out.println("Siamo pronti per giocare! Inizia " + game.getCurrentPlayer().getNickname() + "!");
             switch (game.turn(input)){
@@ -209,36 +205,7 @@ public class Game {
             board.debugPrintToConsole();
 
 
-/*            Player player = game.getCurrentPlayer();
-            player.setCurrentSex(Sex.Male);
-            Worker maleWorker = player.getCurrentWorker();
-            player.setCurrentSex(Sex.Female);
-            Worker femaleWorker = player.getCurrentWorker();
 
-            Player other = game.nextPlayer();
-            System.out.println(game.getCurrentPlayer().getNickname());
-            other.setCurrentSex(Sex.Male);
-            Worker otherMaleWorker = other.getCurrentWorker();
-            other.setCurrentSex(Sex.Female);
-            Worker otherFemaleWorker = other.getCurrentWorker();
-
-            game.nextPlayer();
-
-
-
-
-
-            board.place(maleWorker, new Point (0,0));
-            board.place(femaleWorker, new Point (4, 4));
-            board.place(otherMaleWorker, new Point(4, 3));
-            board.place(otherFemaleWorker, new Point(3, 4));
-            board.debugPrintToConsole();
-            for (Point p: player.getGodCard().computeReachablePoints()
-                 ) {
-                System.out.println(p);
-            }
-            player.moveCurrentWorker(new Point(4, 3));
-            board.debugPrintToConsole();*/
 
 
     }
