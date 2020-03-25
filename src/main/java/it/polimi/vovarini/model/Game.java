@@ -200,26 +200,6 @@ public class Game {
 
     }
 
-    public void undoLastMove(){
-        try {
-            Move opposite = moves.pop().reverse();
-            undoneMoves.push(opposite);
-            opposite.execute();
-        } catch (EmptyStackException ignored) {
-
-        }
-    }
-
-    public void redoMove(){
-        try {
-            Move move = undoneMoves.pop().reverse();
-            moves.push(move);
-            move.execute();
-        } catch (EmptyStackException ignored){
-
-        }
-    }
-
     public Player nextPlayer(){
         currentPlayerIndex++;
         if (currentPlayerIndex >= players.length){
@@ -270,5 +250,5 @@ public class Game {
 
 
     }
-  }
 }
+

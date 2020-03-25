@@ -54,38 +54,30 @@ public class Player {
     return workers;
   }
 
-  public Worker getCurrentWorker() {
-    return workers.get(currentSex);
-  }
-
-  public void setCurrentSex(Sex sex) {
+  public void setCurrentSex (Sex sex){
     currentSex = sex;
   }
 
 
-    public Worker getCurrentWorker(){
+  public Worker getCurrentWorker(){
         return workers.get(currentSex);
     }
 
-    public Worker getOtherWorker(){
-        if(currentSex.equals(Sex.Male)) return workers.get(Sex.Female);
-        else return workers.get(Sex.Male);
-    }
+  public Worker getOtherWorker(){
+      if(currentSex.equals(Sex.Male)) return workers.get(Sex.Female);
+      else return workers.get(Sex.Male);
+  }
 
-    public void setCurrentSex (Sex sex){
-        currentSex = sex;
-    }
+  public GodCard getGodCard(){
+      return godCard;
+  }
 
-    public GodCard getGodCard(){
-        return godCard;
-    }
+  public String getNickname() {
+      return nickname;
+  }
 
-    public String getNickname() {
-        return nickname;
-    }
-
-    public void setCurrentPhase(Phase phase){
-        currentPhase = phase;
-    }
+  public void setCurrentPhase(Phase phase){
+      currentPhase = phase;
+  }
 
 }

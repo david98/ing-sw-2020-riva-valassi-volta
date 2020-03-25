@@ -22,6 +22,7 @@ public abstract class GodCard {
 
   public GodCard(Game game) {
     this.game = game;
+    this.name = GodName.Nobody;
   }
 
   public List<Point> computeReachablePoints() {
