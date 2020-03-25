@@ -1,5 +1,6 @@
 package it.polimi.vovarini.model.board;
 
+import it.polimi.vovarini.model.Player;
 import it.polimi.vovarini.model.Point;
 import it.polimi.vovarini.model.board.items.Item;
 
@@ -80,13 +81,15 @@ public class Board {
     throw new ItemNotFoundException();
   }
 
-  public void debugPrintToConsole() {
+  public void debugPrintToConsole(Player[] players) {
     for (int i = 0; i < boxes.length; i++) {
+      System.out.print("|");
       for (int j = 0; j < boxes.length; j++) {
-        System.out.print(boxes[i][j].toString());
+        System.out.print(" " + boxes[i][j].toString(players));
       }
-      System.out.print("\n");
+      System.out.println((char) 27 + "[37m |");
     }
+    System.out.println((char) 27 + "[37m");
   }
 
   public int getSize() {

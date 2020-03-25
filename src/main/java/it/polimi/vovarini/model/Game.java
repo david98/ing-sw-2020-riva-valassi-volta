@@ -233,13 +233,14 @@ public class Game {
       game.players[i] = new Player(game, new Nobody(game), nickname);
     }
     Board board = game.getBoard();
-    // qui va assegnato anche il colore. Marco se ne sta occupando, vedremo quando integrare quella
-    // parte
+    board.debugPrintToConsole(game.getPlayers());
+
     for (int i = 0; i < game.players.length; i++) {
 
       while (game.startingBoardConfig(i, input, Sex.Male) != 0) {}
       while (game.startingBoardConfig(i, input, Sex.Female) != 0) {}
     }
+    board.debugPrintToConsole(game.getPlayers());
     System.out.println(
         "Siamo pronti per giocare! Inizia " + game.getCurrentPlayer().getNickname() + "!");
     switch (game.turn(input)) {
@@ -261,6 +262,6 @@ public class Game {
         }
     }
 
-    board.debugPrintToConsole();
+    board.debugPrintToConsole(game.getPlayers());
   }
 }
