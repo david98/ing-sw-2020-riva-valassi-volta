@@ -11,7 +11,6 @@ import java.util.Map;
 
 public class Player {
 
-
   private Game game;
 
   private int movementsLeft;
@@ -54,30 +53,28 @@ public class Player {
     return workers;
   }
 
-  public void setCurrentSex (Sex sex){
+  public void setCurrentSex(Sex sex) {
     currentSex = sex;
   }
 
-
-  public Worker getCurrentWorker(){
-        return workers.get(currentSex);
-    }
-
-  public Worker getOtherWorker(){
-      if(currentSex.equals(Sex.Male)) return workers.get(Sex.Female);
-      else return workers.get(Sex.Male);
+  public Worker getCurrentWorker() {
+    return workers.get(currentSex);
   }
 
-  public GodCard getGodCard(){
-      return godCard;
+  public Worker getOtherWorker() {
+    if (currentSex.equals(Sex.Male)) return workers.get(Sex.Female);
+    else return workers.get(Sex.Male);
+  }
+
+  public GodCard getGodCard() {
+    return godCard;
   }
 
   public String getNickname() {
-      return nickname;
+    return nickname;
   }
 
-  public void setCurrentPhase(Phase phase){
-      currentPhase = phase;
+  public void setCurrentPhase(Phase phase) {
+    currentPhase = phase;
   }
-
 }

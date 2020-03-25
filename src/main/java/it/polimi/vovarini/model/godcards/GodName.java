@@ -1,7 +1,6 @@
 package it.polimi.vovarini.model.godcards;
 
 public enum GodName {
-
   Apollo,
   Artemis,
   Athena,

@@ -3,15 +3,13 @@ package it.polimi.vovarini.model.board.items;
 public class Worker extends Item {
   private Sex sex;
 
+  public Worker(Sex sex) {
+    this.sex = sex;
+  }
 
-    public Worker(Sex sex){
-        this.sex = sex;
-    }
-
-    public Sex getSex() {
-        return sex;
-    }
-
+  public Sex getSex() {
+    return sex;
+  }
 
   @Override
   public boolean canBePlacedOn(Item item) {
@@ -28,12 +26,8 @@ public class Worker extends Item {
     return true;
   }
 
-
-    @Override
-    public String toString() {
-        return sex == Sex.Male ? "M" : "F";
-    }
-
-
-
+  @Override
+  public String toString() {
+    return sex == Sex.Male ? "M" : "F";
+  }
 }

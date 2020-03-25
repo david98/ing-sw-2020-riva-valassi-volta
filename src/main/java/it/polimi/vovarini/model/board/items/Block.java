@@ -2,9 +2,7 @@ package it.polimi.vovarini.model.board.items;
 
 public class Block extends Item {
 
-
-    protected int level;
-
+  protected int level;
 
   public Block(int level) throws InvalidLevelException {
     if (level < 1 || level > 4) {
