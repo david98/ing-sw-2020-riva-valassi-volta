@@ -10,47 +10,67 @@ import java.util.Scanner;
 import java.util.Stack;
 
 public class Game {
-    private Player[] players;
-    private int currentPlayerIndex;
+  private Player[] players;
+  private int currentPlayerIndex;
 
+  public Board getBoard() {
+    return board;
+  }
 
-    public Board getBoard() {
-        return board;
+  private Board board;
+
+  private Stack<Move> moves;
+  private Stack<Move> undoneMoves;
+
+  public Game(int numberOfPlayers) {
+    players = new Player[numberOfPlayers];
+    for (int i = 0; i < numberOfPlayers; i++) {
+      players[i] = new Player(this, new Apollo(this), "Player" + i); // TODO: sistemare
     }
+    moves = new Stack<>();
+    undoneMoves = new Stack<>();
+    currentPlayerIndex = 0;
+    board = new Board(Board.DEFAULT_SIZE);
+  }
 
-    private Board board;
+  public void performMove(Move move) {
+    undoneMoves.clear();
+    moves.push(move);
+    move.execute();
+  }
 
-    private Stack<Move> moves;
-    private Stack<Move> undoneMoves;
+  public Player[] getPlayers() {
+    return players;
+  }
 
-    public Game(int numberOfPlayers){
-        players = new Player[numberOfPlayers];
-        for (int i = 0; i < numberOfPlayers; i++){
-            players[i] = new Player(this, new Apollo(this), "Player" + i); //TODO: sistemare
-        }
-        moves = new Stack<>();
-        undoneMoves = new Stack<>();
-        currentPlayerIndex = 0;
-        board = new Board(Board.DEFAULT_SIZE);
+  public void setCurrentPlayerIndex(int currentPlayerIndex) {
+    this.currentPlayerIndex = currentPlayerIndex;
+  }
+
+  public Player getCurrentPlayer() {
+    return players[currentPlayerIndex];
+  }
+
+  public void undoLastMove() {
+    try {
+      Move opposite = moves.pop().reverse();
+      undoneMoves.push(opposite);
+      opposite.execute();
+    } catch (EmptyStackException ignored) {
+
     }
+  }
 
-    public void performMove(Move move){
-        undoneMoves.clear();
-        moves.push(move);
-        move.execute();
-    }
+  public void redoMove() {
+    try {
+      Move move = undoneMoves.pop().reverse();
+      moves.push(move);
+      move.execute();
+    } catch (EmptyStackException ignored) {
 
-    public Player[] getPlayers() {
-        return players;
     }
+  }
 
-    public void setCurrentPlayerIndex(int currentPlayerIndex) {
-        this.currentPlayerIndex = currentPlayerIndex;
-    }
-
-    public Player getCurrentPlayer(){
-        return players[currentPlayerIndex];
-    }
 
     //return 0 se tutto va bene
     //altri valori in base al tipo di eccezione, in modo da poter richiedere il necessario all'utente una volta che ha sbagliato
@@ -248,5 +268,7 @@ public class Game {
 
 
 
+
     }
+  }
 }

@@ -15,35 +15,38 @@ import java.util.List;
 
 public abstract class GodCard {
 
+
     protected Game game;
     protected GodName name;
 
-    public GodCard(Game game){
-        this.game = game;
-    }
 
-    public List<Point> computeReachablePoints() {
-        LinkedList<Point> reachablePoints = new LinkedList<>();
+  public GodCard(Game game) {
+    this.game = game;
+  }
 
+  public List<Point> computeReachablePoints() {
+    LinkedList<Point> reachablePoints = new LinkedList<>();
+
+    try {
+      Player player = game.getCurrentPlayer();
+      Board board = game.getBoard();
+      Worker selectedWorker = player.getCurrentWorker();
+      Point workerPosition = board.getItemPosition(selectedWorker);
+
+      List<Point> candidatePositions = board.getAdjacentPositions(workerPosition);
+
+      for (int i = 0; i < candidatePositions.size(); i++) {
         try {
-            Player player = game.getCurrentPlayer();
-            Board board = game.getBoard();
-            Worker selectedWorker = player.getCurrentWorker();
-            Point workerPosition = board.getItemPosition(selectedWorker);
+          if (selectedWorker.canBePlacedOn(board.getTopmostItem(candidatePositions.get(i)))) {
+            reachablePoints.add(candidatePositions.get(i));
+          }
+        } catch (BoxEmptyException e) {
+          reachablePoints.add(candidatePositions.get(i));
+        } catch (InvalidPositionException ignored) {
 
-            List<Point> candidatePositions = board.getAdjacentPositions(workerPosition);
+        }
+      }
 
-            for (int i = 0; i < candidatePositions.size(); i++){
-                try {
-                    if (selectedWorker.canBePlacedOn(board.getTopmostItem(candidatePositions.get(i)))){
-                        reachablePoints.add(candidatePositions.get(i));
-                    }
-                } catch (BoxEmptyException e){
-                    reachablePoints.add(candidatePositions.get(i));
-                } catch (InvalidPositionException ignored){
-
-                }
-            }
 
         } catch (ItemNotFoundException ignored) {
             System.out.println("NOT FOUND!");
@@ -89,5 +92,6 @@ public abstract class GodCard {
     }
 
     public void consequences(Game game){}
+
 
 }

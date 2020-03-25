@@ -5,6 +5,7 @@ import it.polimi.vovarini.model.board.items.Block;
 
 public class Destruction extends Move {
 
+
     private Block block;
     private Point target;
 
@@ -19,8 +20,6 @@ public class Destruction extends Move {
         return new Construction(board, block, target);
     }
 
-    @Override
-    public void execute() {
-
-    }
+  @Override
+  public void execute() {}
 }
