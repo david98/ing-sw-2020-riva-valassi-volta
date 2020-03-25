@@ -80,7 +80,7 @@ public class Game {
         return 0;
     }
 
-    public Point isValidPoint(Scanner input){
+    public Point isValidReachablePoint(Scanner input){
         boolean validPoint = false;
         while(!validPoint){
             System.out.println(players[currentPlayerIndex].getNickname() + ", inserisci le Coordinate del tuo " + players[currentPlayerIndex].getCurrentWorker().getSex().toString()+"Worker:");
@@ -88,6 +88,21 @@ public class Game {
             String[] numberVector = numberList.split(",");
             Point newPoint = new Point (Integer.parseInt(numberVector[0]), Integer.parseInt(numberVector[1]));
             for (Point point : players[currentPlayerIndex].getGodCard().computeReachablePoints()){
+                if (point.equals(newPoint)) return newPoint;
+            }
+            if (!validPoint) System.out.println("La posizione selezionata non è valida! Reinserisci!");
+        }
+        return new Point(-1,-1);
+    }
+
+    public Point isValidBuildablePoint(Scanner input){
+        boolean validPoint = false;
+        while(!validPoint){
+            System.out.println(players[currentPlayerIndex].getNickname() + ", inserisci le Coordinate del tuo " + players[currentPlayerIndex].getCurrentWorker().getSex().toString()+"Worker:");
+            String numberList = input.nextLine();
+            String[] numberVector = numberList.split(",");
+            Point newPoint = new Point (Integer.parseInt(numberVector[0]), Integer.parseInt(numberVector[1]));
+            for (Point point : players[currentPlayerIndex].getGodCard().computeBuildablePoints()){
                 if (point.equals(newPoint)) return newPoint;
             }
             if (!validPoint) System.out.println("La posizione selezionata non è valida! Reinserisci!");
@@ -122,18 +137,43 @@ public class Game {
                 System.err.println("Non esiste altro sesso!");
         }
 
-        Point newPoint = isValidPoint(input);
+        Point newPoint = isValidReachablePoint(input);
+        Point start = new Point(-1,-1);
         try {
-            board.place(players[currentPlayerIndex].getCurrentWorker(), newPoint);
+            start = board.getItemPosition(players[currentPlayerIndex].getCurrentWorker());
         }
         //Da riempire
+        catch (ItemNotFoundException ignored){
+
+        }
+
+        Movement movement = new Movement(board, start, newPoint);
+        movement.execute();
+
+        players[currentPlayerIndex].setCurrentPhase(Phase.CheckWin);
+        players[currentPlayerIndex].getGodCard().checkWin(movement);
+
+        players[currentPlayerIndex].setCurrentPhase(Phase.Construction);
+        Construction build;
+        newPoint = isValidBuildablePoint(input);
+        Block topItem;
+        try{
+            topItem = (Block) board.getTopmostItem(newPoint);
+            build = new Construction(board, topItem, newPoint);
+            build.execute();
+        }
         catch (InvalidPositionException ignored){
 
         }
-        //Da riempire
-        catch (BoxFullException ignored){
-            
+        catch (BoxEmptyException ignored){
+
         }
+        players[currentPlayerIndex].setCurrentPhase(Phase.End);
+        players[currentPlayerIndex].getGodCard().consequences(this);
+
+        players[currentPlayerIndex].setCurrentPhase(Phase.Wait);
+        nextPlayer();
+
 
 
         return 0;
