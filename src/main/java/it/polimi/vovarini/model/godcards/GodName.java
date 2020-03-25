@@ -9,5 +9,6 @@ public enum GodName {
   Hephaestus,
   Minotaur,
   Pan,
-  Prometheus;
+  Prometheus,
+  Nobody;
 }

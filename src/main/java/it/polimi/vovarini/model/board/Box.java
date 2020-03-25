@@ -15,10 +15,14 @@ public class Box {
     items = new Stack<>();
   }
 
+  // prima permetteva di sovrascrivere un worker di un altro giocatore. Magari le carte porteranno a
+  // nuove modifiche
   public void place(Item item) throws BoxFullException {
     if (items.size() >= 4) {
       throw new BoxFullException();
     }
+
+    // if ( !(items.empty()) && )
 
     items.push(item);
   }

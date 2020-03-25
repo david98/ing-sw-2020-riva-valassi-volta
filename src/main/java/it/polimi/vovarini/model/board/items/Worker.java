@@ -7,6 +7,10 @@ public class Worker extends Item {
     this.sex = sex;
   }
 
+  public Sex getSex() {
+    return sex;
+  }
+
   @Override
   public boolean canBePlacedOn(Item item) {
     if (item instanceof Block) {

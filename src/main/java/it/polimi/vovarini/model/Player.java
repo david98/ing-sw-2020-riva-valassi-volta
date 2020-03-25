@@ -19,6 +19,7 @@ public class Player {
 
   private EnumMap<Sex, Worker> workers;
   private Sex currentSex;
+  private Phase currentPhase;
 
   private GodCard godCard;
   private String nickname;
@@ -34,6 +35,7 @@ public class Player {
     currentSex = Sex.Male;
     godCard = assignedCard;
     this.nickname = nickname;
+    currentPhase = Phase.Wait;
   }
 
   public void moveCurrentWorker(Point destination) {
@@ -51,12 +53,17 @@ public class Player {
     return workers;
   }
 
+  public void setCurrentSex(Sex sex) {
+    currentSex = sex;
+  }
+
   public Worker getCurrentWorker() {
     return workers.get(currentSex);
   }
 
-  public void setCurrentSex(Sex sex) {
-    currentSex = sex;
+  public Worker getOtherWorker() {
+    if (currentSex.equals(Sex.Male)) return workers.get(Sex.Female);
+    else return workers.get(Sex.Male);
   }
 
   public GodCard getGodCard() {
@@ -65,5 +72,9 @@ public class Player {
 
   public String getNickname() {
     return nickname;
+  }
+
+  public void setCurrentPhase(Phase phase) {
+    currentPhase = phase;
   }
 }
