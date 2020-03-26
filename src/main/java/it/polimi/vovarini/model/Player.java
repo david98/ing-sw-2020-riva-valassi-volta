@@ -13,10 +13,6 @@ public class Player {
 
   private Game game;
 
-  private int movementsLeft;
-  private boolean hasMoved;
-  private boolean hasBuilt;
-
   private EnumMap<Sex, Worker> workers;
   private Sex currentSex;
 
@@ -25,9 +21,6 @@ public class Player {
 
   public Player(Game game, GodCard assignedCard, String nickname) {
     this.game = game;
-    movementsLeft = 0;
-    hasMoved = false;
-    hasBuilt = false;
     workers = new EnumMap<>(Sex.class);
     workers.put(Sex.Female, new Worker(Sex.Female));
     workers.put(Sex.Male, new Worker(Sex.Male));
