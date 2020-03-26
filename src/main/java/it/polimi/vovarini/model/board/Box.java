@@ -21,7 +21,7 @@ public class Box {
   // prima permetteva di sovrascrivere un worker di un altro giocatore. Magari le carte porteranno a
   // nuove modifiche
   public void place(Item item) throws BoxFullException {
-    if (items.size() >= 4) {
+    if (items.size() >= MAX_ITEMS) {
       throw new BoxFullException();
     }
 
