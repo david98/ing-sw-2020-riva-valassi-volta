@@ -51,7 +51,7 @@ public class Game implements Observable {
     return currentPhase;
   }
 
-  public Phase nextPhase(){
+  public Phase nextPhase() {
     currentPhase = currentPhase.next();
     return currentPhase;
   }
@@ -91,19 +91,13 @@ public class Game implements Observable {
   }
 
   @Override
-  public void add(Observer observer) {
-
-  }
+  public void add(Observer observer) {}
 
   @Override
-  public void remove(Observer observer) {
-
-  }
+  public void remove(Observer observer) {}
 
   @Override
-  public void notifyObservers() {
-
-  }
+  public void notifyObservers() {}
 
   // qui iniziano i metodi di MERDA
 
@@ -257,9 +251,9 @@ public class Game implements Observable {
 
     Board board = game.getBoard();
     /*
-      qui va assegnato anche il colore. Marco se ne sta occupando, vedremo quando integrare
-      quella parte
-     */
+     qui va assegnato anche il colore. Marco se ne sta occupando, vedremo quando integrare
+     quella parte
+    */
     for (int i = 0; i < game.players.length; i++) {
 
       while (game.startingBoardConfig(i, input, Sex.Male) != 0) {}

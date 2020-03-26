@@ -66,10 +66,10 @@ public abstract class GodCard {
     LinkedList<Point> buildablePoints = new LinkedList<>();
     LinkedList<Block> blocks = new LinkedList<>();
     try {
-      for (int i = Block.MIN_LEVEL; i <= Block.MAX_LEVEL; i++){
+      for (int i = Block.MIN_LEVEL; i <= Block.MAX_LEVEL; i++) {
         blocks.add(new Block(i));
       }
-    } catch (InvalidLevelException ignored){
+    } catch (InvalidLevelException ignored) {
 
     }
 
