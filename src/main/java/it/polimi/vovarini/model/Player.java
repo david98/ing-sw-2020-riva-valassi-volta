@@ -19,7 +19,6 @@ public class Player {
 
   private EnumMap<Sex, Worker> workers;
   private Sex currentSex;
-  private Phase currentPhase;
 
   private GodCard godCard;
   private String nickname;
@@ -35,7 +34,6 @@ public class Player {
     currentSex = Sex.Male;
     godCard = assignedCard;
     this.nickname = nickname;
-    currentPhase = Phase.Wait;
   }
 
   public void moveCurrentWorker(Point destination) {
@@ -72,9 +70,5 @@ public class Player {
 
   public String getNickname() {
     return nickname;
-  }
-
-  public void setCurrentPhase(Phase phase) {
-    currentPhase = phase;
   }
 }

@@ -8,6 +8,9 @@ import it.polimi.vovarini.model.board.Board;
 import it.polimi.vovarini.model.board.BoxEmptyException;
 import it.polimi.vovarini.model.board.InvalidPositionException;
 import it.polimi.vovarini.model.board.ItemNotFoundException;
+import it.polimi.vovarini.model.board.items.Block;
+import it.polimi.vovarini.model.board.items.InvalidLevelException;
+import it.polimi.vovarini.model.board.items.Item;
 import it.polimi.vovarini.model.board.items.Worker;
 
 import java.util.LinkedList;
@@ -34,20 +37,19 @@ public abstract class GodCard {
 
       List<Point> candidatePositions = board.getAdjacentPositions(workerPosition);
 
-      for (int i = 0; i < candidatePositions.size(); i++) {
+      for (Point candidatePosition : candidatePositions) {
         try {
-          if (selectedWorker.canBePlacedOn(board.getTopmostItem(candidatePositions.get(i)))) {
-            reachablePoints.add(candidatePositions.get(i));
+          if (selectedWorker.canBePlacedOn(board.getTopmostItem(candidatePosition))) {
+            reachablePoints.add(candidatePosition);
           }
         } catch (BoxEmptyException e) {
-          reachablePoints.add(candidatePositions.get(i));
+          reachablePoints.add(candidatePosition);
         } catch (InvalidPositionException ignored) {
 
         }
       }
 
     } catch (ItemNotFoundException ignored) {
-      System.out.println("NOT FOUND!");
     }
     return reachablePoints;
   }
@@ -61,7 +63,15 @@ public abstract class GodCard {
   }
 
   public List<Point> computeBuildablePoints() {
-    LinkedList<Point> reachablePoints = new LinkedList<>();
+    LinkedList<Point> buildablePoints = new LinkedList<>();
+    LinkedList<Block> blocks = new LinkedList<>();
+    try {
+      for (int i = Block.MIN_LEVEL; i <= Block.MAX_LEVEL; i++){
+        blocks.add(new Block(i));
+      }
+    } catch (InvalidLevelException ignored){
+
+    }
 
     try {
       Player player = game.getCurrentPlayer();
@@ -71,22 +81,22 @@ public abstract class GodCard {
 
       List<Point> candidatePositions = board.getAdjacentPositions(workerPosition);
 
-      for (int i = 0; i < candidatePositions.size(); i++) {
+      for (Point candidatePosition : candidatePositions) {
         try {
-          if (selectedWorker.canBePlacedOn(board.getTopmostItem(candidatePositions.get(i)))) {
-            reachablePoints.add(candidatePositions.get(i));
+          Item topmostItem = board.getTopmostItem(candidatePosition);
+          if (blocks.stream().anyMatch(block -> block.canBePlacedOn(topmostItem))) {
+            buildablePoints.add(candidatePosition);
           }
         } catch (BoxEmptyException e) {
-          reachablePoints.add(candidatePositions.get(i));
+          buildablePoints.add(candidatePosition);
         } catch (InvalidPositionException ignored) {
 
         }
       }
 
     } catch (ItemNotFoundException ignored) {
-      System.out.println("NOT FOUND!");
     }
-    return reachablePoints;
+    return buildablePoints;
   }
 
   public void consequences(Game game) {}

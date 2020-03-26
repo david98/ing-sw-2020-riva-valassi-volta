@@ -1,5 +1,7 @@
 package it.polimi.vovarini.model;
 
+import it.polimi.vovarini.Observable;
+import it.polimi.vovarini.Observer;
 import it.polimi.vovarini.model.board.*;
 import it.polimi.vovarini.model.board.items.*;
 import it.polimi.vovarini.model.godcards.Apollo;
@@ -9,9 +11,11 @@ import java.util.EmptyStackException;
 import java.util.Scanner;
 import java.util.Stack;
 
-public class Game {
+public class Game implements Observable {
   private Player[] players;
   private int currentPlayerIndex;
+
+  private Phase currentPhase;
 
   public Board getBoard() {
     return board;
@@ -27,10 +31,14 @@ public class Game {
     for (int i = 0; i < numberOfPlayers; i++) {
       players[i] = new Player(this, new Apollo(this), "Player" + i); // TODO: sistemare
     }
+    currentPlayerIndex = 0;
+
     moves = new Stack<>();
     undoneMoves = new Stack<>();
-    currentPlayerIndex = 0;
+
     board = new Board(Board.DEFAULT_SIZE);
+
+    currentPhase = Phase.Start;
   }
 
   public void performMove(Move move) {
@@ -39,15 +47,26 @@ public class Game {
     move.execute();
   }
 
+  public Phase getCurrentPhase() {
+    return currentPhase;
+  }
+
+  public Phase nextPhase(){
+    currentPhase = currentPhase.next();
+    return currentPhase;
+  }
+
   public Player[] getPlayers() {
     return players;
   }
 
-  public void setCurrentPlayerIndex(int currentPlayerIndex) {
-    this.currentPlayerIndex = currentPlayerIndex;
+  public Player getCurrentPlayer() {
+    return players[currentPlayerIndex];
   }
 
-  public Player getCurrentPlayer() {
+  public Player nextPlayer() {
+    currentPhase = Phase.Start;
+    currentPlayerIndex = (currentPlayerIndex + 1) % players.length;
     return players[currentPlayerIndex];
   }
 
@@ -70,6 +89,23 @@ public class Game {
 
     }
   }
+
+  @Override
+  public void add(Observer observer) {
+
+  }
+
+  @Override
+  public void remove(Observer observer) {
+
+  }
+
+  @Override
+  public void notifyObservers() {
+
+  }
+
+  // qui iniziano i metodi di MERDA
 
   // return 0 se tutto va bene
   // altri valori in base al tipo di eccezione, in modo da poter richiedere il necessario all'utente
@@ -95,10 +131,6 @@ public class Game {
       System.err.println("Attenzione! La casella selezionata è già piena!");
       return 2;
     }
-    /*catch (OverwritedWorkerException e){
-        System.err.println("Attenzione! Non puoi rimpiazzare un Worker avversario!");
-        return 3;
-    }*/
 
     return 0;
   }
@@ -145,7 +177,6 @@ public class Game {
 
   public int turn(Scanner input) {
 
-    players[currentPlayerIndex].setCurrentPhase(Phase.Start);
     if (players[currentPlayerIndex].getGodCard().computeReachablePoints().isEmpty()) {
       players[currentPlayerIndex].setCurrentSex(
           players[currentPlayerIndex].getOtherWorker().getSex());
@@ -154,7 +185,7 @@ public class Game {
       }
     }
 
-    players[currentPlayerIndex].setCurrentPhase(Phase.Movement);
+    nextPhase();
     System.out.println(
         players[currentPlayerIndex].getNickname() + ", seleziona il tuo Worker inserendo M o F:");
     String workerChar = input.nextLine();
@@ -186,10 +217,10 @@ public class Game {
     Movement movement = new Movement(board, start, newPoint);
     movement.execute();
 
-    players[currentPlayerIndex].setCurrentPhase(Phase.CheckWin);
+    nextPhase();
     players[currentPlayerIndex].getGodCard().checkWin(movement);
 
-    players[currentPlayerIndex].setCurrentPhase(Phase.Construction);
+    nextPhase();
     Construction build;
     newPoint = isValidBuildablePoint(input);
     Block topItem;
@@ -197,49 +228,44 @@ public class Game {
       topItem = (Block) board.getTopmostItem(newPoint);
       build = new Construction(board, topItem, newPoint);
       build.execute();
-    } catch (InvalidPositionException ignored) {
-
-    } catch (BoxEmptyException ignored) {
+    } catch (InvalidPositionException | BoxEmptyException ignored) {
 
     }
-    players[currentPlayerIndex].setCurrentPhase(Phase.End);
+    nextPhase();
     players[currentPlayerIndex].getGodCard().consequences(this);
 
-    players[currentPlayerIndex].setCurrentPhase(Phase.Wait);
+    nextPhase();
     nextPlayer();
 
     return 0;
   }
 
-  public Player nextPlayer() {
-    currentPlayerIndex++;
-    if (currentPlayerIndex >= players.length) {
-      currentPlayerIndex = 0;
-    }
-    return players[currentPlayerIndex];
-  }
-
   public static void main(String[] args) {
 
-    String cleaner;
     Scanner input = new Scanner(System.in);
     System.out.println("Benvenuti a Santorini! Inserire il numero di Giocatori:");
     int numberOfPlayers = input.nextInt();
+
     Game game = new Game(numberOfPlayers);
+
     input.nextLine();
     for (int i = 0; i < game.players.length; i++) {
       System.out.println("Inserisci il Nickname del Giocatore " + (i + 1) + ":");
       String nickname = input.nextLine();
       game.players[i] = new Player(game, new Nobody(game), nickname);
     }
+
     Board board = game.getBoard();
-    // qui va assegnato anche il colore. Marco se ne sta occupando, vedremo quando integrare quella
-    // parte
+    /*
+      qui va assegnato anche il colore. Marco se ne sta occupando, vedremo quando integrare
+      quella parte
+     */
     for (int i = 0; i < game.players.length; i++) {
 
       while (game.startingBoardConfig(i, input, Sex.Male) != 0) {}
       while (game.startingBoardConfig(i, input, Sex.Female) != 0) {}
     }
+
     System.out.println(
         "Siamo pronti per giocare! Inizia " + game.getCurrentPlayer().getNickname() + "!");
     switch (game.turn(input)) {
