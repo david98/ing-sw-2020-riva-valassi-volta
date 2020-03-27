@@ -32,12 +32,13 @@ public class PlayerTests {
 
   @Test
   @DisplayName("Test currentWorker movement")
-  void playerMoveCurrentWorker() throws BoxEmptyException, InvalidPositionException, BoxFullException, InvalidLevelException {
+  void playerMoveCurrentWorker()
+      throws BoxEmptyException, InvalidPositionException, BoxFullException, InvalidLevelException {
     Game game = new Game(2);
     GodCard godCard = new Nobody(game);
     String nickname = "Guest";
-    Point start = new Point(0,0);
-    Point end = new Point(1,1);
+    Point start = new Point(0, 0);
+    Point end = new Point(1, 1);
     Block block_1 = new Block(1);
 
     Player player = new Player(game, godCard, nickname);
