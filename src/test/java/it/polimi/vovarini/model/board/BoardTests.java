@@ -19,13 +19,12 @@ public class BoardTests {
   void boardGetAdjacentPositions() {
     Board board = new Board(Board.DEFAULT_SIZE);
 
-    Point p1 = new Point(1,0);
-    Point p2 = new Point(0,1);
-    Point p3 = new Point(1,1);
+    Point p1 = new Point(1, 0);
+    Point p2 = new Point(0, 1);
+    Point p3 = new Point(1, 1);
 
-    Point[] pointsList = new Point[]{p1,p2,p3};
+    Point[] pointsList = new Point[] {p1, p2, p3};
 
-    assertArrayEquals(pointsList, board.getAdjacentPositions(new Point(0,0)).toArray());
+    assertArrayEquals(pointsList, board.getAdjacentPositions(new Point(0, 0)).toArray());
   }
-
 }
