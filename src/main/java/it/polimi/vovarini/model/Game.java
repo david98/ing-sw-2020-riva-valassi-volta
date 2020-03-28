@@ -17,10 +17,6 @@ public class Game implements Observable {
 
   private Phase currentPhase;
 
-  public Board getBoard() {
-    return board;
-  }
-
   private Board board;
 
   private Stack<Move> moves;
@@ -39,6 +35,10 @@ public class Game implements Observable {
     board = new Board(Board.DEFAULT_SIZE);
 
     currentPhase = Phase.Start;
+  }
+
+  public Board getBoard() {
+    return board;
   }
 
   public void performMove(Move move) {
