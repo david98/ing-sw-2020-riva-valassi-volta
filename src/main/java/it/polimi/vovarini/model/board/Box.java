@@ -30,6 +30,10 @@ public class Box {
     items.push(item);
   }
 
+  public Stack<Item> getItems() {
+    return items;
+  }
+
   public Item getTopmost() throws BoxEmptyException {
     try {
       return items.peek();
