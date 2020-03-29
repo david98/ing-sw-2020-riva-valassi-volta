@@ -43,10 +43,9 @@ public class Board {
     return adjacentPositions;
   }
 
-  public Box getBox(Point position){
+  public Box getBox(Point position) {
     return boxes[position.getX()][position.getY()];
   }
-
 
   public void place(Item item, Point p) throws InvalidPositionException, BoxFullException {
     if (p.getX() >= size || p.getY() >= size) {
