@@ -52,7 +52,7 @@ public class Board {
     box.place(item);
   }
 
-  public Stack<Item> getItems(Point p) throws InvalidPositionException, BoxEmptyException{
+  public Stack<Item> getItems(Point p) throws InvalidPositionException, BoxEmptyException {
     if (p.getX() >= size || p.getY() >= size) {
       throw new InvalidPositionException();
     }
