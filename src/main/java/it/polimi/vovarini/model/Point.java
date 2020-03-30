@@ -37,4 +37,9 @@ public class Point {
       return super.equals(obj);
     }
   }
+
+  @Override
+  public int hashCode() {
+    return x * 10 + y;
+  }
 }

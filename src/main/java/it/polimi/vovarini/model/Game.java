@@ -29,7 +29,7 @@ public class Game implements Observable {
   public Game(int numberOfPlayers) {
     players = new Player[numberOfPlayers];
     for (int i = 0; i < numberOfPlayers; i++) {
-      players[i] = new Player(this, new Apollo(this), "Player" + i); // TODO: sistemare
+      players[i] = new Player(this, new Apollo(this), "Player" + i);
     }
     currentPlayerIndex = 0;
 
