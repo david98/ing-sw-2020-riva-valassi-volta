@@ -30,6 +30,14 @@ public class Box {
     items.push(item);
   }
 
+  @SuppressWarnings (value="unchecked")
+  public Stack<Item> getItems() throws BoxEmptyException{
+    if (items.isEmpty()){
+      throw new BoxEmptyException();
+    }
+    return (Stack<Item>)items.clone();
+  }
+
   public Item getTopmost() throws BoxEmptyException {
     try {
       return items.peek();
