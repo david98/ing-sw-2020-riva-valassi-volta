@@ -17,7 +17,7 @@ public class NobodyTests {
   void createNobodyItems() {
     try {
       game = new Game(2);
-    } catch (InvalidNumberOfPlayersException ignored){
+    } catch (InvalidNumberOfPlayersException ignored) {
 
     }
     name = "";

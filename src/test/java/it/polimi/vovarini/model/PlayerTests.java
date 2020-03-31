@@ -23,7 +23,7 @@ public class PlayerTests {
       assertEquals("F", player.getOtherWorker().toString());
       assertEquals(godCard, player.getGodCard());
       assertEquals(nickname, player.getNickname());
-    } catch (InvalidNumberOfPlayersException ignored){
+    } catch (InvalidNumberOfPlayersException ignored) {
     }
   }
 }
