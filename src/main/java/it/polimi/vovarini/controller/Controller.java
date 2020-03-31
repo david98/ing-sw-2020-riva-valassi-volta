@@ -19,12 +19,12 @@ public abstract class Controller {
   private HashMap<String, Player> players;
   private EnumMap<GodName, GodCard> availableCards;
 
-  public Controller(){
+  public Controller() {
     starting = false;
   }
 
-  public void startGame(int numberOfPlayers) throws InvalidNumberOfPlayersException,
-          GameStartNotYetCompletedException{
+  public void startGame(int numberOfPlayers)
+      throws InvalidNumberOfPlayersException, GameStartNotYetCompletedException {
     if (!starting) {
       starting = true;
       this.numberOfPlayers = numberOfPlayers;
@@ -35,49 +35,48 @@ public abstract class Controller {
     }
   }
 
-  public void addPlayer(String nickname) throws NicknameAlreadyInUseException,
-          GameFullException{
-    if (players.keySet().size() == numberOfPlayers){
+  public void addPlayer(String nickname) throws NicknameAlreadyInUseException, GameFullException {
+    if (players.keySet().size() == numberOfPlayers) {
       throw new GameFullException();
     }
-    if (players.get(nickname) != null){
+    if (players.get(nickname) != null) {
       throw new NicknameAlreadyInUseException();
     }
     players.put(nickname, new Player(nickname));
   }
 
-  public Player getWhoDecides() throws MissingPlayersException{
-    if (players.keySet().size() < numberOfPlayers){
+  public Player getWhoDecides() throws MissingPlayersException {
+    if (players.keySet().size() < numberOfPlayers) {
       throw new MissingPlayersException();
     }
     int rand = new Random().nextInt(numberOfPlayers);
     int i = 0;
-    for (Player player: players.values()){
-      if (i == rand){
+    for (Player player : players.values()) {
+      if (i == rand) {
         return player;
       }
       i++;
     }
-    //we really should NOT get here, but let's put this just in case
-    return (Player)players.values().toArray()[0];
+    // we really should NOT get here, but let's put this just in case
+    return (Player) players.values().toArray()[0];
   }
 
   public abstract Map<GodName, GodCard> getAllGodCards();
 
-  public void setAvailableCards(Map<GodName, GodCard> cards) throws InvalidNumberOfGodCardsException,
-          AvailableCardsAlreadySetException{
-    if (!availableCards.isEmpty()){
+  public void setAvailableCards(Map<GodName, GodCard> cards)
+      throws InvalidNumberOfGodCardsException, AvailableCardsAlreadySetException {
+    if (!availableCards.isEmpty()) {
       throw new AvailableCardsAlreadySetException();
     }
-    if (cards.keySet().size() != numberOfPlayers){
+    if (cards.keySet().size() != numberOfPlayers) {
       throw new InvalidNumberOfGodCardsException();
     }
-    for (GodName key: cards.keySet()){
+    for (GodName key : cards.keySet()) {
       availableCards.put(key, cards.get(key));
     }
   }
 
-  public Map<GodName, GodCard> getAvailableCards(){
+  public Map<GodName, GodCard> getAvailableCards() {
     return availableCards.clone();
   }
 
@@ -87,7 +86,5 @@ public abstract class Controller {
 
   public abstract void buildBlock(Point target);
 
-  public static void main(String[] args){
-
-  }
+  public static void main(String[] args) {}
 }

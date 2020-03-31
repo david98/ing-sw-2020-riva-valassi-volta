@@ -4,7 +4,6 @@ import it.polimi.vovarini.Observable;
 import it.polimi.vovarini.Observer;
 import it.polimi.vovarini.model.board.*;
 import it.polimi.vovarini.model.board.items.*;
-import it.polimi.vovarini.model.godcards.Apollo;
 import it.polimi.vovarini.model.godcards.Nobody;
 
 import java.util.EmptyStackException;
@@ -31,7 +30,7 @@ public class Game implements Observable {
   private Stack<Move> undoneMoves;
 
   public Game(int numberOfPlayers) throws InvalidNumberOfPlayersException {
-    if (numberOfPlayers < MIN_PLAYERS || numberOfPlayers > MAX_PLAYERS){
+    if (numberOfPlayers < MIN_PLAYERS || numberOfPlayers > MAX_PLAYERS) {
       throw new InvalidNumberOfPlayersException();
     }
 
@@ -256,10 +255,10 @@ public class Game implements Observable {
       }
 
       Board board = game.getBoard();
-    /*
-     qui va assegnato anche il colore. Marco se ne sta occupando, vedremo quando integrare
-     quella parte
-    */
+      /*
+       qui va assegnato anche il colore. Marco se ne sta occupando, vedremo quando integrare
+       quella parte
+      */
       board.debugPrintToConsole(game.getPlayers());
 
       for (int i = 0; i < game.players.length; i++) {
@@ -270,28 +269,28 @@ public class Game implements Observable {
 
       board.debugPrintToConsole(game.getPlayers());
       System.out.println(
-              "Siamo pronti per giocare! Inizia " + game.getCurrentPlayer().getNickname() + "!");
+          "Siamo pronti per giocare! Inizia " + game.getCurrentPlayer().getNickname() + "!");
       switch (game.turn(input)) {
         case -1:
-        {
-          System.out.println(
-                  game.getCurrentPlayer().getNickname()
-                          + " ha perso! Questo significa che la vittoria è di "
-                          + game.nextPlayer().getNickname()
-                          + "!");
-        }
+          {
+            System.out.println(
+                game.getCurrentPlayer().getNickname()
+                    + " ha perso! Questo significa che la vittoria è di "
+                    + game.nextPlayer().getNickname()
+                    + "!");
+          }
         case 0:
-        {
-          game.nextPlayer();
-        }
+          {
+            game.nextPlayer();
+          }
         default:
-        {
-          System.err.println("ERROR: risultato impossibile. Stato della partita indeterminabile");
-        }
+          {
+            System.err.println("ERROR: risultato impossibile. Stato della partita indeterminabile");
+          }
       }
 
       board.debugPrintToConsole(game.getPlayers());
-    } catch (InvalidNumberOfPlayersException e){
+    } catch (InvalidNumberOfPlayersException e) {
       System.err.println("Invalid number of players provided.");
     }
   }

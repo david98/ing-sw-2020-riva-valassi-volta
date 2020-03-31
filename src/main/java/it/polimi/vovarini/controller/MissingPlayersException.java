@@ -1,4 +1,3 @@
 package it.polimi.vovarini.controller;
 
-public class MissingPlayersException extends Exception{
-}
+public class MissingPlayersException extends Exception {}

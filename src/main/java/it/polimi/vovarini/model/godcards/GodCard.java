@@ -108,7 +108,7 @@ public abstract class GodCard {
 
   @Override
   public boolean equals(Object obj) {
-    if (obj instanceof GodCard){
+    if (obj instanceof GodCard) {
       return name.equals(((GodCard) obj).name);
     } else {
       return super.equals(obj);

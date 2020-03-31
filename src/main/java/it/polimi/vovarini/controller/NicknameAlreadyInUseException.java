@@ -1,4 +1,3 @@
 package it.polimi.vovarini.controller;
 
-public class NicknameAlreadyInUseException extends Exception {
-}
+public class NicknameAlreadyInUseException extends Exception {}

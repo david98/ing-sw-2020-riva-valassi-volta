@@ -1,4 +1,3 @@
 package it.polimi.vovarini.model;
 
-public class InvalidNumberOfPlayersException extends Exception {
-}
+public class InvalidNumberOfPlayersException extends Exception {}

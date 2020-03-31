@@ -1,4 +1,3 @@
 package it.polimi.vovarini.controller;
 
-public class GameStartNotYetCompletedException extends Exception{
-}
+public class GameStartNotYetCompletedException extends Exception {}
