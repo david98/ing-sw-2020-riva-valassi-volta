@@ -29,7 +29,7 @@ public class Game implements Observable {
   public Game(int numberOfPlayers) {
     players = new Player[numberOfPlayers];
     for (int i = 0; i < numberOfPlayers; i++) {
-      players[i] = new Player(this, new Apollo(this), "Player" + i);
+      players[i] = new Player(new Apollo(this), "Player" + i); // TODO: sistemare
     }
     currentPlayerIndex = 0;
 
@@ -246,7 +246,7 @@ public class Game implements Observable {
     for (int i = 0; i < game.players.length; i++) {
       System.out.println("Inserisci il Nickname del Giocatore " + (i + 1) + ":");
       String nickname = input.nextLine();
-      game.players[i] = new Player(game, new Nobody(game), nickname);
+      game.players[i] = new Player(new Nobody(game), nickname);
     }
 
     Board board = game.getBoard();

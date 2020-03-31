@@ -22,7 +22,6 @@ public class Apollo extends GodCard {
 
   @Override
   public List<Point> computeReachablePoints() {
-    System.out.println("prova");
     LinkedList<Point> reachablePoints = new LinkedList<>();
 
     try {
@@ -46,8 +45,6 @@ public class Apollo extends GodCard {
 
         }
       }
-      player.moveCurrentWorker(new Point(4, 3));
-
     } catch (ItemNotFoundException ignored) {
     }
     return reachablePoints;
