@@ -35,6 +35,11 @@ public class Game implements Observable {
     }
 
     players = new Player[numberOfPlayers];
+    for (int i = 0; i < numberOfPlayers; i++) {
+      players[i] = new Player(new Apollo(this), "Player" + i); // TODO: sistemare
+    }    
+
+    players = new Player[numberOfPlayers];
     currentPlayerIndex = 0;
 
     moves = new Stack<>();
