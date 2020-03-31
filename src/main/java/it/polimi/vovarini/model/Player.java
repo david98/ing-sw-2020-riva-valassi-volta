@@ -11,33 +11,19 @@ import java.util.Map;
 
 public class Player {
 
-  private Game game;
-
   private EnumMap<Sex, Worker> workers;
   private Sex currentSex;
 
   private GodCard godCard;
   private String nickname;
 
-  public Player(Game game, GodCard assignedCard, String nickname) {
-    this.game = game;
+  public Player(GodCard assignedCard, String nickname) {
     workers = new EnumMap<>(Sex.class);
     workers.put(Sex.Female, new Worker(Sex.Female));
     workers.put(Sex.Male, new Worker(Sex.Male));
     currentSex = Sex.Male;
     godCard = assignedCard;
     this.nickname = nickname;
-  }
-
-  public void moveCurrentWorker(Point destination) {
-    try {
-      Board board = game.getBoard();
-      Point start = board.getItemPosition(getCurrentWorker());
-      Move movement = new Movement(board, start, destination);
-      game.performMove(movement);
-    } catch (ItemNotFoundException ignored) {
-
-    }
   }
 
   public Map<Sex, Worker> getWorkers() {
