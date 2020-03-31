@@ -6,6 +6,6 @@ public class Nobody extends GodCard {
 
   public Nobody(Game game) {
     super(game);
-    name = GodName.Nobody;
+    name = "Nobody";
   }
 }

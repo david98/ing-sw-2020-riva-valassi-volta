@@ -30,18 +30,19 @@ public class Board {
 
   public List<Point> getAdjacentPositions(Point p) {
     LinkedList<Point> adjacentPositions = new LinkedList<>();
-    System.out.println("Point under exam: " + p + "\nAdjacent points:\n");
-    for (int i = p.getY() - 1; i < p.getY() + 1; i++) {
-      for (int j = p.getX() - 1; j < p.getX() + 1; j++) {
+    for (int i = p.getY() - 1; i <= p.getY() + 1; i++) {
+      for (int j = p.getX() - 1; j <= p.getX() + 1; j++) {
         Point point = new Point(j, i);
         if (i >= 0 && i < size && j >= 0 && j < size && !point.equals(p)) {
-          System.out.println(point);
           adjacentPositions.add(point);
         }
       }
     }
-    System.out.println();
     return adjacentPositions;
+  }
+
+  public Box getBox(Point position) {
+    return boxes[position.getX()][position.getY()];
   }
 
   public void place(Item item, Point p) throws InvalidPositionException, BoxFullException {

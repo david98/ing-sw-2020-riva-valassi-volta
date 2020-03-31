@@ -4,6 +4,7 @@ import it.polimi.vovarini.Observable;
 import it.polimi.vovarini.Observer;
 import it.polimi.vovarini.model.board.*;
 import it.polimi.vovarini.model.board.items.*;
+import it.polimi.vovarini.model.godcards.Apollo;
 import it.polimi.vovarini.model.godcards.Nobody;
 
 import java.util.EmptyStackException;
@@ -32,6 +33,10 @@ public class Game implements Observable {
   public Game(int numberOfPlayers) throws InvalidNumberOfPlayersException {
     if (numberOfPlayers < MIN_PLAYERS || numberOfPlayers > MAX_PLAYERS) {
       throw new InvalidNumberOfPlayersException();
+    }
+    players = new Player[numberOfPlayers];
+    for (int i = 0; i < numberOfPlayers; i++) {
+      players[i] = new Player(new Apollo(this), "Player" + i);
     }
 
     players = new Player[numberOfPlayers];
@@ -251,7 +256,7 @@ public class Game implements Observable {
       for (int i = 0; i < game.players.length; i++) {
         System.out.println("Inserisci il Nickname del Giocatore " + (i + 1) + ":");
         String nickname = input.nextLine();
-        game.players[i] = new Player(game, new Nobody(game), nickname);
+        game.players[i] = new Player(new Nobody(game), nickname);
       }
 
       Board board = game.getBoard();
