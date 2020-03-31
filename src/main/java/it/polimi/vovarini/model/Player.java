@@ -25,7 +25,6 @@ public class Player {
   }
 
   public Player(GodCard assignedCard, String nickname) {
-
     workers = new EnumMap<>(Sex.class);
     workers.put(Sex.Female, new Worker(Sex.Female));
     workers.put(Sex.Male, new Worker(Sex.Male));
