@@ -12,6 +12,10 @@ import java.util.Scanner;
 import java.util.Stack;
 
 public class Game implements Observable {
+
+  public static final int MIN_PLAYERS = 2;
+  public static final int MAX_PLAYERS = 3;
+
   private Player[] players;
   private int currentPlayerIndex;
 
@@ -26,11 +30,16 @@ public class Game implements Observable {
   private Stack<Move> moves;
   private Stack<Move> undoneMoves;
 
-  public Game(int numberOfPlayers) {
+  public Game(int numberOfPlayers) throws InvalidNumberOfPlayersException {
+    if (numberOfPlayers < MIN_PLAYERS || numberOfPlayers > MAX_PLAYERS) {
+      throw new InvalidNumberOfPlayersException();
+    }
     players = new Player[numberOfPlayers];
     for (int i = 0; i < numberOfPlayers; i++) {
-      players[i] = new Player(new Apollo(this), "Player" + i); // TODO: sistemare
+      players[i] = new Player(new Apollo(this), "Player" + i);
     }
+
+    players = new Player[numberOfPlayers];
     currentPlayerIndex = 0;
 
     moves = new Stack<>();
@@ -240,50 +249,54 @@ public class Game implements Observable {
     System.out.println("Benvenuti a Santorini! Inserire il numero di Giocatori:");
     int numberOfPlayers = input.nextInt();
 
-    Game game = new Game(numberOfPlayers);
+    try {
+      Game game = new Game(numberOfPlayers);
 
-    input.nextLine();
-    for (int i = 0; i < game.players.length; i++) {
-      System.out.println("Inserisci il Nickname del Giocatore " + (i + 1) + ":");
-      String nickname = input.nextLine();
-      game.players[i] = new Player(new Nobody(game), nickname);
+      input.nextLine();
+      for (int i = 0; i < game.players.length; i++) {
+        System.out.println("Inserisci il Nickname del Giocatore " + (i + 1) + ":");
+        String nickname = input.nextLine();
+        game.players[i] = new Player(new Nobody(game), nickname);
+      }
+
+      Board board = game.getBoard();
+      /*
+       qui va assegnato anche il colore. Marco se ne sta occupando, vedremo quando integrare
+       quella parte
+      */
+      board.debugPrintToConsole(game.getPlayers());
+
+      for (int i = 0; i < game.players.length; i++) {
+
+        while (game.startingBoardConfig(i, input, Sex.Male) != 0) {}
+        while (game.startingBoardConfig(i, input, Sex.Female) != 0) {}
+      }
+
+      board.debugPrintToConsole(game.getPlayers());
+      System.out.println(
+          "Siamo pronti per giocare! Inizia " + game.getCurrentPlayer().getNickname() + "!");
+      switch (game.turn(input)) {
+        case -1:
+          {
+            System.out.println(
+                game.getCurrentPlayer().getNickname()
+                    + " ha perso! Questo significa che la vittoria è di "
+                    + game.nextPlayer().getNickname()
+                    + "!");
+          }
+        case 0:
+          {
+            game.nextPlayer();
+          }
+        default:
+          {
+            System.err.println("ERROR: risultato impossibile. Stato della partita indeterminabile");
+          }
+      }
+
+      board.debugPrintToConsole(game.getPlayers());
+    } catch (InvalidNumberOfPlayersException e) {
+      System.err.println("Invalid number of players provided.");
     }
-
-    Board board = game.getBoard();
-    /*
-     qui va assegnato anche il colore. Marco se ne sta occupando, vedremo quando integrare
-     quella parte
-    */
-    board.debugPrintToConsole(game.getPlayers());
-
-    for (int i = 0; i < game.players.length; i++) {
-
-      while (game.startingBoardConfig(i, input, Sex.Male) != 0) {}
-      while (game.startingBoardConfig(i, input, Sex.Female) != 0) {}
-    }
-
-    board.debugPrintToConsole(game.getPlayers());
-    System.out.println(
-        "Siamo pronti per giocare! Inizia " + game.getCurrentPlayer().getNickname() + "!");
-    switch (game.turn(input)) {
-      case -1:
-        {
-          System.out.println(
-              game.getCurrentPlayer().getNickname()
-                  + " ha perso! Questo significa che la vittoria è di "
-                  + game.nextPlayer().getNickname()
-                  + "!");
-        }
-      case 0:
-        {
-          game.nextPlayer();
-        }
-      default:
-        {
-          System.err.println("ERROR: risultato impossibile. Stato della partita indeterminabile");
-        }
-    }
-
-    board.debugPrintToConsole(game.getPlayers());
   }
 }
