@@ -17,7 +17,7 @@ public class Apollo extends GodCard {
 
   public Apollo(Game game) {
     super(game);
-    this.name = GodName.Apollo;
+    this.name = "Apollo";
   }
 
   @Override
