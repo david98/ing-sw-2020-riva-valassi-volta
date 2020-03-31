@@ -39,7 +39,7 @@ public abstract class GodCard {
 
       for (Point candidatePosition : candidatePositions) {
         try {
-          if (selectedWorker.canBePlacedOn(board.getTopmostItem(candidatePosition))) {
+          if (selectedWorker.canBePlacedOn(board.getItems(candidatePosition).peek())) {
             reachablePoints.add(candidatePosition);
           }
         } catch (BoxEmptyException e) {
@@ -83,7 +83,7 @@ public abstract class GodCard {
 
       for (Point candidatePosition : candidatePositions) {
         try {
-          Item topmostItem = board.getTopmostItem(candidatePosition);
+          Item topmostItem = board.getItems(candidatePosition).peek();
           if (blocks.stream().anyMatch(block -> block.canBePlacedOn(topmostItem))) {
             buildablePoints.add(candidatePosition);
           }

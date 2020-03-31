@@ -219,7 +219,7 @@ public class Game implements Observable {
     newPoint = isValidBuildablePoint(input);
     Block topItem;
     try {
-      topItem = (Block) board.getTopmostItem(newPoint);
+      topItem = (Block) board.getItems(newPoint).peek();
       build = new Construction(board, topItem, newPoint);
       build.execute();
     } catch (InvalidPositionException | BoxEmptyException ignored) {

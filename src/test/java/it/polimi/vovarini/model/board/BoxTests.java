@@ -14,8 +14,8 @@ public class BoxTests {
     BoxEmptyException thrown =
         assertThrows(
             BoxEmptyException.class,
-            box::getTopmost,
-            "Expected getTopmost() to throw BoxEmptyException, but it didn't");
+            box::getItems,
+            "Expected getItems() to throw BoxEmptyException, but it didn't");
 
     thrown =
         assertThrows(

@@ -16,7 +16,7 @@ public class Worker extends Item {
     if (item instanceof Block) {
       Block block = (Block) item;
       return block.getLevel() < 4;
-    } else { // TODO: gestire il caso in cui ci siano carte divinità
+    } else {
       return super.canBePlacedOn(item);
     }
   }

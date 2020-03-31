@@ -34,7 +34,7 @@ public class Apollo extends GodCard {
       for (Point candidatePosition : candidatePositions) {
         try {
           Point p = candidatePosition;
-          Item topmostItem = board.getTopmostItem(p);
+          Item topmostItem = board.getItems(p).peek();
           if (selectedWorker.canBePlacedOn(topmostItem)
               || (topmostItem.canBeRemoved() && !player.getWorkers().containsValue(topmostItem))) {
             reachablePoints.add(candidatePosition);
