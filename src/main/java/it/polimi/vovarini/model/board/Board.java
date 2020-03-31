@@ -6,6 +6,7 @@ import it.polimi.vovarini.model.board.items.Item;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Stack;
 
 public class Board {
 
@@ -52,12 +53,11 @@ public class Board {
     box.place(item);
   }
 
-  public Item getTopmostItem(Point p) throws InvalidPositionException, BoxEmptyException {
+  public Stack<Item> getItems(Point p) throws InvalidPositionException, BoxEmptyException {
     if (p.getX() >= size || p.getY() >= size) {
       throw new InvalidPositionException();
     }
-    Box box = boxes[p.getY()][p.getX()];
-    return box.getTopmost();
+    return boxes[p.getY()][p.getX()].getItems();
   }
 
   public Item remove(Point p) throws InvalidPositionException, BoxEmptyException {
@@ -72,7 +72,7 @@ public class Board {
     for (int i = 0; i < boxes.length; i++) {
       for (int j = 0; j < boxes.length; j++) {
         try {
-          if (boxes[j][i].getTopmost().equals(item)) {
+          if (boxes[j][i].getItems().peek().equals(item)) {
             return new Point(i, j);
           }
         } catch (BoxEmptyException ignored) {

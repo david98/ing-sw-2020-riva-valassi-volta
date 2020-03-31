@@ -25,7 +25,7 @@ public class Movement extends Move {
       Item startItem = board.remove(start);
       Item endItem = null;
       try {
-        endItem = board.getTopmostItem(end);
+        endItem = board.getItems(end).peek();
         if (endItem.canBeRemoved()) {
           board.remove(end);
         }

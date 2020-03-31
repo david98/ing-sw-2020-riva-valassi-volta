@@ -30,8 +30,12 @@ public class Box {
     items.push(item);
   }
 
-  public Stack<Item> getItems() {
-    return items;
+  @SuppressWarnings(value = "unchecked")
+  public Stack<Item> getItems() throws BoxEmptyException {
+    if (items.isEmpty()) {
+      throw new BoxEmptyException();
+    }
+    return (Stack<Item>) items.clone();
   }
 
   public Item getTopmost() throws BoxEmptyException {
