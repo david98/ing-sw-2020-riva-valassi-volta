@@ -1,7 +1,5 @@
 package it.polimi.vovarini.model;
 
-import it.polimi.vovarini.model.board.Board;
-import it.polimi.vovarini.model.board.ItemNotFoundException;
 import it.polimi.vovarini.model.board.items.Sex;
 import it.polimi.vovarini.model.board.items.Worker;
 import it.polimi.vovarini.model.godcards.GodCard;

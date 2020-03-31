@@ -1,11 +1,5 @@
 package it.polimi.vovarini.model;
 
-import it.polimi.vovarini.model.board.BoxEmptyException;
-import it.polimi.vovarini.model.board.BoxFullException;
-import it.polimi.vovarini.model.board.InvalidPositionException;
-import it.polimi.vovarini.model.board.items.Block;
-import it.polimi.vovarini.model.board.items.InvalidLevelException;
-import it.polimi.vovarini.model.board.items.Item;
 import it.polimi.vovarini.model.godcards.GodCard;
 import it.polimi.vovarini.model.godcards.Nobody;
 import org.junit.jupiter.api.DisplayName;
