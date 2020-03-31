@@ -100,4 +100,18 @@ public abstract class GodCard {
   }
 
   public void consequences(Game game) {}
+
+  @Override
+  public int hashCode() {
+    return name.hashCode();
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (obj instanceof GodCard){
+      return name.equals(((GodCard) obj).name);
+    } else {
+      return super.equals(obj);
+    }
+  }
 }
