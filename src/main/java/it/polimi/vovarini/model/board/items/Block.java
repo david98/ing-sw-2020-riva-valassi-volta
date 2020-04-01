@@ -1,6 +1,6 @@
 package it.polimi.vovarini.model.board.items;
 
-public class Block extends Item implements Cloneable{
+public class Block extends Item implements Cloneable {
 
   public static final int MIN_LEVEL = 1;
   public static final int MAX_LEVEL = 4;
@@ -39,7 +39,7 @@ public class Block extends Item implements Cloneable{
 
   @Override
   public boolean equals(Object obj) {
-    if (obj instanceof Block){
+    if (obj instanceof Block) {
       return ((Block) obj).level == level;
     } else {
       return super.equals(obj);
