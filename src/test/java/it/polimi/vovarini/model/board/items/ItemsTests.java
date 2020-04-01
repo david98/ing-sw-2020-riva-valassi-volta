@@ -1,7 +1,6 @@
 package it.polimi.vovarini.model.board.items;
 
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -74,9 +73,9 @@ public class ItemsTests {
 
   @Test
   @DisplayName("Test that equals in Block works")
-  void blockEquals(){
-    for (Block block: blocks){
-      for (Block other: blocks) {
+  void blockEquals() {
+    for (Block block : blocks) {
+      for (Block other : blocks) {
         assertTrue(block.getLevel() == other.getLevel() || !block.equals(other));
       }
     }
@@ -84,9 +83,9 @@ public class ItemsTests {
 
   @Test
   @DisplayName("Test that hashCode in Block works")
-  void blockHashCode(){
-    for (Block block: blocks){
-      for (Block other: blocks) {
+  void blockHashCode() {
+    for (Block block : blocks) {
+      for (Block other : blocks) {
         assertTrue(block.hashCode() == other.hashCode() || !block.equals(other));
       }
     }

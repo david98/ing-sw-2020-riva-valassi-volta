@@ -15,12 +15,12 @@ public class BoxTests {
   private static LinkedList<Block> allBlocks;
 
   @BeforeAll
-  private static void init(){
+  private static void init() {
     allBlocks = new LinkedList<>();
-    for (int i = Block.MIN_LEVEL; i <= Block.MAX_LEVEL; i++){
+    for (int i = Block.MIN_LEVEL; i <= Block.MAX_LEVEL; i++) {
       try {
         allBlocks.add(new Block(i));
-      } catch (InvalidLevelException ignored){
+      } catch (InvalidLevelException ignored) {
 
       }
     }
@@ -45,7 +45,7 @@ public class BoxTests {
 
   @Test
   @DisplayName("Test that place works")
-  void place(){
+  void place() {
     Box box = new Box();
     assertDoesNotThrow(() -> box.place(allBlocks.getFirst()));
     assertDoesNotThrow(() -> assertEquals(box.getItems().peek(), allBlocks.getFirst()));
@@ -53,12 +53,12 @@ public class BoxTests {
 
   @Test
   @DisplayName("Test that a BoxFullException is thrown when Box already contains MAX_ITEMS items")
-  void boxMaximumCapacity(){
+  void boxMaximumCapacity() {
     Box box = new Box();
-    for (int i = 0; i < Box.MAX_ITEMS; i++){
+    for (int i = 0; i < Box.MAX_ITEMS; i++) {
       try {
         box.place(allBlocks.get(i));
-      } catch (BoxFullException ignored){
+      } catch (BoxFullException ignored) {
 
       }
     }
@@ -67,12 +67,12 @@ public class BoxTests {
 
   @Test
   @DisplayName("Test that getItems returns a clone of the Stack")
-  void getItemsReturnsClone(){
+  void getItemsReturnsClone() {
     Box box = new Box();
-    for (int i = 0; i < Box.MAX_ITEMS; i++){
+    for (int i = 0; i < Box.MAX_ITEMS; i++) {
       try {
         box.place(allBlocks.get(i));
-      } catch (BoxFullException ignored){
+      } catch (BoxFullException ignored) {
 
       }
     }
@@ -81,9 +81,8 @@ public class BoxTests {
       items.clear();
       items = box.getItems();
       assertFalse(items.isEmpty());
-    } catch (BoxEmptyException ignored){
+    } catch (BoxEmptyException ignored) {
 
     }
-
   }
 }

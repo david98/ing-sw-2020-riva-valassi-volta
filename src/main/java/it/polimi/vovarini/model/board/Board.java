@@ -28,7 +28,7 @@ public class Board {
     }
   }
 
-  public boolean isPositionValid(Point p){
+  public boolean isPositionValid(Point p) {
     return (p.getX() >= 0 && p.getY() >= 0 && p.getX() < size && p.getY() < size);
   }
 
