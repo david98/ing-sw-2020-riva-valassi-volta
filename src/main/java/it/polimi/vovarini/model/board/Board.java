@@ -46,14 +46,14 @@ public class Board {
   }
 
   public Box getBox(Point position) {
-    return boxes[position.getX()][position.getY()];
+    return boxes[position.getY()][position.getX()];
   }
 
   public void place(Item item, Point p) throws InvalidPositionException, BoxFullException {
     if (!isPositionValid(p)) {
       throw new InvalidPositionException();
     }
-    Box box = boxes[p.getY()][p.getX()];
+    Box box = getBox(p);
     box.place(item);
   }
 
@@ -61,14 +61,14 @@ public class Board {
     if (!isPositionValid(p)) {
       throw new InvalidPositionException();
     }
-    return boxes[p.getY()][p.getX()].getItems();
+    return getBox(p).getItems();
   }
 
   public Item remove(Point p) throws InvalidPositionException, BoxEmptyException {
     if (!isPositionValid(p)) {
       throw new InvalidPositionException();
     }
-    Box box = boxes[p.getY()][p.getX()];
+    Box box = getBox(p);
     return box.removeTopmost();
   }
 
