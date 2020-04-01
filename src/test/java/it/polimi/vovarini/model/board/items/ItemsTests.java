@@ -1,5 +1,6 @@
 package it.polimi.vovarini.model.board.items;
 
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -11,13 +12,13 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class ItemsTests {
 
-  EnumMap<Sex, Worker> workers;
-  ArrayList<Block> blocks;
+  private static EnumMap<Sex, Worker> workers;
+  private static ArrayList<Block> blocks;
 
-  @BeforeEach
-  void createTestItems() {
+  @BeforeAll
+  private static void init() {
     blocks = new ArrayList<>();
-    workers = new EnumMap<Sex, Worker>(Sex.class);
+    workers = new EnumMap<>(Sex.class);
     try {
       for (int i = Block.MIN_LEVEL; i <= Block.MAX_LEVEL; i++) {
         blocks.add(new Block(i));
@@ -67,6 +68,26 @@ public class ItemsTests {
       Worker cur = workers.get(sex);
       for (Block block : blocks) {
         assertTrue(cur.canBePlacedOn(block) || block.getLevel() == Block.MAX_LEVEL);
+      }
+    }
+  }
+
+  @Test
+  @DisplayName("Test that equals in Block works")
+  void blockEquals(){
+    for (Block block: blocks){
+      for (Block other: blocks) {
+        assertTrue(block.getLevel() == other.getLevel() || !block.equals(other));
+      }
+    }
+  }
+
+  @Test
+  @DisplayName("Test that hashCode in Block works")
+  void blockHashCode(){
+    for (Block block: blocks){
+      for (Block other: blocks) {
+        assertTrue(block.hashCode() == other.hashCode() || !block.equals(other));
       }
     }
   }
