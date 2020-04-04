@@ -15,4 +15,8 @@ public class CardChoiceEvent extends GameEvent {
   public CardChoiceEvent(Object source) {
     super(source);
   }
+
+  public ArrayList<GodName> getSelectedCards() {
+    return selectedCards;
+  }
 }

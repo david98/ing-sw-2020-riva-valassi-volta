@@ -42,4 +42,9 @@ public class Point {
   public int hashCode() {
     return x * 10 + y;
   }
+
+public boolean isValidPoint(){
+  return x >= 0 && x < 5 && y >= 0 && y < 5;
+}
+
 }

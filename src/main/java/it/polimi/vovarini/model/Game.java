@@ -108,7 +108,7 @@ public class Game implements Observable {
   @Override
   public void notifyObservers() {}
 
-  // qui iniziano i metodi di MERDA
+  // qui iniziano i metodi pseudo-controller (il linguaggio, per favore)
 
   // return 0 se tutto va bene
   // altri valori in base al tipo di eccezione, in modo da poter richiedere il necessario all'utente
