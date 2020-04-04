@@ -11,7 +11,6 @@ import it.polimi.vovarini.model.board.items.Block;
 import it.polimi.vovarini.model.board.items.InvalidLevelException;
 import it.polimi.vovarini.model.board.items.Item;
 import it.polimi.vovarini.model.board.items.Worker;
-import it.polimi.vovarini.model.godcards.GodCard;
 import it.polimi.vovarini.model.godcards.GodName;
 
 import java.util.*;
@@ -33,37 +32,35 @@ public class Controller implements EventListener {
     game.getCurrentPlayer().setCurrentSex(evt.getSex());
   }
 
-  public void update(BuildEvent evt) throws InvalidPositionException, InvalidPhaseException, NonBuildablePositionException {
+  public void update(BuildEvent evt)
+      throws InvalidPositionException, InvalidPhaseException, NonBuildablePositionException {
     Point input = new Point(evt.getBuildEnd());
     if (!input.isValidPoint()) throw new InvalidPositionException();
 
     Phase currentPhase = game.getCurrentPhase();
-    if(!currentPhase.equals(Phase.Construction)) throw new InvalidPhaseException();
+    if (!currentPhase.equals(Phase.Construction)) throw new InvalidPhaseException();
 
     boolean pointFound = false;
     Block blockToBuild = null;
     int levelToBuild = 0;
-    for (Point point : game.getCurrentPlayer().getGodCard().computeBuildablePoints()){
-      if(point.equals(input)){
+    for (Point point : game.getCurrentPlayer().getGodCard().computeBuildablePoints()) {
+      if (point.equals(input)) {
         pointFound = true;
         try {
           Stack<Item> currentStack = game.getBoard().getBox(point).getItems();
-          if(currentStack.peek() instanceof Worker) currentStack.pop();
-          if(currentStack.empty()) levelToBuild = 1;
-          else{
+          if (currentStack.peek() instanceof Worker) currentStack.pop();
+          if (currentStack.empty()) levelToBuild = 1;
+          else {
             Block topBlock = (Block) currentStack.pop();
             levelToBuild = topBlock.getLevel() + 1;
           }
-        }
-        catch (BoxEmptyException e){
+        } catch (BoxEmptyException e) {
           levelToBuild = 1;
-        }
-        finally {
-          try{
+        } finally {
+          try {
             blockToBuild = new Block(levelToBuild);
+          } catch (InvalidLevelException ignored) {
           }
-          catch (InvalidLevelException ignored){}
-
         }
         Move newMove = new Construction(game.getBoard(), blockToBuild, point);
         newMove.execute();
@@ -71,23 +68,22 @@ public class Controller implements EventListener {
       }
     }
 
-    if(!pointFound){
+    if (!pointFound) {
       throw new NonBuildablePositionException();
     }
   }
 
-  public void update (CardChoiceEvent evt){
-    for(GodName card : evt.getSelectedCards()){
+  public void update(CardChoiceEvent evt) {
+    for (GodName card : evt.getSelectedCards()) {
       this.selectedCards.add(card);
     }
   }
 
-  public void update (CardAssignmentEvent evt) throws CardsNotSelectedException{
-    if (this.selectedCards.isEmpty()){
+  public void update(CardAssignmentEvent evt) throws CardsNotSelectedException {
+    if (this.selectedCards.isEmpty()) {
       throw new CardsNotSelectedException();
-    }
-    else{
-      //Qui va messa la creazione della carta, e dunque la creazione del player.
+    } else {
+      // Qui va messa la creazione della carta, e dunque la creazione del player.
     }
   }
 

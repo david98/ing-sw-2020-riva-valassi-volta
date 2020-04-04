@@ -1,4 +1,3 @@
 package it.polimi.vovarini.controller;
 
-public class NonBuildablePositionException extends Throwable {
-}
+public class NonBuildablePositionException extends Throwable {}
