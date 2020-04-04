@@ -1,9 +1,8 @@
 package it.polimi.vovarini.controller;
 
-import it.polimi.vovarini.model.Game;
-import it.polimi.vovarini.model.InvalidNumberOfPlayersException;
-import it.polimi.vovarini.model.Player;
-import it.polimi.vovarini.model.Point;
+import it.polimi.vovarini.controller.events.BuildEvent;
+import it.polimi.vovarini.controller.events.WorkerEvent;
+import it.polimi.vovarini.model.*;
 import it.polimi.vovarini.model.board.items.Sex;
 import it.polimi.vovarini.model.godcards.GodCard;
 import it.polimi.vovarini.model.godcards.GodName;
@@ -20,7 +19,18 @@ public class Controller implements EventListener {
     this.game = game;
   }
 
-  public void update() { }
+  public void update(WorkerEvent evt) throws InvalidPhaseException {
+    Phase currentPhase = game.getCurrentPhase();
+
+    if(!currentPhase.equals(Phase.Movement)) throw new InvalidPhaseException();
+    game.getCurrentPlayer().setCurrentSex(evt.getSex());
+
+  }
+
+  public void update(BuildEvent evt){
+    Point input = new Point(evt.getBuildEnd());
+
+  }
 
   public static void main(String[] args) {}
 
