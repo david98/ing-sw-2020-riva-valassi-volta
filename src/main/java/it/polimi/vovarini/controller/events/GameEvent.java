@@ -1,6 +1,5 @@
 package it.polimi.vovarini.controller.events;
 
-
 import java.util.EventObject;
 
 public abstract class GameEvent extends EventObject {
