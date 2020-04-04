@@ -38,14 +38,6 @@ public class Box {
     return (Stack<Item>) items.clone();
   }
 
-  public Item getTopmost() throws BoxEmptyException {
-    try {
-      return items.peek();
-    } catch (EmptyStackException e) {
-      throw new BoxEmptyException();
-    }
-  }
-
   public Item removeTopmost() throws BoxEmptyException {
     try {
       return items.pop();
