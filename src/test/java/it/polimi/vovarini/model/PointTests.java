@@ -17,7 +17,7 @@ class PointTests {
 
   @Test
   @DisplayName("Test that the equals method overridden by Point works")
-  void pointEquals(){
+  void pointEquals() {
     Point point1 = new Point(0, 0);
     Point point2 = new Point(0, 0);
 
