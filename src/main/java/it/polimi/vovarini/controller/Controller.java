@@ -12,6 +12,8 @@ public class Controller implements EventListener {
     this.game = game;
   }
 
+  // Questo è il controller del Mengi
+
   public void update() {}
 
   public static void main(String[] args) {}
