@@ -7,16 +7,13 @@ import java.util.concurrent.Executors;
 
 public class Server {
 
-    private static final int PORT = 12345;
-    private ServerSocket serverSocket;
-    private ExecutorService executor = Executors.newFixedThreadPool(128);
+  private static final int PORT = 12345;
+  private ServerSocket serverSocket;
+  private ExecutorService executor = Executors.newFixedThreadPool(128);
 
-    public Server() throws IOException {
-        this.serverSocket = new ServerSocket(PORT);
-    }
+  public Server() throws IOException {
+    this.serverSocket = new ServerSocket(PORT);
+  }
 
-    public synchronized void lobby (ClientConnection c, String name){};
-
-
-
+  public synchronized void lobby(ClientConnection c, String name) {};
 }

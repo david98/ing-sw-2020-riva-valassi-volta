@@ -2,8 +2,7 @@ package it.polimi.vovarini.server;
 
 public interface ClientConnection {
 
-    void closeConnection();
+  void closeConnection();
 
-    void asyncSend(Object message);
-
+  void asyncSend(Object message);
 }
