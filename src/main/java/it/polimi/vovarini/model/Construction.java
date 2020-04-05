@@ -8,15 +8,21 @@ public class Construction extends Move {
   private Block block;
   private Point target;
 
+  public Construction(Board board, Block block, Point point, boolean forced) {
+    super(board, forced);
+    this.block = block;
+    target = point;
+  }
+
   public Construction(Board board, Block block, Point point) {
-    super(board);
+    super(board, false);
     this.block = block;
     target = point;
   }
 
   @Override
   public Move reverse() {
-    return new Destruction(board, block, target);
+    return new Destruction(board, block, target, forced);
   }
 
   @Override
