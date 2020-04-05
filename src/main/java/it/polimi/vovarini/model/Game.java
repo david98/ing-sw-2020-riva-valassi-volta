@@ -1,15 +1,11 @@
 package it.polimi.vovarini.model;
 
-import it.polimi.vovarini.Observable;
-import it.polimi.vovarini.Observer;
 import it.polimi.vovarini.model.board.*;
 import it.polimi.vovarini.model.board.items.*;
-import it.polimi.vovarini.model.godcards.GodCard;
 import it.polimi.vovarini.model.godcards.GodCardFactory;
 import it.polimi.vovarini.model.godcards.GodName;
 
 import java.util.EmptyStackException;
-import java.util.Scanner;
 import java.util.Stack;
 
 public class Game {

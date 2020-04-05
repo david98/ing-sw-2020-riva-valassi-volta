@@ -8,7 +8,7 @@ public class Movement extends Move {
   private Point start;
   private Point end;
 
-  public Movement(Board board, Point start, Point end, boolean forced){
+  public Movement(Board board, Point start, Point end, boolean forced) {
     super(board, forced);
     this.start = new Point(start);
     this.end = new Point(end);
