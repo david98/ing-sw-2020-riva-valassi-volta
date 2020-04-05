@@ -41,26 +41,28 @@ public class GodCardFactory {
             return false;
 
   };
-
-  public static GodCard create(GodName name){
-    switch (name){
-      case Apollo: {
-        return createApollo();
-      }
+  
+  public static GodCard create(GodName name) {
+    switch (name) {
+      case Apollo:
+        {
+          return createApollo();
+        }
       case Nobody:
-      default: {
-        return createNobody();
-      }
+      default:
+        {
+          return createNobody();
+        }
     }
   }
 
-  private static GodCard createApollo(){
+  private static GodCard createApollo() {
     GodCard apollo = new GodCard(GodName.Apollo);
     apollo.isPointReachable = isPointReachableCanExchangeWithWorker;
     return apollo;
   }
 
-  private static GodCard createNobody(){
+  private static GodCard createNobody() {
     return new GodCard(GodName.Nobody);
   }
 }

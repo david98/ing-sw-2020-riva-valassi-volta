@@ -15,11 +15,11 @@ public abstract class Move {
 
   public abstract void execute();
 
-  public boolean isForced(){
+  public boolean isForced() {
     return forced;
   }
 
-  public Board getBoard(){
+  public Board getBoard() {
     return board;
   }
 }
