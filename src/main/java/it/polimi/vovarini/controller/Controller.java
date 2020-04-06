@@ -11,7 +11,6 @@ import it.polimi.vovarini.model.board.items.Block;
 import it.polimi.vovarini.model.board.items.InvalidLevelException;
 import it.polimi.vovarini.model.board.items.Item;
 import it.polimi.vovarini.model.board.items.Worker;
-import it.polimi.vovarini.model.godcards.GodCard;
 import it.polimi.vovarini.model.godcards.GodName;
 
 import java.util.*;
@@ -80,16 +79,17 @@ public class Controller implements EventListener {
     }
   }
 
-  public void update(CardAssignmentEvent evt) throws CardsNotSelectedException, InvalidCardException {
+  public void update(CardAssignmentEvent evt)
+      throws CardsNotSelectedException, InvalidCardException {
     if (this.selectedCards.isEmpty()) {
       throw new CardsNotSelectedException();
     } else {
-        if(!this.selectedCards.contains(evt.getAssignedCard())){
-          throw new InvalidCardException();
-        }
+      if (!this.selectedCards.contains(evt.getAssignedCard())) {
+        throw new InvalidCardException();
+      }
 
-      //GodCard playerCard = new GodCard(game, evt.getAssignedCard()); (new card instance)
-      //game.getCurrentPlayer().setGodCard(playerCard);
+      // GodCard playerCard = new GodCard(game, evt.getAssignedCard()); (new card instance)
+      // game.getCurrentPlayer().setGodCard(playerCard);
     }
   }
 
