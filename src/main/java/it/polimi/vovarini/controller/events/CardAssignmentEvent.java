@@ -10,4 +10,8 @@ public class CardAssignmentEvent extends GameEvent {
   public CardAssignmentEvent(Object source) {
     super(source);
   }
+
+  public GodName getAssignedCard() {
+    return assignedCard;
+  }
 }

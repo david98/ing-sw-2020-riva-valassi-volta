@@ -1,12 +1,12 @@
 package it.polimi.vovarini.model;
 
 public enum Phase {
+  Init,
   Start,
   Movement,
   CheckWin,
   Construction,
-  End,
-  Wait;
+  End;
 
   private static Phase[] vals = values();
 

@@ -19,11 +19,11 @@ import java.util.List;
 public abstract class GodCard {
 
   protected Game game;
-  protected String name;
+  protected GodName name;
 
-  public GodCard(Game game) {
+  public GodCard(Game game, GodName name) {
     this.game = game;
-    this.name = "Nobody";
+    this.name = name;
   }
 
   public List<Point> computeReachablePoints() {
