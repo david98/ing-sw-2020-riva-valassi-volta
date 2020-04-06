@@ -16,14 +16,16 @@ public class Controller implements EventListener {
     this.game = game;
   }
 
-  public void update(RegistrationEvent evt) throws InvalidPhaseException, NicknameAlreadyInUseException {
+  public void update(RegistrationEvent evt)
+      throws InvalidPhaseException, NicknameAlreadyInUseException {
 
-    // Non sarebbe meglio avere una Fase Init, precedente a Start, che viene svolta una tantum ad inizio partita?
-    if(!game.getCurrentPhase().equals(Phase.Start)) {
+    // Non sarebbe meglio avere una Fase Init, precedente a Start, che viene svolta una tantum ad
+    // inizio partita?
+    if (!game.getCurrentPhase().equals(Phase.Start)) {
       throw new InvalidPhaseException();
     }
 
-    if(evt.getNickname() == null) {
+    if (evt.getNickname() == null) {
       // throw new NicknameNullException();
     }
 
@@ -34,8 +36,8 @@ public class Controller implements EventListener {
     }*/
 
     // Questo pezzo di codice andrà dentro addPlayer(String nickname) nel Model
-    for(Player player : game.getPlayers()) {
-      if(player.getNickname().equalsIgnoreCase(evt.getNickname())) {
+    for (Player player : game.getPlayers()) {
+      if (player.getNickname().equalsIgnoreCase(evt.getNickname())) {
         throw new NicknameAlreadyInUseException();
       }
     }
@@ -43,7 +45,8 @@ public class Controller implements EventListener {
 
   public void update(UndoEvent evt) throws InvalidPhaseException {
 
-    if (!game.getCurrentPhase().equals(Phase.Movement) || !game.getCurrentPhase().equals(Phase.Construction)) {
+    if (!game.getCurrentPhase().equals(Phase.Movement)
+        || !game.getCurrentPhase().equals(Phase.Construction)) {
       throw new InvalidPhaseException();
     }
 
@@ -53,14 +56,15 @@ public class Controller implements EventListener {
 
     game.undoLastMove();
 
-    // Manca da gestire il fatto che il Client potrebbe provare ad annullare una mossa che non ha ancora fatto,
+    // Manca da gestire il fatto che il Client potrebbe provare ad annullare una mossa che non ha
+    // ancora fatto,
     // ovvero, il Client si trova nella fase di Movement, ma non ha ancora mosso il proprio Worker,
     // però prova ad annullare la mossa (stesso ragionamento nella fase di Construction)
   }
 
   public void update(NextPlayerEvent evt) throws InvalidPhaseException {
 
-    if(!game.getCurrentPhase().equals(Phase.End)) {
+    if (!game.getCurrentPhase().equals(Phase.End)) {
       throw new InvalidPhaseException();
     }
 
@@ -98,8 +102,10 @@ public class Controller implements EventListener {
     Movement movement = new Movement(game.getBoard(), start, evt.getPoint());
 
     // Se la mossa non è consentita execute() deve notificare il Client
-    // In alternativa, execute() potrà restituire al Controller un boolean che indica l'esito dell'operazione
-    // e il Controller provvederà ad inviare al Client un messaggio d'errore (in questo caso servirebbe la RemoteView)
+    // In alternativa, execute() potrà restituire al Controller un boolean che indica l'esito
+    // dell'operazione
+    // e il Controller provvederà ad inviare al Client un messaggio d'errore (in questo caso
+    // servirebbe la RemoteView)
     movement.execute();
 
     // Passa alla fase di checkWin e controlla se il currentPlayer ha vinto
@@ -108,7 +114,6 @@ public class Controller implements EventListener {
 
     // Passa alla fase di costruzione
     game.nextPhase();
-
   }
 
   public static void main(String[] args) {}
