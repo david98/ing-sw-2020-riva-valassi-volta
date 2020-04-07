@@ -19,8 +19,15 @@ import java.util.stream.Collectors;
 
 public class GodCard {
 
+  protected Game game;
+  protected GodName name;
+
   private Game game;
   private GodName name;
+
+  public GodCard(GodName name) {
+    this.name = name;
+  }
 
   BiFunction<Game, Point, Boolean> isPointReachable =
       (Game game, Point point) -> {
@@ -98,10 +105,6 @@ public class GodCard {
         }
         return false;
       };
-
-  public GodCard(GodName name) {
-    this.name = name;
-  }
 
   public List<Point> computeReachablePoints() throws CurrentPlayerLosesException {
     List<Point> reachablePoints = new LinkedList<>();

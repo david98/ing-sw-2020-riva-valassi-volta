@@ -1,4 +1,4 @@
-package it.polimi.vovarini.model;
+package it.polimi.vovarini.client;
 
 public class Point {
   private int x;
@@ -23,10 +23,6 @@ public class Point {
     return y;
   }
 
-  public boolean isAdjacent(Point other) {
-    return !equals(other) && Math.abs(x - other.x) <= 1 && Math.abs(y - other.y) <= 1;
-  }
-
   @Override
   public String toString() {
     return "(" + x + ", " + y + ")";
@@ -45,9 +41,5 @@ public class Point {
   @Override
   public int hashCode() {
     return x * 10 + y;
-  }
-
-  public boolean isValidPoint() {
-    return x >= 0 && x < 5 && y >= 0 && y < 5;
   }
 }
