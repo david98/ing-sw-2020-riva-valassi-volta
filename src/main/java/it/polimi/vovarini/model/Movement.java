@@ -8,15 +8,21 @@ public class Movement extends Move {
   private Point start;
   private Point end;
 
+  public Movement(Board board, Point start, Point end, boolean forced) {
+    super(board, forced);
+    this.start = new Point(start);
+    this.end = new Point(end);
+  }
+
   public Movement(Board board, Point start, Point end) {
-    super(board);
+    super(board, false);
     this.start = new Point(start);
     this.end = new Point(end);
   }
 
   @Override
   public Move reverse() {
-    return new Movement(board, end, start);
+    return new Movement(board, end, start, forced);
   }
 
   @Override
@@ -41,5 +47,13 @@ public class Movement extends Move {
     } catch (BoxFullException e) {
       System.err.println("End box is full.");
     }
+  }
+
+  public Point getStart() {
+    return new Point(start);
+  }
+
+  public Point getEnd() {
+    return new Point(end);
   }
 }

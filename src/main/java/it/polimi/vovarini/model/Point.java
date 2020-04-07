@@ -23,6 +23,10 @@ public class Point {
     return y;
   }
 
+  public boolean isAdjacent(Point other) {
+    return !equals(other) && Math.abs(x - other.x) <= 1 && Math.abs(y - other.y) <= 1;
+  }
+
   @Override
   public String toString() {
     return "(" + x + ", " + y + ")";

@@ -1,7 +1,6 @@
 package it.polimi.vovarini.model;
 
 import it.polimi.vovarini.model.godcards.GodCard;
-import it.polimi.vovarini.model.godcards.Nobody;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

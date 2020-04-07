@@ -1,9 +1,26 @@
 package it.polimi.vovarini.model.board.items;
 
-public class Block extends Item {
+import java.util.stream.IntStream;
+
+public class Block extends Item implements Cloneable {
 
   public static final int MIN_LEVEL = 1;
   public static final int MAX_LEVEL = 4;
+  public static final int WIN_LEVEL = 3;
+
+  // static array where blocks[i] is a block of level i+1
+  public static final Block[] blocks =
+      (Block[])
+          IntStream.range(MIN_LEVEL, MAX_LEVEL)
+              .mapToObj(
+                  level -> {
+                    try {
+                      return new Block(level);
+                    } catch (InvalidLevelException ignored) {
+                      return null;
+                    }
+                  })
+              .toArray();
 
   protected int level;
 
@@ -30,5 +47,19 @@ public class Block extends Item {
   @Override
   public String toString() {
     return "" + level;
+  }
+
+  @Override
+  public int hashCode() {
+    return level;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (obj instanceof Block) {
+      return ((Block) obj).level == level;
+    } else {
+      return super.equals(obj);
+    }
   }
 }

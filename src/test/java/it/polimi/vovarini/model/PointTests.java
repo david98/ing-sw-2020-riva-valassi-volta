@@ -14,4 +14,13 @@ class PointTests {
     assertEquals(2, point.getX());
     assertEquals(3, point.getY());
   }
+
+  @Test
+  @DisplayName("Test that the equals method overridden by Point works")
+  void pointEquals() {
+    Point point1 = new Point(0, 0);
+    Point point2 = new Point(0, 0);
+
+    assertEquals(point1, point2);
+  }
 }

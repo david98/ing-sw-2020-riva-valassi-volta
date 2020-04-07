@@ -28,6 +28,10 @@ public class Board {
     }
   }
 
+  public boolean isPositionValid(Point p) {
+    return (p.getX() >= 0 && p.getY() >= 0 && p.getX() < size && p.getY() < size);
+  }
+
   public List<Point> getAdjacentPositions(Point p) {
     LinkedList<Point> adjacentPositions = new LinkedList<>();
     for (int i = p.getY() - 1; i <= p.getY() + 1; i++) {
@@ -42,29 +46,29 @@ public class Board {
   }
 
   public Box getBox(Point position) {
-    return boxes[position.getX()][position.getY()];
+    return boxes[position.getY()][position.getX()];
   }
 
   public void place(Item item, Point p) throws InvalidPositionException, BoxFullException {
-    if (p.getX() >= size || p.getY() >= size) {
+    if (!isPositionValid(p)) {
       throw new InvalidPositionException();
     }
-    Box box = boxes[p.getY()][p.getX()];
+    Box box = getBox(p);
     box.place(item);
   }
 
   public Stack<Item> getItems(Point p) throws InvalidPositionException, BoxEmptyException {
-    if (p.getX() >= size || p.getY() >= size) {
+    if (!isPositionValid(p)) {
       throw new InvalidPositionException();
     }
-    return boxes[p.getY()][p.getX()].getItems();
+    return getBox(p).getItems();
   }
 
   public Item remove(Point p) throws InvalidPositionException, BoxEmptyException {
-    if (p.getX() >= size || p.getY() >= size) {
+    if (!isPositionValid(p)) {
       throw new InvalidPositionException();
     }
-    Box box = boxes[p.getY()][p.getX()];
+    Box box = getBox(p);
     return box.removeTopmost();
   }
 
