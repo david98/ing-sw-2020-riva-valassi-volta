@@ -100,7 +100,7 @@ public class Controller implements EventListener {
   }
 
   public void update(RegistrationEvent evt)
-    throws InvalidPhaseException, NicknameAlreadyInUseException {
+      throws InvalidPhaseException, NicknameAlreadyInUseException {
 
     // Non sarebbe meglio avere una Fase Init, precedente a Start, che viene svolta una tantum ad
     // inizio partita?
