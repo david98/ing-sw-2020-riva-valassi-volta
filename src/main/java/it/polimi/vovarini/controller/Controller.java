@@ -193,7 +193,7 @@ public class Controller implements EventListener {
 
     // Passa alla fase di checkWin e controlla se il currentPlayer ha vinto
     game.nextPhase();
-    game.getCurrentPlayer().getGodCard().checkWin(movement);
+    game.getCurrentPlayer().getGodCard().isMovementWinning(movement);
 
     // Passa alla fase di costruzione
     game.nextPhase();
