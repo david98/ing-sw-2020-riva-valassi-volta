@@ -24,7 +24,7 @@ public class GodCard {
 
   private Game game;
   private GodName name;
-  
+
   public GodCard(GodName name) {
     this.name = name;
   }
