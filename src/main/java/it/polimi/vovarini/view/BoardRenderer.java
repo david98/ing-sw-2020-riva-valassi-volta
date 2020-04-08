@@ -6,7 +6,6 @@ import it.polimi.vovarini.model.board.Board;
 import it.polimi.vovarini.model.board.Box;
 import it.polimi.vovarini.model.board.items.Block;
 
-
 public class BoardRenderer {
 
   private Point cursorLocation;
