@@ -32,7 +32,7 @@ public class Controller implements EventListener {
     selectedCards = new ArrayList<GodName>();
   }
 
-  //CLI: keyboard M,F characters
+  // CLI: keyboard M,F characters
   public void update(WorkerEvent evt) throws InvalidPhaseException {
     Phase currentPhase = game.getCurrentPhase();
 
@@ -41,7 +41,7 @@ public class Controller implements EventListener {
     game.nextPhase();
   }
 
-  //CLI: Coordinates input or keyboard arrows
+  // CLI: Coordinates input or keyboard arrows
   public void update(BuildEvent evt)
       throws InvalidPositionException, InvalidPhaseException, NonBuildablePositionException {
     Point input = new Point(evt.getBuildEnd());
@@ -78,9 +78,8 @@ public class Controller implements EventListener {
           break;
         }
       }
-    }
-    catch (CurrentPlayerLosesException e){
-      //method required in model or RemoteView to signal the player which triggered the exception
+    } catch (CurrentPlayerLosesException e) {
+      // method required in model or RemoteView to signal the player which triggered the exception
     }
 
     if (!pointFound) {
@@ -88,14 +87,14 @@ public class Controller implements EventListener {
     }
   }
 
-  //Not part of the 1vs1 simulation we want to develop now
+  // Not part of the 1vs1 simulation we want to develop now
   public void update(CardChoiceEvent evt) {
     for (GodName card : evt.getSelectedCards()) {
       this.selectedCards.add(card);
     }
   }
 
-  //Not part of the 1vs1 simulation we want to develop now
+  // Not part of the 1vs1 simulation we want to develop now
   public void update(CardAssignmentEvent evt)
       throws CardsNotSelectedException, InvalidCardException {
     if (this.selectedCards.isEmpty()) {
@@ -110,7 +109,8 @@ public class Controller implements EventListener {
     }
   }
 
-  //CLI: String input at the start of the game. Any string longer than one should be considered a nickname input
+  // CLI: String input at the start of the game. Any string longer than one should be considered a
+  // nickname input
   public void update(RegistrationEvent evt)
       throws InvalidPhaseException, NicknameAlreadyInUseException {
     /*Va controllata lunghezza/serie di spazi/caratteri speciali?
@@ -118,14 +118,15 @@ public class Controller implements EventListener {
       // throw new NicknameNullException();
     }*/
 
-    //Questa perché è commentata? Sicuramente questo controllo va fatto
+    // Questa perché è commentata? Sicuramente questo controllo va fatto
     /*if(game.isNicknameAvailable(evt.getNickname())) {
       game.addPlayer(evt.getNickname());
     } else {
       throw new NicknameAlreadyInUseException();
     }*/
 
-    // Questo pezzo di codice andrà dentro addPlayer(String nickname) nel Model (players instanziati dopo inserimento del nickname)
+    // Questo pezzo di codice andrà dentro addPlayer(String nickname) nel Model (players instanziati
+    // dopo inserimento del nickname)
     for (Player player : game.getPlayers()) {
       if (player.getNickname().equalsIgnoreCase(evt.getNickname())) {
         throw new NicknameAlreadyInUseException();
@@ -133,7 +134,7 @@ public class Controller implements EventListener {
     }
   }
 
-  //CLI: Ctrl+Z pressed by the user
+  // CLI: Ctrl+Z pressed by the user
   public void update(UndoEvent evt) throws InvalidPhaseException {
 
     if (!game.getCurrentPhase().equals(Phase.Movement)
@@ -141,19 +142,23 @@ public class Controller implements EventListener {
       throw new InvalidPhaseException();
     }
 
-    //Questi controlli sono necessari, ma per la simulazione 1vs1 per ora possiamo rivederli in seguito
+    // Questi controlli sono necessari, ma per la simulazione 1vs1 per ora possiamo rivederli in
+    // seguito
     if (!game.getCurrentPlayer().equals(evt.getSource())) {
       // throw new InvalidTurnException();
     }
 
     game.undoLastMove();
 
-    // Necessario metodo di controllo per eventuali annullamenti senza la presenza di mosse nel turno
-    // Suppongo che alla fine del turno lo stack di annullamento mosse venga svuotato/pulito (vedere anche la regola dei 5 secondi)
+    // Necessario metodo di controllo per eventuali annullamenti senza la presenza di mosse nel
+    // turno
+    // Suppongo che alla fine del turno lo stack di annullamento mosse venga svuotato/pulito (vedere
+    // anche la regola dei 5 secondi)
 
   }
 
-  //CLI: we should find something to press that will make the "skip button" function, to trigger the next turn (like pressing space)
+  // CLI: we should find something to press that will make the "skip button" function, to trigger
+  // the next turn (like pressing space)
   public void update(NextPlayerEvent evt) throws InvalidPhaseException, WrongPlayerException {
 
     if (!game.getCurrentPhase().equals(Phase.End)) {
@@ -161,7 +166,7 @@ public class Controller implements EventListener {
     }
 
     if (!game.getCurrentPlayer().equals(evt.getPlayerSource())) {
-       throw new WrongPlayerException();
+      throw new WrongPlayerException();
     }
 
     game.nextPlayer();
@@ -177,7 +182,7 @@ public class Controller implements EventListener {
     game.nextPhase();
   }*/
 
-  //CLI: Coordinates input or keyboard arrows
+  // CLI: Coordinates input or keyboard arrows
   public void update(MovementEvent evt) throws InvalidPhaseException, WrongPlayerException {
 
     if (!game.getCurrentPhase().equals(Phase.Movement)) {
@@ -194,12 +199,12 @@ public class Controller implements EventListener {
     Point start = null;
     try {
       start = game.getBoard().getItemPosition(game.getCurrentPlayer().getCurrentWorker());
-    }
-    catch (ItemNotFoundException ignored){
+    } catch (ItemNotFoundException ignored) {
 
     }
-    //Qui non manca il controllo che il punto dato sia parte dei ReachablePoints?
-    //Ed un controllo per capire se il movimento che tenta di fare è una salita o discesa di + di un livello?
+    // Qui non manca il controllo che il punto dato sia parte dei ReachablePoints?
+    // Ed un controllo per capire se il movimento che tenta di fare è una salita o discesa di + di
+    // un livello?
     Movement movement = new Movement(game.getBoard(), start, evt.getPoint());
     game.performMove(movement);
 

@@ -6,7 +6,7 @@ import java.util.EventObject;
 
 public abstract class GameEvent extends EventObject {
 
-  //informazione fornita dal client in base all'indirizzo ip associato al giocatore
+  // informazione fornita dal client in base all'indirizzo ip associato al giocatore
   private final Player playerSource;
 
   public GameEvent(Object source, Player player) {
