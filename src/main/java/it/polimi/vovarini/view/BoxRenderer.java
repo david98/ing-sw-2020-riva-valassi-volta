@@ -18,7 +18,7 @@ public class BoxRenderer {
   }
 
   // renders the content of Box
-  public String render(Box box) {
+  public String render(Box box, boolean hasCursor) {
     try {
       Stack<Item> items = box.getItems();
       ItemRenderer itemRenderer = ItemRenderer.getInstance();
@@ -26,14 +26,18 @@ public class BoxRenderer {
       if (items.peek().canBeRemoved()) {
         Item topMostItem = items.pop();
         if (items.empty()) {
-          return " " + itemRenderer.render(topMostItem, playerRenderer);
+          return " " + (hasCursor ? "▮" : itemRenderer.render(topMostItem, playerRenderer));
         } else {
           return itemRenderer.render(items.pop(), playerRenderer)
-              + itemRenderer.render(topMostItem, playerRenderer);
+              + (hasCursor ? "▮" : itemRenderer.render(topMostItem, playerRenderer));
         }
       }
     } catch (BoxEmptyException ignored) {
     }
-    return "  ";
+    return " " + (hasCursor ? "▮" : " ");
+  }
+
+  public String render(Box box) {
+    return render(box, false);
   }
 }
