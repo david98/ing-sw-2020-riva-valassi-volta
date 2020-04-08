@@ -47,6 +47,22 @@ public class Game {
     currentPhase = Phase.Start;
   }
 
+  public void addPlayer (String nickname, int numberOfPlayers) throws InvalidNumberOfPlayersException{
+
+    if(players[players.length - 1] != null) {
+      throw new InvalidNumberOfPlayersException();
+    }
+
+    Player player = new Player(nickname);
+
+    for(int i = 0; i < players.length; i++){
+        if(players[i] == null){
+          players[i] = player;
+          return;
+        }
+      }
+  }
+
   public boolean validateMove(Movement movement) {
     return false;
   }

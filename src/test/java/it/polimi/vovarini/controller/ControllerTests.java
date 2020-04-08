@@ -4,7 +4,10 @@ import it.polimi.vovarini.controller.events.WorkerSelectionEvent;
 import it.polimi.vovarini.model.Game;
 import it.polimi.vovarini.model.InvalidNumberOfPlayersException;
 import it.polimi.vovarini.model.Phase;
+import it.polimi.vovarini.model.Player;
 import it.polimi.vovarini.model.board.items.Sex;
+import it.polimi.vovarini.model.godcards.GodCard;
+import it.polimi.vovarini.model.godcards.GodName;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -32,28 +35,44 @@ public class ControllerTests {
   @DisplayName("Worker Selection due to a WorkerSelectionEvent")
   void workerSelection() {
 
-    Game game = null;
+
     try {
-      game = new Game(2);
+     Game game = new Game(2);
+
+      try{ game.addPlayer("playerOne", 2); }
+      catch (InvalidNumberOfPlayersException e){
+        assertTrue(game.getPlayers().length == 2);
+        return;
+      }
+      try{ game.addPlayer("playerTwo", 2); }
+      catch (InvalidNumberOfPlayersException e){
+        assertTrue(game.getPlayers().length == 2);
+        return;
+      }
+
+      controller = new Controller(game);
+      WorkerSelectionEvent evtF = new WorkerSelectionEvent(this, game.getCurrentPlayer(), Sex.Female);
+      try {
+        controller.update(evtF);
+      } catch (InvalidPhaseException e) {
+        assertNotEquals(game.getCurrentPhase(), Phase.Start);
+        return;
+      }
+      assertEquals(game.getCurrentPlayer().getCurrentWorker().getSex(), Sex.Female);
+
+      WorkerSelectionEvent evtM = new WorkerSelectionEvent(this, game.getCurrentPlayer(), Sex.Male);
+      try {
+        controller.update(evtM);
+      } catch (InvalidPhaseException e) {
+        assertNotEquals(game.getCurrentPhase(), Phase.Start);
+        return;
+      }
+      assertEquals(game.getCurrentPlayer().getCurrentWorker().getSex(), Sex.Male);
+
     } catch (InvalidNumberOfPlayersException ignored) {
 
     }
 
-    controller = new Controller(game);
-    WorkerSelectionEvent evtF = new WorkerSelectionEvent(this, game.getCurrentPlayer(), Sex.Female);
-    try {
-      controller.update(evtF);
-    } catch (InvalidPhaseException e) {
-      assertNotEquals(game.getCurrentPhase(), Phase.Start);
-    }
-    assertEquals(game.getCurrentPlayer().getCurrentWorker().getSex(), Sex.Female);
 
-    WorkerSelectionEvent evtM = new WorkerSelectionEvent(this, game.getCurrentPlayer(), Sex.Male);
-    try {
-      controller.update(evtM);
-    } catch (InvalidPhaseException e) {
-      assertNotEquals(game.getCurrentPhase(), Phase.Start);
-    }
-    assertEquals(game.getCurrentPlayer().getCurrentWorker().getSex(), Sex.Male);
   }
 }
