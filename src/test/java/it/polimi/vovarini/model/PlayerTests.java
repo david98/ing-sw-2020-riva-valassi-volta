@@ -1,6 +1,7 @@
 package it.polimi.vovarini.model;
 
 import it.polimi.vovarini.model.godcards.GodCard;
+import it.polimi.vovarini.model.godcards.GodName;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -13,7 +14,7 @@ public class PlayerTests {
   void playerCreation() {
     try {
       Game game = new Game(2);
-      GodCard godCard = new Nobody(game);
+      GodCard godCard = new GodCard(GodName.Nobody);
       String nickname = "Guest";
 
       Player player = new Player(godCard, nickname);

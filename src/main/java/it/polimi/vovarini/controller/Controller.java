@@ -21,6 +21,10 @@ public class Controller implements EventListener {
   private ArrayList<GodName> selectedCards;
   private final Game game;
 
+  public Game getGame() {
+    return game;
+  }
+
   // Scelta del numero di giocatori fatta su Server, Game precedentemente istanziato
   public Controller(Game game) {
     this.game = game;

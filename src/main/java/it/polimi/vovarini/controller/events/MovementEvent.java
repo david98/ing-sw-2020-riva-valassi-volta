@@ -1,18 +1,16 @@
 package it.polimi.vovarini.controller.events;
 
+import it.polimi.vovarini.model.Player;
 import it.polimi.vovarini.model.Point;
 
 public class MovementEvent extends GameEvent {
 
   private final Point end;
 
-  public MovementEvent(Object source) {
-    super(source);
-    this.end = null;
-  }
 
-  public MovementEvent(Object source, Point end) {
-    super(source);
+
+  public MovementEvent(Object source, Player player, Point end) {
+    super(source, player);
     this.end = end;
   }
 
