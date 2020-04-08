@@ -46,6 +46,10 @@ public class Box {
     }
   }
 
+  public int nextLevel() throws BoxFullException{
+    return 0;
+  }
+
   public String toString(Player[] players) {
     if (items.size() == 0) {
       return (char) 27 + "[37m" + "0-";

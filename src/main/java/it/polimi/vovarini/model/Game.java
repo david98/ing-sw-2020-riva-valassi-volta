@@ -47,6 +47,16 @@ public class Game {
     currentPhase = Phase.Start;
   }
 
+  public boolean validateMove(Movement movement){
+    return false;
+  }
+
+  public boolean validateMove(Construction construction){
+    return false;
+  }
+
+
+
   public void performMove(Move move) {
     undoneMoves.clear();
     moves.push(move);
@@ -76,6 +86,7 @@ public class Game {
     return players[currentPlayerIndex];
   }
 
+  //needs to manage turn flow
   public void undoLastMove() {
     try {
       Move opposite = moves.pop().reverse();

@@ -62,6 +62,10 @@ public class Player {
     return nickname;
   }
 
+  public static boolean validateNickname(String nickname){
+    return false;
+  }
+
   @Override
   public int hashCode() {
     return nickname.hashCode();
