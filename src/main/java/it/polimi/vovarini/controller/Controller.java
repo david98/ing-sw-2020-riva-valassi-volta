@@ -39,7 +39,8 @@ public class Controller implements EventListener {
   }
 
   public void update(BuildEvent evt)
-      throws InvalidPositionException, InvalidPhaseException, NonBuildablePositionException {
+      throws InvalidPositionException, InvalidPhaseException, NonBuildablePositionException,
+          CurrentPlayerLosesException {
     Point input = new Point(evt.getBuildEnd());
     if (!input.isValidPoint()) throw new InvalidPositionException();
 
