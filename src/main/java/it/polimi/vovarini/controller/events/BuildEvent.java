@@ -14,7 +14,6 @@ public class BuildEvent extends GameEvent {
     super(source, player);
     buildEnd = point;
     this.level = level;
-
   }
 
   public int getLevel() {

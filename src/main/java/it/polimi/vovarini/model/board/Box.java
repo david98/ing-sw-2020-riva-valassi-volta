@@ -46,7 +46,7 @@ public class Box {
     }
   }
 
-  public int nextLevel() throws BoxFullException{
+  public int nextLevel() throws BoxFullException {
     return 0;
   }
 

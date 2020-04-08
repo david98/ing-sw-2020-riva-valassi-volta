@@ -5,13 +5,9 @@ import it.polimi.vovarini.controller.events.CardAssignmentEvent;
 import it.polimi.vovarini.controller.events.CardChoiceEvent;
 import it.polimi.vovarini.controller.events.WorkerSelectionEvent;
 import it.polimi.vovarini.model.*;
-import it.polimi.vovarini.model.board.BoxEmptyException;
 import it.polimi.vovarini.model.board.InvalidPositionException;
 import it.polimi.vovarini.model.board.ItemNotFoundException;
 import it.polimi.vovarini.model.board.items.Block;
-import it.polimi.vovarini.model.board.items.InvalidLevelException;
-import it.polimi.vovarini.model.board.items.Item;
-import it.polimi.vovarini.model.board.items.Worker;
 import it.polimi.vovarini.model.godcards.GodName;
 import it.polimi.vovarini.controller.events.MovementEvent;
 import it.polimi.vovarini.controller.events.NextPlayerEvent;
@@ -42,7 +38,8 @@ public class Controller implements EventListener {
 
   // CLI: Coordinates input or keyboard arrows
   public void update(BuildEvent evt)
-      throws InvalidPositionException, InvalidPhaseException, NonBuildablePositionException, WrongPlayerException, InvalidMoveException {
+      throws InvalidPositionException, InvalidPhaseException, NonBuildablePositionException,
+          WrongPlayerException, InvalidMoveException {
 
     if (!game.getCurrentPlayer().equals(evt.getPlayerSource())) {
       throw new WrongPlayerException();
@@ -54,13 +51,14 @@ public class Controller implements EventListener {
     Phase currentPhase = game.getCurrentPhase();
     if (!currentPhase.equals(Phase.Construction)) throw new InvalidPhaseException();
 
-   Construction build = new Construction(game.getBoard(), Block.blocks[evt.getLevel() - 1],evt.getBuildEnd(), false );
-   if (!game.validateMove(build)){
-     throw new InvalidMoveException();
-   }
+    Construction build =
+        new Construction(
+            game.getBoard(), Block.blocks[evt.getLevel() - 1], evt.getBuildEnd(), false);
+    if (!game.validateMove(build)) {
+      throw new InvalidMoveException();
+    }
 
-   game.performMove(build);
-
+    game.performMove(build);
 
     /*boolean pointFound = false;
     Block blockToBuild = null;
@@ -119,33 +117,32 @@ public class Controller implements EventListener {
 
   // CLI: String input at the start of the game. Any string longer than one should be considered a
   // nickname input
-  public void update(RegistrationEvent evt)
-      throws InvalidNicknameException {
+  public void update(RegistrationEvent evt) throws InvalidNicknameException {
 
     for (Player player : game.getPlayers()) {
       if (player.getNickname().equalsIgnoreCase(evt.getNickname())) {
         throw new InvalidNicknameException(InvalidNicknameException.ERROR_DUPLICATE);
       }
 
-      if(!Player.validateNickname(evt.getNickname())) {
+      if (!Player.validateNickname(evt.getNickname())) {
         throw new InvalidNicknameException(InvalidNicknameException.ERROR_INVALID);
       }
 
-    /*Va controllata lunghezza/serie di spazi/caratteri speciali?
-    if (evt.getNickname() == null) {
-      // throw new NicknameNullException();
-    }*/
+      /*Va controllata lunghezza/serie di spazi/caratteri speciali?
+      if (evt.getNickname() == null) {
+        // throw new NicknameNullException();
+      }*/
 
-    // Questa perché è commentata? Sicuramente questo controllo va fatto
+      // Questa perché è commentata? Sicuramente questo controllo va fatto
 
-
-    // Questo pezzo di codice andrà dentro addPlayer(String nickname) nel Model (players instanziati
-    // dopo inserimento del nickname)
-    /*for (Player player : game.getPlayers()) {
-      if (player.getNickname().equalsIgnoreCase(evt.getNickname())) {
-        throw new NicknameAlreadyInUseException();
-      }
-    }*/
+      // Questo pezzo di codice andrà dentro addPlayer(String nickname) nel Model (players
+      // instanziati
+      // dopo inserimento del nickname)
+      /*for (Player player : game.getPlayers()) {
+        if (player.getNickname().equalsIgnoreCase(evt.getNickname())) {
+          throw new NicknameAlreadyInUseException();
+        }
+      }*/
     }
   }
 
@@ -185,7 +182,9 @@ public class Controller implements EventListener {
   }*/
 
   // CLI: Coordinates input or keyboard arrows
-  public void update(MovementEvent evt) throws InvalidPhaseException, WrongPlayerException, InvalidPositionException, InvalidMoveException {
+  public void update(MovementEvent evt)
+      throws InvalidPhaseException, WrongPlayerException, InvalidPositionException,
+          InvalidMoveException {
 
     if (!game.getCurrentPlayer().equals(evt.getPlayerSource())) {
       throw new WrongPlayerException();
@@ -206,7 +205,7 @@ public class Controller implements EventListener {
     }
 
     Movement movement = new Movement(game.getBoard(), start, end);
-    if (!game.validateMove(movement)){
+    if (!game.validateMove(movement)) {
       throw new InvalidMoveException();
     }
 

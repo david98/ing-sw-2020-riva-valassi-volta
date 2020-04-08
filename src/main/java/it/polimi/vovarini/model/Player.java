@@ -62,7 +62,7 @@ public class Player {
     return nickname;
   }
 
-  public static boolean validateNickname(String nickname){
+  public static boolean validateNickname(String nickname) {
     return false;
   }
 
