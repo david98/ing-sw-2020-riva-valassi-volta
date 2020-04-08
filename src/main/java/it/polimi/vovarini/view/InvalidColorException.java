@@ -1,4 +1,3 @@
 package it.polimi.vovarini.view;
 
-public class InvalidColorException extends Exception {
-}
+public class InvalidColorException extends Exception {}
