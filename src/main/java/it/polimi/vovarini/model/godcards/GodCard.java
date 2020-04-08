@@ -22,6 +22,7 @@ public class GodCard {
   protected Game game;
   protected GodName name;
 
+
   public GodCard(GodName name) {
     this.name = name;
   }

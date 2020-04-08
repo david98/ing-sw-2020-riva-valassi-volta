@@ -7,6 +7,7 @@ import it.polimi.vovarini.controller.events.WorkerEvent;
 import it.polimi.vovarini.model.*;
 import it.polimi.vovarini.model.board.BoxEmptyException;
 import it.polimi.vovarini.model.board.InvalidPositionException;
+import it.polimi.vovarini.model.board.ItemNotFoundException;
 import it.polimi.vovarini.model.board.items.Block;
 import it.polimi.vovarini.model.board.items.InvalidLevelException;
 import it.polimi.vovarini.model.board.items.Item;
@@ -31,17 +32,20 @@ public class Controller implements EventListener {
     selectedCards = new ArrayList<GodName>();
   }
 
+  //CLI: keyboard M,F characters
   public void update(WorkerEvent evt) throws InvalidPhaseException {
     Phase currentPhase = game.getCurrentPhase();
 
-    if (!currentPhase.equals(Phase.Movement)) throw new InvalidPhaseException();
+    if (!currentPhase.equals(Phase.Start)) throw new InvalidPhaseException();
     game.getCurrentPlayer().setCurrentSex(evt.getSex());
+    game.nextPhase();
   }
 
+  //CLI: Coordinates input or keyboard arrows
   public void update(BuildEvent evt)
       throws InvalidPositionException, InvalidPhaseException, NonBuildablePositionException {
     Point input = new Point(evt.getBuildEnd());
-    if (!input.isValidPoint()) throw new InvalidPositionException();
+    if (!game.getBoard().isPositionValid(input)) throw new InvalidPositionException();
 
     Phase currentPhase = game.getCurrentPhase();
     if (!currentPhase.equals(Phase.Construction)) throw new InvalidPhaseException();
@@ -49,29 +53,34 @@ public class Controller implements EventListener {
     boolean pointFound = false;
     Block blockToBuild = null;
     int levelToBuild = 0;
-    for (Point point : game.getCurrentPlayer().getGodCard().computeBuildablePoints()) {
-      if (point.equals(input)) {
-        pointFound = true;
-        try {
-          Stack<Item> currentStack = game.getBoard().getBox(point).getItems();
-          if (currentStack.peek() instanceof Worker) currentStack.pop();
-          if (currentStack.empty()) levelToBuild = 1;
-          else {
-            Block topBlock = (Block) currentStack.pop();
-            levelToBuild = topBlock.getLevel() + 1;
-          }
-        } catch (BoxEmptyException e) {
-          levelToBuild = 1;
-        } finally {
+    try {
+      for (Point point : game.getCurrentPlayer().getGodCard().computeBuildablePoints()) {
+        if (point.equals(input)) {
+          pointFound = true;
           try {
-            blockToBuild = new Block(levelToBuild);
-          } catch (InvalidLevelException ignored) {
+            Stack<Item> currentStack = game.getBoard().getBox(point).getItems();
+            if (currentStack.peek() instanceof Worker) currentStack.pop();
+            if (currentStack.empty()) levelToBuild = 1;
+            else {
+              Block topBlock = (Block) currentStack.pop();
+              levelToBuild = topBlock.getLevel() + 1;
+            }
+          } catch (BoxEmptyException e) {
+            levelToBuild = 1;
+          } finally {
+            try {
+              blockToBuild = new Block(levelToBuild);
+            } catch (InvalidLevelException ignored) {
+            }
           }
+          Move newMove = new Construction(game.getBoard(), blockToBuild, point);
+          game.performMove(newMove);
+          break;
         }
-        Move newMove = new Construction(game.getBoard(), blockToBuild, point);
-        newMove.execute();
-        break;
       }
+    }
+    catch (CurrentPlayerLosesException e){
+      //method required in model or RemoteView to signal the player which triggered the exception
     }
 
     if (!pointFound) {
@@ -79,12 +88,14 @@ public class Controller implements EventListener {
     }
   }
 
+  //Not part of the 1vs1 simulation we want to develop now
   public void update(CardChoiceEvent evt) {
     for (GodName card : evt.getSelectedCards()) {
       this.selectedCards.add(card);
     }
   }
 
+  //Not part of the 1vs1 simulation we want to develop now
   public void update(CardAssignmentEvent evt)
       throws CardsNotSelectedException, InvalidCardException {
     if (this.selectedCards.isEmpty()) {
@@ -99,26 +110,22 @@ public class Controller implements EventListener {
     }
   }
 
+  //CLI: String input at the start of the game. Any string longer than one should be considered a nickname input
   public void update(RegistrationEvent evt)
       throws InvalidPhaseException, NicknameAlreadyInUseException {
-
-    // Non sarebbe meglio avere una Fase Init, precedente a Start, che viene svolta una tantum ad
-    // inizio partita?
-    if (!game.getCurrentPhase().equals(Phase.Start)) {
-      throw new InvalidPhaseException();
-    }
-
+    /*Va controllata lunghezza/serie di spazi/caratteri speciali?
     if (evt.getNickname() == null) {
       // throw new NicknameNullException();
-    }
+    }*/
 
+    //Questa perché è commentata? Sicuramente questo controllo va fatto
     /*if(game.isNicknameAvailable(evt.getNickname())) {
       game.addPlayer(evt.getNickname());
     } else {
       throw new NicknameAlreadyInUseException();
     }*/
 
-    // Questo pezzo di codice andrà dentro addPlayer(String nickname) nel Model
+    // Questo pezzo di codice andrà dentro addPlayer(String nickname) nel Model (players instanziati dopo inserimento del nickname)
     for (Player player : game.getPlayers()) {
       if (player.getNickname().equalsIgnoreCase(evt.getNickname())) {
         throw new NicknameAlreadyInUseException();
@@ -126,6 +133,7 @@ public class Controller implements EventListener {
     }
   }
 
+  //CLI: Ctrl+Z pressed by the user
   public void update(UndoEvent evt) throws InvalidPhaseException {
 
     if (!game.getCurrentPhase().equals(Phase.Movement)
@@ -133,26 +141,27 @@ public class Controller implements EventListener {
       throw new InvalidPhaseException();
     }
 
+    //Questi controlli sono necessari, ma per la simulazione 1vs1 per ora possiamo rivederli in seguito
     if (!game.getCurrentPlayer().equals(evt.getSource())) {
       // throw new InvalidTurnException();
     }
 
     game.undoLastMove();
 
-    // Manca da gestire il fatto che il Client potrebbe provare ad annullare una mossa che non ha
-    // ancora fatto,
-    // ovvero, il Client si trova nella fase di Movement, ma non ha ancora mosso il proprio Worker,
-    // però prova ad annullare la mossa (stesso ragionamento nella fase di Construction)
+    // Necessario metodo di controllo per eventuali annullamenti senza la presenza di mosse nel turno
+    // Suppongo che alla fine del turno lo stack di annullamento mosse venga svuotato/pulito (vedere anche la regola dei 5 secondi)
+
   }
 
-  public void update(NextPlayerEvent evt) throws InvalidPhaseException {
+  //CLI: we should find something to press that will make the "skip button" function, to trigger the next turn (like pressing space)
+  public void update(NextPlayerEvent evt) throws InvalidPhaseException, WrongPlayerException {
 
     if (!game.getCurrentPhase().equals(Phase.End)) {
       throw new InvalidPhaseException();
     }
 
-    if (!game.getCurrentPlayer().equals(evt.getSource())) {
-      // throw new InvalidTurnException();
+    if (!game.getCurrentPlayer().equals(evt.getPlayerSource())) {
+       throw new WrongPlayerException();
     }
 
     game.nextPlayer();
@@ -168,32 +177,31 @@ public class Controller implements EventListener {
     game.nextPhase();
   }*/
 
-  public void update(MovementEvent evt) throws InvalidPhaseException {
+  //CLI: Coordinates input or keyboard arrows
+  public void update(MovementEvent evt) throws InvalidPhaseException, WrongPlayerException {
 
     if (!game.getCurrentPhase().equals(Phase.Movement)) {
       throw new InvalidPhaseException();
     }
 
-    if (!game.getCurrentPlayer().equals(evt.getSource())) {
-      // throw new InvalidTurnException();
+    if (!game.getCurrentPlayer().equals(evt.getPlayerSource())) {
+      throw new WrongPlayerException();
     }
 
     // Il punto start è il punto dove risiede il Worker che voglio spostare
     // Questo punto mi viene passato dal Client tramite un evento workerEvent
     // Devo salvare questo currentWorkerPosition da qualche parte su Game
     Point start = null;
+    try {
+      start = game.getBoard().getItemPosition(game.getCurrentPlayer().getCurrentWorker());
+    }
+    catch (ItemNotFoundException ignored){
+
+    }
+    //Qui non manca il controllo che il punto dato sia parte dei ReachablePoints?
+    //Ed un controllo per capire se il movimento che tenta di fare è una salita o discesa di + di un livello?
     Movement movement = new Movement(game.getBoard(), start, evt.getPoint());
-
-    // Se la mossa non è consentita execute() deve notificare il Client
-    // In alternativa, execute() potrà restituire al Controller un boolean che indica l'esito
-    // dell'operazione
-    // e il Controller provvederà ad inviare al Client un messaggio d'errore (in questo caso
-    // servirebbe la RemoteView)
-    movement.execute();
-
-    // Passa alla fase di checkWin e controlla se il currentPlayer ha vinto
-    game.nextPhase();
-    game.getCurrentPlayer().getGodCard().isMovementWinning(movement);
+    game.performMove(movement);
 
     // Passa alla fase di costruzione
     game.nextPhase();
