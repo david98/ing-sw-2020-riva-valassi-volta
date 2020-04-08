@@ -10,8 +10,8 @@ public class PlayerRenderer {
 
   public static PlayerRenderer instance = null;
 
-  public static PlayerRenderer getInstance(){
-    if (instance == null){
+  public static PlayerRenderer getInstance() {
+    if (instance == null) {
       instance = new PlayerRenderer();
     }
     return instance;
@@ -19,23 +19,22 @@ public class PlayerRenderer {
 
   private HashMap<Player, Color> colorMap;
 
-  private PlayerRenderer(){
+  private PlayerRenderer() {
     colorMap = new HashMap<>();
   }
 
-  public void setPlayers(Player[] players){
+  public void setPlayers(Player[] players) {
     Random rand = new Random();
-    for (Player player: players){
-      colorMap.put(player, new Color(rand.nextInt(255), rand.nextInt(255), rand
-              .nextInt(255)));
+    for (Player player : players) {
+      colorMap.put(player, new Color(rand.nextInt(255), rand.nextInt(255), rand.nextInt(255)));
     }
   }
 
-  public Set<Player> getPlayers(){
+  public Set<Player> getPlayers() {
     return colorMap.keySet();
   }
 
-  public Color getPlayerColor(Player player){
+  public Color getPlayerColor(Player player) {
     return colorMap.get(player);
   }
 }

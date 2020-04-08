@@ -9,8 +9,8 @@ public class ItemRenderer {
 
   public static ItemRenderer instance = null;
 
-  public static ItemRenderer getInstance(){
-    if (instance == null){
+  public static ItemRenderer getInstance() {
+    if (instance == null) {
       instance = new ItemRenderer();
     }
     return instance;
@@ -18,25 +18,25 @@ public class ItemRenderer {
 
   private HashMap<Item, Player> ownerMap;
 
-  public ItemRenderer(){
+  public ItemRenderer() {
     this.ownerMap = new HashMap<>();
   }
 
-  public String render(Item item, PlayerRenderer playerRenderer){
+  public String render(Item item, PlayerRenderer playerRenderer) {
     if (!item.canBeRemoved()) {
       return item.toString();
     } else {
       Player owner = ownerMap.get(item);
-      if (owner == null){
+      if (owner == null) {
         owner = findOwner(item, playerRenderer);
       }
       return playerRenderer.getPlayerColor(owner).wrap(item.toString());
     }
   }
 
-  private Player findOwner(Item item, PlayerRenderer playerRenderer){
-    for (Player player: playerRenderer.getPlayers()){
-      if (player.getWorkers().containsValue(item)){
+  private Player findOwner(Item item, PlayerRenderer playerRenderer) {
+    for (Player player : playerRenderer.getPlayers()) {
+      if (player.getWorkers().containsValue(item)) {
         ownerMap.put(item, player);
         return player;
       }
