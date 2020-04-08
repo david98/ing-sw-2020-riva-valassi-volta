@@ -10,7 +10,7 @@ public class Block extends Item implements Cloneable {
 
   // static array where blocks[i] is a block of level i+1
   public static final Block[] blocks =
-          IntStream.range(MIN_LEVEL, MAX_LEVEL)
+          IntStream.range(MIN_LEVEL, MAX_LEVEL + 1)
               .mapToObj(
                   level -> {
                     try {
