@@ -218,7 +218,6 @@ public class Controller implements EventListener {
       e.printStackTrace();
     }
     game.performMove(movement);
-    game.nextPhase();
   }
 
   public static void main(String[] args) {}

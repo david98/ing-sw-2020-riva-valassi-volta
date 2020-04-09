@@ -9,6 +9,7 @@ import it.polimi.vovarini.model.Point;
 import it.polimi.vovarini.model.board.BoxFullException;
 import it.polimi.vovarini.model.board.InvalidPositionException;
 import it.polimi.vovarini.model.board.ItemNotFoundException;
+import it.polimi.vovarini.model.board.items.Block;
 import it.polimi.vovarini.model.board.items.Sex;
 import it.polimi.vovarini.model.godcards.GodCard;
 import it.polimi.vovarini.model.godcards.GodName;
@@ -147,6 +148,44 @@ public class ControllerTests {
       } catch (InvalidPositionException ignored) {
       } catch (InvalidMoveException ignored) {
       }
+
+      Point invalidMovePoint = new Point (3,3);
+      MovementEvent evtInvalidMove = new MovementEvent(this, game.getCurrentPlayer(), invalidMovePoint);
+
+      assertThrows(InvalidMoveException.class, ()-> {controller.update(evtInvalidMove);});
+
+      Block newBlockLevelOne = Block.blocks[0];
+      Block newBlockLevelTwo = Block.blocks[1];
+      Point buildPoint = new Point (1,1);
+      try {
+        game.getBoard().place(newBlockLevelOne, buildPoint);
+        game.getBoard().place(newBlockLevelTwo, buildPoint);
+      }
+      catch (BoxFullException ignored){}
+      catch (InvalidPositionException ignored){}
+
+      MovementEvent evtInvalidLevel = new MovementEvent(this, game.getCurrentPlayer(), buildPoint);
+
+      assertThrows(InvalidMoveException.class, ()->{controller.update(evtInvalidLevel);});
+
+      Point negativePoint = new Point (-1, -1);
+      MovementEvent evtInvalidPos = new MovementEvent(this, game.getCurrentPlayer(), negativePoint);
+
+      assertThrows(InvalidPositionException.class, ()->{controller.update(evtInvalidPos);});
+
+      game.nextPlayer();
+      MovementEvent evtInvalidPlayer = new MovementEvent(this, game.getPlayers()[0], point);
+
+      assertThrows(WrongPlayerException.class, ()->{controller.update(evtInvalidPlayer);});
+
+      game.nextPlayer();
+
+      game.nextPhase();
+      game.nextPhase();
+      Point newPoint = new Point(0,2);
+      MovementEvent evtInvalidPhase = new MovementEvent(this, game.getCurrentPlayer(), newPoint);
+
+      assertThrows(InvalidPhaseException.class, ()->{controller.update(evtInvalidPhase);});
 
     } catch (InvalidNumberOfPlayersException ignored) {
 
