@@ -64,8 +64,6 @@ public class Game {
     }
   }
 
-
-
   public boolean validateMove(Movement movement) {
     return false;
   }
