@@ -1,5 +1,6 @@
 package it.polimi.vovarini.controller;
 
+import it.polimi.vovarini.controller.events.MovementEvent;
 import it.polimi.vovarini.controller.events.WorkerSelectionEvent;
 import it.polimi.vovarini.model.Game;
 import it.polimi.vovarini.model.InvalidNumberOfPlayersException;
@@ -119,15 +120,11 @@ public class ControllerTests {
       catch (InvalidPositionException ignored){}
       catch (BoxFullException ignored){}
       controller = new Controller(game);
-<<<<<<< HEAD
+
       MovementEvent evt = new MovementEvent(this, game.getCurrentPlayer(), new Point (0, 1));
 
     }
     catch (InvalidNumberOfPlayersException ignored){
-=======
-      // MovementEvent evt = new MovementEvent(this, game.getCurrentPlayer(), )
-    } catch (InvalidNumberOfPlayersException ignored) {
->>>>>>> bab73dda9ed50af0047ea65043bc2de08cfbf205
 
     }
   }
