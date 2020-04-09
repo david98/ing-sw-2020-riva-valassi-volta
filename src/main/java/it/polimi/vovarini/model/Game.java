@@ -1,120 +1,98 @@
 package it.polimi.vovarini.model;
 
 import it.polimi.vovarini.model.board.*;
-import it.polimi.vovarini.model.board.items.InvalidLevelException;
-import it.polimi.vovarini.model.board.items.Sex;
-import it.polimi.vovarini.model.board.items.Worker;
-import it.polimi.vovarini.model.godcards.Apollo;
+import it.polimi.vovarini.model.board.items.*;
+import it.polimi.vovarini.model.godcards.GodCardFactory;
+import it.polimi.vovarini.model.godcards.GodName;
 
 import java.util.EmptyStackException;
 import java.util.Stack;
 
 public class Game {
-    private Player[] players;
-    private int currentPlayerIndex;
 
-    public Board getBoard() {
-        return board;
+  public static final int MIN_PLAYERS = 2;
+  public static final int MAX_PLAYERS = 3;
+
+  private Player[] players;
+  private int currentPlayerIndex;
+
+  private Phase currentPhase;
+
+  public Board getBoard() {
+    return board;
+  }
+
+  private Board board;
+
+  private Stack<Move> moves;
+  private Stack<Move> undoneMoves;
+
+  public Game(int numberOfPlayers) throws InvalidNumberOfPlayersException {
+    if (numberOfPlayers < MIN_PLAYERS || numberOfPlayers > MAX_PLAYERS) {
+      throw new InvalidNumberOfPlayersException();
+    }
+    players = new Player[numberOfPlayers];
+    for (int i = 0; i < numberOfPlayers; i++) {
+      players[i] = new Player(GodCardFactory.create(GodName.Apollo), "Player" + i);
     }
 
-    private Board board;
+    players = new Player[numberOfPlayers];
+    currentPlayerIndex = 0;
 
-    private Stack<Move> moves;
-    private Stack<Move> undoneMoves;
+    moves = new Stack<>();
+    undoneMoves = new Stack<>();
 
-    public Game(int numberOfPlayers){
-        players = new Player[numberOfPlayers];
-        for (int i = 0; i < numberOfPlayers; i++){
-            players[i] = new Player(this, new Apollo(this), "Player" + i); //TODO: sistemare
-        }
-        moves = new Stack<>();
-        undoneMoves = new Stack<>();
-        currentPlayerIndex = 0;
-        board = new Board(Board.DEFAULT_SIZE);
+    board = new Board(Board.DEFAULT_SIZE);
+
+    currentPhase = Phase.Start;
+  }
+
+  public void performMove(Move move) {
+    undoneMoves.clear();
+    moves.push(move);
+    move.execute();
+  }
+
+  public Phase getCurrentPhase() {
+    return currentPhase;
+  }
+
+  public Phase nextPhase() {
+    currentPhase = currentPhase.next();
+    return currentPhase;
+  }
+
+  public Player[] getPlayers() {
+    return players;
+  }
+
+  public Player getCurrentPlayer() {
+    return players[currentPlayerIndex];
+  }
+
+  public Player nextPlayer() {
+    currentPhase = Phase.Start;
+    currentPlayerIndex = (currentPlayerIndex + 1) % players.length;
+    return players[currentPlayerIndex];
+  }
+
+  public void undoLastMove() {
+    try {
+      Move opposite = moves.pop().reverse();
+      undoneMoves.push(opposite);
+      opposite.execute();
+    } catch (EmptyStackException ignored) {
+
     }
+  }
 
-    public void performMove(Move move){
-        undoneMoves.clear();
-        moves.push(move);
-        move.execute();
+  public void redoMove() {
+    try {
+      Move move = undoneMoves.pop().reverse();
+      moves.push(move);
+      move.execute();
+    } catch (EmptyStackException ignored) {
+
     }
-
-    public Player[] getPlayers() {
-        return players;
-    }
-
-    public void setCurrentPlayerIndex(int currentPlayerIndex) {
-        this.currentPlayerIndex = currentPlayerIndex;
-    }
-
-    public Player getCurrentPlayer(){
-        return players[currentPlayerIndex];
-    }
-
-    public void undoLastMove(){
-        try {
-            Move opposite = moves.pop().reverse();
-            undoneMoves.push(opposite);
-            opposite.execute();
-        } catch (EmptyStackException ignored) {
-
-        }
-    }
-
-    public void redoMove(){
-        try {
-            Move move = undoneMoves.pop().reverse();
-            moves.push(move);
-            move.execute();
-        } catch (EmptyStackException ignored){
-
-        }
-    }
-
-    public Player nextPlayer(){
-        currentPlayerIndex++;
-        if (currentPlayerIndex >= players.length){
-            currentPlayerIndex = 0;
-        }
-        return players[currentPlayerIndex];
-    }
-
-    public static void main(String[] args){
-        try {
-            Game game = new Game(2);
-            Player player = game.getCurrentPlayer();
-            player.setCurrentSex(Sex.Male);
-            Worker maleWorker = player.getCurrentWorker();
-            player.setCurrentSex(Sex.Female);
-            Worker femaleWorker = player.getCurrentWorker();
-
-            Player other = game.nextPlayer();
-            System.out.println(game.getCurrentPlayer().getNickname());
-            other.setCurrentSex(Sex.Male);
-            Worker otherMaleWorker = other.getCurrentWorker();
-            other.setCurrentSex(Sex.Female);
-            Worker otherFemaleWorker = other.getCurrentWorker();
-
-            game.nextPlayer();
-
-            Board board = game.getBoard();
-
-            board.place(maleWorker, new Point (0,0));
-            board.place(femaleWorker, new Point (4, 4));
-            board.place(otherMaleWorker, new Point(4, 3));
-            board.place(otherFemaleWorker, new Point(3, 4));
-            board.debugPrintToConsole();
-            for (Point p: player.getGodCard().computeReachablePoints()
-                 ) {
-                System.out.println(p);
-            }
-            player.moveCurrentWorker(new Point(4, 3));
-            board.debugPrintToConsole();
-
-        } catch (InvalidPositionException e){
-            System.err.println("Invalid position.");
-        } catch (BoxFullException e){
-            System.err.println("Box is full.");
-        }
-    }
+  }
 }

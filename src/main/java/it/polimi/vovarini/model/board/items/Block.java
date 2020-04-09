@@ -1,30 +1,65 @@
 package it.polimi.vovarini.model.board.items;
 
-public class Block extends Item{
-    private int level;
+import java.util.stream.IntStream;
 
-    public Block(int level) throws InvalidLevelException{
-        if (level < 1 || level > 4){
-            throw new InvalidLevelException();
-        }
-        this.level = level;
-    }
+public class Block extends Item implements Cloneable {
 
-    public int getLevel() {
-        return level;
-    }
+  public static final int MIN_LEVEL = 1;
+  public static final int MAX_LEVEL = 4;
+  public static final int WIN_LEVEL = 3;
 
-    public boolean canBePlacedOn(Item item){
-        if (item instanceof Block) {
-            Block block = (Block) item;
-            return level == (block.getLevel() + 1);
-        } else {
-            return super.canBePlacedOn(item);
-        }
-    }
+  // static array where blocks[i] is a block of level i+1
+  public static final Block[] blocks =
+      (Block[])
+          IntStream.range(MIN_LEVEL, MAX_LEVEL)
+              .mapToObj(
+                  level -> {
+                    try {
+                      return new Block(level);
+                    } catch (InvalidLevelException ignored) {
+                      return null;
+                    }
+                  })
+              .toArray();
 
-    @Override
-    public String toString() {
-        return "" + level;
+  protected int level;
+
+  public Block(int level) throws InvalidLevelException {
+    if (level < MIN_LEVEL || level > MAX_LEVEL) {
+      throw new InvalidLevelException();
     }
+    this.level = level;
+  }
+
+  public int getLevel() {
+    return level;
+  }
+
+  public boolean canBePlacedOn(Item item) {
+    if (item instanceof Block) {
+      Block block = (Block) item;
+      return level == (block.getLevel() + 1);
+    } else {
+      return super.canBePlacedOn(item);
+    }
+  }
+
+  @Override
+  public String toString() {
+    return "" + level;
+  }
+
+  @Override
+  public int hashCode() {
+    return level;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (obj instanceof Block) {
+      return ((Block) obj).level == level;
+    } else {
+      return super.equals(obj);
+    }
+  }
 }

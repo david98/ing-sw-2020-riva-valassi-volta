@@ -5,25 +5,26 @@ import it.polimi.vovarini.model.board.items.Block;
 
 public class Construction extends Move {
 
-    private Block block;
+  private Block block;
+  private Point target;
 
-    private int x;
-    private int y;
+  public Construction(Board board, Block block, Point point, boolean forced) {
+    super(board, forced);
+    this.block = block;
+    target = point;
+  }
 
-    public Construction(Board board, Block block, int x, int y){
-        super(board);
-        this.block = block;
-        this.x = x;
-        this.y = y;
-    }
+  public Construction(Board board, Block block, Point point) {
+    super(board, false);
+    this.block = block;
+    target = point;
+  }
 
-    @Override
-    public Move reverse() {
-        return new Destruction(board, block, x, y);
-    }
+  @Override
+  public Move reverse() {
+    return new Destruction(board, block, target, forced);
+  }
 
-    @Override
-    public void execute() {
-
-    }
+  @Override
+  public void execute() {}
 }
