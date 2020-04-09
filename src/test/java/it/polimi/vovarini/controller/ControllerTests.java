@@ -65,6 +65,7 @@ public class ControllerTests {
         assertNotEquals(game.getCurrentPhase(), Phase.Start);
         return;
       }
+      catch (WrongPlayerException ignored){}
       assertEquals(game.getCurrentPlayer().getCurrentWorker().getSex(), Sex.Female);
 
       WorkerSelectionEvent evtM = new WorkerSelectionEvent(this, game.getCurrentPlayer(), Sex.Male);
@@ -74,6 +75,7 @@ public class ControllerTests {
         assertNotEquals(game.getCurrentPhase(), Phase.Start);
         return;
       }
+      catch (WrongPlayerException ignored){}
       assertEquals(game.getCurrentPlayer().getCurrentWorker().getSex(), Sex.Male);
 
       WorkerSelectionEvent evtWrongPlayer =

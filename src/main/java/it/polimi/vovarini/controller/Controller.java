@@ -32,7 +32,12 @@ public class Controller implements EventListener {
   }
 
   // CLI: keyboard M,F characters
-  public void update(WorkerSelectionEvent evt) throws InvalidPhaseException {
+  public void update(WorkerSelectionEvent evt) throws InvalidPhaseException, WrongPlayerException {
+
+    if (!game.getCurrentPlayer().equals(evt.getPlayerSource())) {
+      throw new WrongPlayerException();
+    }
+
     Phase currentPhase = game.getCurrentPhase();
 
     if (!currentPhase.equals(Phase.Start)) throw new InvalidPhaseException();
