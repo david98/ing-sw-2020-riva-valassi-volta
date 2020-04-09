@@ -214,8 +214,7 @@ public class Controller implements EventListener {
       if (!game.validateMove(movement)) {
         throw new InvalidMoveException();
       }
-    }
-    catch (CurrentPlayerLosesException e){
+    } catch (CurrentPlayerLosesException e) {
       e.printStackTrace();
     }
     game.performMove(movement);

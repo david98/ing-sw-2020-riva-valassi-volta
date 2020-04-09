@@ -116,15 +116,14 @@ public class ControllerTests {
       game.getCurrentPlayer().setCurrentSex(Sex.Male);
       try {
         game.getBoard().place(game.getCurrentPlayer().getCurrentWorker(), new Point(0, 0));
+      } catch (InvalidPositionException ignored) {
+      } catch (BoxFullException ignored) {
       }
-      catch (InvalidPositionException ignored){}
-      catch (BoxFullException ignored){}
       controller = new Controller(game);
 
-      MovementEvent evt = new MovementEvent(this, game.getCurrentPlayer(), new Point (0, 1));
+      MovementEvent evt = new MovementEvent(this, game.getCurrentPlayer(), new Point(0, 1));
 
-    }
-    catch (InvalidNumberOfPlayersException ignored){
+    } catch (InvalidNumberOfPlayersException ignored) {
 
     }
   }
