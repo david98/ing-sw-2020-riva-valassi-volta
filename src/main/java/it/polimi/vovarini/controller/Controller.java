@@ -39,8 +39,8 @@ public class Controller implements EventListener {
     }
 
     Phase currentPhase = game.getCurrentPhase();
-
     if (!currentPhase.equals(Phase.Start)) throw new InvalidPhaseException();
+
     game.getCurrentPlayer().setCurrentSex(evt.getSex());
     game.nextPhase();
   }
@@ -50,15 +50,14 @@ public class Controller implements EventListener {
       throws InvalidPositionException, InvalidPhaseException, NonBuildablePositionException,
           WrongPlayerException, InvalidMoveException {
 
-    if (!game.getCurrentPlayer().equals(evt.getPlayerSource())) {
-      throw new WrongPlayerException();
-    }
-
-    Point input = new Point(evt.getBuildEnd());
-    if (!game.getBoard().isPositionValid(input)) throw new InvalidPositionException();
+    Player currentPlayer = game.getCurrentPlayer();
+    if (!currentPlayer.equals(evt.getPlayerSource())) throw new WrongPlayerException();
 
     Phase currentPhase = game.getCurrentPhase();
     if (!currentPhase.equals(Phase.Construction)) throw new InvalidPhaseException();
+
+    Point input = new Point(evt.getBuildEnd());
+    if (!game.getBoard().isPositionValid(input)) throw new InvalidPositionException();
 
     Construction build =
         new Construction(
@@ -104,6 +103,7 @@ public class Controller implements EventListener {
 
   // Not part of the 1vs1 simulation we want to develop now
   public void update(CardChoiceEvent evt) {
+
     for (GodName card : evt.getSelectedCards()) {
       this.selectedCards.add(card);
     }
@@ -158,9 +158,8 @@ public class Controller implements EventListener {
   // CLI: Ctrl+Z pressed by the user
   public void update(UndoEvent evt) throws WrongPlayerException {
 
-    if (!game.getCurrentPlayer().equals(evt.getPlayerSource())) {
-      throw new WrongPlayerException();
-    }
+    Player currentPlayer = game.getCurrentPlayer();
+    if (!currentPlayer.equals(evt.getPlayerSource())) throw new WrongPlayerException();
 
     game.undoLastMove();
   }
@@ -169,13 +168,11 @@ public class Controller implements EventListener {
   // the next turn (like pressing space)
   public void update(NextPlayerEvent evt) throws InvalidPhaseException, WrongPlayerException {
 
-    if (!game.getCurrentPhase().equals(Phase.End)) {
-      throw new InvalidPhaseException();
-    }
+    Player currentPlayer = game.getCurrentPlayer();
+    if (!currentPlayer.equals(evt.getPlayerSource())) throw new WrongPlayerException();
 
-    if (!game.getCurrentPlayer().equals(evt.getPlayerSource())) {
-      throw new WrongPlayerException();
-    }
+    Phase currentPhase = game.getCurrentPhase();
+    if (!currentPhase.equals(Phase.End)) throw new InvalidPhaseException();
 
     game.nextPlayer();
   }
@@ -183,25 +180,22 @@ public class Controller implements EventListener {
   // Gestisce lo skip dell'utente tra una fase e l'altra
   /*public void update(NextPhaseEvent evt) throws WrongPlayerException {
 
-    if (!game.getCurrentPlayer().equals(evt.getPlayerSource())) {
-      throw new WrongPlayerException();
-    }
+    Player currentPlayer = game.getCurrentPlayer();
+    if (!currentPlayer.equals(evt.getPlayerSource())) throw new WrongPlayerException();
 
     game.nextPhase();
   }*/
 
   // CLI: Coordinates input or keyboard arrows
   public void update(MovementEvent evt)
-      throws InvalidPhaseException, WrongPlayerException, InvalidPositionException,
-          InvalidMoveException {
+          throws InvalidPhaseException, WrongPlayerException, InvalidPositionException,
+          InvalidMoveException, CurrentPlayerLosesException {
 
-    if (!game.getCurrentPlayer().equals(evt.getPlayerSource())) {
-      throw new WrongPlayerException();
-    }
+    Player currentPlayer = game.getCurrentPlayer();
+    if (!currentPlayer.equals(evt.getPlayerSource())) throw new WrongPlayerException();
 
-    if (!game.getCurrentPhase().equals(Phase.Movement)) {
-      throw new InvalidPhaseException();
-    }
+    Phase currentPhase = game.getCurrentPhase();
+    if (!currentPhase.equals(Phase.Movement)) throw new InvalidPhaseException();
 
     Point end = evt.getPoint();
     if (!game.getBoard().isPositionValid(end)) throw new InvalidPositionException();
@@ -215,13 +209,10 @@ public class Controller implements EventListener {
 
     Movement movement = new Movement(game.getBoard(), start, end);
 
-    try {
-      if (!game.validateMove(movement)) {
-        throw new InvalidMoveException();
-      }
-    } catch (CurrentPlayerLosesException e) {
-      e.printStackTrace();
+    if (!game.validateMove(movement)) {
+      throw new InvalidMoveException();
     }
+    
     game.performMove(movement);
   }
 

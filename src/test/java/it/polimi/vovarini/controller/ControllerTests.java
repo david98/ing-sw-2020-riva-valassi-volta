@@ -2,10 +2,7 @@ package it.polimi.vovarini.controller;
 
 import it.polimi.vovarini.controller.events.MovementEvent;
 import it.polimi.vovarini.controller.events.WorkerSelectionEvent;
-import it.polimi.vovarini.model.Game;
-import it.polimi.vovarini.model.InvalidNumberOfPlayersException;
-import it.polimi.vovarini.model.Phase;
-import it.polimi.vovarini.model.Point;
+import it.polimi.vovarini.model.*;
 import it.polimi.vovarini.model.board.BoxFullException;
 import it.polimi.vovarini.model.board.InvalidPositionException;
 import it.polimi.vovarini.model.board.ItemNotFoundException;
@@ -150,6 +147,7 @@ public class ControllerTests {
       } catch (InvalidPositionException ignored) {
       } catch (InvalidMoveException ignored) {
       }
+      catch (CurrentPlayerLosesException ignored){}
 
       Point invalidMovePoint = new Point (3,3);
       MovementEvent evtInvalidMove = new MovementEvent(this, game.getCurrentPlayer(), invalidMovePoint);
