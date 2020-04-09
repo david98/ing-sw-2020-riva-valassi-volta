@@ -11,7 +11,6 @@ import it.polimi.vovarini.model.board.InvalidPositionException;
 import it.polimi.vovarini.model.board.ItemNotFoundException;
 import it.polimi.vovarini.model.board.items.Sex;
 import it.polimi.vovarini.model.godcards.GodCard;
-import it.polimi.vovarini.model.godcards.GodCardFactory;
 import it.polimi.vovarini.model.godcards.GodName;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -103,7 +102,7 @@ public class ControllerTests {
   void MovementTest() {
     try {
       Game game = new Game(2);
-      Point point = new Point (0, 1);
+      Point point = new Point(0, 1);
 
       try {
         game.addPlayer("playerOne", 2);
@@ -135,19 +134,19 @@ public class ControllerTests {
       game.nextPhase();
 
       MovementEvent evt = new MovementEvent(this, game.getCurrentPlayer(), point);
-      try{
+      try {
         controller.update(evt);
         try {
-          assertTrue(point.equals(game.getBoard().getItemPosition(game.getCurrentPlayer().getCurrentWorker())));
+          assertTrue(
+              point.equals(
+                  game.getBoard().getItemPosition(game.getCurrentPlayer().getCurrentWorker())));
+        } catch (ItemNotFoundException ignored) {
         }
-        catch (ItemNotFoundException ignored) {}
+      } catch (InvalidPhaseException ignored) {
+      } catch (WrongPlayerException ignored) {
+      } catch (InvalidPositionException ignored) {
+      } catch (InvalidMoveException ignored) {
       }
-      catch (InvalidPhaseException ignored){}
-      catch (WrongPlayerException ignored){}
-      catch (InvalidPositionException ignored){}
-      catch (InvalidMoveException ignored){}
-
-
 
     } catch (InvalidNumberOfPlayersException ignored) {
 
