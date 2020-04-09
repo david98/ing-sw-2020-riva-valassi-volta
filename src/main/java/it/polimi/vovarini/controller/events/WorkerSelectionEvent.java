@@ -6,7 +6,7 @@ import it.polimi.vovarini.model.board.items.Sex;
 // evento di selezione del worker
 public class WorkerSelectionEvent extends GameEvent {
 
-  private Sex sex;
+  private final Sex sex;
 
   public WorkerSelectionEvent(Object source, Player player, Sex sex) {
     super(source, player);
