@@ -66,7 +66,36 @@ public class Game {
 
 
 
-  public boolean validateMove(Movement movement) {
+  public boolean validateMove(Movement movement) throws CurrentPlayerLosesException {
+
+    Stack<Item> startPositionStack = new Stack<Item>();
+    Stack<Item> endPositionStack = new Stack<Item>();
+
+
+    try {
+      startPositionStack = (Stack<Item>) getBoard().getBox(movement.getStart()).getItems().clone();
+      startPositionStack.pop();
+    }
+    catch (BoxEmptyException ignored) {}
+
+    try {
+      endPositionStack = (Stack<Item>) getBoard().getBox(movement.getEnd()).getItems().clone();
+    }
+    catch (BoxEmptyException ignored){}
+
+    try {
+      for (Point point : getCurrentPlayer().getGodCard().computeReachablePoints()) {
+        if(point.equals(movement.getEnd())){
+          if(startPositionStack.size() == endPositionStack.size() || startPositionStack.size() == (endPositionStack.size() - 1) ){
+            return true;
+          }
+        }
+      }
+    }
+    catch (CurrentPlayerLosesException e){
+      throw e;
+    }
+
     return false;
   }
 

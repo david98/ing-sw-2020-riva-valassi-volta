@@ -5,6 +5,9 @@ import it.polimi.vovarini.controller.events.WorkerSelectionEvent;
 import it.polimi.vovarini.model.Game;
 import it.polimi.vovarini.model.InvalidNumberOfPlayersException;
 import it.polimi.vovarini.model.Phase;
+import it.polimi.vovarini.model.Point;
+import it.polimi.vovarini.model.board.BoxFullException;
+import it.polimi.vovarini.model.board.InvalidPositionException;
 import it.polimi.vovarini.model.board.items.Sex;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -101,8 +104,15 @@ public class ControllerTests {
         return;
       }
 
+      game.getCurrentPlayer().setCurrentSex(Sex.Male);
+      try {
+        game.getBoard().place(game.getCurrentPlayer().getCurrentWorker(), new Point(0, 0));
+      }
+      catch (InvalidPositionException ignored){}
+      catch (BoxFullException ignored){}
       controller = new Controller(game);
-      //MovementEvent evt = new MovementEvent(this, game.getCurrentPlayer(), )
+      MovementEvent evt = new MovementEvent(this, game.getCurrentPlayer(), new Point (0, 1));
+
     }
     catch (InvalidNumberOfPlayersException ignored){
 
