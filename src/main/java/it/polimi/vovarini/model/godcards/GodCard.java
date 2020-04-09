@@ -26,6 +26,11 @@ public class GodCard {
     this.name = name;
   }
 
+  public GodCard(GodName name, Game game){
+    this.name = name;
+    this.game = game;
+  }
+
   BiFunction<Game, Point, Boolean> isPointReachable =
       (Game game, Point point) -> {
         try {

@@ -8,7 +8,11 @@ import it.polimi.vovarini.model.Phase;
 import it.polimi.vovarini.model.Point;
 import it.polimi.vovarini.model.board.BoxFullException;
 import it.polimi.vovarini.model.board.InvalidPositionException;
+import it.polimi.vovarini.model.board.ItemNotFoundException;
 import it.polimi.vovarini.model.board.items.Sex;
+import it.polimi.vovarini.model.godcards.GodCard;
+import it.polimi.vovarini.model.godcards.GodCardFactory;
+import it.polimi.vovarini.model.godcards.GodName;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -99,6 +103,7 @@ public class ControllerTests {
   void MovementTest() {
     try {
       Game game = new Game(2);
+      Point point = new Point (0, 1);
 
       try {
         game.addPlayer("playerOne", 2);
@@ -113,6 +118,12 @@ public class ControllerTests {
         return;
       }
 
+      GodCard cardOne = new GodCard(GodName.Nobody, game);
+      GodCard cardTwo = new GodCard(GodName.Nobody, game);
+
+      game.getPlayers()[0].setGodCard(cardOne);
+      game.getPlayers()[1].setGodCard(cardTwo);
+
       game.getCurrentPlayer().setCurrentSex(Sex.Male);
       try {
         game.getBoard().place(game.getCurrentPlayer().getCurrentWorker(), new Point(0, 0));
@@ -121,7 +132,21 @@ public class ControllerTests {
       catch (BoxFullException ignored){}
       controller = new Controller(game);
 
-      MovementEvent evt = new MovementEvent(this, game.getCurrentPlayer(), new Point (0, 1));
+      game.nextPhase();
+
+      MovementEvent evt = new MovementEvent(this, game.getCurrentPlayer(), point);
+      try{
+        controller.update(evt);
+        try {
+          assertTrue(point.equals(game.getBoard().getItemPosition(game.getCurrentPlayer().getCurrentWorker())));
+        }
+        catch (ItemNotFoundException ignored) {}
+      }
+      catch (InvalidPhaseException ignored){}
+      catch (WrongPlayerException ignored){}
+      catch (InvalidPositionException ignored){}
+      catch (InvalidMoveException ignored){}
+
 
     }
     catch (InvalidNumberOfPlayersException ignored){
