@@ -209,10 +209,15 @@ public class Controller implements EventListener {
     }
 
     Movement movement = new Movement(game.getBoard(), start, end);
-    if (!game.validateMove(movement)) {
-      throw new InvalidMoveException();
-    }
 
+    try {
+      if (!game.validateMove(movement)) {
+        throw new InvalidMoveException();
+      }
+    }
+    catch (CurrentPlayerLosesException e){
+      e.printStackTrace();
+    }
     game.performMove(movement);
     game.nextPhase();
   }

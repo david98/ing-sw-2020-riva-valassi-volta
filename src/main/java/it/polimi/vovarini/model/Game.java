@@ -65,7 +65,6 @@ public class Game {
   }
 
 
-
   public boolean validateMove(Movement movement) throws CurrentPlayerLosesException {
 
     Stack<Item> startPositionStack = new Stack<Item>();
