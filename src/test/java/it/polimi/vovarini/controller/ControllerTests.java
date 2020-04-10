@@ -1,6 +1,7 @@
 package it.polimi.vovarini.controller;
 
 import it.polimi.vovarini.controller.events.MovementEvent;
+import it.polimi.vovarini.controller.events.UndoEvent;
 import it.polimi.vovarini.controller.events.WorkerSelectionEvent;
 import it.polimi.vovarini.model.*;
 import it.polimi.vovarini.model.board.BoxFullException;
@@ -99,7 +100,7 @@ public class ControllerTests {
 
   @Test
   @DisplayName("Player moves due to a MovementEvent. Tests sequence of calls")
-  void MovementTest() {
+  void movementTest() {
     try {
       Game game = new Game(2);
       Point point = new Point(0, 1);
@@ -190,5 +191,39 @@ public class ControllerTests {
     } catch (InvalidNumberOfPlayersException ignored) {
 
     }
+  }
+
+  @Test
+  @DisplayName("Tests the undo function that undoes the last performed move.")
+  void undoTest(){
+
+    try {
+      Game game = new Game(2);
+
+      try {
+        game.addPlayer("playerOne", 2);
+      } catch (InvalidNumberOfPlayersException e) {
+        assertTrue(game.getPlayers().length == 2);
+        return;
+      }
+      try {
+        game.addPlayer("playerTwo", 2);
+      } catch (InvalidNumberOfPlayersException e) {
+        assertTrue(game.getPlayers().length == 2);
+        return;
+      }
+
+      controller = new Controller(game);
+      UndoEvent evt = new UndoEvent(this, game.getCurrentPlayer());
+      try{
+        controller.update(evt);
+      }
+      catch (WrongPlayerException ignored){}
+
+      UndoEvent evtWrongPlayer = new UndoEvent(this, game.getPlayers()[1]);
+      assertThrows(WrongPlayerException.class, ()->{ controller.update(evtWrongPlayer); });
+    }
+    catch (InvalidNumberOfPlayersException ignored){}
+
   }
 }
