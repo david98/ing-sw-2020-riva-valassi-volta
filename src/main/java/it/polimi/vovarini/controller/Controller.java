@@ -1,18 +1,12 @@
 package it.polimi.vovarini.controller;
 
-import it.polimi.vovarini.controller.events.BuildEvent;
-import it.polimi.vovarini.controller.events.CardAssignmentEvent;
-import it.polimi.vovarini.controller.events.CardChoiceEvent;
-import it.polimi.vovarini.controller.events.WorkerSelectionEvent;
+import it.polimi.vovarini.controller.events.*;
 import it.polimi.vovarini.model.*;
+import it.polimi.vovarini.model.board.BoxFullException;
 import it.polimi.vovarini.model.board.InvalidPositionException;
 import it.polimi.vovarini.model.board.ItemNotFoundException;
 import it.polimi.vovarini.model.board.items.Block;
 import it.polimi.vovarini.model.godcards.GodName;
-import it.polimi.vovarini.controller.events.MovementEvent;
-import it.polimi.vovarini.controller.events.NextPlayerEvent;
-import it.polimi.vovarini.controller.events.RegistrationEvent;
-import it.polimi.vovarini.controller.events.UndoEvent;
 
 import java.util.*;
 
@@ -215,6 +209,22 @@ public class Controller implements EventListener {
     
     game.performMove(movement);
   }
+
+  public void update(SpawnWorkerEvent evt) throws WrongPlayerException, InvalidPositionException {
+
+    Player currentPlayer = game.getCurrentPlayer();
+    if (!currentPlayer.equals(evt.getPlayerSource())) throw new WrongPlayerException();
+
+    Point target = evt.getTarget();
+    if (!game.getBoard().isPositionValid(target)) throw new InvalidPositionException();
+
+    try {
+      game.getBoard().place(currentPlayer.getCurrentWorker(), target);
+    }
+    catch (BoxFullException ignored){}
+  }
+
+
 
   public static void main(String[] args) {}
 }
