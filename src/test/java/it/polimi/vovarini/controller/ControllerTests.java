@@ -99,7 +99,7 @@ public class ControllerTests {
 
   @Test
   @DisplayName("Player moves due to a MovementEvent. Tests sequence of calls")
-  void MovementTest() {
+  void movementTest() {
     try {
       Game game = new Game(2);
       Point point = new Point(0, 1);
@@ -482,4 +482,90 @@ public class ControllerTests {
     assertThrows(WrongPlayerException.class, ()->{controller.update(evtInvalidPlayer);});
   }
 
+  @Test
+  @DisplayName("Tests the undo function that undoes the last performed move.")
+  void undoTest(){
+
+    try {
+      Game game = new Game(2);
+
+      try {
+        game.addPlayer("playerOne", 2);
+      } catch (InvalidNumberOfPlayersException e) {
+        assertTrue(game.getPlayers().length == 2);
+        return;
+      }
+      try {
+        game.addPlayer("playerTwo", 2);
+      } catch (InvalidNumberOfPlayersException e) {
+        assertTrue(game.getPlayers().length == 2);
+        return;
+      }
+
+      controller = new Controller(game);
+      UndoEvent evt = new UndoEvent(this, game.getCurrentPlayer());
+      try{
+        controller.update(evt);
+      }
+      catch (WrongPlayerException ignored){}
+
+      UndoEvent evtWrongPlayer = new UndoEvent(this, game.getPlayers()[1]);
+      assertThrows(WrongPlayerException.class, ()->{ controller.update(evtWrongPlayer); });
+    }
+    catch (InvalidNumberOfPlayersException ignored){}
+
+  }
+
+  @Test
+  @DisplayName("Tests that a correct SpwanWorkerEvent places the currentWorker in the right place, which is the target parameter")
+  void SpawnWorkerTest(){
+
+    try{
+      Game game = new Game(2);
+
+      try {
+        game.addPlayer("playerOne", 2);
+      } catch (InvalidNumberOfPlayersException e) {
+        assertTrue(game.getPlayers().length == 2);
+        return;
+      }
+      try {
+        game.addPlayer("playerTwo", 2);
+      } catch (InvalidNumberOfPlayersException e) {
+        assertTrue(game.getPlayers().length == 2);
+        return;
+      }
+
+      controller = new Controller(game);
+
+
+      Point target = new Point (0,0);
+
+      SpawnWorkerEvent evt = new SpawnWorkerEvent(this, game.getCurrentPlayer(), target);
+      try{
+        controller.update(evt);
+      }
+      catch (WrongPlayerException ignored){}
+      catch (InvalidPositionException ignored){}
+
+      try {
+        assertEquals(game.getBoard().getItemPosition(game.getCurrentPlayer().getCurrentWorker()), evt.getTarget());
+      }
+      catch (ItemNotFoundException e){
+        e.printStackTrace();
+      }
+
+      Point badTarget = new Point (-1, -1);
+      SpawnWorkerEvent evtInvalidPos = new SpawnWorkerEvent(this, game.getCurrentPlayer(), badTarget);
+      assertThrows(InvalidPositionException.class, ()->{ controller.update(evtInvalidPos); });
+
+      SpawnWorkerEvent evtWrongPlayer = new SpawnWorkerEvent(this, game.getPlayers()[1], target);
+      assertThrows(WrongPlayerException.class, ()->{ controller.update(evtWrongPlayer); });
+    }
+
+
+
+    catch (InvalidNumberOfPlayersException ignored){}
+
+  }
 }

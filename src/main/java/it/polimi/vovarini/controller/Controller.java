@@ -2,7 +2,7 @@ package it.polimi.vovarini.controller;
 
 import it.polimi.vovarini.controller.events.*;
 import it.polimi.vovarini.model.*;
-import it.polimi.vovarini.model.board.Board;
+import it.polimi.vovarini.model.board.BoxFullException;
 import it.polimi.vovarini.model.board.InvalidPositionException;
 import it.polimi.vovarini.model.board.ItemNotFoundException;
 import it.polimi.vovarini.model.board.items.Block;
@@ -168,6 +168,22 @@ public class Controller implements EventListener {
     
     game.performMove(movement);
   }
+
+  public void update(SpawnWorkerEvent evt) throws WrongPlayerException, InvalidPositionException {
+
+    Player currentPlayer = game.getCurrentPlayer();
+    if (!currentPlayer.equals(evt.getPlayerSource())) throw new WrongPlayerException();
+
+    Point target = evt.getTarget();
+    if (!game.getBoard().isPositionValid(target)) throw new InvalidPositionException();
+
+    try {
+      game.getBoard().place(currentPlayer.getCurrentWorker(), target);
+    }
+    catch (BoxFullException ignored){}
+  }
+
+
 
   public static void main(String[] args) {}
 }
