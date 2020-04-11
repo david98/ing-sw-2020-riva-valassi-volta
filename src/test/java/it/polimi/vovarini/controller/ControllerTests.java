@@ -1,9 +1,6 @@
 package it.polimi.vovarini.controller;
 
-import it.polimi.vovarini.controller.events.BuildEvent;
-import it.polimi.vovarini.controller.events.MovementEvent;
-import it.polimi.vovarini.controller.events.RegistrationEvent;
-import it.polimi.vovarini.controller.events.WorkerSelectionEvent;
+import it.polimi.vovarini.controller.events.*;
 import it.polimi.vovarini.model.*;
 import it.polimi.vovarini.model.board.BoxEmptyException;
 import it.polimi.vovarini.model.board.BoxFullException;
@@ -305,7 +302,7 @@ public class ControllerTests {
 
   @Test
   @DisplayName("Player builds due to a ConstructionEvent. Tests sequence of calls")
-  void registrationTest() {
+    void registrationTest() {
 
     Game game = null;
     try {
@@ -374,5 +371,115 @@ public class ControllerTests {
     }
 
     assertEquals(game.getPlayers()[1].getNickname(), nickname);
+
+    // There is no place for you in this Game
+    nickname = "xXBEN00BXx";
+    RegistrationEvent evtInvalidNumberOfPlayers = new RegistrationEvent(this, null, nickname);
+
+    assertThrows(InvalidNumberOfPlayersException.class, ()-> {controller.update(evtInvalidNumberOfPlayers);});
+
+    assertEquals(game.getPlayers()[0].getNickname(), "Mengi_97");
+    assertEquals(game.getPlayers()[1].getNickname(), "Valas511");
+    assertEquals(game.getPlayers().length, 2);
   }
+
+  @Test
+  @DisplayName("To change current player")
+  void nextPlayerTest() {
+
+    Game game = null;
+    try {
+      game = new Game(3);
+    } catch (InvalidNumberOfPlayersException ignored) {
+    }
+
+    try {
+      game.addPlayer("playerOne");
+      game.addPlayer("playerTwo");
+      game.addPlayer("playerThree");
+    } catch (InvalidNumberOfPlayersException e) {
+      assertNotNull(game.getPlayers()[game.getPlayers().length-1]);
+      return;
+    }
+
+    controller = new Controller(game);
+
+    game.nextPhase();
+    game.nextPhase();
+    game.nextPhase();
+
+    assertEquals(game.getCurrentPhase(), Phase.End);
+
+    Player[] players = game.getPlayers();
+
+    NextPlayerEvent evt = new NextPlayerEvent(this, players[0]);
+
+    try {
+      controller.update(evt);
+    } catch (InvalidPhaseException ignored) {
+    } catch (WrongPlayerException ignored) {
+    }
+
+    assertEquals(game.getCurrentPlayer(), players[1]);
+    assertEquals(game.getCurrentPhase(), Phase.Start);
+
+    // invalidPhase: Start phase
+    NextPlayerEvent evtInvalidPhase = new NextPlayerEvent(this, players[1]);
+    assertThrows(InvalidPhaseException.class, ()-> {controller.update(evtInvalidPhase);});
+
+    game.nextPhase();
+    game.nextPhase();
+    game.nextPhase();
+
+    // invalidPlayer: wrong player
+    NextPlayerEvent evtInvalidPlayer = new NextPlayerEvent(this, players[2]);
+    assertThrows(WrongPlayerException.class, ()->{controller.update(evtInvalidPlayer);});
+  }
+
+  @Test
+  @DisplayName("To change current phase")
+  void skipTest() {
+    Game game = null;
+    try {
+      game = new Game(3);
+    } catch (InvalidNumberOfPlayersException ignored) {
+    }
+
+    try {
+      game.addPlayer("playerOne");
+      game.addPlayer("playerTwo");
+      game.addPlayer("playerThree");
+    } catch (InvalidNumberOfPlayersException e) {
+      assertNotNull(game.getPlayers()[game.getPlayers().length-1]);
+      return;
+    }
+
+    controller = new Controller(game);
+
+    SkipEvent evt = new SkipEvent(this, game.getPlayers()[0]);
+
+    try {
+      controller.update(evt);
+    } catch (InvalidPhaseException ignored) {
+    } catch (WrongPlayerException ignored) {
+    }
+
+    assertEquals(game.getCurrentPlayer(), game.getPlayers()[0]);
+    assertEquals(game.getCurrentPhase(), Phase.Movement);
+
+    game.nextPhase();
+    game.nextPhase();
+
+    // invalidPhase: End phase
+    SkipEvent evtInvalidPhase = new SkipEvent(this, game.getCurrentPlayer());
+    assertThrows(InvalidPhaseException.class, ()-> {controller.update(evtInvalidPhase);});
+
+    game.nextPlayer();
+    game.nextPlayer();
+
+    // invalidPlayer: wrong player
+    NextPlayerEvent evtInvalidPlayer = new NextPlayerEvent(this, game.getPlayers()[0]);
+    assertThrows(WrongPlayerException.class, ()->{controller.update(evtInvalidPlayer);});
+  }
+
 }
