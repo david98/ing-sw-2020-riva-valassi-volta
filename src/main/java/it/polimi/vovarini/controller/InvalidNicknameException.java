@@ -9,4 +9,8 @@ public class InvalidNicknameException extends Throwable {
   public InvalidNicknameException(int errorCode) {
     this.errorCode = errorCode;
   }
+
+  public int getErrorCode() {
+    return errorCode;
+  }
 }

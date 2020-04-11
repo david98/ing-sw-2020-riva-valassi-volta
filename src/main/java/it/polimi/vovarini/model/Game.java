@@ -47,7 +47,7 @@ public class Game {
     currentPhase = Phase.Start;
   }
 
-  public void addPlayer(String nickname, int numberOfPlayers)
+  public void addPlayer(String nickname)
       throws InvalidNumberOfPlayersException {
 
     if (players[players.length - 1] != null) {
@@ -97,6 +97,26 @@ public class Game {
   }
 
   public boolean validateMove(Construction construction) {
+
+    try {
+      for (Point point : getCurrentPlayer().getGodCard().computeBuildablePoints()) {
+        if (construction.getTarget().equals(point)) {
+          Stack<Item> items = board.getItems(construction.getTarget());
+          if (construction.getBlock().canBePlacedOn(items.peek()))
+            return true;
+        }
+      }
+    } catch (CurrentPlayerLosesException e) {
+      System.out.println("Tu non puoi costruire perchè hai perso.");
+      System.out.println("Io invece devo gestire questa eccezione come si deve.");
+      System.out.println("Ma prima devo capire come viene lanciata.");
+    } catch (BoxEmptyException e) {
+      if(construction.getBlock().getLevel() == 1) {
+        return true;
+      }
+    } catch (InvalidPositionException ignored) {
+    }
+
     return false;
   }
 
