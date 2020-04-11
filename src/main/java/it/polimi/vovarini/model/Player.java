@@ -63,7 +63,7 @@ public class Player {
   }
 
   public static boolean validateNickname(String nickname) {
-    return false;
+    return (nickname != null) && nickname.matches("[A-Za-z0-9_]{4,16}$");
   }
 
   @Override

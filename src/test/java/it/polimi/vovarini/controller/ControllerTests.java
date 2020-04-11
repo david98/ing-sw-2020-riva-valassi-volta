@@ -1,8 +1,11 @@
 package it.polimi.vovarini.controller;
 
+import it.polimi.vovarini.controller.events.BuildEvent;
 import it.polimi.vovarini.controller.events.MovementEvent;
+import it.polimi.vovarini.controller.events.RegistrationEvent;
 import it.polimi.vovarini.controller.events.WorkerSelectionEvent;
 import it.polimi.vovarini.model.*;
+import it.polimi.vovarini.model.board.BoxEmptyException;
 import it.polimi.vovarini.model.board.BoxFullException;
 import it.polimi.vovarini.model.board.InvalidPositionException;
 import it.polimi.vovarini.model.board.ItemNotFoundException;
@@ -41,13 +44,13 @@ public class ControllerTests {
       Game game = new Game(2);
 
       try {
-        game.addPlayer("playerOne", 2);
+        game.addPlayer("playerOne");
       } catch (InvalidNumberOfPlayersException e) {
         assertTrue(game.getPlayers().length == 2);
         return;
       }
       try {
-        game.addPlayer("playerTwo", 2);
+        game.addPlayer("playerTwo");
       } catch (InvalidNumberOfPlayersException e) {
         assertTrue(game.getPlayers().length == 2);
         return;
@@ -105,13 +108,13 @@ public class ControllerTests {
       Point point = new Point(0, 1);
 
       try {
-        game.addPlayer("playerOne", 2);
+        game.addPlayer("playerOne");
       } catch (InvalidNumberOfPlayersException e) {
         assertTrue(game.getPlayers().length == 2);
         return;
       }
       try {
-        game.addPlayer("playerTwo", 2);
+        game.addPlayer("playerTwo");
       } catch (InvalidNumberOfPlayersException e) {
         assertTrue(game.getPlayers().length == 2);
         return;
@@ -146,8 +149,8 @@ public class ControllerTests {
       } catch (WrongPlayerException ignored) {
       } catch (InvalidPositionException ignored) {
       } catch (InvalidMoveException ignored) {
+      } catch (CurrentPlayerLosesException ignored){
       }
-      catch (CurrentPlayerLosesException ignored){}
 
       Point invalidMovePoint = new Point (3,3);
       MovementEvent evtInvalidMove = new MovementEvent(this, game.getCurrentPlayer(), invalidMovePoint);
@@ -190,5 +193,186 @@ public class ControllerTests {
     } catch (InvalidNumberOfPlayersException ignored) {
 
     }
+  }
+
+  @Test
+  @DisplayName("Player builds due to a ConstructionEvent. Tests sequence of calls")
+  void constructionTest() {
+
+    Game game = null;
+    try {
+      game = new Game(2);
+    } catch (InvalidNumberOfPlayersException ignored) {
+    }
+
+    try {
+      game.addPlayer("playerOne");
+      game.addPlayer("playerTwo");
+    } catch (InvalidNumberOfPlayersException e) {
+      assertNotNull(game.getPlayers()[game.getPlayers().length-1]);
+      return;
+    }
+
+    GodCard cardOne = new GodCard(GodName.Nobody, game);
+    GodCard cardTwo = new GodCard(GodName.Nobody, game);
+
+    game.getPlayers()[0].setGodCard(cardOne);
+    game.getPlayers()[1].setGodCard(cardTwo);
+
+    game.getCurrentPlayer().setCurrentSex(Sex.Female);
+
+    Point femalePos = new Point(0,1);
+    try {
+      game.getBoard().place(game.getCurrentPlayer().getCurrentWorker(), femalePos);
+    } catch (InvalidPositionException ignored) {
+    } catch (BoxFullException ignored) {
+    }
+
+    game.getCurrentPlayer().setCurrentSex(Sex.Male);
+
+    Point malePos = new Point(0,0);
+    try {
+      game.getBoard().place(game.getCurrentPlayer().getCurrentWorker(), malePos);
+    } catch (InvalidPositionException ignored) {
+    } catch (BoxFullException ignored) {
+    }
+
+    controller = new Controller(game);
+
+    // Move in Construction phase
+    game.nextPhase();
+    game.nextPhase();
+
+    assertEquals(game.getCurrentPhase(), Phase.Construction);
+
+    // Ok, now let's test on Construction
+
+    // Remember: FemaleWorker is on the point (0,1)
+    //           MaleWorker (=currentWorker) is on the point (0,0)
+
+    Point target = new Point(1,1);
+    int level = 1;
+
+    BuildEvent evt = new BuildEvent(this, game.getCurrentPlayer(), target, level);
+
+    try {
+      controller.update(evt);
+    } catch (InvalidPositionException ignored) {
+    } catch (InvalidPhaseException ignored) {
+    } catch (WrongPlayerException ignored) {
+    } catch (InvalidMoveException ignored) {
+    }
+
+    try {
+      assertEquals(game.getBoard().getItems(target).peek(), Block.blocks[level-1]);
+      } catch (BoxEmptyException e) {
+      System.out.println("Construction has not been performed");
+      } catch (InvalidPositionException ignored) {
+    }
+
+    // Now level of (1,1) is 1
+
+    target = new Point(1,0);
+
+    // invalidMove: target not adjacent
+    Point notAdjacentPoint = new Point (3,3);
+    BuildEvent evtInvalidMove = new BuildEvent(this, game.getCurrentPlayer(), notAdjacentPoint, level);
+    assertThrows(InvalidMoveException.class, ()-> {controller.update(evtInvalidMove);});
+
+    // invalidMove: femaleWorker on the top of target (target = femalePosition)
+    BuildEvent evtInvalidMove2 = new BuildEvent(this, game.getCurrentPlayer(), femalePos, level);
+    assertThrows(InvalidMoveException.class, ()-> {controller.update(evtInvalidMove);});
+
+    // invalidMove: invalidLevel
+    BuildEvent evtInvalidLevel = new BuildEvent(this, game.getCurrentPlayer(), target, level+1);
+    assertThrows(InvalidMoveException.class, ()->{controller.update(evtInvalidLevel);});
+
+    // invalidPosition: negative target
+    Point negativePoint = new Point (-1, -1);
+    BuildEvent evtInvalidPos = new BuildEvent(this, game.getCurrentPlayer(), negativePoint, level);
+    assertThrows(InvalidPositionException.class, ()->{controller.update(evtInvalidPos);});
+
+    // invalidPlayer: wrong player
+    BuildEvent evtInvalidPlayer = new BuildEvent(this, game.getPlayers()[1], target, level);
+    assertThrows(WrongPlayerException.class, ()->{controller.update(evtInvalidPlayer);});
+
+    // invalidPhase: Start phase
+    game.nextPlayer();
+    BuildEvent evtInvalidPhase = new BuildEvent(this, game.getCurrentPlayer(), target, level);
+    assertThrows(InvalidPhaseException.class, ()->{controller.update(evtInvalidPhase);});
+  }
+
+
+  @Test
+  @DisplayName("Player builds due to a ConstructionEvent. Tests sequence of calls")
+  void registrationTest() {
+
+    Game game = null;
+    try {
+      game = new Game(2);
+    } catch (InvalidNumberOfPlayersException ignored) {
+    }
+
+    controller = new Controller(game);
+
+    String nickname = "Mengi_97";
+    RegistrationEvent evt = new RegistrationEvent(this, null, nickname);
+
+    try {
+      controller.update(evt);
+    } catch (InvalidNicknameException ignored) {
+    } catch (InvalidNumberOfPlayersException ignored) {
+    }
+
+    assertEquals(game.getPlayers()[0].getNickname(), nickname);
+
+    InvalidNicknameException e;
+
+    // invalidNickname: null nickname
+    nickname = null;
+    RegistrationEvent evtNullNickname = new RegistrationEvent(this, null, nickname);
+    e = assertThrows(InvalidNicknameException.class, ()-> {controller.update(evtNullNickname);});
+    assertEquals(e.getErrorCode(), e.ERROR_INVALID);
+
+    // invalidNickname: length < 4
+    nickname = "o_o";
+    RegistrationEvent evtInvalidLength = new RegistrationEvent(this, null, nickname);
+    e = assertThrows(InvalidNicknameException.class, ()-> {controller.update(evtInvalidLength);});
+    assertEquals(e.getErrorCode(), e.ERROR_INVALID);
+
+    // invalidNickname: length > 16
+    nickname = "0123456789ABCDEF_ZZZZ";
+    RegistrationEvent evtInvalidLength2 = new RegistrationEvent(this, null, nickname);
+    e = assertThrows(InvalidNicknameException.class, ()-> {controller.update(evtInvalidLength2);});
+    assertEquals(e.getErrorCode(), e.ERROR_INVALID);
+
+    // invalidNickname: special character
+    nickname = "Mengi-97";
+    RegistrationEvent evtInvalidNickname = new RegistrationEvent(this, null, nickname);
+    e = assertThrows(InvalidNicknameException.class, ()-> {controller.update(evtInvalidNickname);});
+    assertEquals(e.getErrorCode(), e.ERROR_INVALID);
+
+    // invalidNickname: blank character
+    nickname = "Mengi 97";
+    RegistrationEvent evtInvalidNickname2 = new RegistrationEvent(this, null, nickname);
+    e = assertThrows(InvalidNicknameException.class, ()-> {controller.update(evtInvalidNickname2);});
+    assertEquals(e.getErrorCode(), e.ERROR_INVALID);
+
+    // invalidNickname: duplicate
+    nickname = "mEnGi_97";
+    RegistrationEvent evtDuplicateNickname = new RegistrationEvent(this, null, nickname);
+    e = assertThrows(InvalidNicknameException.class, ()-> {controller.update(evtDuplicateNickname);});
+    assertEquals(e.getErrorCode(), e.ERROR_DUPLICATE);
+
+    nickname = "Valas511";
+    evt = new RegistrationEvent(this, null, nickname);
+
+    try {
+      controller.update(evt);
+    } catch (InvalidNicknameException ignored) {
+    } catch (InvalidNumberOfPlayersException ignored) {
+    }
+
+    assertEquals(game.getPlayers()[1].getNickname(), nickname);
   }
 }
