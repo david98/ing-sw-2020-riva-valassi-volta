@@ -107,13 +107,13 @@ public class ControllerTests {
       try {
         game.addPlayer("playerOne");
       } catch (InvalidNumberOfPlayersException e) {
-        assertTrue(game.getPlayers().length == 2);
+        assertNotNull(game.getPlayers()[game.getPlayers().length-1]);
         return;
       }
       try {
         game.addPlayer("playerTwo");
       } catch (InvalidNumberOfPlayersException e) {
-        assertTrue(game.getPlayers().length == 2);
+        assertNotNull(game.getPlayers()[game.getPlayers().length-1]);
         return;
       }
 
@@ -490,15 +490,15 @@ public class ControllerTests {
       Game game = new Game(2);
 
       try {
-        game.addPlayer("playerOne", 2);
+        game.addPlayer("playerOne");
       } catch (InvalidNumberOfPlayersException e) {
-        assertTrue(game.getPlayers().length == 2);
+        assertNotNull(game.getPlayers()[game.getPlayers().length-1]);
         return;
       }
       try {
-        game.addPlayer("playerTwo", 2);
+        game.addPlayer("playerTwo");
       } catch (InvalidNumberOfPlayersException e) {
-        assertTrue(game.getPlayers().length == 2);
+        assertNotNull(game.getPlayers()[game.getPlayers().length-1]);
         return;
       }
 
@@ -524,15 +524,15 @@ public class ControllerTests {
       Game game = new Game(2);
 
       try {
-        game.addPlayer("playerOne", 2);
+        game.addPlayer("playerOne");
       } catch (InvalidNumberOfPlayersException e) {
-        assertTrue(game.getPlayers().length == 2);
+        assertNotNull(game.getPlayers()[game.getPlayers().length-1]);
         return;
       }
       try {
-        game.addPlayer("playerTwo", 2);
+        game.addPlayer("playerTwo");
       } catch (InvalidNumberOfPlayersException e) {
-        assertTrue(game.getPlayers().length == 2);
+        assertNotNull(game.getPlayers()[game.getPlayers().length-1]);
         return;
       }
 

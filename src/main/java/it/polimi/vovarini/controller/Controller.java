@@ -2,6 +2,7 @@ package it.polimi.vovarini.controller;
 
 import it.polimi.vovarini.controller.events.*;
 import it.polimi.vovarini.model.*;
+import it.polimi.vovarini.model.board.Board;
 import it.polimi.vovarini.model.board.BoxFullException;
 import it.polimi.vovarini.model.board.InvalidPositionException;
 import it.polimi.vovarini.model.board.ItemNotFoundException;
