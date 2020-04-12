@@ -8,7 +8,7 @@ import java.util.Set;
 
 public class PlayerRenderer {
 
-  public static PlayerRenderer instance = null;
+  private static PlayerRenderer instance = null;
 
   public static PlayerRenderer getInstance() {
     if (instance == null) {
@@ -28,6 +28,13 @@ public class PlayerRenderer {
     for (Player player : players) {
       colorMap.put(player, new Color(rand.nextInt(255), rand.nextInt(255), rand.nextInt(255)));
     }
+  }
+
+  public String render(Player player){
+    return colorMap.get(player).wrap(
+            player.getNickname() + (player.getGodCard() == null ?
+                    null : " (" + player.getGodCard().getName().name() + ")")
+    );
   }
 
   public Set<Player> getPlayers() {

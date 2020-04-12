@@ -1,10 +1,7 @@
 package it.polimi.vovarini.model.godcards;
 
 import it.polimi.vovarini.model.*;
-import it.polimi.vovarini.model.board.Board;
-import it.polimi.vovarini.model.board.BoxEmptyException;
-import it.polimi.vovarini.model.board.InvalidPositionException;
-import it.polimi.vovarini.model.board.ItemNotFoundException;
+import it.polimi.vovarini.model.board.*;
 import it.polimi.vovarini.model.board.items.Block;
 import it.polimi.vovarini.model.board.items.Item;
 import it.polimi.vovarini.model.board.items.Worker;
@@ -36,23 +33,17 @@ public class GodCard {
           }
 
           try {
-            Stack<Item> destinationItems = game.getBoard().getItems(point);
-            /* Here we assume that if the Block below a Worker is, say,
-             * a level 3 block, then below it you have a level 2 block
-             * and a level 1 block. Blocks must be stacked according to
-             * their level. Also, with Atlas you can build level 4 blocks
-             * anywhere, but no Worker can stand on top of a level 4 Block
-             * so this assumption is still valid.
-             */
-            int destinationLevel = destinationItems.size();
-            int currentWorkerLevel = game.getBoard().getItems(currentWorkerPosition).size();
+            Box destinationBox = game.getBoard().getBox(point);
+            Stack<Item> destinationItems = destinationBox.getItems();
+            int destinationLevel = destinationBox.getLevel();
+            int currentWorkerLevel = game.getBoard().getBox(currentWorkerPosition).getLevel();
             return (destinationLevel - currentWorkerLevel <= 1)
                 && currentWorker.canBePlacedOn(destinationItems.peek());
           } catch (BoxEmptyException ignored) {
             return true;
           }
 
-        } catch (ItemNotFoundException | InvalidPositionException ignored) {
+        } catch (ItemNotFoundException ignored) {
           System.err.println("This really should never happen...");
         }
         return false;
@@ -154,6 +145,10 @@ public class GodCard {
       throw new CurrentPlayerLosesException();
     }
     return buildablePoints;
+  }
+
+  public GodName getName(){
+    return name;
   }
 
   public void consequences(Game game) {}

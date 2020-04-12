@@ -2,6 +2,7 @@ package it.polimi.vovarini.model.godcards;
 
 import it.polimi.vovarini.model.Game;
 import it.polimi.vovarini.model.Point;
+import it.polimi.vovarini.model.board.Box;
 import it.polimi.vovarini.model.board.BoxEmptyException;
 import it.polimi.vovarini.model.board.InvalidPositionException;
 import it.polimi.vovarini.model.board.ItemNotFoundException;
@@ -23,10 +24,12 @@ public class GodCardFactory {
           }
 
           try {
-            Stack<Item> destinationItems = game.getBoard().getItems(point);
+            Box destinationBox = game.getBoard().getBox(point);
+            Stack<Item> destinationItems = destinationBox.getItems();
 
-            int destinationLevel = destinationItems.size();
-            int currentWorkerLevel = game.getBoard().getItems(currentWorkerPosition).size();
+            int destinationLevel = destinationBox.getLevel();
+            int currentWorkerLevel = game.getBoard().getBox(currentWorkerPosition).getLevel();
+
             return (destinationLevel - currentWorkerLevel <= 1)
                 && (currentWorker.canBePlacedOn(destinationItems.peek())
                     || destinationItems.peek().canBeRemoved());
@@ -34,7 +37,7 @@ public class GodCardFactory {
             return true;
           }
 
-        } catch (ItemNotFoundException | InvalidPositionException ignored) {
+        } catch (ItemNotFoundException ignored) {
           System.err.println("This really should never happen...");
         }
         return false;

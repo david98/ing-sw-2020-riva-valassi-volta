@@ -23,6 +23,9 @@ public class BoxRenderer {
       Stack<Item> items = box.getItems();
       ItemRenderer itemRenderer = ItemRenderer.getInstance();
       PlayerRenderer playerRenderer = PlayerRenderer.getInstance();
+
+      StringBuilder content = new StringBuilder();
+
       if (items.peek().canBeRemoved()) {
         Item topMostItem = items.pop();
         if (items.empty()) {
@@ -31,6 +34,8 @@ public class BoxRenderer {
           return itemRenderer.render(items.pop(), playerRenderer)
               + (hasCursor ? "▮" : itemRenderer.render(topMostItem, playerRenderer));
         }
+      } else if (!items.empty()){
+        return itemRenderer.render(items.pop(), playerRenderer) + " ";
       }
     } catch (BoxEmptyException ignored) {
     }

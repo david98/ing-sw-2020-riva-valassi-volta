@@ -1,5 +1,7 @@
 package it.polimi.vovarini.model;
 
+import java.util.Random;
+
 public class Point {
   private int x;
 
@@ -49,5 +51,10 @@ public class Point {
 
   public boolean isValidPoint() {
     return x >= 0 && x < 5 && y >= 0 && y < 5;
+  }
+
+  public static Point random(int xBound, int yBound){
+    Random r = new Random();
+    return new Point(r.nextInt(xBound), r.nextInt(yBound));
   }
 }

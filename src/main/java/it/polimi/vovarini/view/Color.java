@@ -1,6 +1,11 @@
 package it.polimi.vovarini.view;
 
 public class Color {
+
+  public final static Color Red = new Color(255, 0, 0);
+  public final static Color Green = new Color(0, 255,  0);
+  public final static Color Blue = new Color(0, 0,  255);
+
   public int r, g, b;
 
   public Color(int r, int g, int b) {

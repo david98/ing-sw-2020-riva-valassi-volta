@@ -36,7 +36,6 @@ public class Game {
       players[i] = new Player(GodCardFactory.create(GodName.Apollo), "Player" + i);
     }
 
-    players = new Player[numberOfPlayers];
     currentPlayerIndex = 0;
 
     moves = new Stack<>();
