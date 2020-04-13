@@ -1,4 +1,4 @@
-package it.polimi.vovarini.controller.events;
+package it.polimi.vovarini.common.events;
 
 import it.polimi.vovarini.model.Player;
 

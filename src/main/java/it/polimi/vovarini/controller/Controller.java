@@ -1,6 +1,6 @@
 package it.polimi.vovarini.controller;
 
-import it.polimi.vovarini.controller.events.*;
+import it.polimi.vovarini.common.events.*;
 import it.polimi.vovarini.model.*;
 import it.polimi.vovarini.model.board.Board;
 import it.polimi.vovarini.model.board.BoxFullException;
