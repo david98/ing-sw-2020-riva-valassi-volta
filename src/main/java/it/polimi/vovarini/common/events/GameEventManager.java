@@ -34,7 +34,7 @@ public class GameEventManager {
         Class<?>[] parameterTypes = m.getParameterTypes();
         Class<? extends GameEvent> eventClass = a.eventClass();
         if (parameterTypes.length == 1 && parameterTypes[0].equals(eventClass)) {
-          GameEventManager.getInstance().register(obj, m, eventClass);
+          getInstance().register(obj, m, eventClass);
         } else {
           throw new Error("Invalid listener"); // TODO: improve
         }
@@ -42,14 +42,16 @@ public class GameEventManager {
     }
   }
 
+  // TODO: add bind method for static methods
+
   private void register(Object obj, Method method, Class<? extends GameEvent> eventClass){
     Set<Map.Entry<Object, Method>> eventClassListeners = listeners.computeIfAbsent(eventClass.getSimpleName(),
             k -> new HashSet<>());
     eventClassListeners.add(new AbstractMap.SimpleEntry<>(obj, method));
   }
 
-  public void raise(GameEvent e) {
-    Set<Map.Entry<Object, Method>> eventListeners = listeners.get(e.getClass().getSimpleName());
+  public static void raise(GameEvent e) {
+    Set<Map.Entry<Object, Method>> eventListeners = getInstance().listeners.get(e.getClass().getSimpleName());
     if (eventListeners != null){
       for (Map.Entry<Object, Method> pair: eventListeners){
         try {
