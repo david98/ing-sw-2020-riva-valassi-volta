@@ -15,7 +15,7 @@ public class Block extends Item implements Cloneable {
               level -> {
                 try {
                   return new Block(level);
-                } catch (InvalidLevelException e) {
+                } catch (InvalidLevelException ignored) {
                   return null;
                 }
               })

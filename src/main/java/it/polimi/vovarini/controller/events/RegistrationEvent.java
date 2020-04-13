@@ -1,16 +1,13 @@
 package it.polimi.vovarini.controller.events;
 
+import it.polimi.vovarini.model.Player;
+
 public class RegistrationEvent extends GameEvent {
 
   private final String nickname;
 
-  public RegistrationEvent(Object source) {
-    super(source);
-    this.nickname = null;
-  }
-
-  public RegistrationEvent(Object source, String nickname) {
-    super(source);
+  public RegistrationEvent(Object source, Player player, String nickname) {
+    super(source, player);
     this.nickname = nickname;
   }
 

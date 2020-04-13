@@ -46,7 +46,7 @@ public class Box {
     }
   }
 
-  public int getLevel(){
+  public int getLevel() {
     /* Here we assume that if the Block below a Worker is, say,
      * a level 3 block, then below it you have a level 2 block
      * and a level 1 block. Blocks must be stacked according to
@@ -54,10 +54,10 @@ public class Box {
      * anywhere, but no Worker can stand on top of a level 4 Block
      * so this assumption is still valid.
      */
-    if (items.size() == 0){
+    if (items.size() == 0) {
       return 0;
-    } else if (items.peek().canBeRemoved()){
-        return items.size() - 1;
+    } else if (items.peek().canBeRemoved()) {
+      return items.size() - 1;
     } else {
       return items.size();
     }

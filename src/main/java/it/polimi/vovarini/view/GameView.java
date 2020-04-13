@@ -54,17 +54,11 @@ public class GameView {
 
   private String getPhasePrompt(Phase phase){
     switch (phase){
-      case Init: {
-        break;
-      }
       case Start:{
         break;
       }
       case Movement: {
         return "Select a Worker, then select a destination.";
-      }
-      case CheckWin: {
-        break;
       }
       case Construction: {
         break;
