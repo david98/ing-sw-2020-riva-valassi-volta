@@ -22,6 +22,10 @@ public class GameView {
 
   private Game game;
 
+  private Player player;
+  private Player[] otherPlayers;
+  private Phase currentPhase;
+
   private Worker selectedWorker;
   private Point currentStart;
   private Point currentEnd;
@@ -34,7 +38,11 @@ public class GameView {
   private int printedLineCount;
 
   public GameView(Game game){
+    GameEventManager.bindListeners(this);
+
     this.game = game;
+    //this.player = player;
+    this.currentPhase = Phase.Start;
 
     boardRenderer = new BoardRenderer();
 
@@ -54,6 +62,11 @@ public class GameView {
 
   }
 
+  @GameEventListener
+  public void handlePhaseUpdate(PhaseUpdateEvent e){
+    currentPhase = e.getNewPhase();
+  }
+
   private String getPhasePrompt(Phase phase){
     switch (phase){
       case Start:{
@@ -63,7 +76,7 @@ public class GameView {
         return "Select a Worker, then select a destination.";
       }
       case Construction: {
-        break;
+        return "Where do you want to build?";
       }
       case End: {
         break;
@@ -181,11 +194,11 @@ public class GameView {
       GameView view = new GameView(game);
       Controller controller = new Controller(game);
 
-      PlayerRenderer.getInstance().setPlayers(view.game.getPlayers());
+      PlayerRenderer.getInstance().setPlayers(game.getPlayers());
 
       // some initialization for testing purposes
-      for (Player player: view.game.getPlayers()){
-        player.getGodCard().setGame(view.game);
+      for (Player player: game.getPlayers()){
+        player.getGodCard().setGame(game);
       }
 
       GameEventManager.raise(new WorkerSelectionEvent(view, game.getCurrentPlayer(), Sex.Female));
