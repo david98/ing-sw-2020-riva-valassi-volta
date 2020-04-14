@@ -8,9 +8,9 @@ public class GameEventManagerTest {
     GameEventManager.bindListeners(this);
   }
 
-  @GameEventListener(eventClass = WorkerSelectionEvent.class)
-  public void prova(WorkerSelectionEvent e){
-    System.out.println(e.getSex());
+  @GameEventListener
+  public void prova(WorkerSelectionEvent e, String a){
+    System.out.println(e);
   }
 
   public static void main(String[] args){

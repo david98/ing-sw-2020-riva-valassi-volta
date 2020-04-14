@@ -1,5 +1,7 @@
 package it.polimi.vovarini.view;
 
+import it.polimi.vovarini.common.events.*;
+import it.polimi.vovarini.controller.Controller;
 import it.polimi.vovarini.model.*;
 import it.polimi.vovarini.model.board.Board;
 import it.polimi.vovarini.model.board.Box;
@@ -112,7 +114,11 @@ public class GameView {
       if (boardRenderer.getCursorLocation().equals(currentStart)){
         deSelect();
       } else {
-        // create move
+        GameEventManager.raise(new MovementEvent(this,
+                game.getCurrentPlayer(),
+                boardRenderer.getCursorLocation())
+        );
+        deSelect();
       }
     } else {
       // check if one of the player's workers is under the cursor
@@ -121,8 +127,11 @@ public class GameView {
         if (game.getCurrentPlayer().getWorkers().values().stream().anyMatch(w -> w.equals(item))){
           currentStart = boardRenderer.getCursorLocation();
           selectedWorker = (Worker)item;
-          // here we should raise a new selection event
-          game.getCurrentPlayer().setCurrentSex(selectedWorker.getSex());
+          GameEventManager.raise(
+                  new WorkerSelectionEvent(this,
+                          game.getCurrentPlayer(),
+                          selectedWorker.getSex())
+          );
           // mark points reachable by the selected worker
           boardRenderer.markPoints(
                   game.getCurrentPlayer().getGodCard().computeReachablePoints()
@@ -168,23 +177,23 @@ public class GameView {
 
   public static void main(String[] args){
     try {
-      GameView view = new GameView(new Game(2));
+      Game game = new Game(2);
+      GameView view = new GameView(game);
+      Controller controller = new Controller(game);
+
       PlayerRenderer.getInstance().setPlayers(view.game.getPlayers());
 
       // some initialization for testing purposes
       for (Player player: view.game.getPlayers()){
         player.getGodCard().setGame(view.game);
       }
-      view.game.nextPhase();
-      view.game.getBoard().place(
-              view.game.getCurrentPlayer().getWorkers().get(Sex.Male), new Point(0, 0)
-      );
-      view.game.getBoard().place(
-              view.game.getCurrentPlayer().getWorkers().get(Sex.Female), new Point(3, 0)
-      );
-      view.game.getBoard().place(
-              Block.blocks[0], new Point(0, 1)
-      );
+
+      GameEventManager.raise(new WorkerSelectionEvent(view, game.getCurrentPlayer(), Sex.Female));
+      GameEventManager.raise(new SpawnWorkerEvent(view, game.getCurrentPlayer(), new Point(0, 0)));
+      GameEventManager.raise(new WorkerSelectionEvent(view, game.getCurrentPlayer(), Sex.Male));
+      GameEventManager.raise(new SpawnWorkerEvent(view, game.getCurrentPlayer(), new Point (2, 0)));
+
+      GameEventManager.raise(new SkipEvent(view, game.getCurrentPlayer()));
 
       view.clearScreen();
       view.render();

@@ -22,23 +22,27 @@ public class Controller implements EventListener {
 
   // Scelta del numero di giocatori fatta su Server, Game precedentemente istanziato
   public Controller(Game game) {
+    GameEventManager.bindListeners(this);
     this.game = game;
-    selectedCards = new ArrayList<GodName>();
+    selectedCards = new ArrayList<>();
   }
 
   // CLI: keyboard M,F characters
+  @GameEventListener
   public void update(WorkerSelectionEvent evt) throws InvalidPhaseException, WrongPlayerException {
 
     Player currentPlayer = game.getCurrentPlayer();
     if (!currentPlayer.equals(evt.getPlayerSource())) throw new WrongPlayerException();
 
     Phase currentPhase = game.getCurrentPhase();
-    if (!currentPhase.equals(Phase.Start)) throw new InvalidPhaseException();
+    if (currentPhase.equals(Phase.Construction) || currentPhase.equals(Phase.End))
+      throw new InvalidPhaseException();
 
     game.getCurrentPlayer().setCurrentSex(evt.getSex());
   }
 
   // CLI: Coordinates input or keyboard arrows
+  @GameEventListener
   public void update(BuildEvent evt)
       throws InvalidPositionException, InvalidPhaseException,
           WrongPlayerException, InvalidMoveException {
@@ -64,11 +68,9 @@ public class Controller implements EventListener {
   }
 
   // Not part of the 1vs1 simulation we want to develop now
+  @GameEventListener
   public void update(CardChoiceEvent evt) {
-
-    for (GodName card : evt.getSelectedCards()) {
-      this.selectedCards.add(card);
-    }
+    this.selectedCards.addAll(evt.getSelectedCards());
   }
 
   // Not part of the 1vs1 simulation we want to develop now
@@ -88,6 +90,7 @@ public class Controller implements EventListener {
 
   // CLI: String input at the start of the game. Any string longer than one should be considered a
   // nickname input
+  @GameEventListener
   public void update(RegistrationEvent evt) throws InvalidNicknameException, InvalidNumberOfPlayersException {
 
     for (Player player : game.getPlayers()) {
@@ -108,6 +111,7 @@ public class Controller implements EventListener {
   }
 
   // CLI: Ctrl+Z pressed by the user
+  @GameEventListener
   public void update(UndoEvent evt) throws WrongPlayerException {
 
     Player currentPlayer = game.getCurrentPlayer();
@@ -118,6 +122,7 @@ public class Controller implements EventListener {
 
   // CLI: we should find something to press that will make the "skip button" function, to trigger
   // the next turn (like pressing space)
+  @GameEventListener
   public void update(NextPlayerEvent evt) throws InvalidPhaseException, WrongPlayerException {
 
     Player currentPlayer = game.getCurrentPlayer();
@@ -131,6 +136,7 @@ public class Controller implements EventListener {
 
   // Gestisce lo skip dell'utente tra una fase e l'altra
   // Non va bene in fase END, perchè bisognerebbe lanciare NextPlayerEvent
+  @GameEventListener
   public void update(SkipEvent evt) throws WrongPlayerException, InvalidPhaseException {
 
     Player currentPlayer = game.getCurrentPlayer();
@@ -143,6 +149,7 @@ public class Controller implements EventListener {
   }
 
   // CLI: Coordinates input or keyboard arrows
+  @GameEventListener
   public void update(MovementEvent evt)
           throws InvalidPhaseException, WrongPlayerException, InvalidPositionException,
           InvalidMoveException, CurrentPlayerLosesException {
@@ -168,8 +175,10 @@ public class Controller implements EventListener {
     if (!game.validateMove(movement)) throw new InvalidMoveException();
     
     game.performMove(movement);
+    game.nextPhase();
   }
 
+  @GameEventListener
   public void update(SpawnWorkerEvent evt) throws WrongPlayerException, InvalidPositionException {
 
     Player currentPlayer = game.getCurrentPlayer();

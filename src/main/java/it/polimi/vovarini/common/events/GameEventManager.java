@@ -27,16 +27,26 @@ public class GameEventManager {
    *
    * @param obj The object containing the listeners.
    */
+  @SuppressWarnings("unchecked")
   public static void bindListeners(@org.jetbrains.annotations.NotNull Object obj){
     for (Method m: obj.getClass().getMethods()){
       GameEventListener a = m.getDeclaredAnnotation(GameEventListener.class);
       if (a != null){
         Class<?>[] parameterTypes = m.getParameterTypes();
-        Class<? extends GameEvent> eventClass = a.eventClass();
-        if (parameterTypes.length == 1 && parameterTypes[0].equals(eventClass)) {
-          getInstance().register(obj, m, eventClass);
-        } else {
-          throw new Error("Invalid listener"); // TODO: improve
+        try {
+          Class<? extends GameEvent> eventClass = (Class<? extends GameEvent>) parameterTypes[0];
+          if (GameEvent.class.isAssignableFrom(eventClass)) {
+            if (parameterTypes.length == 1) {
+              getInstance().register(obj, m, eventClass);
+            } else {
+              throw new Error("A listener can only have 1 parameter!"); // TODO: improve
+            }
+          } else {
+            throw new Error("Expected listener parameter to inherit from GameEvent but " +
+                    eventClass + " was found instead.");
+          }
+        } catch (ClassCastException e){
+          e.printStackTrace();
         }
       }
     }
@@ -56,8 +66,10 @@ public class GameEventManager {
       for (Map.Entry<Object, Method> pair: eventListeners){
         try {
           pair.getValue().invoke(pair.getKey(), e.getClass().cast(e));
-        } catch (InvocationTargetException | IllegalAccessException ex){
+        } catch (IllegalAccessException ex){
           ex.printStackTrace();
+        } catch (InvocationTargetException ex){
+          ex.getTargetException().printStackTrace();
         }
       }
     }
