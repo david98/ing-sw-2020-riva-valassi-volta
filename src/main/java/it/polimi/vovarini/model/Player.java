@@ -62,6 +62,10 @@ public class Player {
     return nickname;
   }
 
+  public static boolean validateNickname(String nickname) {
+    return (nickname != null) && nickname.matches("[A-Za-z0-9_]{4,16}$");
+  }
+
   @Override
   public int hashCode() {
     return nickname.hashCode();

@@ -36,7 +36,6 @@ public class Game {
       players[i] = new Player(GodCardFactory.create(GodName.Apollo), "Player" + i);
     }
 
-    players = new Player[numberOfPlayers];
     currentPlayerIndex = 0;
 
     moves = new Stack<>();
@@ -45,6 +44,79 @@ public class Game {
     board = new Board(Board.DEFAULT_SIZE);
 
     currentPhase = Phase.Start;
+  }
+
+  public void addPlayer(String nickname)
+      throws InvalidNumberOfPlayersException {
+
+    if (players[players.length - 1] != null) {
+      throw new InvalidNumberOfPlayersException();
+    }
+
+    Player player = new Player(nickname);
+
+    for (int i = 0; i < players.length; i++) {
+      if (players[i] == null) {
+        players[i] = player;
+        return;
+      }
+    }
+  }
+
+  public boolean validateMove(Movement movement) throws CurrentPlayerLosesException {
+
+    Stack<Item> startPositionStack = new Stack<Item>();
+    Stack<Item> endPositionStack = new Stack<Item>();
+
+    try {
+      startPositionStack = (Stack<Item>) getBoard().getBox(movement.getStart()).getItems().clone();
+      startPositionStack.pop();
+    } catch (BoxEmptyException ignored) {
+    }
+
+    try {
+      endPositionStack = (Stack<Item>) getBoard().getBox(movement.getEnd()).getItems().clone();
+    } catch (BoxEmptyException ignored) {
+    }
+
+    try {
+      for (Point point : getCurrentPlayer().getGodCard().computeReachablePoints()) {
+        if (point.equals(movement.getEnd())) {
+          if (startPositionStack.size() == endPositionStack.size()
+              || startPositionStack.size() == (endPositionStack.size() - 1)) {
+            return true;
+          }
+        }
+      }
+    } catch (CurrentPlayerLosesException e) {
+      throw e;
+    }
+
+    return false;
+  }
+
+  public boolean validateMove(Construction construction) {
+
+    try {
+      for (Point point : getCurrentPlayer().getGodCard().computeBuildablePoints()) {
+        if (construction.getTarget().equals(point)) {
+          Stack<Item> items = board.getItems(construction.getTarget());
+          if (construction.getBlock().canBePlacedOn(items.peek()))
+            return true;
+        }
+      }
+    } catch (CurrentPlayerLosesException e) {
+      System.out.println("Tu non puoi costruire perchè hai perso.");
+      System.out.println("Io invece devo gestire questa eccezione come si deve.");
+      System.out.println("Ma prima devo capire come viene lanciata.");
+    } catch (BoxEmptyException e) {
+      if(construction.getBlock().getLevel() == 1) {
+        return true;
+      }
+    } catch (InvalidPositionException ignored) {
+    }
+
+    return false;
   }
 
   public void performMove(Move move) {
@@ -76,6 +148,7 @@ public class Game {
     return players[currentPlayerIndex];
   }
 
+  // needs to manage turn flow
   public void undoLastMove() {
     try {
       Move opposite = moves.pop().reverse();
