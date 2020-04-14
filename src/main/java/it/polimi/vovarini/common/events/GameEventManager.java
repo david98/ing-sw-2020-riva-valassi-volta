@@ -39,7 +39,7 @@ public class GameEventManager {
             if (parameterTypes.length == 1) {
               getInstance().register(obj, m, eventClass);
             } else {
-              throw new Error("A listener can only have 1 parameter!"); // TODO: improve
+              throw new Error("A listener can only have 1 parameter!"); // maybe improve?
             }
           } else {
             throw new Error("Expected listener parameter to inherit from GameEvent but " +
@@ -52,7 +52,7 @@ public class GameEventManager {
     }
   }
 
-  // TODO: add bind method for static methods
+  // maybe add bind method for static methods?
 
   private void register(Object obj, Method method, Class<? extends GameEvent> eventClass){
     Set<Map.Entry<Object, Method>> eventClassListeners = listeners.computeIfAbsent(eventClass.getSimpleName(),
