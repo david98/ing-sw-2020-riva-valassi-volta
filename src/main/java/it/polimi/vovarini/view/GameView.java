@@ -11,24 +11,30 @@ import it.polimi.vovarini.model.board.items.Block;
 import it.polimi.vovarini.model.board.items.Item;
 import it.polimi.vovarini.model.board.items.Sex;
 import it.polimi.vovarini.model.board.items.Worker;
+import it.polimi.vovarini.model.godcards.GodCardFactory;
+import it.polimi.vovarini.model.godcards.GodName;
 import org.jline.terminal.Terminal;
 import org.jline.terminal.TerminalBuilder;
 
 import java.io.IOException;
 import java.io.Reader;
 import java.util.Arrays;
+import java.util.Scanner;
 
 public class GameView {
 
-  private Game game;
-
-  private Player player;
-  private Player[] otherPlayers;
+  private Player owner;
+  private Player currentPlayer;
+  private Player[] players;
   private Phase currentPhase;
+
+  private Board board;
 
   private Worker selectedWorker;
   private Point currentStart;
   private Point currentEnd;
+
+  private boolean reRenderNeeded;
 
   private BoardRenderer boardRenderer;
 
@@ -37,34 +43,30 @@ public class GameView {
 
   private int printedLineCount;
 
-  public GameView(Game game){
+  public GameView(){
     GameEventManager.bindListeners(this);
 
-    this.game = game;
-    //this.player = player;
     this.currentPhase = Phase.Start;
+    this.reRenderNeeded = true;
 
     boardRenderer = new BoardRenderer();
 
     printedLineCount = 0;
-    try {
-      terminal = TerminalBuilder.builder()
-              .jna(true)
-              .system(true)
-              .build();
-      terminal.enterRawMode();
+  }
 
-      reader = terminal.reader();
-    } catch (IOException e){
-      System.err.println("Could not allocate terminal.\n");
-      e.printStackTrace();
-    }
+  @GameEventListener
+  public void handleInvalidNickname(InvalidNicknameEvent e){
 
   }
 
   @GameEventListener
   public void handlePhaseUpdate(PhaseUpdateEvent e){
     currentPhase = e.getNewPhase();
+  }
+
+  @GameEventListener
+  public void handleGameStart(GameStartEvent e){
+    startMatch();
   }
 
   private String getPhasePrompt(Phase phase){
@@ -94,16 +96,30 @@ public class GameView {
     printedLineCount += newLines + 1;
   }
 
-  public void render(){
-    for (Player player: game.getPlayers()){
-      if (player.equals(game.getCurrentPlayer())){
-        printLine("*" + PlayerRenderer.getInstance().render(player) + "*");
-      } else {
-        printLine(PlayerRenderer.getInstance().render(player));
+  private void renderPlayers(){
+    for (Player player: players){
+      StringBuilder playerLine = new StringBuilder();
+      playerLine.append(PlayerRenderer.getInstance().render(player));
+      if (player.equals(owner)){
+        playerLine.insert(0, "YOU --> ");
       }
+      if (player.equals(currentPlayer)){
+        playerLine.insert(0, "*");
+        playerLine.append("*");
+      }
+      printLine(playerLine.toString());
     }
-    printLine(boardRenderer.render(game.getBoard()));
-    printLine(getPhasePrompt(game.getCurrentPhase()));
+  }
+
+  public void render(){
+    if (reRenderNeeded) {
+      clearScreen();
+      renderPlayers();
+      printLine(boardRenderer.render(board));
+      printLine(getPhasePrompt(currentPhase));
+
+      reRenderNeeded = false;
+    }
   }
 
   public void clearScreen() {
@@ -120,6 +136,8 @@ public class GameView {
     currentStart = null;
     currentEnd = null;
     boardRenderer.resetMarkedPoints();
+
+    reRenderNeeded = true;
   }
 
   private void select(){
@@ -128,7 +146,7 @@ public class GameView {
         deSelect();
       } else {
         GameEventManager.raise(new MovementEvent(this,
-                game.getCurrentPlayer(),
+                owner,
                 boardRenderer.getCursorLocation())
         );
         deSelect();
@@ -136,19 +154,20 @@ public class GameView {
     } else {
       // check if one of the player's workers is under the cursor
       try{
-        Item item = game.getBoard().getItems(boardRenderer.getCursorLocation()).pop();
-        if (game.getCurrentPlayer().getWorkers().values().stream().anyMatch(w -> w.equals(item))){
+        Item item = board.getItems(boardRenderer.getCursorLocation()).pop();
+        if (owner.getWorkers().values().stream().anyMatch(w -> w.equals(item))){
           currentStart = boardRenderer.getCursorLocation();
           selectedWorker = (Worker)item;
           GameEventManager.raise(
                   new WorkerSelectionEvent(this,
-                          game.getCurrentPlayer(),
+                          owner,
                           selectedWorker.getSex())
           );
           // mark points reachable by the selected worker
           boardRenderer.markPoints(
-                  game.getCurrentPlayer().getGodCard().computeReachablePoints()
+                  owner.getGodCard().computeReachablePoints()
           );
+          reRenderNeeded = true;
         }
       } catch (BoxEmptyException ignored){
       } catch (InvalidPositionException ignored){
@@ -159,45 +178,88 @@ public class GameView {
   }
 
   public void handleInput() throws IOException{
-    int input = reader.read();
+    if (owner.equals(currentPlayer)) {
+      int input = reader.read();
 
-    switch (input){
-      case 97: { //A
-        boardRenderer.moveCursor(Direction.Left);
-        break;
-      }
-      case 100: { //D
-        boardRenderer.moveCursor(Direction.Right);
-        break;
-      }
-      case 119: { //W
-        boardRenderer.moveCursor(Direction.Up);
-        break;
-      }
-      case 115: { //S
-        boardRenderer.moveCursor(Direction.Down);
-        break;
-      }
-      case 32: { //space
-        select();
-        break;
-      }
-      default: {
-        break;
+      switch (input) {
+        case 97: { //A
+          boardRenderer.moveCursor(Direction.Left);
+          reRenderNeeded = true;
+          break;
+        }
+        case 100: { //D
+          boardRenderer.moveCursor(Direction.Right);
+          reRenderNeeded = true;
+          break;
+        }
+        case 119: { //W
+          boardRenderer.moveCursor(Direction.Up);
+          reRenderNeeded = true;
+          break;
+        }
+        case 115: { //S
+          boardRenderer.moveCursor(Direction.Down);
+          reRenderNeeded = true;
+          break;
+        }
+        case 32: { //space
+          select();
+          break;
+        }
+        default: {
+          break;
+        }
       }
     }
+  }
+
+  public void startMatch() {
+    try {
+      terminal = TerminalBuilder.builder()
+              .jna(true)
+              .system(true)
+              .build();
+      terminal.enterRawMode();
+
+      reader = terminal.reader();
+
+    } catch (IOException e) {
+      System.err.println("Could not allocate terminal.\n");
+      e.printStackTrace();
+    }
+  }
+
+  public void gameSetup(){
+    // ask for nickname
+    Scanner sc = new Scanner(System.in);
+    clearScreen();
+    System.out.print("Type your nickname: ");
+    String nickname = sc.next();
+    // TODO: check if nickname has been accepted
+    GameEventManager.raise(new RegistrationEvent(this, null, nickname));
+    System.out.println("Now waiting for other players...");
   }
 
   public static void main(String[] args){
     try {
       Game game = new Game(2);
-      GameView view = new GameView(game);
+      GameView view = new GameView();
       Controller controller = new Controller(game);
+
+      view.gameSetup();
+
+      GameEventManager.raise(new RegistrationEvent(view, null, "Marcantonio"));
+
+      view.players = game.getPlayers();
+      view.owner = view.players[0];
+      view.currentPlayer = view.players[0];
+      view.board = game.getBoard();
 
       PlayerRenderer.getInstance().setPlayers(game.getPlayers());
 
       // some initialization for testing purposes
       for (Player player: game.getPlayers()){
+        player.setGodCard(GodCardFactory.create(GodName.Nobody));
         player.getGodCard().setGame(game);
       }
 
@@ -208,11 +270,9 @@ public class GameView {
 
       GameEventManager.raise(new SkipEvent(view, game.getCurrentPlayer()));
 
-      view.clearScreen();
       view.render();
       while (true) {
         view.handleInput();
-        view.clearScreen();
         view.render();
       }
     } catch (Exception e){

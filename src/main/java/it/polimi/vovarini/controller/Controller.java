@@ -92,7 +92,6 @@ public class Controller implements EventListener {
   // nickname input
   @GameEventListener
   public void update(RegistrationEvent evt) throws InvalidNicknameException, InvalidNumberOfPlayersException {
-
     for (Player player : game.getPlayers()) {
       if(player == null) break ;
       if (player.getNickname().equalsIgnoreCase(evt.getNickname())) {
@@ -105,6 +104,9 @@ public class Controller implements EventListener {
 
     try {
       game.addPlayer(evt.getNickname());
+      if (game.isFull()){
+        GameEventManager.raise(new GameStartEvent(this));
+      }
     } catch (InvalidNumberOfPlayersException e) {
       throw new InvalidNumberOfPlayersException();
     }

@@ -5,7 +5,9 @@ import it.polimi.vovarini.model.board.items.*;
 import it.polimi.vovarini.model.godcards.GodCardFactory;
 import it.polimi.vovarini.model.godcards.GodName;
 
+import java.util.Arrays;
 import java.util.EmptyStackException;
+import java.util.Objects;
 import java.util.Stack;
 
 public class Game {
@@ -31,10 +33,8 @@ public class Game {
     if (numberOfPlayers < MIN_PLAYERS || numberOfPlayers > MAX_PLAYERS) {
       throw new InvalidNumberOfPlayersException();
     }
+
     players = new Player[numberOfPlayers];
-    for (int i = 0; i < numberOfPlayers; i++) {
-      players[i] = new Player(GodCardFactory.create(GodName.Apollo), "Player" + i);
-    }
 
     currentPlayerIndex = 0;
 
@@ -167,5 +167,9 @@ public class Game {
     } catch (EmptyStackException ignored) {
 
     }
+  }
+
+  public boolean isFull(){
+    return Arrays.stream(players).noneMatch(Objects::isNull);
   }
 }
