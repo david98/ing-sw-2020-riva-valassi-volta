@@ -55,11 +55,6 @@ public class GameView {
   }
 
   @GameEventListener
-  public void handleInvalidNickname(InvalidNicknameEvent e){
-
-  }
-
-  @GameEventListener
   public void handlePhaseUpdate(PhaseUpdateEvent e){
     currentPhase = e.getNewPhase();
   }
@@ -145,7 +140,7 @@ public class GameView {
       if (boardRenderer.getCursorLocation().equals(currentStart)){
         deSelect();
       } else {
-        GameEventManager.raise(new MovementEvent(this,
+        GameEventManager.raise(new MovementEvent(
                 owner,
                 boardRenderer.getCursorLocation())
         );
@@ -159,7 +154,7 @@ public class GameView {
           currentStart = boardRenderer.getCursorLocation();
           selectedWorker = (Worker)item;
           GameEventManager.raise(
-                  new WorkerSelectionEvent(this,
+                  new WorkerSelectionEvent(
                           owner,
                           selectedWorker.getSex())
           );
@@ -233,10 +228,14 @@ public class GameView {
     // ask for nickname
     Scanner sc = new Scanner(System.in);
     clearScreen();
+    String nickname = null;
     System.out.print("Type your nickname: ");
-    String nickname = sc.next();
-    // TODO: check if nickname has been accepted
-    GameEventManager.raise(new RegistrationEvent(this, null, nickname));
+    nickname = sc.next();
+    while ((nickname == null) || !nickname.matches("[A-Za-z0-9_]{4,16}$")){
+      System.out.print("Invalid nickname, type a new one: ");
+      nickname = sc.next();
+    }
+    GameEventManager.raise(new RegistrationEvent(this, nickname));
     System.out.println("Now waiting for other players...");
   }
 
@@ -248,7 +247,7 @@ public class GameView {
 
       view.gameSetup();
 
-      GameEventManager.raise(new RegistrationEvent(view, null, "Marcantonio"));
+      GameEventManager.raise(new RegistrationEvent(view,"Marcantonio"));
 
       view.players = game.getPlayers();
       view.owner = view.players[0];
@@ -263,12 +262,12 @@ public class GameView {
         player.getGodCard().setGame(game);
       }
 
-      GameEventManager.raise(new WorkerSelectionEvent(view, game.getCurrentPlayer(), Sex.Female));
-      GameEventManager.raise(new SpawnWorkerEvent(view, game.getCurrentPlayer(), new Point(0, 0)));
-      GameEventManager.raise(new WorkerSelectionEvent(view, game.getCurrentPlayer(), Sex.Male));
-      GameEventManager.raise(new SpawnWorkerEvent(view, game.getCurrentPlayer(), new Point (2, 0)));
+      GameEventManager.raise(new WorkerSelectionEvent(game.getCurrentPlayer(), Sex.Female));
+      GameEventManager.raise(new SpawnWorkerEvent(game.getCurrentPlayer(), new Point(0, 0)));
+      GameEventManager.raise(new WorkerSelectionEvent(game.getCurrentPlayer(), Sex.Male));
+      GameEventManager.raise(new SpawnWorkerEvent(game.getCurrentPlayer(), new Point (2, 0)));
 
-      GameEventManager.raise(new SkipEvent(view, game.getCurrentPlayer()));
+      GameEventManager.raise(new SkipEvent(game.getCurrentPlayer()));
 
       view.render();
       while (true) {

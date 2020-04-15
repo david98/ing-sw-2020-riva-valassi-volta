@@ -6,8 +6,8 @@ public class RegistrationEvent extends GameEvent {
 
   private final String nickname;
 
-  public RegistrationEvent(Object source, Player player, String nickname) {
-    super(source, player);
+  public RegistrationEvent(Object source, String nickname) {
+    super(source);
     this.nickname = nickname;
   }
 

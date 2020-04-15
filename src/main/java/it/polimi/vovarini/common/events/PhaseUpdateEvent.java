@@ -6,7 +6,7 @@ public class PhaseUpdateEvent extends GameEvent{
   private Phase newPhase;
 
   public PhaseUpdateEvent(Object source, Phase newPhase){
-    super(source, null);
+    super(source);
     this.newPhase = newPhase;
   }
 

@@ -7,8 +7,8 @@ public class SpawnWorkerEvent extends GameEvent {
 
     private Point target;
 
-    public SpawnWorkerEvent(Object source, Player player, Point target){
-        super(source, player);
+    public SpawnWorkerEvent(Object source, Point target){
+        super(source);
         this.target = target;
     }
 

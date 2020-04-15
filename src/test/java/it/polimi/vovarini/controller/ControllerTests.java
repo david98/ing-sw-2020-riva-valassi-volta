@@ -15,13 +15,15 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+// TODO: refactor
+
 @DisplayName("Controller Tests")
 public class ControllerTests {
 
   private static Controller controller;
 
   @Test
-  @DisplayName("Controller Instance")
+  @DisplayName("Controller instantiation")
   void controllerCreation() {
     Game game = null;
     try {
@@ -55,7 +57,7 @@ public class ControllerTests {
 
       controller = new Controller(game);
       WorkerSelectionEvent evtF =
-          new WorkerSelectionEvent(this, game.getCurrentPlayer(), Sex.Female);
+          new WorkerSelectionEvent(game.getCurrentPlayer(), Sex.Female);
       try {
         controller.update(evtF);
       } catch (InvalidPhaseException e) {
@@ -65,7 +67,7 @@ public class ControllerTests {
       catch (WrongPlayerException ignored){}
       assertEquals(game.getCurrentPlayer().getCurrentWorker().getSex(), Sex.Female);
 
-      WorkerSelectionEvent evtM = new WorkerSelectionEvent(this, game.getCurrentPlayer(), Sex.Male);
+      WorkerSelectionEvent evtM = new WorkerSelectionEvent(game.getCurrentPlayer(), Sex.Male);
       try {
         controller.update(evtM);
       } catch (InvalidPhaseException e) {
@@ -76,7 +78,7 @@ public class ControllerTests {
       assertEquals(game.getCurrentPlayer().getCurrentWorker().getSex(), Sex.Male);
 
       WorkerSelectionEvent evtWrongPlayer =
-          new WorkerSelectionEvent(this, game.getPlayers()[1], Sex.Male);
+          new WorkerSelectionEvent(game.getPlayers()[1], Sex.Male);
       assertThrows(
           WrongPlayerException.class,
           () -> {
@@ -85,7 +87,7 @@ public class ControllerTests {
 
       game.nextPhase();
       WorkerSelectionEvent evtNextPhase =
-          new WorkerSelectionEvent(this, game.getCurrentPlayer(), Sex.Female);
+          new WorkerSelectionEvent(game.getCurrentPlayer(), Sex.Female);
       assertThrows(
           InvalidPhaseException.class,
           () -> {
@@ -133,7 +135,7 @@ public class ControllerTests {
 
       game.nextPhase();
 
-      MovementEvent evt = new MovementEvent(this, game.getCurrentPlayer(), point);
+      MovementEvent evt = new MovementEvent(game.getCurrentPlayer(), point);
       try {
         controller.update(evt);
         try {
@@ -150,7 +152,7 @@ public class ControllerTests {
       }
 
       Point invalidMovePoint = new Point (3,3);
-      MovementEvent evtInvalidMove = new MovementEvent(this, game.getCurrentPlayer(), invalidMovePoint);
+      MovementEvent evtInvalidMove = new MovementEvent(game.getCurrentPlayer(), invalidMovePoint);
 
       assertThrows(InvalidMoveException.class, ()-> {controller.update(evtInvalidMove);});
 
@@ -164,17 +166,17 @@ public class ControllerTests {
       catch (BoxFullException ignored){}
       catch (InvalidPositionException ignored){}
 
-      MovementEvent evtInvalidLevel = new MovementEvent(this, game.getCurrentPlayer(), buildPoint);
+      MovementEvent evtInvalidLevel = new MovementEvent(game.getCurrentPlayer(), buildPoint);
 
       assertThrows(InvalidMoveException.class, ()->{controller.update(evtInvalidLevel);});
 
       Point negativePoint = new Point (-1, -1);
-      MovementEvent evtInvalidPos = new MovementEvent(this, game.getCurrentPlayer(), negativePoint);
+      MovementEvent evtInvalidPos = new MovementEvent(game.getCurrentPlayer(), negativePoint);
 
       assertThrows(InvalidPositionException.class, ()->{controller.update(evtInvalidPos);});
 
       game.nextPlayer();
-      MovementEvent evtInvalidPlayer = new MovementEvent(this, game.getPlayers()[0], point);
+      MovementEvent evtInvalidPlayer = new MovementEvent(game.getPlayers()[0], point);
 
       assertThrows(WrongPlayerException.class, ()->{controller.update(evtInvalidPlayer);});
 
@@ -183,7 +185,7 @@ public class ControllerTests {
       game.nextPhase();
       game.nextPhase();
       Point newPoint = new Point(0,2);
-      MovementEvent evtInvalidPhase = new MovementEvent(this, game.getCurrentPlayer(), newPoint);
+      MovementEvent evtInvalidPhase = new MovementEvent(game.getCurrentPlayer(), newPoint);
 
       assertThrows(InvalidPhaseException.class, ()->{controller.update(evtInvalidPhase);});
 
@@ -250,7 +252,7 @@ public class ControllerTests {
     Point target = new Point(1,1);
     int level = 1;
 
-    BuildEvent evt = new BuildEvent(this, game.getCurrentPlayer(), target, level);
+    BuildEvent evt = new BuildEvent(game.getCurrentPlayer(), target, level);
 
     try {
       controller.update(evt);
@@ -273,29 +275,29 @@ public class ControllerTests {
 
     // invalidMove: target not adjacent
     Point notAdjacentPoint = new Point (3,3);
-    BuildEvent evtInvalidMove = new BuildEvent(this, game.getCurrentPlayer(), notAdjacentPoint, level);
+    BuildEvent evtInvalidMove = new BuildEvent(game.getCurrentPlayer(), notAdjacentPoint, level);
     assertThrows(InvalidMoveException.class, ()-> {controller.update(evtInvalidMove);});
 
     // invalidMove: femaleWorker on the top of target (target = femalePosition)
-    BuildEvent evtInvalidMove2 = new BuildEvent(this, game.getCurrentPlayer(), femalePos, level);
+    BuildEvent evtInvalidMove2 = new BuildEvent(game.getCurrentPlayer(), femalePos, level);
     assertThrows(InvalidMoveException.class, ()-> {controller.update(evtInvalidMove);});
 
     // invalidMove: invalidLevel
-    BuildEvent evtInvalidLevel = new BuildEvent(this, game.getCurrentPlayer(), target, level+1);
+    BuildEvent evtInvalidLevel = new BuildEvent(game.getCurrentPlayer(), target, level+1);
     assertThrows(InvalidMoveException.class, ()->{controller.update(evtInvalidLevel);});
 
     // invalidPosition: negative target
     Point negativePoint = new Point (-1, -1);
-    BuildEvent evtInvalidPos = new BuildEvent(this, game.getCurrentPlayer(), negativePoint, level);
+    BuildEvent evtInvalidPos = new BuildEvent(game.getCurrentPlayer(), negativePoint, level);
     assertThrows(InvalidPositionException.class, ()->{controller.update(evtInvalidPos);});
 
     // invalidPlayer: wrong player
-    BuildEvent evtInvalidPlayer = new BuildEvent(this, game.getPlayers()[1], target, level);
+    BuildEvent evtInvalidPlayer = new BuildEvent(game.getPlayers()[1], target, level);
     assertThrows(WrongPlayerException.class, ()->{controller.update(evtInvalidPlayer);});
 
     // invalidPhase: Start phase
     game.nextPlayer();
-    BuildEvent evtInvalidPhase = new BuildEvent(this, game.getCurrentPlayer(), target, level);
+    BuildEvent evtInvalidPhase = new BuildEvent(game.getCurrentPlayer(), target, level);
     assertThrows(InvalidPhaseException.class, ()->{controller.update(evtInvalidPhase);});
   }
 
@@ -313,7 +315,7 @@ public class ControllerTests {
     controller = new Controller(game);
 
     String nickname = "Mengi_97";
-    RegistrationEvent evt = new RegistrationEvent(this, null, nickname);
+    RegistrationEvent evt = new RegistrationEvent(this, nickname);
 
     try {
       controller.update(evt);
@@ -327,42 +329,42 @@ public class ControllerTests {
 
     // invalidNickname: null nickname
     nickname = null;
-    RegistrationEvent evtNullNickname = new RegistrationEvent(this, null, nickname);
+    RegistrationEvent evtNullNickname = new RegistrationEvent(this, nickname);
     e = assertThrows(InvalidNicknameException.class, ()-> {controller.update(evtNullNickname);});
     assertEquals(e.getErrorCode(), e.ERROR_INVALID);
 
     // invalidNickname: length < 4
     nickname = "o_o";
-    RegistrationEvent evtInvalidLength = new RegistrationEvent(this, null, nickname);
+    RegistrationEvent evtInvalidLength = new RegistrationEvent(this, nickname);
     e = assertThrows(InvalidNicknameException.class, ()-> {controller.update(evtInvalidLength);});
     assertEquals(e.getErrorCode(), e.ERROR_INVALID);
 
     // invalidNickname: length > 16
     nickname = "0123456789ABCDEF_ZZZZ";
-    RegistrationEvent evtInvalidLength2 = new RegistrationEvent(this, null, nickname);
+    RegistrationEvent evtInvalidLength2 = new RegistrationEvent(this, nickname);
     e = assertThrows(InvalidNicknameException.class, ()-> {controller.update(evtInvalidLength2);});
     assertEquals(e.getErrorCode(), e.ERROR_INVALID);
 
     // invalidNickname: special character
     nickname = "Mengi-97";
-    RegistrationEvent evtInvalidNickname = new RegistrationEvent(this, null, nickname);
+    RegistrationEvent evtInvalidNickname = new RegistrationEvent(this, nickname);
     e = assertThrows(InvalidNicknameException.class, ()-> {controller.update(evtInvalidNickname);});
     assertEquals(e.getErrorCode(), e.ERROR_INVALID);
 
     // invalidNickname: blank character
     nickname = "Mengi 97";
-    RegistrationEvent evtInvalidNickname2 = new RegistrationEvent(this, null, nickname);
+    RegistrationEvent evtInvalidNickname2 = new RegistrationEvent(this, nickname);
     e = assertThrows(InvalidNicknameException.class, ()-> {controller.update(evtInvalidNickname2);});
     assertEquals(e.getErrorCode(), e.ERROR_INVALID);
 
     // invalidNickname: duplicate
     nickname = "mEnGi_97";
-    RegistrationEvent evtDuplicateNickname = new RegistrationEvent(this, null, nickname);
+    RegistrationEvent evtDuplicateNickname = new RegistrationEvent(this, nickname);
     e = assertThrows(InvalidNicknameException.class, ()-> {controller.update(evtDuplicateNickname);});
     assertEquals(e.getErrorCode(), e.ERROR_DUPLICATE);
 
     nickname = "Valas511";
-    evt = new RegistrationEvent(this, null, nickname);
+    evt = new RegistrationEvent(this, nickname);
 
     try {
       controller.update(evt);
@@ -374,7 +376,7 @@ public class ControllerTests {
 
     // There is no place for you in this Game
     nickname = "xXBEN00BXx";
-    RegistrationEvent evtInvalidNumberOfPlayers = new RegistrationEvent(this, null, nickname);
+    RegistrationEvent evtInvalidNumberOfPlayers = new RegistrationEvent(this, nickname);
 
     assertThrows(InvalidNumberOfPlayersException.class, ()-> {controller.update(evtInvalidNumberOfPlayers);});
 
@@ -412,7 +414,7 @@ public class ControllerTests {
 
     Player[] players = game.getPlayers();
 
-    NextPlayerEvent evt = new NextPlayerEvent(this, players[0]);
+    NextPlayerEvent evt = new NextPlayerEvent(players[0]);
 
     try {
       controller.update(evt);
@@ -424,7 +426,7 @@ public class ControllerTests {
     assertEquals(game.getCurrentPhase(), Phase.Start);
 
     // invalidPhase: Start phase
-    NextPlayerEvent evtInvalidPhase = new NextPlayerEvent(this, players[1]);
+    NextPlayerEvent evtInvalidPhase = new NextPlayerEvent(players[1]);
     assertThrows(InvalidPhaseException.class, ()-> {controller.update(evtInvalidPhase);});
 
     game.nextPhase();
@@ -432,7 +434,7 @@ public class ControllerTests {
     game.nextPhase();
 
     // invalidPlayer: wrong player
-    NextPlayerEvent evtInvalidPlayer = new NextPlayerEvent(this, players[2]);
+    NextPlayerEvent evtInvalidPlayer = new NextPlayerEvent(players[2]);
     assertThrows(WrongPlayerException.class, ()->{controller.update(evtInvalidPlayer);});
   }
 
@@ -456,7 +458,7 @@ public class ControllerTests {
 
     controller = new Controller(game);
 
-    SkipEvent evt = new SkipEvent(this, game.getPlayers()[0]);
+    SkipEvent evt = new SkipEvent(game.getPlayers()[0]);
 
     try {
       controller.update(evt);
@@ -471,14 +473,14 @@ public class ControllerTests {
     game.nextPhase();
 
     // invalidPhase: End phase
-    SkipEvent evtInvalidPhase = new SkipEvent(this, game.getCurrentPlayer());
+    SkipEvent evtInvalidPhase = new SkipEvent(game.getCurrentPlayer());
     assertThrows(InvalidPhaseException.class, ()-> {controller.update(evtInvalidPhase);});
 
     game.nextPlayer();
     game.nextPlayer();
 
     // invalidPlayer: wrong player
-    NextPlayerEvent evtInvalidPlayer = new NextPlayerEvent(this, game.getPlayers()[0]);
+    NextPlayerEvent evtInvalidPlayer = new NextPlayerEvent(game.getPlayers()[0]);
     assertThrows(WrongPlayerException.class, ()->{controller.update(evtInvalidPlayer);});
   }
 
@@ -503,13 +505,13 @@ public class ControllerTests {
       }
 
       controller = new Controller(game);
-      UndoEvent evt = new UndoEvent(this, game.getCurrentPlayer());
+      UndoEvent evt = new UndoEvent(game.getCurrentPlayer());
       try{
         controller.update(evt);
       }
       catch (WrongPlayerException ignored){}
 
-      UndoEvent evtWrongPlayer = new UndoEvent(this, game.getPlayers()[1]);
+      UndoEvent evtWrongPlayer = new UndoEvent(game.getPlayers()[1]);
       assertThrows(WrongPlayerException.class, ()->{ controller.update(evtWrongPlayer); });
     }
     catch (InvalidNumberOfPlayersException ignored){}
@@ -541,7 +543,7 @@ public class ControllerTests {
 
       Point target = new Point (0,0);
 
-      SpawnWorkerEvent evt = new SpawnWorkerEvent(this, game.getCurrentPlayer(), target);
+      SpawnWorkerEvent evt = new SpawnWorkerEvent(game.getCurrentPlayer(), target);
       try{
         controller.update(evt);
       }
@@ -556,10 +558,10 @@ public class ControllerTests {
       }
 
       Point badTarget = new Point (-1, -1);
-      SpawnWorkerEvent evtInvalidPos = new SpawnWorkerEvent(this, game.getCurrentPlayer(), badTarget);
+      SpawnWorkerEvent evtInvalidPos = new SpawnWorkerEvent(game.getCurrentPlayer(), badTarget);
       assertThrows(InvalidPositionException.class, ()->{ controller.update(evtInvalidPos); });
 
-      SpawnWorkerEvent evtWrongPlayer = new SpawnWorkerEvent(this, game.getPlayers()[1], target);
+      SpawnWorkerEvent evtWrongPlayer = new SpawnWorkerEvent(game.getPlayers()[1], target);
       assertThrows(WrongPlayerException.class, ()->{ controller.update(evtWrongPlayer); });
     }
 

@@ -10,8 +10,8 @@ public class BuildEvent extends GameEvent {
   private final Point buildEnd;
   private final int level;
 
-  public BuildEvent(Object source, Player player, Point point, int level) {
-    super(source, player);
+  public BuildEvent(Object source, Point point, int level) {
+    super(source);
     buildEnd = point;
     this.level = level;
   }

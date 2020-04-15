@@ -8,8 +8,8 @@ public class WorkerSelectionEvent extends GameEvent {
 
   private final Sex sex;
 
-  public WorkerSelectionEvent(Object source, Player player, Sex sex) {
-    super(source, player);
+  public WorkerSelectionEvent(Object source, Sex sex) {
+    super(source);
     this.sex = sex;
   }
 

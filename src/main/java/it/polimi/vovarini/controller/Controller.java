@@ -32,7 +32,7 @@ public class Controller implements EventListener {
   public void update(WorkerSelectionEvent evt) throws InvalidPhaseException, WrongPlayerException {
 
     Player currentPlayer = game.getCurrentPlayer();
-    if (!currentPlayer.equals(evt.getPlayerSource())) throw new WrongPlayerException();
+    if (!currentPlayer.equals(evt.getSource())) throw new WrongPlayerException();
 
     Phase currentPhase = game.getCurrentPhase();
     if (currentPhase.equals(Phase.Construction) || currentPhase.equals(Phase.End))
@@ -48,7 +48,7 @@ public class Controller implements EventListener {
           WrongPlayerException, InvalidMoveException {
 
     Player currentPlayer = game.getCurrentPlayer();
-    if (!currentPlayer.equals(evt.getPlayerSource())) throw new WrongPlayerException();
+    if (!currentPlayer.equals(evt.getSource())) throw new WrongPlayerException();
 
     Phase currentPhase = game.getCurrentPhase();
     if (!currentPhase.equals(Phase.Construction)) throw new InvalidPhaseException();
@@ -117,7 +117,7 @@ public class Controller implements EventListener {
   public void update(UndoEvent evt) throws WrongPlayerException {
 
     Player currentPlayer = game.getCurrentPlayer();
-    if (!currentPlayer.equals(evt.getPlayerSource())) throw new WrongPlayerException();
+    if (!currentPlayer.equals(evt.getSource())) throw new WrongPlayerException();
 
     game.undoLastMove();
   }
@@ -128,7 +128,7 @@ public class Controller implements EventListener {
   public void update(NextPlayerEvent evt) throws InvalidPhaseException, WrongPlayerException {
 
     Player currentPlayer = game.getCurrentPlayer();
-    if (!currentPlayer.equals(evt.getPlayerSource())) throw new WrongPlayerException();
+    if (!currentPlayer.equals(evt.getSource())) throw new WrongPlayerException();
 
     Phase currentPhase = game.getCurrentPhase();
     if (!currentPhase.equals(Phase.End)) throw new InvalidPhaseException();
@@ -142,7 +142,7 @@ public class Controller implements EventListener {
   public void update(SkipEvent evt) throws WrongPlayerException, InvalidPhaseException {
 
     Player currentPlayer = game.getCurrentPlayer();
-    if (!currentPlayer.equals(evt.getPlayerSource())) throw new WrongPlayerException();
+    if (!currentPlayer.equals(evt.getSource())) throw new WrongPlayerException();
 
     Phase currentPhase = game.getCurrentPhase();
     if (currentPhase.equals(Phase.End)) throw new InvalidPhaseException();
@@ -157,7 +157,7 @@ public class Controller implements EventListener {
           InvalidMoveException, CurrentPlayerLosesException {
 
     Player currentPlayer = game.getCurrentPlayer();
-    if (!currentPlayer.equals(evt.getPlayerSource())) throw new WrongPlayerException();
+    if (!currentPlayer.equals(evt.getSource())) throw new WrongPlayerException();
 
     Phase currentPhase = game.getCurrentPhase();
     if (!currentPhase.equals(Phase.Movement)) throw new InvalidPhaseException();
@@ -184,7 +184,7 @@ public class Controller implements EventListener {
   public void update(SpawnWorkerEvent evt) throws WrongPlayerException, InvalidPositionException {
 
     Player currentPlayer = game.getCurrentPlayer();
-    if (!currentPlayer.equals(evt.getPlayerSource())) throw new WrongPlayerException();
+    if (!currentPlayer.equals(evt.getSource())) throw new WrongPlayerException();
 
     Point target = evt.getTarget();
     if (!game.getBoard().isPositionValid(target)) throw new InvalidPositionException();

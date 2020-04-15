@@ -7,8 +7,8 @@ public class MovementEvent extends GameEvent {
 
   private final Point end;
 
-  public MovementEvent(Object source, Player player, Point end) {
-    super(source, player);
+  public MovementEvent(Object source, Point end) {
+    super(source);
     this.end = end;
   }
 
