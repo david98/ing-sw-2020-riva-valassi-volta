@@ -1,10 +1,13 @@
 package it.polimi.vovarini.common.events;
 
-import it.polimi.vovarini.model.Player;
 import it.polimi.vovarini.model.Point;
 
-// si è deciso di separare MovementEvent e BuildEvent perchè, pur strutturalmente equivalenti, sono
-// molto diversi a livello semantico
+/**
+ * @author Mattia Valassi
+ * @author Marco Riva
+ * @version 0.1
+ * @since 0.1
+ */
 public class BuildEvent extends GameEvent {
 
   private final Point buildEnd;

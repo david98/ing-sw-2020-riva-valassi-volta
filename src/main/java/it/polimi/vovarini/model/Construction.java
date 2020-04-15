@@ -1,12 +1,9 @@
 package it.polimi.vovarini.model;
 
-import it.polimi.vovarini.controller.InvalidMoveException;
 import it.polimi.vovarini.model.board.Board;
-import it.polimi.vovarini.model.board.BoxEmptyException;
 import it.polimi.vovarini.model.board.BoxFullException;
 import it.polimi.vovarini.model.board.InvalidPositionException;
 import it.polimi.vovarini.model.board.items.Block;
-import it.polimi.vovarini.model.board.items.Item;
 
 public class Construction extends Move {
 

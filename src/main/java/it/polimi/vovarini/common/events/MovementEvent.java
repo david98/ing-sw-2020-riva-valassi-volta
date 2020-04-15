@@ -1,6 +1,5 @@
 package it.polimi.vovarini.common.events;
 
-import it.polimi.vovarini.model.Player;
 import it.polimi.vovarini.model.Point;
 
 public class MovementEvent extends GameEvent {

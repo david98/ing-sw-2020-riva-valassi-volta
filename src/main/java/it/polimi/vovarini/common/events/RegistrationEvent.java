@@ -1,7 +1,5 @@
 package it.polimi.vovarini.common.events;
 
-import it.polimi.vovarini.model.Player;
-
 public class RegistrationEvent extends GameEvent {
 
   private final String nickname;

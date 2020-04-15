@@ -1,6 +1,5 @@
 package it.polimi.vovarini.common.events;
 
-import it.polimi.vovarini.model.Player;
 import it.polimi.vovarini.model.board.items.Sex;
 
 // evento di selezione del worker

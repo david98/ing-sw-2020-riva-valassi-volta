@@ -9,7 +9,8 @@ import it.polimi.vovarini.model.board.ItemNotFoundException;
 import it.polimi.vovarini.model.board.items.Block;
 import it.polimi.vovarini.model.godcards.GodName;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.EventListener;
 
 public class Controller implements EventListener {
 
