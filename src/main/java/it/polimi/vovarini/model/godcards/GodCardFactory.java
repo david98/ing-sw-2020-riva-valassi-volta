@@ -46,6 +46,67 @@ public class GodCardFactory {
         return false;
       };
 
+    private static BiFunction<Game, Point, Boolean> isPointReachableMinotaur =
+            (Game game, Point point) -> {
+                try {
+                    Worker currentWorker = game.getCurrentPlayer().getCurrentWorker();
+                    Point currentWorkerPosition = game.getBoard().getItemPosition(currentWorker);
+                    if (!point.isAdjacent(currentWorkerPosition)) {
+                        return false;
+                    }
+
+                    Box destinationBox = game.getBoard().getBox(point);
+                    Stack<Item> destinationItems = null;
+
+                    try {
+                        destinationItems = destinationBox.getItems();
+                    } catch (BoxEmptyException ignored) {
+                        // la casella di destinazione è adiacente e vuota
+                        return true;
+                    }
+
+                    int destinationLevel = destinationBox.getLevel();
+                    int currentWorkerLevel = game.getBoard().getBox(currentWorkerPosition).getLevel();
+
+
+                    if(destinationLevel - currentWorkerLevel <= 1) {
+
+                        // General rules
+                        if(currentWorker.canBePlacedOn(destinationItems.peek())) {
+                            // la casella di destinazione è raggiungibile (adiacenza e livello ok) e libera
+                            return true;
+                        }
+
+                        // Minotaur's rules
+                        Worker otherWorker = game.getCurrentPlayer().getOtherWorker();
+                        // se nella casella di destinazione c'è un worker nemico
+                        if(destinationItems.peek().canBeRemoved() && !destinationItems.peek().equals(otherWorker)) {
+                            Worker enemysWorker = (Worker) destinationItems.peek();
+                            int x = 2*point.getX() - currentWorkerPosition.getX();
+                            int y = 2*point.getY() - currentWorkerPosition.getY();
+                            Point forcedDestination = new Point(x,y);
+                            Box forcedDestinationBox = game.getBoard().getBox(forcedDestination);
+                            Item forcedDestinationItem = null;
+
+                            // se la casella successiva nella stessa direzione del movimento è vuota
+                            try { forcedDestinationItem = forcedDestinationBox.getItems().peek();
+                            } catch (BoxEmptyException ignored) {
+                                return true;
+                            }
+
+                            // se la casella successiva nella stessa direzione del movimento è libera
+                            if(enemysWorker.canBePlacedOn(forcedDestinationItem)) {
+                                return true;
+                            }
+                        }
+                    }
+
+                } catch (ItemNotFoundException ignored) {
+                    System.err.println("This really should never happen...");
+                }
+                return false;
+            };
+
   private static Predicate<Movement> isMovementWinningPan =
           (Movement movement) -> {
             if (movement.isForced()) {
@@ -67,6 +128,10 @@ public class GodCardFactory {
         {
           return createApollo();
         }
+        case Minotaur:
+        {
+            return createMinotaur();
+        }
       case Pan:
       {
         return createPan();
@@ -83,6 +148,12 @@ public class GodCardFactory {
     GodCard apollo = new GodCard(GodName.Apollo);
     apollo.isPointReachable = isPointReachableCanExchangeWithWorker;
     return apollo;
+  }
+
+  private static GodCard createMinotaur() {
+      GodCard minotaur = new GodCard(GodName.Minotaur);
+      minotaur.isPointReachable = isPointReachableMinotaur;
+      return minotaur;
   }
 
   private static GodCard createPan() {
