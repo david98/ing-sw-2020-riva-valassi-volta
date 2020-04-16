@@ -41,6 +41,11 @@
             <version>19.0.0</version>
             <scope>compile</scope>
         </dependency>
+        <dependency>
+            <groupId>org.jline</groupId>
+            <artifactId>jline</artifactId>
+            <version>3.14.0</version>
+        </dependency>
     </dependencies>
 
 </project>

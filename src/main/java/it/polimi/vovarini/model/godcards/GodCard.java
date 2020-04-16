@@ -82,21 +82,13 @@ public class GodCard {
         if (movement.isForced()) {
           return false;
         }
-        try {
-          Stack<Item> destinationItems = movement.getBoard().getItems(movement.getEnd());
-          int endLevel = destinationItems.size();
-          if (endLevel != Block.WIN_LEVEL) {
-            return false;
-          }
-          int currentLevel = movement.getBoard().getItems(movement.getStart()).size() - 1;
-
-          return currentLevel < Block.WIN_LEVEL;
-        } catch (BoxEmptyException e) {
+        int endLevel = movement.getBoard().getBox(movement.getEnd()).getLevel();
+        if (endLevel != Block.WIN_LEVEL) {
           return false;
-        } catch (InvalidPositionException ignored) {
-          System.err.println("This really should never happen...");
         }
-        return false;
+        int currentLevel = movement.getBoard().getBox(movement.getStart()).getLevel();
+
+        return currentLevel < Block.WIN_LEVEL;
       };
 
   public List<Point> computeReachablePoints() throws CurrentPlayerLosesException {
