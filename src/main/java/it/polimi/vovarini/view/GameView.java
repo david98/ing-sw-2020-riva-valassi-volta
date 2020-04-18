@@ -169,7 +169,7 @@ public class GameView {
   private void selectWhenConstructionPhase(){
     try {
       Point dest = boardRenderer.getCursorLocation();
-      Collection<Point> buildablePoints = owner.getGodCard().computeReachablePoints();
+      Collection<Point> buildablePoints = owner.getGodCard().computeBuildablePoints();
       if (buildablePoints.contains(dest)){
         int nextLevel = board.getBox(dest).getLevel() + 1;
         deSelect();
