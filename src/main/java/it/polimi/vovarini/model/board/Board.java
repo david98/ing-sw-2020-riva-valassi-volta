@@ -89,17 +89,6 @@ public class Board implements Cloneable{
     throw new ItemNotFoundException();
   }
 
-  public void debugPrintToConsole(Player[] players) {
-    for (int i = 0; i < boxes.length; i++) {
-      System.out.print("|");
-      for (int j = 0; j < boxes.length; j++) {
-        System.out.print(" " + boxes[i][j].toString(players));
-      }
-      System.out.println((char) 27 + "[37m |");
-    }
-    System.out.println((char) 27 + "[37m");
-  }
-
   public int getSize() {
     return size;
   }

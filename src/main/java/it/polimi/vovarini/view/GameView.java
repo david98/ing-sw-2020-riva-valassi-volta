@@ -58,7 +58,7 @@ public class GameView {
 
   @GameEventListener
   public void handleBoardUpdate(BoardUpdateEvent e){
-    board = e.getNewBoard();
+    board = e.getNewBoard().clone();
     reRenderNeeded = true;
   }
 
@@ -190,6 +190,7 @@ public class GameView {
         deSelect();
       } else if (boardRenderer.getMarkedPoints().contains(boardRenderer.getCursorLocation())){
         boardRenderer.resetMarkedPoints();
+        System.out.println("MOVIMENTO!");
         GameEventManager.raise(new MovementEvent(
                 owner,
                 boardRenderer.getCursorLocation())
@@ -198,7 +199,8 @@ public class GameView {
     } else {
       // check if one of the player's workers is under the cursor
       try{
-        Item item = board.getItems(boardRenderer.getCursorLocation()).pop();
+        Item item = board.getItems(boardRenderer.getCursorLocation()).peek();
+
         if (owner.getWorkers().values().stream().anyMatch(w -> w.equals(item))){
           currentStart = boardRenderer.getCursorLocation();
           selectedWorker = (Worker)item;
@@ -211,6 +213,7 @@ public class GameView {
           boardRenderer.markPoints(
                   owner.getGodCard().computeReachablePoints()
           );
+
           reRenderNeeded = true;
         }
       } catch (BoxEmptyException ignored){

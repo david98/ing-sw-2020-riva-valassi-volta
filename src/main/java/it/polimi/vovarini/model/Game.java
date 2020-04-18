@@ -4,14 +4,12 @@ import it.polimi.vovarini.common.events.CurrentPlayerChangedEvent;
 import it.polimi.vovarini.common.events.GameEventManager;
 import it.polimi.vovarini.common.events.PhaseUpdateEvent;
 import it.polimi.vovarini.model.board.Board;
+import it.polimi.vovarini.model.board.Box;
 import it.polimi.vovarini.model.board.BoxEmptyException;
 import it.polimi.vovarini.model.board.InvalidPositionException;
 import it.polimi.vovarini.model.board.items.Item;
 
-import java.util.Arrays;
-import java.util.EmptyStackException;
-import java.util.Objects;
-import java.util.Stack;
+import java.util.*;
 
 public class Game {
 
@@ -66,36 +64,34 @@ public class Game {
     }
   }
 
-  public boolean validateMove(Movement movement) throws CurrentPlayerLosesException {
-
-    Stack<Item> startPositionStack = new Stack<Item>();
-    Stack<Item> endPositionStack = new Stack<Item>();
-
-    try {
-      startPositionStack = (Stack<Item>) getBoard().getBox(movement.getStart()).getItems().clone();
-      startPositionStack.pop();
-    } catch (BoxEmptyException ignored) {
-    }
+  /**
+   * Returns true if movement is valid for the current player and their current worker.
+   *
+   * @param movement The move to be validated.
+   * @return If movement is valid.
+   */
+  public boolean validateMove(Movement movement) {
 
     try {
-      endPositionStack = (Stack<Item>) getBoard().getBox(movement.getEnd()).getItems().clone();
-    } catch (BoxEmptyException ignored) {
-    }
+      Collection<Point> reachablePoints = getCurrentPlayer().getGodCard().computeReachablePoints();
 
-    try {
-      for (Point point : getCurrentPlayer().getGodCard().computeReachablePoints()) {
-        if (point.equals(movement.getEnd())) {
-          if (startPositionStack.size() == endPositionStack.size()
-              || startPositionStack.size() == (endPositionStack.size() - 1)) {
-            return true;
-          }
-        }
+      if (!reachablePoints.contains(movement.getEnd())) {
+        return false;
       }
-    } catch (CurrentPlayerLosesException e) {
-      throw e;
+
+      try {
+        Box startBox = board.getBox(movement.getStart());
+        startBox.removeTopmost();
+        Box endBox = board.getBox(movement.getEnd());
+
+        return (endBox.getLevel() - startBox.getLevel()) <= 1;
+      } catch (BoxEmptyException e) {
+        throw new RuntimeException(e);
+      }
+    } catch (CurrentPlayerLosesException e){
+      return false;
     }
 
-    return false;
   }
 
   public boolean validateMove(Construction construction) {

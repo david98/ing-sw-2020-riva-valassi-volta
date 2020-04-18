@@ -85,4 +85,27 @@ public class BoxTests {
 
     }
   }
+
+  @Test
+  @DisplayName("Test that the clone() method on Box works")
+  void cloneWorks(){
+    Box box = new Box();
+
+    for (int i = 0; i < Box.MAX_ITEMS; i++) {
+      try {
+        box.place(allBlocks.get(i));
+      } catch (BoxFullException ignored) {
+
+      }
+    }
+
+    Box box2 = box.clone();
+    try {
+      box2.removeTopmost();
+      box2.removeTopmost();
+      assertEquals(box.getItems().size(), Box.MAX_ITEMS);
+    } catch (BoxEmptyException ignored){
+
+    }
+  }
 }

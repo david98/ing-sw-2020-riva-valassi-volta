@@ -146,7 +146,6 @@ public class ControllerTests {
       } catch (WrongPlayerException ignored) {
       } catch (InvalidPositionException ignored) {
       } catch (InvalidMoveException ignored) {
-      } catch (CurrentPlayerLosesException ignored){
       }
 
       Point invalidMovePoint = new Point (3,3);

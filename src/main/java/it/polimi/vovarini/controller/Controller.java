@@ -31,7 +31,6 @@ public class Controller implements EventListener {
   // CLI: keyboard M,F characters
   @GameEventListener
   public void update(WorkerSelectionEvent evt) throws InvalidPhaseException, WrongPlayerException {
-
     Player currentPlayer = game.getCurrentPlayer();
     if (!currentPlayer.equals(evt.getSource())) throw new WrongPlayerException();
 
@@ -157,30 +156,28 @@ public class Controller implements EventListener {
   @GameEventListener
   public void update(MovementEvent evt)
           throws InvalidPhaseException, WrongPlayerException, InvalidPositionException,
-          InvalidMoveException, CurrentPlayerLosesException {
-
-    Player currentPlayer = game.getCurrentPlayer();
-    if (!currentPlayer.equals(evt.getSource())) throw new WrongPlayerException();
-
-    Phase currentPhase = game.getCurrentPhase();
-    if (!currentPhase.equals(Phase.Movement)) throw new InvalidPhaseException();
-
-    Point end = evt.getPoint();
-    if (!game.getBoard().isPositionValid(end)) throw new InvalidPositionException();
-
-    Point start = null;
+          InvalidMoveException {
     try {
-      start = game.getBoard().getItemPosition(game.getCurrentPlayer().getCurrentWorker());
-    } catch (ItemNotFoundException ignored) {
+      Point start = game.getBoard().getItemPosition(game.getCurrentPlayer().getCurrentWorker());
 
+      Player currentPlayer = game.getCurrentPlayer();
+      if (!currentPlayer.equals(evt.getSource())) throw new WrongPlayerException();
+
+      Phase currentPhase = game.getCurrentPhase();
+      if (!currentPhase.equals(Phase.Movement)) throw new InvalidPhaseException();
+
+      Point end = evt.getPoint();
+      if (!game.getBoard().isPositionValid(end)) throw new InvalidPositionException();
+
+      Movement movement = new Movement(game.getBoard(), start, end);
+
+      if (!game.validateMove(movement)) throw new InvalidMoveException();
+
+      game.performMove(movement);
+      game.nextPhase();
+    } catch (ItemNotFoundException e) {
+      throw new RuntimeException(e);
     }
-
-    Movement movement = new Movement(game.getBoard(), start, end);
-
-    if (!game.validateMove(movement)) throw new InvalidMoveException();
-    
-    game.performMove(movement);
-    game.nextPhase();
   }
 
   @GameEventListener
