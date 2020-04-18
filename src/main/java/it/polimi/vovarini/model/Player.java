@@ -7,7 +7,7 @@ import it.polimi.vovarini.model.godcards.GodCard;
 import java.util.EnumMap;
 import java.util.Map;
 
-public class Player {
+public class Player implements Cloneable{
 
   private EnumMap<Sex, Worker> workers;
   private Sex currentSex;
@@ -65,6 +65,19 @@ public class Player {
   public static boolean validateNickname(String nickname) {
     return (nickname != null) && nickname.matches("[A-Za-z0-9_]{4,16}$");
   }
+
+  public Player clone() {
+    try {
+      Player p = (Player) super.clone();
+      if (p.godCard != null) {
+        p.godCard = godCard.clone();
+      }
+      return p;
+    } catch (CloneNotSupportedException e) {
+      throw new RuntimeException(e);
+    }
+  }
+
 
   @Override
   public int hashCode() {

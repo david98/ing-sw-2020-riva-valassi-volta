@@ -66,6 +66,8 @@ public class Controller implements EventListener {
     if (!game.validateMove(build)) throw new InvalidMoveException();
 
     game.performMove(build);
+    game.nextPhase();
+    game.nextPlayer();
   }
 
   // Not part of the 1vs1 simulation we want to develop now

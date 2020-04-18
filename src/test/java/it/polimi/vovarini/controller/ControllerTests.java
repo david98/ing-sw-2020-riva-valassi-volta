@@ -15,8 +15,6 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-// TODO: refactor
-
 @DisplayName("Controller Tests")
 public class ControllerTests {
 

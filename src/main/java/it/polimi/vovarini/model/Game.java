@@ -1,5 +1,8 @@
 package it.polimi.vovarini.model;
 
+import it.polimi.vovarini.common.events.CurrentPlayerChangedEvent;
+import it.polimi.vovarini.common.events.GameEventManager;
+import it.polimi.vovarini.common.events.PhaseUpdateEvent;
 import it.polimi.vovarini.model.board.Board;
 import it.polimi.vovarini.model.board.BoxEmptyException;
 import it.polimi.vovarini.model.board.InvalidPositionException;
@@ -130,7 +133,7 @@ public class Game {
   }
 
   public Phase nextPhase() {
-    currentPhase = currentPhase.next();
+    setCurrentPhase(currentPhase.next());
     return currentPhase;
   }
 
@@ -143,9 +146,15 @@ public class Game {
   }
 
   public Player nextPlayer() {
-    currentPhase = Phase.Start;
+    setCurrentPhase(Phase.Start);
     currentPlayerIndex = (currentPlayerIndex + 1) % players.length;
+    GameEventManager.raise(new CurrentPlayerChangedEvent(this, players[currentPlayerIndex].clone()));
     return players[currentPlayerIndex];
+  }
+
+  public void setCurrentPhase(Phase phase){
+    this.currentPhase = phase;
+    GameEventManager.raise(new PhaseUpdateEvent(this, phase));
   }
 
   // needs to manage turn flow

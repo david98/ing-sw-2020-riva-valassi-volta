@@ -14,7 +14,7 @@ import java.util.function.BiFunction;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-public class GodCard {
+public class GodCard implements Cloneable{
 
   protected Game game;
   protected GodName name;
@@ -160,6 +160,14 @@ public class GodCard {
 
   public void setGame(Game game) {
     this.game = game;
+  }
+
+  public GodCard clone(){
+    try{
+      return (GodCard) super.clone();
+    } catch (CloneNotSupportedException e){
+      throw new RuntimeException(e);
+    }
   }
 
   @Override

@@ -1,5 +1,7 @@
 package it.polimi.vovarini.model.board;
 
+import it.polimi.vovarini.common.events.BoardUpdateEvent;
+import it.polimi.vovarini.common.events.GameEventManager;
 import it.polimi.vovarini.model.Player;
 import it.polimi.vovarini.model.Point;
 import it.polimi.vovarini.model.board.items.Item;
@@ -8,7 +10,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Stack;
 
-public class Board {
+public class Board implements Cloneable{
 
   public static final int DEFAULT_SIZE = 5;
 
@@ -55,6 +57,7 @@ public class Board {
     }
     Box box = getBox(p);
     box.place(item);
+    GameEventManager.raise(new BoardUpdateEvent(this, this.clone()));
   }
 
   public Stack<Item> getItems(Point p) throws InvalidPositionException, BoxEmptyException {
@@ -100,4 +103,20 @@ public class Board {
   public int getSize() {
     return size;
   }
+
+  public Board clone() {
+    try {
+      Board b = (Board) super.clone();
+      b.boxes = new Box[size][size];
+      for (int i = 0; i < size; i++) {
+        for (int j = 0; j < size; j++) {
+          b.boxes[i][j] = boxes[i][j].clone();
+        }
+      }
+      return b;
+    } catch (CloneNotSupportedException e) {
+      throw new RuntimeException(e);
+    }
+  }
+
 }

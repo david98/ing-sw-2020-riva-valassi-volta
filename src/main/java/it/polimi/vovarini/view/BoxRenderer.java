@@ -49,7 +49,7 @@ public class BoxRenderer {
               + (hasCursor ? "▮" : itemRenderer.render(topMostItem, playerRenderer));
         }
       } else if (!items.empty()){
-        return itemRenderer.render(items.pop(), playerRenderer) + " ";
+        return itemRenderer.render(items.pop(), playerRenderer) + (hasCursor ? "▮" : " ");
       }
     } catch (BoxEmptyException ignored) {
     }

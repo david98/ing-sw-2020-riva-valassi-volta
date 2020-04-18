@@ -8,7 +8,7 @@ import it.polimi.vovarini.model.board.items.Worker;
 import java.util.EmptyStackException;
 import java.util.Stack;
 
-public class Box {
+public class Box implements Cloneable{
 
   public static final int MAX_ITEMS = 4;
 
@@ -90,5 +90,19 @@ public class Box {
       return (char) 27 + color + "##";
     }
     return (char) 27 + "[37m" + items.peek().toString() + "-";
+  }
+
+  public Box clone(){
+    Box box;
+    try{
+      box = (Box) super.clone();
+      box.items = getItems();
+      return box;
+    } catch (CloneNotSupportedException e){
+      throw new RuntimeException(e);
+    } catch (BoxEmptyException e){
+      box = new Box();
+      return box;
+    }
   }
 }
