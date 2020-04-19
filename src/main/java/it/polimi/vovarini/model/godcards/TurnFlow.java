@@ -11,10 +11,6 @@ import java.util.ArrayList;
  */
 public class TurnFlow extends Behavior {
 
-    /**
-     * This is an overriding of the Constraint method in Behavior. It will apply any malus or bonus that influences the NextPhase of the current player
-     * @param malusCard is the previous card whose effect is applied by the method
-     * @author Mattia Valassi
-     */
+
 
 }

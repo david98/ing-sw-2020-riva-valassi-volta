@@ -14,21 +14,40 @@ import java.util.function.BiFunction;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+/**
+ * @class The GodCard class represents a general GodCard
+ * game is the current game played by all the players
+ * name references one of the cards available in the base set of Santorini
+ */
 public class GodCard {
 
   protected Game game;
   protected GodName name;
 
-
+  /**
+   * Constructor method of GodCard class without game assignment (if the card is created before starting the game)
+   * @param name Name of the Card I want to create, must be a value of the GodName enumeration
+   */
   public GodCard(GodName name) {
     this.name = name;
   }
 
+  /**
+   * Constructor method of GodCard
+   * @param name Name of the Card I want to create, must be a value of the GodName enumeration
+   * @param game Instance of game currently played by all the players
+   */
   public GodCard(GodName name, Game game) {
     this.name = name;
     this.game = game;
   }
 
+  /**
+   * Lambda function presenting the base Behavior for Reachability. Gets injected dynamically by code in the Reachability class
+   * @param game Instance of game currently played by all the players
+   * @param point Candidate to be a Movement destination
+   * @return if the candidate point can be reached returns true, false otherwise
+   */
   BiFunction<Game, Point, Boolean> isPointReachable =
       (Game game, Point point) -> {
         try {
@@ -55,6 +74,12 @@ public class GodCard {
         return false;
       };
 
+  /**
+   * Lambda function presenting the base Behavior for Buildability. Gets injected dynamically by code in the Buildability class
+   * @param game Instance of game currently played by all the players
+   * @param point Candidate to be a Construction destination
+   * @return if the candidate point can be built upon returns true, false otherwise
+   */
   BiFunction<Game, Point, Boolean> isPointBuildable =
       (Game game, Point point) -> {
         try {
@@ -77,6 +102,13 @@ public class GodCard {
         return false;
       };
 
+
+  /**
+   * Predicate for checking if a player has won with the Movement he wants to perform (applied before the movement itself)
+   * @param movement The Movement move the player wants to execute.
+   * @return A predicate always return true or false. It will return true if the movement leads to victory after execution, false otherwise
+   * A Forced movement always return false (the system itself must not make a player win)
+   */
   Predicate<Movement> isMovementWinning =
       (Movement movement) -> {
         // this needs to be called BEFORE calling movement.execute()
@@ -92,6 +124,11 @@ public class GodCard {
         return currentLevel < Block.WIN_LEVEL;
       };
 
+  /**
+   *
+   * @return a list of points that the player can reach from his currentWorker position
+   * @throws CurrentPlayerLosesException if the list of points is empty it means that the current player cannot move, thus losing the game
+   */
   public List<Point> computeReachablePoints() throws CurrentPlayerLosesException {
     List<Point> reachablePoints = new LinkedList<>();
 
@@ -120,6 +157,11 @@ public class GodCard {
     return isMovementWinning.test(movement);
   }
 
+  /**
+   *
+   * @return a list of points that the player can build upon from his currentWorker position
+   * @throws CurrentPlayerLosesException if the list of points is empty it means that the current player cannot build, thus losing the game
+   */
   public List<Point> computeBuildablePoints() throws CurrentPlayerLosesException {
     List<Point> buildablePoints = new LinkedList<>();
 

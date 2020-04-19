@@ -12,10 +12,6 @@ import java.util.ArrayList;
  */
 public class Buildability extends Behavior {
 
-    /**
-     * This is an overriding of the Constraint method in Behavior. It will apply any malus or bonus that influences the ConstructionPhase of the current player
-     * @param malusCard is the previous card whose effect is applied by the method
-     * @author Mattia Valassi
-     */
+
 
 }
