@@ -1,20 +1,5 @@
 package it.polimi.vovarini.model.godcards;
 
-import it.polimi.vovarini.model.Game;
-import it.polimi.vovarini.model.Movement;
-import it.polimi.vovarini.model.Point;
-import it.polimi.vovarini.model.board.Box;
-import it.polimi.vovarini.model.board.BoxEmptyException;
-import it.polimi.vovarini.model.board.InvalidPositionException;
-import it.polimi.vovarini.model.board.ItemNotFoundException;
-import it.polimi.vovarini.model.board.items.Block;
-import it.polimi.vovarini.model.board.items.Item;
-import it.polimi.vovarini.model.board.items.Worker;
-
-import java.util.Stack;
-import java.util.function.BiFunction;
-import java.util.function.Predicate;
-
 /**
  * @class GodCardFactory creates a specific GodCard injecting dynamically particular methods that pertain to a particular card
  */

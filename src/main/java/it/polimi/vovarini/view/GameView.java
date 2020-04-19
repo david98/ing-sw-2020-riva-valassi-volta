@@ -1,13 +1,11 @@
 package it.polimi.vovarini.view;
 
 import it.polimi.vovarini.common.events.*;
+import it.polimi.vovarini.common.exceptions.CurrentPlayerLosesException;
 import it.polimi.vovarini.controller.Controller;
 import it.polimi.vovarini.model.*;
-import it.polimi.vovarini.model.board.Board;
-import it.polimi.vovarini.model.board.Box;
-import it.polimi.vovarini.model.board.BoxEmptyException;
-import it.polimi.vovarini.model.board.InvalidPositionException;
-import it.polimi.vovarini.model.board.items.Block;
+import it.polimi.vovarini.common.exceptions.BoxEmptyException;
+import it.polimi.vovarini.common.exceptions.InvalidPositionException;
 import it.polimi.vovarini.model.board.items.Item;
 import it.polimi.vovarini.model.board.items.Sex;
 import it.polimi.vovarini.model.board.items.Worker;
@@ -16,7 +14,6 @@ import org.jline.terminal.TerminalBuilder;
 
 import java.io.IOException;
 import java.io.Reader;
-import java.util.Arrays;
 
 public class GameView {
 

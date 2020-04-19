@@ -3,8 +3,8 @@ package it.polimi.vovarini.model.godcards;
 import it.polimi.vovarini.model.Game;
 import it.polimi.vovarini.model.Point;
 import it.polimi.vovarini.model.board.Box;
-import it.polimi.vovarini.model.board.BoxEmptyException;
-import it.polimi.vovarini.model.board.ItemNotFoundException;
+import it.polimi.vovarini.common.exceptions.BoxEmptyException;
+import it.polimi.vovarini.common.exceptions.ItemNotFoundException;
 import it.polimi.vovarini.model.board.items.Item;
 import it.polimi.vovarini.model.board.items.Worker;
 

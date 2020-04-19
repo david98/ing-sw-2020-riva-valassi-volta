@@ -1,5 +1,7 @@
 package it.polimi.vovarini.model.board;
 
+import it.polimi.vovarini.common.exceptions.BoxEmptyException;
+import it.polimi.vovarini.common.exceptions.BoxFullException;
 import it.polimi.vovarini.model.board.items.*;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;

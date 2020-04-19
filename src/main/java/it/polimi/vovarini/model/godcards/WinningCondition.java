@@ -1,10 +1,7 @@
 package it.polimi.vovarini.model.godcards;
 
-import it.polimi.vovarini.model.Movement;
-import it.polimi.vovarini.model.Point;
+import it.polimi.vovarini.model.moves.Movement;
 import it.polimi.vovarini.model.board.items.Block;
-
-import java.util.ArrayList;
 
 /**
  * @class WinningCondition is an extension of Behavior. It represents in specific the "Win" behavior. Here, all methods influenced by cards acting on the Win aspect

@@ -1,5 +1,7 @@
 package it.polimi.vovarini.model.board;
 
+import it.polimi.vovarini.common.exceptions.BoxEmptyException;
+import it.polimi.vovarini.common.exceptions.BoxFullException;
 import it.polimi.vovarini.model.Player;
 import it.polimi.vovarini.model.board.items.Item;
 import it.polimi.vovarini.model.board.items.Sex;

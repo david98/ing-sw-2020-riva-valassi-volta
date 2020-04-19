@@ -1,13 +1,13 @@
 package it.polimi.vovarini.model.godcards;
 
 import it.polimi.vovarini.model.Game;
-import it.polimi.vovarini.model.InvalidNumberOfPlayersException;
-import it.polimi.vovarini.model.Movement;
+import it.polimi.vovarini.common.exceptions.InvalidNumberOfPlayersException;
+import it.polimi.vovarini.model.moves.Movement;
 import it.polimi.vovarini.model.Point;
 import it.polimi.vovarini.model.board.Board;
-import it.polimi.vovarini.model.board.BoxEmptyException;
-import it.polimi.vovarini.model.board.BoxFullException;
-import it.polimi.vovarini.model.board.InvalidPositionException;
+import it.polimi.vovarini.common.exceptions.BoxEmptyException;
+import it.polimi.vovarini.common.exceptions.BoxFullException;
+import it.polimi.vovarini.common.exceptions.InvalidPositionException;
 import it.polimi.vovarini.model.board.items.Block;
 import it.polimi.vovarini.model.board.items.Sex;
 import it.polimi.vovarini.model.board.items.Worker;

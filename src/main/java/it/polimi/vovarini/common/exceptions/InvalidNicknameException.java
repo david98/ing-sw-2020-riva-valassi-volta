@@ -1,4 +1,4 @@
-package it.polimi.vovarini.controller;
+package it.polimi.vovarini.common.exceptions;
 
 public class InvalidNicknameException extends Throwable {
 
