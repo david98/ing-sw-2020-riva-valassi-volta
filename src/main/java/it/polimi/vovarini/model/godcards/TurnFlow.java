@@ -13,6 +13,8 @@ import java.util.ArrayList;
  */
 public class TurnFlow extends Behavior {
 
+    private static boolean restoration = false;
+
     public static Phase nextPhaseExtendsConstruction (Game game){
         if (game.getCurrentPhase().equals(Phase.Construction)) return Phase.Construction;
         else return game.getCurrentPhase().next();
@@ -21,6 +23,20 @@ public class TurnFlow extends Behavior {
     public static Phase nextPhaseExtendsMovement (Game game){
         if (game.getCurrentPhase().equals((Phase.Movement))) return Phase.Movement;
         else return game.getCurrentPhase().next();
+    }
+
+    public static Phase nextPhaseConstructionTwice (Game game){
+        if (game.getCurrentPhase().equals(Phase.Start)){
+            restoration = true;
+            return Phase.Construction;
+        }
+
+        if (game.getCurrentPhase().equals(Phase.Construction) && restoration){
+            restoration = false;
+            return Phase.Movement;
+        }
+        else return game.getCurrentPhase().next();
+
     }
 
 }

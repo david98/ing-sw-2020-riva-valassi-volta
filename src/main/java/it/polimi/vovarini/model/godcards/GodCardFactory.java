@@ -83,6 +83,13 @@ public class GodCardFactory {
     return artemis;
   }
 
+  private static GodCard createPrometheus(){
+    GodCard prometheus = new GodCard(GodName.Prometheus);
+    prometheus.nextPhase = TurnFlow::nextPhaseConstructionTwice;
+    //TODO: isPointReachablePrometheus
+    return prometheus;
+  }
+
     /**
      * This method just generates an empty card without any effect on the game
      * @return a generic instance of an "empty" GodCard, if someone wants to play with the std set of rules and without the influence of a card
