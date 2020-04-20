@@ -16,6 +16,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Stack;
 import java.util.function.BiFunction;
+import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -106,6 +107,14 @@ public class GodCard {
         }
         return false;
       };
+
+  /**
+   * Lambda function that returns the next phase of the turn following the standard flow
+   * @param game Instance of game currently played by all the players
+   * @return the next phase to play, according to the normal flow of the game
+   */
+  Function<Game, Phase> nextPhase =
+          (Game game) -> game.getCurrentPhase().next();
 
 
   /**

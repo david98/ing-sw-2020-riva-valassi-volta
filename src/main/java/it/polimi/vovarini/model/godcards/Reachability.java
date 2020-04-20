@@ -80,7 +80,7 @@ public class Reachability extends Behavior {
     //TODO: See how to add blockedPoints condition (if point € blockePoints -> point is unreachable)
     //Is it possibile to add a method that checks if I can force the opponent's worker in the direction I'm moving. It will give us the opportunity to
     //collapse Apollo and Minotaur in the same method (isPointReachableCanReplaceWorker)
-    public static boolean isPointReachableMinotaur(Game game, Point point){
+    public static boolean isPointReachableConditionedExchange(Game game, Point point){
         try {
             Worker currentWorker = game.getCurrentPlayer().getCurrentWorker();
             Point currentWorkerPosition = game.getBoard().getItemPosition(currentWorker);
@@ -133,6 +133,21 @@ public class Reachability extends Behavior {
                     }
                 }
             }
+
+        } catch (ItemNotFoundException ignored) {
+            System.err.println("This really should never happen...");
+        }
+        return false;
+    }
+
+    public static boolean isPointReachablePreviousBoxDenied(Game game, Point point){
+        try{
+            Worker currentWorker = game.getCurrentPlayer().getCurrentWorker();
+            Point currentWorkerPosition = game.getBoard().getItemPosition(currentWorker);
+            if (!point.isAdjacent(currentWorkerPosition)) {
+                return false;
+            }
+
 
         } catch (ItemNotFoundException ignored) {
             System.err.println("This really should never happen...");
