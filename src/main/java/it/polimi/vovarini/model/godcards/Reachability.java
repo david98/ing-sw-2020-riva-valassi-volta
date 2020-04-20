@@ -28,7 +28,6 @@ public class Reachability extends Behavior {
      * @author Mattia Valassi
      */
     public void constraintAthena(Game game, Point destination) {
-       //TODO: fills blockedPoints with Athena constraint
     }
 
     /**
@@ -39,7 +38,6 @@ public class Reachability extends Behavior {
      * @return true if the chosen position is reachable, false if it isn't
      * @author Davide Volta
      */
-    //TODO: See how to add blockedPoints condition (if point € blockePoints -> point is unreachable)
     public static boolean isPointReachableCanExchangeWithWorker(Game game, Point point){
         try {
             Worker currentWorker = game.getCurrentPlayer().getCurrentWorker();
@@ -77,7 +75,6 @@ public class Reachability extends Behavior {
      * @return if the chosen position is reachable, false if it isn't
      * @author Marco Riva
      */
-    //TODO: See how to add blockedPoints condition (if point € blockedPoints -> point is unreachable)
     //Is it possibile to add a method that checks if I can force the opponent's worker in the direction I'm moving. It will give us the opportunity to
     //collapse Apollo and Minotaur in the same method (isPointReachableCanReplaceWorker)
     public static boolean isPointReachableConditionedExchange(Game game, Point point){

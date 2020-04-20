@@ -191,7 +191,7 @@ public class Controller implements EventListener {
 
     Point target = evt.getTarget();
     if (!game.getBoard().isPositionValid(target)) throw new InvalidPositionException();
-    // TODO: check that worker hasn't been spawned already
+
     try {
       game.getBoard().place(currentPlayer.getCurrentWorker(), target);
     }

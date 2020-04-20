@@ -66,14 +66,12 @@ public class GodCardFactory {
   private static GodCard createDemeter() {
     GodCard demeter = new GodCard(GodName.Demeter);
     demeter.nextPhase = TurnFlow::nextPhaseExtendsConstruction;
-    //TODO: isPointBuildableDemeter
     return demeter;
   }
 
   private static GodCard createHephaestus(){
     GodCard hephy = new GodCard(GodName.Hephaestus);
     hephy.nextPhase = TurnFlow::nextPhaseExtendsConstruction;
-    //TODO: isPointBuildableHephaestus
     return hephy;
   }
 
@@ -87,7 +85,6 @@ public class GodCardFactory {
   private static GodCard createPrometheus(){
     GodCard prometheus = new GodCard(GodName.Prometheus);
     prometheus.nextPhase = TurnFlow::nextPhaseConstructionTwice;
-    //TODO: isPointReachablePrometheus
     return prometheus;
   }
 
