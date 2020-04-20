@@ -5,6 +5,14 @@ import it.polimi.vovarini.model.board.items.Item;
 
 import java.util.HashMap;
 
+/**
+ * A singleton that can create a {@link String} representation
+ * of a given {@link Item} ready to be printed.
+ *
+ * @author Davide Volta
+ * @version 0.1
+ * @since 0.1
+ */
 public class ItemRenderer {
 
   public static ItemRenderer instance = null;

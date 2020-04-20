@@ -1,12 +1,20 @@
 package it.polimi.vovarini.model;
 
-import it.polimi.vovarini.model.board.*;
-import it.polimi.vovarini.model.board.items.*;
-import it.polimi.vovarini.model.godcards.GodCardFactory;
-import it.polimi.vovarini.model.godcards.GodName;
+import it.polimi.vovarini.common.events.CurrentPlayerChangedEvent;
+import it.polimi.vovarini.common.events.GameEventManager;
+import it.polimi.vovarini.common.events.PhaseUpdateEvent;
+import it.polimi.vovarini.common.exceptions.BoxEmptyException;
+import it.polimi.vovarini.common.exceptions.CurrentPlayerLosesException;
+import it.polimi.vovarini.common.exceptions.InvalidNumberOfPlayersException;
+import it.polimi.vovarini.common.exceptions.InvalidPositionException;
+import it.polimi.vovarini.model.board.Board;
+import it.polimi.vovarini.model.board.Box;
+import it.polimi.vovarini.model.board.items.Item;
+import it.polimi.vovarini.model.moves.Construction;
+import it.polimi.vovarini.model.moves.Move;
+import it.polimi.vovarini.model.moves.Movement;
 
-import java.util.EmptyStackException;
-import java.util.Stack;
+import java.util.*;
 
 public class Game {
 
@@ -31,10 +39,8 @@ public class Game {
     if (numberOfPlayers < MIN_PLAYERS || numberOfPlayers > MAX_PLAYERS) {
       throw new InvalidNumberOfPlayersException();
     }
+
     players = new Player[numberOfPlayers];
-    for (int i = 0; i < numberOfPlayers; i++) {
-      players[i] = new Player(GodCardFactory.create(GodName.Apollo), "Player" + i);
-    }
 
     currentPlayerIndex = 0;
 
@@ -63,36 +69,34 @@ public class Game {
     }
   }
 
-  public boolean validateMove(Movement movement) throws CurrentPlayerLosesException {
-
-    Stack<Item> startPositionStack = new Stack<Item>();
-    Stack<Item> endPositionStack = new Stack<Item>();
-
-    try {
-      startPositionStack = (Stack<Item>) getBoard().getBox(movement.getStart()).getItems().clone();
-      startPositionStack.pop();
-    } catch (BoxEmptyException ignored) {
-    }
+  /**
+   * Returns true if movement is valid for the current player and their current worker.
+   *
+   * @param movement The move to be validated.
+   * @return If movement is valid.
+   */
+  public boolean validateMove(Movement movement) {
 
     try {
-      endPositionStack = (Stack<Item>) getBoard().getBox(movement.getEnd()).getItems().clone();
-    } catch (BoxEmptyException ignored) {
-    }
+      Collection<Point> reachablePoints = getCurrentPlayer().getGodCard().computeReachablePoints();
 
-    try {
-      for (Point point : getCurrentPlayer().getGodCard().computeReachablePoints()) {
-        if (point.equals(movement.getEnd())) {
-          if (startPositionStack.size() == endPositionStack.size()
-              || startPositionStack.size() == (endPositionStack.size() - 1)) {
-            return true;
-          }
-        }
+      if (!reachablePoints.contains(movement.getEnd())) {
+        return false;
       }
-    } catch (CurrentPlayerLosesException e) {
-      throw e;
+
+      try {
+        Box startBox = board.getBox(movement.getStart());
+        startBox.removeTopmost();
+        Box endBox = board.getBox(movement.getEnd());
+
+        return (endBox.getLevel() - startBox.getLevel()) <= 1;
+      } catch (BoxEmptyException e) {
+        throw new RuntimeException(e);
+      }
+    } catch (CurrentPlayerLosesException e){
+      return false;
     }
 
-    return false;
   }
 
   public boolean validateMove(Construction construction) {
@@ -130,7 +134,7 @@ public class Game {
   }
 
   public Phase nextPhase() {
-    currentPhase = currentPhase.next();
+    setCurrentPhase(currentPhase.next());
     return currentPhase;
   }
 
@@ -143,9 +147,15 @@ public class Game {
   }
 
   public Player nextPlayer() {
-    currentPhase = Phase.Start;
+    setCurrentPhase(Phase.Start);
     currentPlayerIndex = (currentPlayerIndex + 1) % players.length;
+    GameEventManager.raise(new CurrentPlayerChangedEvent(this, players[currentPlayerIndex].clone()));
     return players[currentPlayerIndex];
+  }
+
+  public void setCurrentPhase(Phase phase){
+    this.currentPhase = phase;
+    GameEventManager.raise(new PhaseUpdateEvent(this, phase));
   }
 
   // needs to manage turn flow
@@ -167,5 +177,9 @@ public class Game {
     } catch (EmptyStackException ignored) {
 
     }
+  }
+
+  public boolean isFull(){
+    return Arrays.stream(players).noneMatch(Objects::isNull);
   }
 }

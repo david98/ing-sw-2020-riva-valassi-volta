@@ -13,7 +13,7 @@ public class BoardRenderer {
 
   private Point cursorLocation;
 
-  private ArrayList<Point> markedPoints;
+  public ArrayList<Point> markedPoints;
 
   public BoardRenderer() {
     cursorLocation = new Point(0, 0);
@@ -38,7 +38,7 @@ public class BoardRenderer {
                         markedColor.wrap(BoxRenderer.getInstance().render(box, cur.equals(cursorLocation))) :
                         BoxRenderer.getInstance().render(box, cur.equals(cursorLocation))
         );
-        boardRep.append(marked ? markedColor.wrap("|") : "|");
+        boardRep.append(marked ? markedColor.wrap("|") :"|");
       }
       boardRep.append("\n");
     }
@@ -91,5 +91,9 @@ public class BoardRenderer {
 
   public void resetMarkedPoints(){
     markedPoints.clear();
+  }
+
+  public ArrayList<Point> getMarkedPoints() {
+    return new ArrayList<>(markedPoints);
   }
 }

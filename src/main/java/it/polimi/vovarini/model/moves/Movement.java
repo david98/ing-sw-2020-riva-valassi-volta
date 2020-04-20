@@ -1,6 +1,10 @@
-package it.polimi.vovarini.model;
+package it.polimi.vovarini.model.moves;
 
-import it.polimi.vovarini.model.board.*;
+import it.polimi.vovarini.common.exceptions.BoxEmptyException;
+import it.polimi.vovarini.common.exceptions.BoxFullException;
+import it.polimi.vovarini.common.exceptions.InvalidPositionException;
+import it.polimi.vovarini.model.Point;
+import it.polimi.vovarini.model.board.Board;
 import it.polimi.vovarini.model.board.items.Item;
 
 public class Movement extends Move {

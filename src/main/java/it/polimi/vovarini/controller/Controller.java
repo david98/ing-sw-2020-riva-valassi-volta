@@ -1,15 +1,19 @@
 package it.polimi.vovarini.controller;
 
 import it.polimi.vovarini.common.events.*;
-import it.polimi.vovarini.model.*;
+import it.polimi.vovarini.common.exceptions.*;
+import it.polimi.vovarini.model.Game;
+import it.polimi.vovarini.model.Phase;
+import it.polimi.vovarini.model.Player;
+import it.polimi.vovarini.model.Point;
 import it.polimi.vovarini.model.board.Board;
-import it.polimi.vovarini.model.board.BoxFullException;
-import it.polimi.vovarini.model.board.InvalidPositionException;
-import it.polimi.vovarini.model.board.ItemNotFoundException;
 import it.polimi.vovarini.model.board.items.Block;
 import it.polimi.vovarini.model.godcards.GodName;
+import it.polimi.vovarini.model.moves.Construction;
+import it.polimi.vovarini.model.moves.Movement;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.EventListener;
 
 public class Controller implements EventListener {
 
@@ -30,9 +34,8 @@ public class Controller implements EventListener {
   // CLI: keyboard M,F characters
   @GameEventListener
   public void update(WorkerSelectionEvent evt) throws InvalidPhaseException, WrongPlayerException {
-
     Player currentPlayer = game.getCurrentPlayer();
-    if (!currentPlayer.equals(evt.getPlayerSource())) throw new WrongPlayerException();
+    if (!currentPlayer.equals(evt.getSource())) throw new WrongPlayerException();
 
     Phase currentPhase = game.getCurrentPhase();
     if (currentPhase.equals(Phase.Construction) || currentPhase.equals(Phase.End))
@@ -48,7 +51,7 @@ public class Controller implements EventListener {
           WrongPlayerException, InvalidMoveException {
 
     Player currentPlayer = game.getCurrentPlayer();
-    if (!currentPlayer.equals(evt.getPlayerSource())) throw new WrongPlayerException();
+    if (!currentPlayer.equals(evt.getSource())) throw new WrongPlayerException();
 
     Phase currentPhase = game.getCurrentPhase();
     if (!currentPhase.equals(Phase.Construction)) throw new InvalidPhaseException();
@@ -65,6 +68,7 @@ public class Controller implements EventListener {
     if (!game.validateMove(build)) throw new InvalidMoveException();
 
     game.performMove(build);
+    game.setCurrentPhase(game.getCurrentPlayer().getGodCard().computeNextPhase(game));
   }
 
   // Not part of the 1vs1 simulation we want to develop now
@@ -92,7 +96,6 @@ public class Controller implements EventListener {
   // nickname input
   @GameEventListener
   public void update(RegistrationEvent evt) throws InvalidNicknameException, InvalidNumberOfPlayersException {
-
     for (Player player : game.getPlayers()) {
       if(player == null) break ;
       if (player.getNickname().equalsIgnoreCase(evt.getNickname())) {
@@ -105,6 +108,9 @@ public class Controller implements EventListener {
 
     try {
       game.addPlayer(evt.getNickname());
+      if (game.isFull()){
+        GameEventManager.raise(new GameStartEvent(this));
+      }
     } catch (InvalidNumberOfPlayersException e) {
       throw new InvalidNumberOfPlayersException();
     }
@@ -115,7 +121,7 @@ public class Controller implements EventListener {
   public void update(UndoEvent evt) throws WrongPlayerException {
 
     Player currentPlayer = game.getCurrentPlayer();
-    if (!currentPlayer.equals(evt.getPlayerSource())) throw new WrongPlayerException();
+    if (!currentPlayer.equals(evt.getSource())) throw new WrongPlayerException();
 
     game.undoLastMove();
   }
@@ -126,7 +132,7 @@ public class Controller implements EventListener {
   public void update(NextPlayerEvent evt) throws InvalidPhaseException, WrongPlayerException {
 
     Player currentPlayer = game.getCurrentPlayer();
-    if (!currentPlayer.equals(evt.getPlayerSource())) throw new WrongPlayerException();
+    if (!currentPlayer.equals(evt.getSource())) throw new WrongPlayerException();
 
     Phase currentPhase = game.getCurrentPhase();
     if (!currentPhase.equals(Phase.End)) throw new InvalidPhaseException();
@@ -140,49 +146,48 @@ public class Controller implements EventListener {
   public void update(SkipEvent evt) throws WrongPlayerException, InvalidPhaseException {
 
     Player currentPlayer = game.getCurrentPlayer();
-    if (!currentPlayer.equals(evt.getPlayerSource())) throw new WrongPlayerException();
+    if (!currentPlayer.equals(evt.getSource())) throw new WrongPlayerException();
 
     Phase currentPhase = game.getCurrentPhase();
     if (currentPhase.equals(Phase.End)) throw new InvalidPhaseException();
 
-    game.nextPhase();
+    game.setCurrentPhase(game.getCurrentPlayer().getGodCard().computeNextPhase(game));
   }
 
   // CLI: Coordinates input or keyboard arrows
   @GameEventListener
   public void update(MovementEvent evt)
           throws InvalidPhaseException, WrongPlayerException, InvalidPositionException,
-          InvalidMoveException, CurrentPlayerLosesException {
-
-    Player currentPlayer = game.getCurrentPlayer();
-    if (!currentPlayer.equals(evt.getPlayerSource())) throw new WrongPlayerException();
-
-    Phase currentPhase = game.getCurrentPhase();
-    if (!currentPhase.equals(Phase.Movement)) throw new InvalidPhaseException();
-
-    Point end = evt.getPoint();
-    if (!game.getBoard().isPositionValid(end)) throw new InvalidPositionException();
-
-    Point start = null;
+          InvalidMoveException {
     try {
-      start = game.getBoard().getItemPosition(game.getCurrentPlayer().getCurrentWorker());
-    } catch (ItemNotFoundException ignored) {
+      Point start = game.getBoard().getItemPosition(game.getCurrentPlayer().getCurrentWorker());
 
+      Player currentPlayer = game.getCurrentPlayer();
+      if (!currentPlayer.equals(evt.getSource())) throw new WrongPlayerException();
+
+      Phase currentPhase = game.getCurrentPhase();
+      if (!currentPhase.equals(Phase.Movement)) throw new InvalidPhaseException();
+
+      Point end = evt.getPoint();
+      if (!game.getBoard().isPositionValid(end)) throw new InvalidPositionException();
+
+      Movement movement = new Movement(game.getBoard(), start, end);
+
+      if (!game.validateMove(movement)) throw new InvalidMoveException();
+
+      game.performMove(movement);
+      game.setCurrentPhase(game.getCurrentPlayer().getGodCard().computeNextPhase(game));
+    } catch (ItemNotFoundException e) {
+      throw new RuntimeException(e);
     }
 
-    Movement movement = new Movement(game.getBoard(), start, end);
-
-    if (!game.validateMove(movement)) throw new InvalidMoveException();
-    
-    game.performMove(movement);
-    game.nextPhase();
   }
 
   @GameEventListener
   public void update(SpawnWorkerEvent evt) throws WrongPlayerException, InvalidPositionException {
 
     Player currentPlayer = game.getCurrentPlayer();
-    if (!currentPlayer.equals(evt.getPlayerSource())) throw new WrongPlayerException();
+    if (!currentPlayer.equals(evt.getSource())) throw new WrongPlayerException();
 
     Point target = evt.getTarget();
     if (!game.getBoard().isPositionValid(target)) throw new InvalidPositionException();

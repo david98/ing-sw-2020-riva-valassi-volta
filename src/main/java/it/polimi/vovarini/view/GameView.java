@@ -1,34 +1,49 @@
 package it.polimi.vovarini.view;
 
+import com.sun.jna.Function;
+import com.sun.jna.platform.win32.WinDef.BOOL;
+import com.sun.jna.platform.win32.WinDef.DWORD;
+import com.sun.jna.platform.win32.WinDef.DWORDByReference;
+import com.sun.jna.platform.win32.WinNT.HANDLE;
 import it.polimi.vovarini.common.events.*;
+import it.polimi.vovarini.common.exceptions.BoxEmptyException;
+import it.polimi.vovarini.common.exceptions.CurrentPlayerLosesException;
+import it.polimi.vovarini.common.exceptions.InvalidPositionException;
 import it.polimi.vovarini.controller.Controller;
-import it.polimi.vovarini.model.*;
+import it.polimi.vovarini.model.Game;
+import it.polimi.vovarini.model.Phase;
+import it.polimi.vovarini.model.Player;
+import it.polimi.vovarini.model.Point;
 import it.polimi.vovarini.model.board.Board;
-import it.polimi.vovarini.model.board.Box;
-import it.polimi.vovarini.model.board.BoxEmptyException;
-import it.polimi.vovarini.model.board.InvalidPositionException;
-import it.polimi.vovarini.model.board.items.Block;
 import it.polimi.vovarini.model.board.items.Item;
 import it.polimi.vovarini.model.board.items.Sex;
 import it.polimi.vovarini.model.board.items.Worker;
+import it.polimi.vovarini.model.godcards.GodCardFactory;
+import it.polimi.vovarini.model.godcards.GodName;
 import org.jline.terminal.Terminal;
 import org.jline.terminal.TerminalBuilder;
 
 import java.io.IOException;
 import java.io.Reader;
-import java.util.Arrays;
+import java.util.Collection;
+import java.util.Scanner;
+
+import static com.sun.jna.platform.win32.Wincon.ENABLE_LINE_INPUT;
 
 public class GameView {
 
-  private Game game;
-
-  private Player player;
-  private Player[] otherPlayers;
+  private Player owner;
+  private Player currentPlayer;
+  private Player[] players;
   private Phase currentPhase;
+
+  private Board board;
 
   private Worker selectedWorker;
   private Point currentStart;
   private Point currentEnd;
+
+  private boolean reRenderNeeded;
 
   private BoardRenderer boardRenderer;
 
@@ -37,34 +52,50 @@ public class GameView {
 
   private int printedLineCount;
 
-  public GameView(Game game){
+  public GameView(){
     GameEventManager.bindListeners(this);
 
-    this.game = game;
-    //this.player = player;
     this.currentPhase = Phase.Start;
+    this.reRenderNeeded = true;
 
     boardRenderer = new BoardRenderer();
 
     printedLineCount = 0;
-    try {
-      terminal = TerminalBuilder.builder()
-              .jna(true)
-              .system(true)
-              .build();
-      terminal.enterRawMode();
+  }
 
-      reader = terminal.reader();
-    } catch (IOException e){
-      System.err.println("Could not allocate terminal.\n");
-      e.printStackTrace();
-    }
+  private void handlePlayerLoss(){
+    printLine("Hai perso coglione!");
+  }
 
+  @GameEventListener
+  public void handleBoardUpdate(BoardUpdateEvent e){
+    board = e.getNewBoard().clone();
+    reRenderNeeded = true;
+  }
+
+  @GameEventListener
+  public void handlePlayerUpdate(CurrentPlayerChangedEvent e){
+    currentPlayer = e.getNewPlayer();
+    // for the purpose of this demo, we also update owner so that the game can continue
+    owner = e.getNewPlayer();
   }
 
   @GameEventListener
   public void handlePhaseUpdate(PhaseUpdateEvent e){
     currentPhase = e.getNewPhase();
+    if (currentPhase == Phase.Construction){
+      try {
+        boardRenderer.markPoints(owner.getGodCard().computeBuildablePoints());
+      } catch (CurrentPlayerLosesException ex){
+        handlePlayerLoss();
+      }
+    }
+    reRenderNeeded = true;
+  }
+
+  @GameEventListener
+  public void handleGameStart(GameStartEvent e){
+    startMatch();
   }
 
   private String getPhasePrompt(Phase phase){
@@ -73,13 +104,13 @@ public class GameView {
         break;
       }
       case Movement: {
-        return "Select a Worker, then select a destination.";
+        return "MOVEMENT - Select a Worker, then select a destination.";
       }
       case Construction: {
-        return "Where do you want to build?";
+        return "CONSTRUCTION - Where do you want to build?";
       }
       case End: {
-        break;
+        return "END";
       }
       default: {
         return "";
@@ -94,16 +125,34 @@ public class GameView {
     printedLineCount += newLines + 1;
   }
 
-  public void render(){
-    for (Player player: game.getPlayers()){
-      if (player.equals(game.getCurrentPlayer())){
-        printLine("*" + PlayerRenderer.getInstance().render(player) + "*");
-      } else {
-        printLine(PlayerRenderer.getInstance().render(player));
+  private void renderPlayers(){
+    for (Player player: players){
+      StringBuilder playerLine = new StringBuilder();
+      playerLine.append(PlayerRenderer.getInstance().render(player));
+      if (player.equals(owner)){
+        playerLine.insert(0, "YOU --> ");
       }
+      if (player.equals(currentPlayer)){
+        playerLine.insert(0, "*");
+        playerLine.append("*");
+      }
+      printLine(playerLine.toString());
     }
-    printLine(boardRenderer.render(game.getBoard()));
-    printLine(getPhasePrompt(game.getCurrentPhase()));
+  }
+
+  public void render(){
+    if (reRenderNeeded) {
+      clearScreen();
+      renderPlayers();
+      printLine(boardRenderer.render(board));
+      if (owner.equals(currentPlayer)) {
+        printLine(getPhasePrompt(currentPhase));
+      } else {
+        printLine("It's " + currentPlayer.getNickname() + "'s turn.");
+      }
+
+      reRenderNeeded = false;
+    }
   }
 
   public void clearScreen() {
@@ -120,99 +169,220 @@ public class GameView {
     currentStart = null;
     currentEnd = null;
     boardRenderer.resetMarkedPoints();
+
+    reRenderNeeded = true;
   }
 
-  private void select(){
+  /**
+   * This method handles a spacebar press when
+   * the current phase is Construction.
+   */
+  private void selectWhenConstructionPhase(){
+    try {
+      Point dest = boardRenderer.getCursorLocation();
+      Collection<Point> buildablePoints = owner.getGodCard().computeBuildablePoints();
+      if (buildablePoints.contains(dest)){
+        int nextLevel = board.getBox(dest).getLevel() + 1;
+        deSelect();
+        GameEventManager.raise(new BuildEvent(owner, dest, nextLevel));
+      }
+    } catch (CurrentPlayerLosesException e){
+      handlePlayerLoss();
+    }
+  }
+
+  /**
+   * This method handles a spacebar press when
+   * the current phase is Movement.
+   */
+  private void selectWhenMovementPhase(){
     if (selectedWorker != null){
       if (boardRenderer.getCursorLocation().equals(currentStart)){
         deSelect();
-      } else {
-        GameEventManager.raise(new MovementEvent(this,
-                game.getCurrentPlayer(),
+      } else if (boardRenderer.getMarkedPoints().contains(boardRenderer.getCursorLocation())){
+        boardRenderer.resetMarkedPoints();
+        System.out.println("MOVIMENTO!");
+        GameEventManager.raise(new MovementEvent(
+                owner,
                 boardRenderer.getCursorLocation())
         );
-        deSelect();
       }
     } else {
       // check if one of the player's workers is under the cursor
-      try{
-        Item item = game.getBoard().getItems(boardRenderer.getCursorLocation()).pop();
-        if (game.getCurrentPlayer().getWorkers().values().stream().anyMatch(w -> w.equals(item))){
+      try {
+        Item item = board.getItems(boardRenderer.getCursorLocation()).peek();
+
+        if (owner.getWorkers().values().stream().anyMatch(w -> w.equals(item))) {
           currentStart = boardRenderer.getCursorLocation();
-          selectedWorker = (Worker)item;
+          selectedWorker = (Worker) item;
           GameEventManager.raise(
-                  new WorkerSelectionEvent(this,
-                          game.getCurrentPlayer(),
+                  new WorkerSelectionEvent(
+                          owner,
                           selectedWorker.getSex())
           );
           // mark points reachable by the selected worker
           boardRenderer.markPoints(
-                  game.getCurrentPlayer().getGodCard().computeReachablePoints()
+                  owner.getGodCard().computeReachablePoints()
           );
+
+          reRenderNeeded = true;
         }
-      } catch (BoxEmptyException ignored){
-      } catch (InvalidPositionException ignored){
-      } catch (CurrentPlayerLosesException ignored){
+      } catch (BoxEmptyException ignored) {
+      } catch (InvalidPositionException ignored) {
+      } catch (CurrentPlayerLosesException ignored) {
+        handlePlayerLoss();
       }
 
     }
   }
 
-  public void handleInput() throws IOException{
-    int input = reader.read();
+  /**
+   * This method handles a spacebar press. The outcome depends
+   * on the current Phase and the game status.
+   */
+  private void select(){
+    switch (currentPhase){
+      case Start:
+      case Movement:
+        selectWhenMovementPhase();
+      case Construction:
+        selectWhenConstructionPhase();
+      case End:
+      default:
+    }
+  }
 
-    switch (input){
-      case 97: { //A
-        boardRenderer.moveCursor(Direction.Left);
-        break;
-      }
-      case 100: { //D
-        boardRenderer.moveCursor(Direction.Right);
-        break;
-      }
-      case 119: { //W
-        boardRenderer.moveCursor(Direction.Up);
-        break;
-      }
-      case 115: { //S
-        boardRenderer.moveCursor(Direction.Down);
-        break;
-      }
-      case 32: { //space
-        select();
-        break;
-      }
-      default: {
-        break;
+  public void handleInput() throws IOException{
+    if (owner.equals(currentPlayer)) {
+      int input = reader.read();
+
+      switch (input) {
+        case 97: { //A
+          boardRenderer.moveCursor(Direction.Left);
+          reRenderNeeded = true;
+          break;
+        }
+        case 100: { //D
+          boardRenderer.moveCursor(Direction.Right);
+          reRenderNeeded = true;
+          break;
+        }
+        case 119: { //W
+          boardRenderer.moveCursor(Direction.Up);
+          reRenderNeeded = true;
+          break;
+        }
+        case 115: { //S
+          boardRenderer.moveCursor(Direction.Down);
+          reRenderNeeded = true;
+          break;
+        }
+        case 32: { //space
+          select();
+          break;
+        }
+        case 110: { //N
+          GameEventManager.raise(new SkipEvent(currentPlayer));
+          break;
+        }
+        default: {
+          break;
+        }
       }
     }
+  }
+
+  public void startMatch() {
+    try {
+
+      if(System.getProperty("os.name").startsWith("Windows"))
+      {
+        // Set output mode to handle virtual terminal sequences
+        Function GetStdHandleFunc = Function.getFunction("kernel32", "GetStdHandle");
+        DWORD STD_OUTPUT_HANDLE = new DWORD(-11);
+        HANDLE hOut = (HANDLE)GetStdHandleFunc.invoke(HANDLE.class, new Object[]{STD_OUTPUT_HANDLE});
+
+        DWORDByReference p_dwMode = new DWORDByReference(new DWORD(0));
+        Function GetConsoleModeFunc = Function.getFunction("kernel32", "GetConsoleMode");
+        GetConsoleModeFunc.invoke(BOOL.class, new Object[]{hOut, p_dwMode});
+
+        int ENABLE_VIRTUAL_TERMINAL_PROCESSING = 4;
+        DWORD dwMode = p_dwMode.getValue();
+        dwMode.setValue((dwMode.intValue() | ENABLE_VIRTUAL_TERMINAL_PROCESSING) &~ENABLE_LINE_INPUT);
+        Function SetConsoleModeFunc = Function.getFunction("kernel32", "SetConsoleMode");
+        SetConsoleModeFunc.invoke(BOOL.class, new Object[]{hOut, dwMode});
+      }
+
+      terminal = TerminalBuilder.builder()
+              .jna(true)
+              .system(true)
+              .build();
+      terminal.enterRawMode();
+
+
+      reader = terminal.reader();
+
+    } catch (IOException e) {
+      System.err.println("Could not allocate terminal.\n");
+      e.printStackTrace();
+    }
+  }
+
+  public void gameSetup(){
+    // ask for nickname
+    Scanner sc = new Scanner(System.in);
+    clearScreen();
+    String nickname = null;
+    System.out.print("Type your nickname: ");
+    nickname = sc.next();
+    while ((nickname == null) || !nickname.matches("[A-Za-z0-9_]{4,16}$")){
+      System.out.print("Invalid nickname, type a new one: ");
+      nickname = sc.next();
+    }
+    GameEventManager.raise(new RegistrationEvent(this, nickname));
+    System.out.println("Now waiting for other players...");
   }
 
   public static void main(String[] args){
     try {
       Game game = new Game(2);
-      GameView view = new GameView(game);
+      GameView view = new GameView();
       Controller controller = new Controller(game);
+
+      view.gameSetup();
+
+      GameEventManager.raise(new RegistrationEvent(view,"Marcantonio"));
 
       PlayerRenderer.getInstance().setPlayers(game.getPlayers());
 
       // some initialization for testing purposes
       for (Player player: game.getPlayers()){
+        player.setGodCard(GodCardFactory.create(GodName.Nobody));
         player.getGodCard().setGame(game);
       }
 
-      GameEventManager.raise(new WorkerSelectionEvent(view, game.getCurrentPlayer(), Sex.Female));
-      GameEventManager.raise(new SpawnWorkerEvent(view, game.getCurrentPlayer(), new Point(0, 0)));
-      GameEventManager.raise(new WorkerSelectionEvent(view, game.getCurrentPlayer(), Sex.Male));
-      GameEventManager.raise(new SpawnWorkerEvent(view, game.getCurrentPlayer(), new Point (2, 0)));
+      view.players = game.getPlayers();
+      view.owner = view.players[0].clone();
+      view.currentPlayer = view.players[0].clone();
+      view.board = game.getBoard().clone();
 
-      GameEventManager.raise(new SkipEvent(view, game.getCurrentPlayer()));
+      GameEventManager.raise(new WorkerSelectionEvent(game.getCurrentPlayer(), Sex.Female));
+      GameEventManager.raise(new SpawnWorkerEvent(game.getCurrentPlayer(), new Point(0, 0)));
+      GameEventManager.raise(new WorkerSelectionEvent(game.getCurrentPlayer(), Sex.Male));
+      GameEventManager.raise(new SpawnWorkerEvent(game.getCurrentPlayer(), new Point (2, 0)));
 
-      view.clearScreen();
+      game.nextPlayer();
+
+      GameEventManager.raise(new WorkerSelectionEvent(game.getPlayers()[1], Sex.Female));
+      GameEventManager.raise(new SpawnWorkerEvent(game.getPlayers()[1], new Point(4, 0)));
+      GameEventManager.raise(new WorkerSelectionEvent(game.getPlayers()[1], Sex.Male));
+      GameEventManager.raise(new SpawnWorkerEvent(game.getPlayers()[1], new Point (1, 1)));
+
+      game.nextPlayer();
+
       view.render();
       while (true) {
         view.handleInput();
-        view.clearScreen();
         view.render();
       }
     } catch (Exception e){

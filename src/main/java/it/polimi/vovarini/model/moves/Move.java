@@ -1,4 +1,4 @@
-package it.polimi.vovarini.model;
+package it.polimi.vovarini.model.moves;
 
 import it.polimi.vovarini.model.board.Board;
 

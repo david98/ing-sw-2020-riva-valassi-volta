@@ -15,6 +15,6 @@ public class GameEventManagerTest {
 
   public static void main(String[] args){
     GameEventManagerTest test = new GameEventManagerTest();
-    GameEventManager.raise(new WorkerSelectionEvent(test, null, Sex.Male));
+    GameEventManager.raise(new WorkerSelectionEvent(test, Sex.Male));
   }
 }

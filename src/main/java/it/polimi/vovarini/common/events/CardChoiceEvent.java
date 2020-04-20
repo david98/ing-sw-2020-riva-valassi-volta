@@ -1,6 +1,5 @@
 package it.polimi.vovarini.common.events;
 
-import it.polimi.vovarini.model.Player;
 import it.polimi.vovarini.model.godcards.GodName;
 
 import java.util.ArrayList;
@@ -13,8 +12,8 @@ public class CardChoiceEvent extends GameEvent {
   // lanciato 4 volte max, abbiamo deciso di "trasportare" l'informazione
   private ArrayList<GodName> selectedCards;
 
-  public CardChoiceEvent(Object source, Player player) {
-    super(source, player);
+  public CardChoiceEvent(Object source) {
+    super(source);
   }
 
   public ArrayList<GodName> getSelectedCards() {
