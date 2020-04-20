@@ -85,7 +85,7 @@ public class Game {
       }
 
       try {
-        Box startBox = board.getBox(movement.getStart());
+        Box startBox = board.getBox(movement.getStart()).clone();
         startBox.removeTopmost();
         Box endBox = board.getBox(movement.getEnd());
 

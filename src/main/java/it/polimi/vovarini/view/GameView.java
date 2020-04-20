@@ -20,6 +20,7 @@ import it.polimi.vovarini.model.board.items.Sex;
 import it.polimi.vovarini.model.board.items.Worker;
 import it.polimi.vovarini.model.godcards.GodCardFactory;
 import it.polimi.vovarini.model.godcards.GodName;
+import it.polimi.vovarini.model.moves.Movement;
 import org.jline.terminal.Terminal;
 import org.jline.terminal.TerminalBuilder;
 

@@ -7,6 +7,7 @@ import it.polimi.vovarini.model.Phase;
 import it.polimi.vovarini.model.Player;
 import it.polimi.vovarini.model.Point;
 import it.polimi.vovarini.model.board.Board;
+import it.polimi.vovarini.model.board.Box;
 import it.polimi.vovarini.model.board.items.Block;
 import it.polimi.vovarini.model.godcards.GodName;
 import it.polimi.vovarini.model.moves.Construction;
@@ -172,7 +173,6 @@ public class Controller implements EventListener {
       if (!game.getBoard().isPositionValid(end)) throw new InvalidPositionException();
 
       Movement movement = new Movement(game.getBoard(), start, end);
-
       if (!game.validateMove(movement)) throw new InvalidMoveException();
 
       game.performMove(movement);
