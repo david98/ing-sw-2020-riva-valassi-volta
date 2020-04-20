@@ -117,6 +117,8 @@ public class GodCard {
           (Game game) -> game.getCurrentPhase().next();
 
 
+
+
   /**
    * Predicate for checking if a player has won with the Movement he wants to perform (applied before the movement itself)
    * @param movement The Movement move the player wants to execute.
@@ -199,6 +201,10 @@ public class GodCard {
       throw new CurrentPlayerLosesException();
     }
     return buildablePoints;
+  }
+
+  public Phase computeNextPhase(Game game){
+    return nextPhase.apply(game);
   }
 
   public GodName getName(){

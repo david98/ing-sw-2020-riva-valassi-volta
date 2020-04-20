@@ -136,6 +136,10 @@ public class Game {
     return currentPhase;
   }
 
+  public void setCurrentPhase(Phase currentPhase) {
+    this.currentPhase = currentPhase;
+  }
+
   public Phase nextPhase() {
     currentPhase = currentPhase.next();
     return currentPhase;

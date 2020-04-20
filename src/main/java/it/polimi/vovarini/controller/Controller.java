@@ -68,6 +68,7 @@ public class Controller implements EventListener {
     if (!game.validateMove(build)) throw new InvalidMoveException();
 
     game.performMove(build);
+    game.setCurrentPhase(game.getCurrentPlayer().getGodCard().computeNextPhase(game));
   }
 
   // Not part of the 1vs1 simulation we want to develop now
@@ -148,7 +149,7 @@ public class Controller implements EventListener {
     Phase currentPhase = game.getCurrentPhase();
     if (currentPhase.equals(Phase.End)) throw new InvalidPhaseException();
 
-    game.nextPhase();
+    game.setCurrentPhase(game.getCurrentPlayer().getGodCard().computeNextPhase(game));
   }
 
   // CLI: Coordinates input or keyboard arrows
@@ -178,7 +179,7 @@ public class Controller implements EventListener {
     if (!game.validateMove(movement)) throw new InvalidMoveException();
     
     game.performMove(movement);
-    game.nextPhase();
+    game.setCurrentPhase(game.getCurrentPlayer().getGodCard().computeNextPhase(game));
   }
 
   @GameEventListener
