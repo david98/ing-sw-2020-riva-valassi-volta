@@ -1,33 +1,68 @@
 package it.polimi.vovarini.model.godcards;
 
-import it.polimi.vovarini.model.*;
-import it.polimi.vovarini.model.board.*;
+import it.polimi.vovarini.common.exceptions.BoxEmptyException;
+import it.polimi.vovarini.common.exceptions.CurrentPlayerLosesException;
+import it.polimi.vovarini.common.exceptions.InvalidPositionException;
+import it.polimi.vovarini.common.exceptions.ItemNotFoundException;
+import it.polimi.vovarini.model.Game;
+import it.polimi.vovarini.model.Phase;
+import it.polimi.vovarini.model.Player;
+import it.polimi.vovarini.model.Point;
+import it.polimi.vovarini.model.board.Board;
+import it.polimi.vovarini.model.board.Box;
 import it.polimi.vovarini.model.board.items.Block;
 import it.polimi.vovarini.model.board.items.Item;
 import it.polimi.vovarini.model.board.items.Worker;
+import it.polimi.vovarini.model.moves.Movement;
 
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Stack;
 import java.util.function.BiFunction;
+import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+/**
+ * The GodCard class represents a general GodCard
+ * game is the current game played by all the players
+ * name references one of the cards available in the base set of Santorini
+ *
+ * @author Mattia Valassi
+ * @author Marco Riva
+ * @author Davide Volta
+ * @version 0.2
+ * @since 0.1
+ */
 public class GodCard implements Cloneable{
-
   protected Game game;
   protected GodName name;
 
+  /**
+   * Constructor method of GodCard class without game assignment (if the card is created before starting the game)
+   * @param name Name of the Card I want to create, must be a value of the GodName enumeration
+   */
   public GodCard(GodName name) {
     this.name = name;
   }
 
+  /**
+   * Constructor method of GodCard
+   * @param name Name of the Card I want to create, must be a value of the GodName enumeration
+   * @param game Instance of game currently played by all the players
+   */
   public GodCard(GodName name, Game game) {
     this.name = name;
     this.game = game;
   }
 
+  /**
+   * Lambda function presenting the base Behavior for Reachability. Gets injected dynamically by code in the Reachability class
+   * @param game Instance of game currently played by all the players
+   * @param point Candidate to be a Movement destination
+   * @return if the candidate point can be reached returns true, false otherwise
+   */
   BiFunction<Game, Point, Boolean> isPointReachable =
       (Game game, Point point) -> {
         try {
@@ -54,6 +89,12 @@ public class GodCard implements Cloneable{
         return false;
       };
 
+  /**
+   * Lambda function presenting the base Behavior for Buildability. Gets injected dynamically by code in the Buildability class
+   * @param game Instance of game currently played by all the players
+   * @param point Candidate to be a Construction destination
+   * @return if the candidate point can be built upon returns true, false otherwise
+   */
   BiFunction<Game, Point, Boolean> isPointBuildable =
       (Game game, Point point) -> {
         try {
@@ -76,29 +117,43 @@ public class GodCard implements Cloneable{
         return false;
       };
 
+  /**
+   * Lambda function that returns the next phase of the turn following the standard flow
+   * @param game Instance of game currently played by all the players
+   * @return the next phase to play, according to the normal flow of the game
+   */
+  Function<Game, Phase> nextPhase =
+          (Game game) -> game.getCurrentPhase().next();
+
+
+
+
+  /**
+   * Predicate for checking if a player has won with the Movement he wants to perform (applied before the movement itself)
+   * @param movement The Movement move the player wants to execute.
+   * @return A predicate always return true or false. It will return true if the movement leads to victory after execution, false otherwise
+   * A Forced movement always return false (the system itself must not make a player win)
+   */
   Predicate<Movement> isMovementWinning =
       (Movement movement) -> {
         // this needs to be called BEFORE calling movement.execute()
         if (movement.isForced()) {
           return false;
         }
-        try {
-          Stack<Item> destinationItems = movement.getBoard().getItems(movement.getEnd());
-          int endLevel = destinationItems.size();
-          if (endLevel != Block.WIN_LEVEL) {
-            return false;
-          }
-          int currentLevel = movement.getBoard().getItems(movement.getStart()).size() - 1;
-
-          return currentLevel < Block.WIN_LEVEL;
-        } catch (BoxEmptyException e) {
+        int endLevel = movement.getBoard().getBox(movement.getEnd()).getLevel();
+        if (endLevel != Block.WIN_LEVEL) {
           return false;
-        } catch (InvalidPositionException ignored) {
-          System.err.println("This really should never happen...");
         }
-        return false;
+        int currentLevel = movement.getBoard().getBox(movement.getStart()).getLevel();
+
+        return currentLevel < Block.WIN_LEVEL;
       };
 
+  /**
+   *
+   * @return a list of points that the player can reach from his currentWorker position
+   * @throws CurrentPlayerLosesException if the list of points is empty it means that the current player cannot move, thus losing the game
+   */
   public List<Point> computeReachablePoints() throws CurrentPlayerLosesException {
     List<Point> reachablePoints = new LinkedList<>();
 
@@ -127,6 +182,11 @@ public class GodCard implements Cloneable{
     return isMovementWinning.test(movement);
   }
 
+  /**
+   *
+   * @return a list of points that the player can build upon from his currentWorker position
+   * @throws CurrentPlayerLosesException if the list of points is empty it means that the current player cannot build, thus losing the game
+   */
   public List<Point> computeBuildablePoints() throws CurrentPlayerLosesException {
     List<Point> buildablePoints = new LinkedList<>();
 
@@ -150,6 +210,10 @@ public class GodCard implements Cloneable{
       throw new CurrentPlayerLosesException();
     }
     return buildablePoints;
+  }
+
+  public Phase computeNextPhase(Game game){
+    return nextPhase.apply(game);
   }
 
   public GodName getName(){

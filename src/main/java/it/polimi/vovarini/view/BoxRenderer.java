@@ -1,7 +1,7 @@
 package it.polimi.vovarini.view;
 
+import it.polimi.vovarini.common.exceptions.BoxEmptyException;
 import it.polimi.vovarini.model.board.Box;
-import it.polimi.vovarini.model.board.BoxEmptyException;
 import it.polimi.vovarini.model.board.items.Item;
 
 import java.util.Stack;

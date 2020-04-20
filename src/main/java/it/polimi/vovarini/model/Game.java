@@ -3,11 +3,16 @@ package it.polimi.vovarini.model;
 import it.polimi.vovarini.common.events.CurrentPlayerChangedEvent;
 import it.polimi.vovarini.common.events.GameEventManager;
 import it.polimi.vovarini.common.events.PhaseUpdateEvent;
+import it.polimi.vovarini.common.exceptions.BoxEmptyException;
+import it.polimi.vovarini.common.exceptions.CurrentPlayerLosesException;
+import it.polimi.vovarini.common.exceptions.InvalidNumberOfPlayersException;
+import it.polimi.vovarini.common.exceptions.InvalidPositionException;
 import it.polimi.vovarini.model.board.Board;
 import it.polimi.vovarini.model.board.Box;
-import it.polimi.vovarini.model.board.BoxEmptyException;
-import it.polimi.vovarini.model.board.InvalidPositionException;
 import it.polimi.vovarini.model.board.items.Item;
+import it.polimi.vovarini.model.moves.Construction;
+import it.polimi.vovarini.model.moves.Move;
+import it.polimi.vovarini.model.moves.Movement;
 
 import java.util.*;
 

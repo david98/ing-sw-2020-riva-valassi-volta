@@ -1,7 +1,6 @@
 package it.polimi.vovarini.view;
 
 import it.polimi.vovarini.model.Player;
-import it.polimi.vovarini.model.board.Box;
 import it.polimi.vovarini.model.board.items.Item;
 
 import java.util.HashMap;

@@ -27,7 +27,7 @@ public class GameEventManager {
    *
    * @param obj The object containing the listeners.
    */
-  @SuppressWarnings("unchecked")
+ @SuppressWarnings("unchecked")
   public static void bindListeners(@org.jetbrains.annotations.NotNull Object obj){
     for (Method m: obj.getClass().getMethods()){
       GameEventListener a = m.getDeclaredAnnotation(GameEventListener.class);

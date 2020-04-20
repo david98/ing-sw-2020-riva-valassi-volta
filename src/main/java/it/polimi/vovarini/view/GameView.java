@@ -1,11 +1,20 @@
 package it.polimi.vovarini.view;
 
+import com.sun.jna.Function;
+import com.sun.jna.platform.win32.WinDef.BOOL;
+import com.sun.jna.platform.win32.WinDef.DWORD;
+import com.sun.jna.platform.win32.WinDef.DWORDByReference;
+import com.sun.jna.platform.win32.WinNT.HANDLE;
 import it.polimi.vovarini.common.events.*;
+import it.polimi.vovarini.common.exceptions.BoxEmptyException;
+import it.polimi.vovarini.common.exceptions.CurrentPlayerLosesException;
+import it.polimi.vovarini.common.exceptions.InvalidPositionException;
 import it.polimi.vovarini.controller.Controller;
-import it.polimi.vovarini.model.*;
+import it.polimi.vovarini.model.Game;
+import it.polimi.vovarini.model.Phase;
+import it.polimi.vovarini.model.Player;
+import it.polimi.vovarini.model.Point;
 import it.polimi.vovarini.model.board.Board;
-import it.polimi.vovarini.model.board.BoxEmptyException;
-import it.polimi.vovarini.model.board.InvalidPositionException;
 import it.polimi.vovarini.model.board.items.Item;
 import it.polimi.vovarini.model.board.items.Sex;
 import it.polimi.vovarini.model.board.items.Worker;
@@ -18,10 +27,6 @@ import java.io.IOException;
 import java.io.Reader;
 import java.util.Collection;
 import java.util.Scanner;
-
-import com.sun.jna.*;
-import com.sun.jna.platform.win32.WinDef.*;
-import com.sun.jna.platform.win32.WinNT.HANDLE;
 
 import static com.sun.jna.platform.win32.Wincon.ENABLE_LINE_INPUT;
 
@@ -204,12 +209,12 @@ public class GameView {
       }
     } else {
       // check if one of the player's workers is under the cursor
-      try{
+      try {
         Item item = board.getItems(boardRenderer.getCursorLocation()).peek();
 
-        if (owner.getWorkers().values().stream().anyMatch(w -> w.equals(item))){
+        if (owner.getWorkers().values().stream().anyMatch(w -> w.equals(item))) {
           currentStart = boardRenderer.getCursorLocation();
-          selectedWorker = (Worker)item;
+          selectedWorker = (Worker) item;
           GameEventManager.raise(
                   new WorkerSelectionEvent(
                           owner,
@@ -222,9 +227,9 @@ public class GameView {
 
           reRenderNeeded = true;
         }
-      } catch (BoxEmptyException ignored){
-      } catch (InvalidPositionException ignored){
-      } catch (CurrentPlayerLosesException ignored){
+      } catch (BoxEmptyException ignored) {
+      } catch (InvalidPositionException ignored) {
+      } catch (CurrentPlayerLosesException ignored) {
         handlePlayerLoss();
       }
 

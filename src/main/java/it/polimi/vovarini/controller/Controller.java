@@ -1,13 +1,16 @@
 package it.polimi.vovarini.controller;
 
 import it.polimi.vovarini.common.events.*;
-import it.polimi.vovarini.model.*;
+import it.polimi.vovarini.common.exceptions.*;
+import it.polimi.vovarini.model.Game;
+import it.polimi.vovarini.model.Phase;
+import it.polimi.vovarini.model.Player;
+import it.polimi.vovarini.model.Point;
 import it.polimi.vovarini.model.board.Board;
-import it.polimi.vovarini.model.board.BoxFullException;
-import it.polimi.vovarini.model.board.InvalidPositionException;
-import it.polimi.vovarini.model.board.ItemNotFoundException;
 import it.polimi.vovarini.model.board.items.Block;
 import it.polimi.vovarini.model.godcards.GodName;
+import it.polimi.vovarini.model.moves.Construction;
+import it.polimi.vovarini.model.moves.Movement;
 
 import java.util.ArrayList;
 import java.util.EventListener;
@@ -65,8 +68,7 @@ public class Controller implements EventListener {
     if (!game.validateMove(build)) throw new InvalidMoveException();
 
     game.performMove(build);
-    game.nextPhase();
-    game.nextPlayer();
+    game.setCurrentPhase(game.getCurrentPlayer().getGodCard().computeNextPhase(game));
   }
 
   // Not part of the 1vs1 simulation we want to develop now
@@ -149,7 +151,7 @@ public class Controller implements EventListener {
     Phase currentPhase = game.getCurrentPhase();
     if (currentPhase.equals(Phase.End)) throw new InvalidPhaseException();
 
-    game.nextPhase();
+    game.setCurrentPhase(game.getCurrentPlayer().getGodCard().computeNextPhase(game));
   }
 
   // CLI: Coordinates input or keyboard arrows
@@ -174,10 +176,11 @@ public class Controller implements EventListener {
       if (!game.validateMove(movement)) throw new InvalidMoveException();
 
       game.performMove(movement);
-      game.nextPhase();
+      game.setCurrentPhase(game.getCurrentPlayer().getGodCard().computeNextPhase(game));
     } catch (ItemNotFoundException e) {
       throw new RuntimeException(e);
     }
+
   }
 
   @GameEventListener

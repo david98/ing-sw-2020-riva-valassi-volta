@@ -1,53 +1,30 @@
 package it.polimi.vovarini.model.godcards;
 
-import it.polimi.vovarini.model.Game;
-import it.polimi.vovarini.model.Point;
-import it.polimi.vovarini.model.board.Box;
-import it.polimi.vovarini.model.board.BoxEmptyException;
-import it.polimi.vovarini.model.board.ItemNotFoundException;
-import it.polimi.vovarini.model.board.items.Item;
-import it.polimi.vovarini.model.board.items.Worker;
-
-import java.util.Stack;
-import java.util.function.BiFunction;
-
+/**
+ * GodCardFactory creates a specific GodCard injecting dynamically
+ * particular methods that pertain to a particular card
+ */
 public class GodCardFactory {
 
-  private static BiFunction<Game, Point, Boolean> isPointReachableCanExchangeWithWorker =
-      (Game game, Point point) -> {
-        try {
-          Worker currentWorker = game.getCurrentPlayer().getCurrentWorker();
-          Point currentWorkerPosition = game.getBoard().getItemPosition(currentWorker);
-          if (!point.isAdjacent(currentWorkerPosition)) {
-            return false;
-          }
-
-          try {
-            Box destinationBox = game.getBoard().getBox(point);
-            Stack<Item> destinationItems = destinationBox.getItems();
-
-            int destinationLevel = destinationBox.getLevel();
-            int currentWorkerLevel = game.getBoard().getBox(currentWorkerPosition).getLevel();
-
-            return (destinationLevel - currentWorkerLevel <= 1)
-                && (currentWorker.canBePlacedOn(destinationItems.peek())
-                    || destinationItems.peek().canBeRemoved());
-          } catch (BoxEmptyException ignored) {
-            return true;
-          }
-
-        } catch (ItemNotFoundException ignored) {
-          System.err.println("This really should never happen...");
-        }
-        return false;
-      };
-
-  public static GodCard create(GodName name) {
+    /**
+     * This method applies a switch-case structure to create all the cards currently supported by our game
+     * @param name part of the GodName enumeration, it specifies what card we want to create, example Apollo, Artemis...
+     * @return the created GodCard with all the dynamic assignments of methods
+     */
+    public static GodCard create(GodName name) {
     switch (name) {
       case Apollo:
         {
           return createApollo();
         }
+        case Minotaur:
+        {
+            return createMinotaur();
+        }
+      case Pan:
+      {
+        return createPan();
+      }
       case Nobody:
       default:
         {
@@ -56,12 +33,68 @@ public class GodCardFactory {
     }
   }
 
+    /**
+     * This method injects a generic GodCard with all the Behaviors modified by the card Apollo
+     * @return an instance of a GodCard in the mold of Santorini's Apollo card
+     */
   private static GodCard createApollo() {
     GodCard apollo = new GodCard(GodName.Apollo);
-    apollo.isPointReachable = isPointReachableCanExchangeWithWorker;
+    apollo.isPointReachable = Reachability::isPointReachableCanExchangeWithWorker;
     return apollo;
   }
 
+    /**
+     * This method injects a generic GodCard with all the Behaviors modified by the card Minotaur
+     * @return an instance of a GodCard in the mold of Santorini's Minotaur card
+     */
+  private static GodCard createMinotaur() {
+      GodCard minotaur = new GodCard(GodName.Minotaur);
+      minotaur.isPointReachable = Reachability::isPointReachableConditionedExchange;
+      return minotaur;
+  }
+
+    /**
+     * This method injects a generic GodCard with all the Behaviors modified by the card Pan
+     * @return an instance of a GodCard in the mold of Santorini's Pan card
+     */
+  private static GodCard createPan() {
+    GodCard pan = new GodCard(GodName.Pan);
+    pan.isMovementWinning = WinningCondition::isWinningPan;
+    return pan;
+  }
+
+  private static GodCard createDemeter() {
+    GodCard demeter = new GodCard(GodName.Demeter);
+    demeter.nextPhase = TurnFlow::nextPhaseExtendsConstruction;
+    //TODO: isPointBuildableDemeter
+    return demeter;
+  }
+
+  private static GodCard createHephaestus(){
+    GodCard hephy = new GodCard(GodName.Hephaestus);
+    hephy.nextPhase = TurnFlow::nextPhaseExtendsConstruction;
+    //TODO: isPointBuildableHephaestus
+    return hephy;
+  }
+
+  private static GodCard createArtemis(){
+    GodCard artemis = new GodCard(GodName.Artemis);
+    artemis.nextPhase = TurnFlow::nextPhaseExtendsMovement;
+    artemis.isPointReachable = Reachability::isPointReachablePreviousBoxDenied;
+    return artemis;
+  }
+
+  private static GodCard createPrometheus(){
+    GodCard prometheus = new GodCard(GodName.Prometheus);
+    prometheus.nextPhase = TurnFlow::nextPhaseConstructionTwice;
+    //TODO: isPointReachablePrometheus
+    return prometheus;
+  }
+
+    /**
+     * This method just generates an empty card without any effect on the game
+     * @return a generic instance of an "empty" GodCard, if someone wants to play with the std set of rules and without the influence of a card
+     */
   private static GodCard createNobody() {
     return new GodCard(GodName.Nobody);
   }
