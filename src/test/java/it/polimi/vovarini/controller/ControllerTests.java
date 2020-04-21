@@ -85,7 +85,7 @@ public class ControllerTests {
             controller.update(evtWrongPlayer);
           });
 
-      game.nextPhase();
+      game.getCurrentPlayer().getGodCard().computeNextPhase(game);
       WorkerSelectionEvent evtNextPhase =
           new WorkerSelectionEvent(game.getCurrentPlayer(), Sex.Female);
       assertThrows(

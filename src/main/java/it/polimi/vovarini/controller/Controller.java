@@ -70,7 +70,6 @@ public class Controller implements EventListener {
     if (!game.validateMove(build)) throw new InvalidMoveException();
 
     game.performMove(build);
-    game.setCurrentPhase(game.getCurrentPlayer().getGodCard().computeNextPhase(game));
   }
 
   // Not part of the 1vs1 simulation we want to develop now
@@ -180,7 +179,6 @@ public class Controller implements EventListener {
       currentPlayer.getGodCard().consequences(game);
 
       game.performMove(movement);
-      game.setCurrentPhase(game.getCurrentPlayer().getGodCard().computeNextPhase(game));
     } catch (ItemNotFoundException e) {
       throw new RuntimeException(e);
     }
