@@ -49,14 +49,9 @@ public class Reachability extends Behavior {
             try {
                 Box destinationBox = game.getBoard().getBox(point);
                 Stack<Item> destinationItems = destinationBox.getItems();
-
-                int destinationLevel = destinationBox.getLevel();
-                int currentWorkerLevel = game.getBoard().getBox(currentWorkerPosition).getLevel();
                 Worker otherWorker = game.getCurrentPlayer().getOtherWorker();
 
-                return (destinationLevel - currentWorkerLevel <= 1)
-                        && (currentWorker.canBePlacedOn(destinationItems.peek())
-                        || (destinationItems.peek().canBeRemoved() && !destinationItems.peek().equals(otherWorker)));
+                return ((destinationItems.peek().canBeRemoved() && !destinationItems.peek().equals(otherWorker)));
             } catch (BoxEmptyException ignored) {
                 return true;
             }

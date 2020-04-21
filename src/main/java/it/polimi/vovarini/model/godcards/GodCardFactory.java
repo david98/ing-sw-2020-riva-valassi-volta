@@ -39,7 +39,7 @@ public class GodCardFactory {
      */
   private static GodCard createApollo() {
     GodCard apollo = new GodCard(GodName.Apollo);
-    apollo.isPointReachable = Reachability::isPointReachableCanExchangeWithWorker;
+    apollo.movementConditions.add(Reachability::isPointReachableCanExchangeWithWorker);
     return apollo;
   }
 
@@ -49,7 +49,7 @@ public class GodCardFactory {
      */
   private static GodCard createMinotaur() {
       GodCard minotaur = new GodCard(GodName.Minotaur);
-      minotaur.isPointReachable = Reachability::isPointReachableConditionedExchange;
+      minotaur.movementConditions.add(Reachability::isPointReachableConditionedExchange);
       return minotaur;
   }
 
@@ -59,7 +59,7 @@ public class GodCardFactory {
      */
   private static GodCard createPan() {
     GodCard pan = new GodCard(GodName.Pan);
-    pan.isMovementWinning = WinningCondition::isWinningPan;
+    pan.winningConditions.add(WinningCondition::isWinningPan);
     return pan;
   }
 
@@ -78,7 +78,7 @@ public class GodCardFactory {
   private static GodCard createArtemis(){
     GodCard artemis = new GodCard(GodName.Artemis);
     artemis.nextPhase = TurnFlow::nextPhaseExtendsMovement;
-    artemis.isPointReachable = Reachability::isPointReachablePreviousBoxDenied;
+    artemis.movementConditions.add(Reachability::isPointReachablePreviousBoxDenied);
     return artemis;
   }
 
