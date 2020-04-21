@@ -84,31 +84,22 @@ public class Game {
     } catch (CurrentPlayerLosesException e){
       return false;
     }
-
   }
 
   public boolean validateMove(Construction construction) {
 
     try {
-      for (Point point : getCurrentPlayer().getGodCard().computeBuildablePoints()) {
-        if (construction.getTarget().equals(point)) {
-          Stack<Item> items = board.getItems(construction.getTarget());
-          if (construction.getBlock().canBePlacedOn(items.peek()))
-            return true;
-        }
-      }
-    } catch (CurrentPlayerLosesException e) {
-      System.out.println("Tu non puoi costruire perchè hai perso.");
-      System.out.println("Io invece devo gestire questa eccezione come si deve.");
-      System.out.println("Ma prima devo capire come viene lanciata.");
-    } catch (BoxEmptyException e) {
-      if(construction.getBlock().getLevel() == 1) {
-        return true;
-      }
-    } catch (InvalidPositionException ignored) {
-    }
+      Collection<Point> buildablePoints = getCurrentPlayer().getGodCard().computeBuildablePoints();
 
-    return false;
+      if (!buildablePoints.contains(construction.getTarget())) {
+        return false;
+      }
+
+      return true;
+
+    } catch (CurrentPlayerLosesException e) {
+      return false;
+    }
   }
 
   public void performMove(Move move) {

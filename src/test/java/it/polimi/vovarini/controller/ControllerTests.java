@@ -8,6 +8,7 @@ import it.polimi.vovarini.common.exceptions.BoxFullException;
 import it.polimi.vovarini.common.exceptions.InvalidPositionException;
 import it.polimi.vovarini.common.exceptions.ItemNotFoundException;
 import it.polimi.vovarini.model.board.items.Block;
+import it.polimi.vovarini.model.board.items.OverwrittenWorkerException;
 import it.polimi.vovarini.model.board.items.Sex;
 import it.polimi.vovarini.model.godcards.GodCard;
 import it.polimi.vovarini.model.godcards.GodName;
@@ -538,6 +539,7 @@ public class ControllerTests {
 
       controller = new Controller(game);
 
+      game.getCurrentPlayer().setCurrentSex(Sex.Male);
 
       Point target = new Point (0,0);
 
@@ -547,6 +549,8 @@ public class ControllerTests {
       }
       catch (WrongPlayerException ignored){}
       catch (InvalidPositionException ignored){}
+      catch (OverwrittenWorkerException ignored) {
+      }
 
       try {
         assertEquals(game.getBoard().getItemPosition(game.getCurrentPlayer().getCurrentWorker()), evt.getTarget());
@@ -561,6 +565,16 @@ public class ControllerTests {
 
       SpawnWorkerEvent evtWrongPlayer = new SpawnWorkerEvent(game.getPlayers()[1], target);
       assertThrows(WrongPlayerException.class, ()->{ controller.update(evtWrongPlayer); });
+
+      target = new Point (1,0);
+      SpawnWorkerEvent evtWorkerAlreadySpawned = new SpawnWorkerEvent(game.getCurrentPlayer(), target);
+      assertThrows(OverwrittenWorkerException.class, ()->{ controller.update(evtWorkerAlreadySpawned); });
+
+      target = new Point (0,0);
+      game.getCurrentPlayer().setCurrentSex(Sex.Female);
+      SpawnWorkerEvent evtOverwrittenWorker = new SpawnWorkerEvent(game.getCurrentPlayer(), target);
+      assertThrows(OverwrittenWorkerException.class, ()->{ controller.update(evtOverwrittenWorker); });
+
     }
 
 

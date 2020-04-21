@@ -8,6 +8,8 @@ import it.polimi.vovarini.model.Player;
 import it.polimi.vovarini.model.Point;
 import it.polimi.vovarini.model.board.Board;
 import it.polimi.vovarini.model.board.items.Block;
+import it.polimi.vovarini.model.board.items.OverwrittenWorkerException;
+import it.polimi.vovarini.model.board.items.Worker;
 import it.polimi.vovarini.model.godcards.GodName;
 import it.polimi.vovarini.model.moves.Construction;
 import it.polimi.vovarini.model.moves.Movement;
@@ -174,6 +176,9 @@ public class Controller implements EventListener {
       Movement movement = new Movement(game.getBoard(), start, end);
       if (!game.validateMove(movement)) throw new InvalidMoveException();
 
+      // Se la mossa è valida, prima eseguo le conseguenze (ndr cambiare nome) sideEffects
+      currentPlayer.getGodCard().consequences(game);
+
       game.performMove(movement);
       game.setCurrentPhase(game.getCurrentPlayer().getGodCard().computeNextPhase(game));
     } catch (ItemNotFoundException e) {
@@ -183,7 +188,7 @@ public class Controller implements EventListener {
   }
 
   @GameEventListener
-  public void update(SpawnWorkerEvent evt) throws WrongPlayerException, InvalidPositionException {
+  public void update(SpawnWorkerEvent evt) throws WrongPlayerException, InvalidPositionException, OverwrittenWorkerException {
 
     Player currentPlayer = game.getCurrentPlayer();
     if (!currentPlayer.equals(evt.getSource())) throw new WrongPlayerException();
@@ -191,10 +196,28 @@ public class Controller implements EventListener {
     Point target = evt.getTarget();
     if (!game.getBoard().isPositionValid(target)) throw new InvalidPositionException();
 
+    Worker currentWorker = currentPlayer.getCurrentWorker();
+
     try {
-      game.getBoard().place(currentPlayer.getCurrentWorker(), target);
+      if (game.getBoard().getItemPosition(currentWorker) != null) {
+        // Worker già posizionato
+        throw new OverwrittenWorkerException();
+      }
+    } catch (ItemNotFoundException e) {
+      try {
+        if(!currentWorker.canBePlacedOn(game.getBoard().getItems(target).peek())) {
+          // Worker sopra altro worker
+          throw new OverwrittenWorkerException();
+        }
+        // non dovrebbe mai arrivare qui, viene sempre scatenata BoxEmptyException
+      } catch (BoxEmptyException ex) {
+        try {
+          game.getBoard().place(currentPlayer.getCurrentWorker(), target);
+        } catch (BoxFullException ignored) {
+          // Non dovrebbe mai succedere
+        }
+      }
     }
-    catch (BoxFullException ignored){}
   }
 
 
