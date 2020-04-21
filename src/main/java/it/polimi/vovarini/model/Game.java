@@ -101,7 +101,7 @@ public class Game {
       }
 
       return true;
-      
+
     } catch (CurrentPlayerLosesException e) {
       return false;
     }

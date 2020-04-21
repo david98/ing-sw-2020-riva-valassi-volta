@@ -177,6 +177,9 @@ public class Controller implements EventListener {
 
       if (!game.validateMove(movement)) throw new InvalidMoveException();
 
+      // Se la mossa è valida, prima eseguo le conseguenze (ndr cambiare nome) sideEffects
+      currentPlayer.getGodCard().consequences(game);
+
       game.performMove(movement);
       game.setCurrentPhase(game.getCurrentPlayer().getGodCard().computeNextPhase(game));
     } catch (ItemNotFoundException e) {
