@@ -150,10 +150,6 @@ public class GodCard implements Cloneable{
    */
   Predicate<Movement> isMovementWinning =
       (Movement movement) -> {
-        // this needs to be called BEFORE calling movement.execute()
-        if (movement.isForced()) {
-          return false;
-        }
         int endLevel = movement.getBoard().getBox(movement.getEnd()).getLevel();
         if (endLevel != Block.WIN_LEVEL) {
           return false;
@@ -203,7 +199,7 @@ public class GodCard implements Cloneable{
   }
 
   public boolean isMovementWinning(Movement movement) {
-    return winningConditions.stream().anyMatch(cond -> cond.test(movement)) &&
+    return !movement.isForced() && winningConditions.stream().anyMatch(cond -> cond.test(movement)) &&
             winningConstraints.stream().noneMatch(cond -> cond.test(movement));
   }
 

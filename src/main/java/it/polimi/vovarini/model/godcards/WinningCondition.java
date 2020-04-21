@@ -16,19 +16,10 @@ public class WinningCondition extends Behavior {
      * @param movement the Movement move the player would like to perform
      * @return true if the player wins performing the movement, false otherwise
      */
-    public static boolean isWinningPan(Movement movement){
-        if (movement.isForced()) {
-            return false;
-        }
+    public static boolean isWinningPan(Movement movement) {
         int endLevel = movement.getBoard().getBox(movement.getEnd()).getLevel();
         int currentLevel = movement.getBoard().getBox(movement.getStart()).getLevel();
 
-        if (endLevel != Block.WIN_LEVEL) {
-            return currentLevel - endLevel >= 2;
-        }
-
-        return currentLevel < Block.WIN_LEVEL;
+        return currentLevel - endLevel >= 2;
     }
-
-
 }

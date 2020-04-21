@@ -67,7 +67,7 @@ public class PanTests {
         } catch (BoxEmptyException ignored) {
         }
 
-        assertTrue(pan.isMovementWinning.test(new Movement(board, start, end)));
+        assertTrue(pan.isMovementWinning(new Movement(board, start, end)));
 
         // from 3 to 0
         try {
@@ -79,7 +79,7 @@ public class PanTests {
         } catch (BoxEmptyException ignored) {
         }
 
-        assertTrue(pan.isMovementWinning.test(new Movement(board, start, end)));
+        assertTrue(pan.isMovementWinning(new Movement(board, start, end)));
 
         // from 3 to 1
         try {
@@ -88,7 +88,7 @@ public class PanTests {
         } catch (BoxFullException ignored) {
         }
 
-        assertTrue(pan.isMovementWinning.test(new Movement(board, start, end)));
+        assertTrue(pan.isMovementWinning(new Movement(board, start, end)));
 
         // from 3 to 2
         try {
@@ -97,7 +97,7 @@ public class PanTests {
         } catch (BoxFullException ignored) {
         }
 
-        assertFalse(pan.isMovementWinning.test(new Movement(board, start, end)));
+        assertFalse(pan.isMovementWinning(new Movement(board, start, end)));
 
         // from 2 to 3 (general rules)
         try {
@@ -110,7 +110,7 @@ public class PanTests {
         } catch (BoxEmptyException ignored) {
         }
 
-        assertTrue(pan.isMovementWinning.test(new Movement(board, start, end)));
+        assertTrue(pan.isMovementWinning(new Movement(board, start, end)));
     }
 
 
