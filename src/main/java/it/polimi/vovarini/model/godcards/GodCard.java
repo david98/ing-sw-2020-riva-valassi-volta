@@ -15,10 +15,7 @@ import it.polimi.vovarini.model.board.items.Item;
 import it.polimi.vovarini.model.board.items.Worker;
 import it.polimi.vovarini.model.moves.Movement;
 
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Stack;
+import java.util.*;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -45,6 +42,7 @@ public class GodCard implements Cloneable{
    */
   public GodCard(GodName name) {
     this.name = name;
+    initCollections();
   }
 
   /**
@@ -55,6 +53,22 @@ public class GodCard implements Cloneable{
   public GodCard(GodName name, Game game) {
     this.name = name;
     this.game = game;
+    initCollections();
+  }
+
+  private void initCollections(){
+    movementConditions = new HashSet<>();
+    movementConstraints = new HashSet<>();
+
+    buildingConditions = new HashSet<>();
+    buildingConstraints = new HashSet<>();
+
+    winningConditions = new HashSet<>();
+    winningConstraints = new HashSet<>();
+
+    movementConditions.add(isPointReachable);
+    buildingConditions.add(isPointBuildable);
+    winningConditions.add(isMovementWinning);
   }
 
   /**
@@ -149,6 +163,15 @@ public class GodCard implements Cloneable{
         return currentLevel < Block.WIN_LEVEL;
       };
 
+  Collection<BiFunction<Game, Point, Boolean>> movementConditions;
+  Collection<BiFunction<Game, Point, Boolean>> movementConstraints;
+
+  Collection<BiFunction<Game, Point, Boolean>> buildingConditions;
+  Collection<BiFunction<Game, Point, Boolean>> buildingConstraints;
+
+  Collection<Predicate<Movement>> winningConditions;
+  Collection<Predicate<Movement>> winningConstraints;
+
   /**
    *
    * @return a list of points that the player can reach from his currentWorker position
@@ -167,7 +190,8 @@ public class GodCard implements Cloneable{
 
       reachablePoints =
           candidatePositions.stream()
-              .filter(p -> isPointReachable.apply(game, p))
+              .filter(p -> movementConditions.stream().anyMatch(cond -> cond.apply(game, p)))
+                  .filter(p -> movementConstraints.stream().allMatch(cond -> cond.apply(game, p)))
               .collect(Collectors.toList());
     } catch (ItemNotFoundException ignored) {
     }
@@ -179,7 +203,8 @@ public class GodCard implements Cloneable{
   }
 
   public boolean isMovementWinning(Movement movement) {
-    return isMovementWinning.test(movement);
+    return winningConditions.stream().anyMatch(cond -> cond.test(movement)) &&
+            winningConstraints.stream().noneMatch(cond -> cond.test(movement));
   }
 
   /**
@@ -200,8 +225,9 @@ public class GodCard implements Cloneable{
 
       buildablePoints =
           candidatePositions.stream()
-              .filter(p -> isPointBuildable.apply(game, p))
-              .collect(Collectors.toList());
+                .filter(p -> buildingConditions.stream().anyMatch(cond -> cond.apply(game, p)))
+                .filter(p -> buildingConstraints.stream().allMatch(cond -> cond.apply(game, p)))
+                .collect(Collectors.toList());
 
     } catch (ItemNotFoundException ignored) {
     }

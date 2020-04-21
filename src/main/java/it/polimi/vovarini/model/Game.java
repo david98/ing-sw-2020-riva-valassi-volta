@@ -80,19 +80,7 @@ public class Game {
     try {
       Collection<Point> reachablePoints = getCurrentPlayer().getGodCard().computeReachablePoints();
 
-      if (!reachablePoints.contains(movement.getEnd())) {
-        return false;
-      }
-
-      try {
-        Box startBox = board.getBox(movement.getStart()).clone();
-        startBox.removeTopmost();
-        Box endBox = board.getBox(movement.getEnd());
-
-        return (endBox.getLevel() - startBox.getLevel()) <= 1;
-      } catch (BoxEmptyException e) {
-        throw new RuntimeException(e);
-      }
+      return reachablePoints.contains(movement.getEnd());
     } catch (CurrentPlayerLosesException e){
       return false;
     }

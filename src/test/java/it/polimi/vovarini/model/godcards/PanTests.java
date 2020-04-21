@@ -40,7 +40,7 @@ public class PanTests {
 
     @Test
     @DisplayName("Test a movementWinning with a GodCard of type Pan")
-    void panMovementWinnig() {
+    void panMovementWinning() {
         GodCard pan = GodCardFactory.create(GodName.Pan);
         Board board = game.getBoard();
         Point start = new Point(0,0);
@@ -55,7 +55,7 @@ public class PanTests {
         } catch (BoxFullException ignored) {
         }
 
-        assertFalse(pan.isMovementWinning.test(new Movement(board, start, end)));
+        assertFalse(pan.isMovementWinning(new Movement(board, start, end)));
 
         // from 2 to 0
         try {
