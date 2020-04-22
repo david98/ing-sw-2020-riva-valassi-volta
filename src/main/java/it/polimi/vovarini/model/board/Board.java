@@ -1,6 +1,11 @@
 package it.polimi.vovarini.model.board;
 
-import it.polimi.vovarini.model.Player;
+import it.polimi.vovarini.common.events.BoardUpdateEvent;
+import it.polimi.vovarini.common.events.GameEventManager;
+import it.polimi.vovarini.common.exceptions.BoxEmptyException;
+import it.polimi.vovarini.common.exceptions.BoxFullException;
+import it.polimi.vovarini.common.exceptions.InvalidPositionException;
+import it.polimi.vovarini.common.exceptions.ItemNotFoundException;
 import it.polimi.vovarini.model.Point;
 import it.polimi.vovarini.model.board.items.Item;
 
@@ -8,7 +13,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Stack;
 
-public class Board {
+public class Board implements Cloneable{
 
   public static final int DEFAULT_SIZE = 5;
 
@@ -28,42 +33,48 @@ public class Board {
     }
   }
 
+  public boolean isPositionValid(Point p) {
+    return (p.getX() >= 0 && p.getY() >= 0 && p.getX() < size && p.getY() < size);
+  }
+
   public List<Point> getAdjacentPositions(Point p) {
     LinkedList<Point> adjacentPositions = new LinkedList<>();
-    System.out.println("Point under exam: " + p + "\nAdjacent points:\n");
-    for (int i = p.getY() - 1; i < p.getY() + 1; i++) {
-      for (int j = p.getX() - 1; j < p.getX() + 1; j++) {
+    for (int i = p.getY() - 1; i <= p.getY() + 1; i++) {
+      for (int j = p.getX() - 1; j <= p.getX() + 1; j++) {
         Point point = new Point(j, i);
         if (i >= 0 && i < size && j >= 0 && j < size && !point.equals(p)) {
-          System.out.println(point);
           adjacentPositions.add(point);
         }
       }
     }
-    System.out.println();
     return adjacentPositions;
   }
 
+  public Box getBox(Point position) {
+    return boxes[position.getY()][position.getX()];
+  }
+
   public void place(Item item, Point p) throws InvalidPositionException, BoxFullException {
-    if (p.getX() >= size || p.getY() >= size) {
+    if (!isPositionValid(p)) {
       throw new InvalidPositionException();
     }
-    Box box = boxes[p.getY()][p.getX()];
+    Box box = getBox(p);
     box.place(item);
+    GameEventManager.raise(new BoardUpdateEvent(this, this.clone()));
   }
 
   public Stack<Item> getItems(Point p) throws InvalidPositionException, BoxEmptyException {
-    if (p.getX() >= size || p.getY() >= size) {
+    if (!isPositionValid(p)) {
       throw new InvalidPositionException();
     }
-    return boxes[p.getY()][p.getX()].getItems();
+    return getBox(p).getItems();
   }
 
   public Item remove(Point p) throws InvalidPositionException, BoxEmptyException {
-    if (p.getX() >= size || p.getY() >= size) {
+    if (!isPositionValid(p)) {
       throw new InvalidPositionException();
     }
-    Box box = boxes[p.getY()][p.getX()];
+    Box box = getBox(p);
     return box.removeTopmost();
   }
 
@@ -81,18 +92,23 @@ public class Board {
     throw new ItemNotFoundException();
   }
 
-  public void debugPrintToConsole(Player[] players) {
-    for (int i = 0; i < boxes.length; i++) {
-      System.out.print("|");
-      for (int j = 0; j < boxes.length; j++) {
-        System.out.print(" " + boxes[i][j].toString(players));
-      }
-      System.out.println((char) 27 + "[37m |");
-    }
-    System.out.println((char) 27 + "[37m");
-  }
-
   public int getSize() {
     return size;
   }
+
+  public Board clone() {
+    try {
+      Board b = (Board) super.clone();
+      b.boxes = new Box[size][size];
+      for (int i = 0; i < size; i++) {
+        for (int j = 0; j < size; j++) {
+          b.boxes[i][j] = boxes[i][j].clone();
+        }
+      }
+      return b;
+    } catch (CloneNotSupportedException e) {
+      throw new RuntimeException(e);
+    }
+  }
+
 }

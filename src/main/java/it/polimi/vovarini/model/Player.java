@@ -1,7 +1,5 @@
 package it.polimi.vovarini.model;
 
-import it.polimi.vovarini.model.board.Board;
-import it.polimi.vovarini.model.board.ItemNotFoundException;
 import it.polimi.vovarini.model.board.items.Sex;
 import it.polimi.vovarini.model.board.items.Worker;
 import it.polimi.vovarini.model.godcards.GodCard;
@@ -9,9 +7,7 @@ import it.polimi.vovarini.model.godcards.GodCard;
 import java.util.EnumMap;
 import java.util.Map;
 
-public class Player {
-
-  private Game game;
+public class Player implements Cloneable{
 
   private EnumMap<Sex, Worker> workers;
   private Sex currentSex;
@@ -19,25 +15,22 @@ public class Player {
   private GodCard godCard;
   private String nickname;
 
-  public Player(Game game, GodCard assignedCard, String nickname) {
-    this.game = game;
+  public Player(String nickname) {
+    workers = new EnumMap<>(Sex.class);
+    workers.put(Sex.Female, new Worker(Sex.Female));
+    workers.put(Sex.Male, new Worker(Sex.Male));
+    currentSex = Sex.Male;
+
+    this.nickname = nickname;
+  }
+
+  public Player(GodCard assignedCard, String nickname) {
     workers = new EnumMap<>(Sex.class);
     workers.put(Sex.Female, new Worker(Sex.Female));
     workers.put(Sex.Male, new Worker(Sex.Male));
     currentSex = Sex.Male;
     godCard = assignedCard;
     this.nickname = nickname;
-  }
-
-  public void moveCurrentWorker(Point destination) {
-    try {
-      Board board = game.getBoard();
-      Point start = board.getItemPosition(getCurrentWorker());
-      Move movement = new Movement(board, start, destination);
-      game.performMove(movement);
-    } catch (ItemNotFoundException ignored) {
-
-    }
   }
 
   public Map<Sex, Worker> getWorkers() {
@@ -61,7 +54,42 @@ public class Player {
     return godCard;
   }
 
+  public void setGodCard(GodCard godCard) {
+    this.godCard = godCard;
+  }
+
   public String getNickname() {
     return nickname;
+  }
+
+  public static boolean validateNickname(String nickname) {
+    return (nickname != null) && nickname.matches("[A-Za-z0-9_]{4,16}$");
+  }
+
+  public Player clone() {
+    try {
+      Player p = (Player) super.clone();
+      if (p.godCard != null) {
+        p.godCard = godCard.clone();
+      }
+      return p;
+    } catch (CloneNotSupportedException e) {
+      throw new RuntimeException(e);
+    }
+  }
+
+
+  @Override
+  public int hashCode() {
+    return nickname.hashCode();
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (obj instanceof Player) {
+      return nickname.equals(((Player) obj).nickname);
+    } else {
+      return super.equals(obj);
+    }
   }
 }
