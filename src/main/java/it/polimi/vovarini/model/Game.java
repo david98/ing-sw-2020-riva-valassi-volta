@@ -3,13 +3,10 @@ package it.polimi.vovarini.model;
 import it.polimi.vovarini.common.events.CurrentPlayerChangedEvent;
 import it.polimi.vovarini.common.events.GameEventManager;
 import it.polimi.vovarini.common.events.PhaseUpdateEvent;
-import it.polimi.vovarini.common.exceptions.BoxEmptyException;
 import it.polimi.vovarini.common.exceptions.CurrentPlayerLosesException;
 import it.polimi.vovarini.common.exceptions.InvalidNumberOfPlayersException;
 import it.polimi.vovarini.common.exceptions.InvalidPositionException;
 import it.polimi.vovarini.model.board.Board;
-import it.polimi.vovarini.model.board.Box;
-import it.polimi.vovarini.model.board.items.Item;
 import it.polimi.vovarini.model.moves.Construction;
 import it.polimi.vovarini.model.moves.Move;
 import it.polimi.vovarini.model.moves.Movement;
@@ -52,6 +49,13 @@ public class Game {
     currentPhase = Phase.Start;
   }
 
+  /**
+   * This method adds a new player into the game with the nickname already
+   * validated through {@link Player#validateNickname(String)}
+   *
+   * @param nickname the name of the player to be added
+   * @throws InvalidNumberOfPlayersException if there is already the maximum number of players
+   */
   public void addPlayer(String nickname)
       throws InvalidNumberOfPlayersException {
 
@@ -70,7 +74,7 @@ public class Game {
   }
 
   /**
-   * Returns true if movement is valid for the current player and their current worker.
+   * Returns true if movement is valid for the current player and his current worker.
    *
    * @param movement The move to be validated.
    * @return If movement is valid.
@@ -86,6 +90,12 @@ public class Game {
     }
   }
 
+  /**
+   * Returns true if construction is valid for the current player and his current worker.
+   *
+   * @param construction The move to be validated.
+   * @return If construction is valid.
+   */
   public boolean validateMove(Construction construction) {
 
     try {
@@ -98,6 +108,13 @@ public class Game {
     }
   }
 
+  /**
+   * This method saves the move to be performed (the move that was previously validated
+   * through {@link #validateMove(Movement)} or {@link #validateMove(Construction)}) into the Stack of the moves
+   * that is possible to undo. Successively, the method performs the move through the call of the execute method.
+   *
+   * @param move The move to be performed
+   */
   public void performMove(Move move) {
     undoneMoves.clear();
     moves.push(move);

@@ -139,12 +139,7 @@ public class GodCard implements Cloneable{
   Function<Game, Phase> nextPhase =
           (Game game) -> game.getCurrentPhase().next();
 
-  /**
-   * Lambda function presenting the base Behavior for sideEffects. Gets injected dynamically by code in the Reachability class
-   * @param game Instance of game currently played by all the players
-   * @param movement Candidate to be a Movement destination
-   * @return if the candidate point can be reached returns true, false otherwise
-   */
+
   BiFunction<Game, Movement, List<Movement>> listEffects =
           (Game game, Movement movement) -> {
             List<Movement> movementList = new LinkedList<>();
@@ -252,6 +247,10 @@ public class GodCard implements Cloneable{
     return name;
   }
 
+  /**
+   * @param movement Movement to be analysed
+   * @return list of movements to be made sequentially
+   */
   public List<Movement> listEffects(Movement movement) {
     return listEffects.apply(game, movement);
   }

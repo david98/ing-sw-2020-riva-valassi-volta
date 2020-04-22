@@ -66,7 +66,7 @@ public class Controller implements EventListener {
     Block toBuild = Block.blocks[evt.getLevel() - 1];
     Point target = evt.getBuildEnd();
 
-    Construction build = new Construction(board, toBuild, target, false);
+    Construction build = new Construction(board, toBuild, target);
 
     if (!game.validateMove(build)) throw new InvalidMoveException();
 

@@ -1,9 +1,5 @@
 package it.polimi.vovarini.model.godcards;
 
-import it.polimi.vovarini.model.Game;
-
-import javax.print.attribute.standard.Sides;
-
 /**
  * GodCardFactory creates a specific GodCard injecting dynamically
  * particular methods that pertain to a particular card
