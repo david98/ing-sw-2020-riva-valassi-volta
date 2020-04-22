@@ -103,6 +103,7 @@ public class GodCard implements Cloneable{
         return false;
       };
 
+
   /**
    * Lambda function presenting the base Behavior for Buildability. Gets injected dynamically by code in the Buildability class
    * @param game Instance of game currently played by all the players

@@ -268,7 +268,7 @@ public class ControllerTests {
     });
 
     // invalidMove: invalidLevel
-    BuildEvent evtInvalidLevel = new BuildEvent(game.getCurrentPlayer(), target, level + 1);
+    BuildEvent evtInvalidLevel = new BuildEvent(game.getCurrentPlayer(), target, 3);
     assertThrows(InvalidMoveException.class, () -> {
       controller.update(evtInvalidLevel);
     });

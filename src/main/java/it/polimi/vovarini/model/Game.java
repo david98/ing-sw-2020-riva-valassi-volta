@@ -3,10 +3,7 @@ package it.polimi.vovarini.model;
 import it.polimi.vovarini.common.events.CurrentPlayerChangedEvent;
 import it.polimi.vovarini.common.events.GameEventManager;
 import it.polimi.vovarini.common.events.PhaseUpdateEvent;
-import it.polimi.vovarini.common.exceptions.BoxEmptyException;
-import it.polimi.vovarini.common.exceptions.CurrentPlayerLosesException;
-import it.polimi.vovarini.common.exceptions.InvalidNumberOfPlayersException;
-import it.polimi.vovarini.common.exceptions.InvalidPositionException;
+import it.polimi.vovarini.common.exceptions.*;
 import it.polimi.vovarini.model.board.Board;
 import it.polimi.vovarini.model.board.Box;
 import it.polimi.vovarini.model.board.items.Item;
@@ -90,12 +87,16 @@ public class Game {
 
     try {
       Collection<Point> buildablePoints = getCurrentPlayer().getGodCard().computeBuildablePoints();
+      Box destinationBox = getBoard().getBox(construction.getTarget());
+
+      if(construction.getBlock().getLevel() - destinationBox.getLevel() != 1) return false;
 
       return buildablePoints.contains(construction.getTarget());
 
     } catch (CurrentPlayerLosesException e) {
       return false;
     }
+
   }
 
   public void performMove(Move move) {
