@@ -161,10 +161,10 @@ public class Controller implements EventListener {
           throws InvalidPhaseException, WrongPlayerException, InvalidPositionException,
           InvalidMoveException {
     try {
-      Point start = game.getBoard().getItemPosition(game.getCurrentPlayer().getCurrentWorker());
-
       Player currentPlayer = game.getCurrentPlayer();
       if (!currentPlayer.equals(evt.getSource())) throw new WrongPlayerException();
+
+      Point start = game.getBoard().getItemPosition(game.getCurrentPlayer().getCurrentWorker());
 
       Phase currentPhase = game.getCurrentPhase();
       if (!currentPhase.equals(Phase.Movement)) throw new InvalidPhaseException();
