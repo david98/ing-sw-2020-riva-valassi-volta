@@ -40,7 +40,7 @@ public class Controller implements EventListener {
     if (!currentPlayer.equals(evt.getSource())) throw new WrongPlayerException();
 
     Phase currentPhase = game.getCurrentPhase();
-    if (currentPhase.equals(Phase.Construction) || currentPhase.equals(Phase.End))
+    if (!currentPhase.equals(Phase.Start))
       throw new InvalidPhaseException();
 
     game.getCurrentPlayer().setCurrentSex(evt.getSex());
@@ -138,7 +138,7 @@ public class Controller implements EventListener {
     Phase currentPhase = game.getCurrentPhase();
     if (!currentPhase.equals(Phase.End)) throw new InvalidPhaseException();
 
-    game.nextPlayer();
+    game.setCurrentPhase(game.getCurrentPlayer().getGodCard().computeNextPhase(game));
   }
 
   // Gestisce lo skip dell'utente tra una fase e l'altra

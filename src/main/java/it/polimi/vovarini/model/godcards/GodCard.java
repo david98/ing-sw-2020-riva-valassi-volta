@@ -235,7 +235,16 @@ public class GodCard implements Cloneable{
   }
 
   public Phase computeNextPhase(Game game){
-    return nextPhase.apply(game);
+
+    Phase next = nextPhase.apply(game);
+
+    if(next.equals(Phase.Start)){
+      game.nextPlayer();
+    }
+
+    return next;
+
+
   }
 
   public GodName getName(){

@@ -126,7 +126,6 @@ public class Game {
   }
 
   public Player nextPlayer() {
-    setCurrentPhase(Phase.Start);
     currentPlayerIndex = (currentPlayerIndex + 1) % players.length;
     GameEventManager.raise(new CurrentPlayerChangedEvent(this, players[currentPlayerIndex].clone()));
     return players[currentPlayerIndex];
