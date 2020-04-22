@@ -89,7 +89,9 @@ public class Game {
       Collection<Point> buildablePoints = getCurrentPlayer().getGodCard().computeBuildablePoints();
       Box destinationBox = getBoard().getBox(construction.getTarget());
 
+
       return buildablePoints.contains(construction.getTarget()) && construction.getBlock().canBePlacedOn(destinationBox.getItems().peek());
+
 
     } catch (CurrentPlayerLosesException e) {
       return false;

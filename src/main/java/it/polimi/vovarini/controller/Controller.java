@@ -16,6 +16,7 @@ import it.polimi.vovarini.model.moves.Movement;
 
 import java.util.ArrayList;
 import java.util.EventListener;
+import java.util.List;
 
 public class Controller implements EventListener {
 
@@ -170,10 +171,14 @@ public class Controller implements EventListener {
       Movement movement = new Movement(game.getBoard(), start, end);
       if (!game.validateMove(movement)) throw new InvalidMoveException();
 
-      // Se la mossa è valida, prima eseguo le conseguenze (ndr cambiare nome) sideEffects
-      currentPlayer.getGodCard().consequences(game);
+      List<Movement> movementList = currentPlayer.getGodCard().listEffects(movement);
+      for(Movement m : movementList) {
+        game.performMove(m);
+      }
+
 
       game.performMove(movement);
+
     } catch (ItemNotFoundException e) {
       throw new RuntimeException(e);
     }

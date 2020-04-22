@@ -140,8 +140,18 @@ public class GodCard implements Cloneable{
   Function<Game, Phase> nextPhase =
           (Game game) -> game.getCurrentPhase().next();
 
-
-
+  /**
+   * Lambda function presenting the base Behavior for sideEffects. Gets injected dynamically by code in the Reachability class
+   * @param game Instance of game currently played by all the players
+   * @param movement Candidate to be a Movement destination
+   * @return if the candidate point can be reached returns true, false otherwise
+   */
+  BiFunction<Game, Movement, List<Movement>> listEffects =
+          (Game game, Movement movement) -> {
+            List<Movement> movementList = new LinkedList<>();
+            movementList.add(movement);
+            return movementList;
+          };
 
   /**
    * Predicate for checking if a player has won with the Movement he wants to perform (applied before the movement itself)
@@ -160,14 +170,14 @@ public class GodCard implements Cloneable{
         return currentLevel < Block.WIN_LEVEL;
       };
 
-  Collection<BiFunction<Game, Point, Boolean>> movementConditions;
-  Collection<BiFunction<Game, Point, Boolean>> movementConstraints;
+    Collection<BiFunction<Game, Point, Boolean>> movementConditions;
+    Collection<BiFunction<Game, Point, Boolean>> movementConstraints;
 
-  Collection<BiFunction<Game, Point, Boolean>> buildingConditions;
-  Collection<BiFunction<Game, Point, Boolean>> buildingConstraints;
+    Collection<BiFunction<Game, Point, Boolean>> buildingConditions;
+    Collection<BiFunction<Game, Point, Boolean>> buildingConstraints;
 
-  Collection<Predicate<Movement>> winningConditions;
-  Collection<Predicate<Movement>> winningConstraints;
+    Collection<Predicate<Movement>> winningConditions;
+    Collection<Predicate<Movement>> winningConstraints;
 
   /**
    *
@@ -252,7 +262,11 @@ public class GodCard implements Cloneable{
     return name;
   }
 
-  public void consequences(Game game) {
+  public List<Movement> listEffects(Movement movement) {
+    return listEffects.apply(game, movement);
+  }
+
+  public void consequences() {
   }
 
   public void setGame(Game game) {
