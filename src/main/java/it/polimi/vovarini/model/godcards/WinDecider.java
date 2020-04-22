@@ -1,6 +1,5 @@
 package it.polimi.vovarini.model.godcards;
 
-import it.polimi.vovarini.model.board.items.Block;
 import it.polimi.vovarini.model.moves.Movement;
 
 /**
@@ -8,7 +7,7 @@ import it.polimi.vovarini.model.moves.Movement;
  * of the Game are listed
  * @author Mattia Valassi
  */
-public class WinningCondition extends Behavior {
+public class WinDecider extends Decider {
 
     /**
      * This method checks if, after applying Pan's effect, the current player wins after the execution of the Movement move he wants to perform

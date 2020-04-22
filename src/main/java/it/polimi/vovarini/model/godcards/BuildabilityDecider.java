@@ -6,7 +6,7 @@ package it.polimi.vovarini.model.godcards;
  * of the Game are listed
  * @author Mattia Valassi
  */
-public class Buildability extends Behavior {
+public class BuildabilityDecider extends Decider {
 
 
 

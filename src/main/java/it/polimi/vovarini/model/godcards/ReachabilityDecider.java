@@ -15,7 +15,7 @@ import java.util.Stack;
  * @class Reachability is an extension of Behavior. It represents in specific the "Move" behavior. Here, all methods influenced by cards acting on the Moving aspect
  * of the Game are listed
  */
-public class Reachability extends Behavior {
+public class ReachabilityDecider extends Decider {
 
     private static ArrayList<Point> blockedPoints = new ArrayList<Point>();
 

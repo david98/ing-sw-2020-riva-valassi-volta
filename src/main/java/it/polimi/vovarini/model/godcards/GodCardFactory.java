@@ -1,9 +1,5 @@
 package it.polimi.vovarini.model.godcards;
 
-import it.polimi.vovarini.model.Game;
-
-import javax.print.attribute.standard.Sides;
-
 /**
  * GodCardFactory creates a specific GodCard injecting dynamically
  * particular methods that pertain to a particular card
@@ -43,7 +39,7 @@ public class GodCardFactory {
      */
     private static GodCard createApollo() {
       GodCard apollo = new GodCard(GodName.Apollo);
-      apollo.movementConditions.add(Reachability::isPointReachableCanExchangeWithWorker);
+      apollo.movementConditions.add(ReachabilityDecider::isPointReachableCanExchangeWithWorker);
       return apollo;
     }
 
@@ -53,8 +49,8 @@ public class GodCardFactory {
      */
     private static GodCard createMinotaur() {
         GodCard minotaur = new GodCard(GodName.Minotaur);
-        minotaur.movementConditions.add(Reachability::isPointReachableConditionedExchange);
-        minotaur.listEffects = ListEffects::listEffectsMinotaur;
+        minotaur.movementConditions.add(ReachabilityDecider::isPointReachableConditionedExchange);
+        minotaur.listEffects = ConsequencesDecider::listEffectsMinotaur;
         return minotaur;
     }
 
@@ -64,32 +60,32 @@ public class GodCardFactory {
      */
     private static GodCard createPan() {
       GodCard pan = new GodCard(GodName.Pan);
-      pan.winningConditions.add(WinningCondition::isWinningPan);
+      pan.winningConditions.add(WinDecider::isWinningPan);
       return pan;
     }
 
     private static GodCard createDemeter() {
       GodCard demeter = new GodCard(GodName.Demeter);
-      demeter.nextPhase = TurnFlow::nextPhaseExtendsConstruction;
+      demeter.nextPhase = FlowDecider::nextPhaseExtendsConstruction;
       return demeter;
     }
 
     private static GodCard createHephaestus(){
       GodCard hephy = new GodCard(GodName.Hephaestus);
-      hephy.nextPhase = TurnFlow::nextPhaseExtendsConstruction;
+      hephy.nextPhase = FlowDecider::nextPhaseExtendsConstruction;
       return hephy;
     }
 
     private static GodCard createArtemis(){
       GodCard artemis = new GodCard(GodName.Artemis);
-      artemis.nextPhase = TurnFlow::nextPhaseExtendsMovement;
-      artemis.movementConditions.add(Reachability::isPointReachablePreviousBoxDenied);
+      artemis.nextPhase = FlowDecider::nextPhaseExtendsMovement;
+      artemis.movementConditions.add(ReachabilityDecider::isPointReachablePreviousBoxDenied);
       return artemis;
     }
 
     private static GodCard createPrometheus(){
       GodCard prometheus = new GodCard(GodName.Prometheus);
-      prometheus.nextPhase = TurnFlow::nextPhaseConstructionTwice;
+      prometheus.nextPhase = FlowDecider::nextPhaseConstructionTwice;
       return prometheus;
     }
 

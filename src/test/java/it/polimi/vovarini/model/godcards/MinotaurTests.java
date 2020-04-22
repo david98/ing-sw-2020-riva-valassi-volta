@@ -74,7 +74,7 @@ public class MinotaurTests {
                 }
             }
 
-            assertFalse(Reachability.isPointReachableConditionedExchange(game, end));
+            assertFalse(ReachabilityDecider.isPointReachableConditionedExchange(game, end));
             assertEquals(currentWorker, board.getBox(start).getItems().peek());
             assertEquals(otherWorker, board.getBox(end).getItems().peek());
 
@@ -119,7 +119,7 @@ public class MinotaurTests {
                 }
             }
 
-            assertFalse(Reachability.isPointReachableConditionedExchange(game, end));
+            assertFalse(ReachabilityDecider.isPointReachableConditionedExchange(game, end));
             assertEquals(currentWorker, board.getBox(start).getItems().peek());
             assertEquals(enemysWorker, board.getBox(end).getItems().peek());
             assertEquals(otherWorker, board.getBox(forcedDestination).getItems().peek());
@@ -168,7 +168,7 @@ public class MinotaurTests {
                 }
             }
 
-            assertFalse(Reachability.isPointReachableConditionedExchange(game, end));
+            assertFalse(ReachabilityDecider.isPointReachableConditionedExchange(game, end));
             assertEquals(currentWorker, board.getBox(start).getItems().peek());
             assertEquals(enemysWorker, board.getBox(end).getItems().peek());
 
@@ -208,7 +208,7 @@ public class MinotaurTests {
             board.place(Block.blocks[1], forcedDestination);
             board.place(Block.blocks[2], forcedDestination);
 
-            assertTrue(Reachability.isPointReachableConditionedExchange(game, end));
+            assertTrue(ReachabilityDecider.isPointReachableConditionedExchange(game, end));
             assertFalse(minotaur.isMovementWinning(movement));
 
             if(game.validateMove(movement)) {
@@ -260,7 +260,7 @@ public class MinotaurTests {
             board.place(Block.blocks[1], forcedDestination);
             board.place(Block.blocks[2], forcedDestination);
 
-            assertTrue(Reachability.isPointReachableConditionedExchange(game, end));
+            assertTrue(ReachabilityDecider.isPointReachableConditionedExchange(game, end));
             assertTrue(minotaur.isMovementWinning(movement));
 
             if(game.validateMove(movement)) {

@@ -7,13 +7,13 @@ import it.polimi.vovarini.model.moves.Movement;
 import java.util.LinkedList;
 import java.util.List;
 
-public class ListEffects extends Behavior {
+public class ConsequencesDecider extends Decider {
 
     public static List<Movement> listEffectsMinotaur(Game game, Movement movement) {
 
         List<Movement> movementList = new LinkedList<>();
 
-        if(Reachability.isPointReachableConditionedExchange(game, movement.getEnd())) {
+        if(ReachabilityDecider.isPointReachableConditionedExchange(game, movement.getEnd())) {
 
             Point start = movement.getStart();
             Point end = movement.getEnd();

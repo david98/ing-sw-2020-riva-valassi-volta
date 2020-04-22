@@ -8,7 +8,7 @@ import it.polimi.vovarini.model.Phase;
  * of the Game are listed
  * @author Mattia Valassi
  */
-public class TurnFlow extends Behavior {
+public class FlowDecider extends Decider {
 
     /**
      * restoration = false -> The flow is normal, not modified. restoration -> The flow is not normal, has been modified
