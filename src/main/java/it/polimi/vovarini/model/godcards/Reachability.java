@@ -70,46 +70,32 @@ public class Reachability extends Behavior {
      * @return if the chosen position is reachable, false if it isn't
      * @author Marco Riva
      */
-    //Is it possibile to add a method that checks if I can force the opponent's worker in the direction I'm moving. It will give us the opportunity to
-    //collapse Apollo and Minotaur in the same method (isPointReachableCanReplaceWorker)
     public static boolean isPointReachableConditionedExchange(Game game, Point point){
         try {
             Worker currentWorker = game.getCurrentPlayer().getCurrentWorker();
             Point currentWorkerPosition = game.getBoard().getItemPosition(currentWorker);
+
             if (!point.isAdjacent(currentWorkerPosition)) {
                 return false;
             }
 
             Box destinationBox = game.getBoard().getBox(point);
-            Stack<Item> destinationItems = null;
-
-            try {
-                destinationItems = destinationBox.getItems();
-            } catch (BoxEmptyException ignored) {
-                // la casella di destinazione è adiacente e vuota
-                return true;
-            }
-
             int destinationLevel = destinationBox.getLevel();
             int currentWorkerLevel = game.getBoard().getBox(currentWorkerPosition).getLevel();
 
-
+            // Minotaur's rules
             if(destinationLevel - currentWorkerLevel <= 1) {
-
-                // General rules
-                if(currentWorker.canBePlacedOn(destinationItems.peek())) {
-                    // la casella di destinazione è raggiungibile (adiacenza e livello ok) e libera
-                    return true;
-                }
-
-                // Minotaur's rules
+                Stack<Item> destinationItems = destinationBox.getItems();
                 Worker otherWorker = game.getCurrentPlayer().getOtherWorker();
+
                 // se nella casella di destinazione c'è un worker nemico
                 if(destinationItems.peek().canBeRemoved() && !destinationItems.peek().equals(otherWorker)) {
                     Worker enemysWorker = (Worker) destinationItems.peek();
+
                     int x = 2*point.getX() - currentWorkerPosition.getX();
                     int y = 2*point.getY() - currentWorkerPosition.getY();
                     Point forcedDestination = new Point(x,y);
+
                     Box forcedDestinationBox = game.getBoard().getBox(forcedDestination);
                     Item forcedDestinationItem = null;
 
@@ -128,6 +114,8 @@ public class Reachability extends Behavior {
 
         } catch (ItemNotFoundException ignored) {
             System.err.println("This really should never happen...");
+        } catch (BoxEmptyException ignored) {
+            return false;
         }
         return false;
     }

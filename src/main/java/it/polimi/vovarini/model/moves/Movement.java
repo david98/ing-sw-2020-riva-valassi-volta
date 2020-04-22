@@ -38,8 +38,8 @@ public class Movement extends Move {
         endItem = board.getItems(end).peek();
         if (endItem.canBeRemoved()) {
           board.remove(end);
+          board.place(endItem, start);
         }
-        board.place(endItem, start);
       } catch (BoxEmptyException ignored) {
 
       }
