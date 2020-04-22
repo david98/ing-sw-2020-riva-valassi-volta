@@ -91,11 +91,7 @@ public class Game {
     try {
       Collection<Point> buildablePoints = getCurrentPlayer().getGodCard().computeBuildablePoints();
 
-      if (!buildablePoints.contains(construction.getTarget())) {
-        return false;
-      }
-
-      return true;
+      return buildablePoints.contains(construction.getTarget());
 
     } catch (CurrentPlayerLosesException e) {
       return false;
