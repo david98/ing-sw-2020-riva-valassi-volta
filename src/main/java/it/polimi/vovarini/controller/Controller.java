@@ -197,8 +197,8 @@ public class Controller implements EventListener {
 
   // CLI: we should find something to press that will make the "skip button" function, to trigger
   // the next turn (like pressing space)
-  @GameEventListener
-  public void update(NextPlayerEvent evt) throws InvalidPhaseException, WrongPlayerException {
+  //@GameEventListener
+  /*public void update(NextPlayerEvent evt) throws InvalidPhaseException, WrongPlayerException {
 
     Player currentPlayer = game.getCurrentPlayer();
     if (!currentPlayer.equals(evt.getSource())) throw new WrongPlayerException();
@@ -207,18 +207,16 @@ public class Controller implements EventListener {
     if (!currentPhase.equals(Phase.End)) throw new InvalidPhaseException();
 
     game.setCurrentPhase(game.getCurrentPlayer().getGodCard().computeNextPhase(game));
-  }
+  }*/
 
   // Gestisce lo skip dell'utente tra una fase e l'altra
-  // Non va bene in fase END, perchè bisognerebbe lanciare NextPlayerEvent
+  //Domanda: Abilitazione del bottone Skip? Ovviamente se non ha fatto mosse o non ha selezionato il worker, non posso farglielo abilitare (questo lo fa la View?)
+  //Aggiungiamo un attributo skipEnable sul model (sulle carte, su game?)
   @GameEventListener
-  public void update(SkipEvent evt) throws WrongPlayerException, InvalidPhaseException {
+  public void update(SkipEvent evt) throws WrongPlayerException, UnskippablePhaseException {
 
     Player currentPlayer = game.getCurrentPlayer();
     if (!currentPlayer.equals(evt.getSource())) throw new WrongPlayerException();
-
-    Phase currentPhase = game.getCurrentPhase();
-    if (currentPhase.equals(Phase.End)) throw new InvalidPhaseException();
 
     game.setCurrentPhase(game.getCurrentPlayer().getGodCard().computeNextPhase(game));
   }

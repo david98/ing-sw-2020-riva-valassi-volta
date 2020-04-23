@@ -15,7 +15,10 @@ import it.polimi.vovarini.model.godcards.GodName;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
+import java.util.LinkedList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -25,6 +28,15 @@ public class ControllerTests {
 
   private static Controller controller;
   private static Game game;
+
+  private static List<Phase> provideAllPhases(){
+    LinkedList<Phase> phases = new LinkedList<>();
+
+    for(Phase phase : Phase.values()){
+      phases.add(phase);
+    }
+    return phases;
+  }
 
   @Test
   @DisplayName("Controller instantiation")
@@ -295,117 +307,6 @@ public class ControllerTests {
     });
   }
 
-
-
-  @Test
-  @DisplayName("To change current player")
-  void nextPlayerTest() {
-
-    Game game = null;
-    try {
-      game = new Game(3);
-    } catch (InvalidNumberOfPlayersException ignored) {
-    }
-
-    try {
-      game.addPlayer("playerOne");
-      game.addPlayer("playerTwo");
-      game.addPlayer("playerThree");
-    } catch (InvalidNumberOfPlayersException e) {
-      assertNotNull(game.getPlayers()[game.getPlayers().length - 1]);
-      return;
-    }
-
-    controller = new Controller(game);
-
-    game.nextPhase();
-    game.nextPhase();
-    game.nextPhase();
-
-    assertEquals(game.getCurrentPhase(), Phase.End);
-
-    Player[] players = game.getPlayers();
-
-    NextPlayerEvent evt = new NextPlayerEvent(players[0]);
-
-    try {
-      controller.update(evt);
-    } catch (InvalidPhaseException ignored) {
-    } catch (WrongPlayerException ignored) {
-    }
-
-    assertEquals(game.getCurrentPlayer(), players[1]);
-    assertEquals(game.getCurrentPhase(), Phase.Start);
-
-    // invalidPhase: Start phase
-    NextPlayerEvent evtInvalidPhase = new NextPlayerEvent(players[1]);
-    assertThrows(InvalidPhaseException.class, () -> {
-      controller.update(evtInvalidPhase);
-    });
-
-
-    game.setCurrentPhase(game.getCurrentPlayer().getGodCard().computeNextPhase(game));
-    game.setCurrentPhase(game.getCurrentPlayer().getGodCard().computeNextPhase(game));
-    game.setCurrentPhase(game.getCurrentPlayer().getGodCard().computeNextPhase(game));
-
-    // invalidPlayer: wrong player
-    NextPlayerEvent evtInvalidPlayer = new NextPlayerEvent(players[2]);
-    assertThrows(WrongPlayerException.class, () -> {
-      controller.update(evtInvalidPlayer);
-    });
-  }
-
-  @Test
-  @DisplayName("To change current phase")
-  void skipTest() {
-    Game game = null;
-    try {
-      game = new Game(3);
-    } catch (InvalidNumberOfPlayersException ignored) {
-    }
-
-    try {
-      game.addPlayer("playerOne");
-      game.addPlayer("playerTwo");
-      game.addPlayer("playerThree");
-    } catch (InvalidNumberOfPlayersException e) {
-      assertNotNull(game.getPlayers()[game.getPlayers().length - 1]);
-      return;
-    }
-
-    controller = new Controller(game);
-
-    SkipEvent evt = new SkipEvent(game.getPlayers()[0]);
-
-    try {
-      controller.update(evt);
-    } catch (InvalidPhaseException ignored) {
-    } catch (WrongPlayerException ignored) {
-    }
-
-    assertEquals(game.getCurrentPlayer(), game.getPlayers()[0]);
-    assertEquals(game.getCurrentPhase(), Phase.Movement);
-
-    game.setCurrentPhase(game.getCurrentPlayer().getGodCard().computeNextPhase(game));
-    game.setCurrentPhase(game.getCurrentPlayer().getGodCard().computeNextPhase(game));
-
-    // invalidPhase: End phase
-    SkipEvent evtInvalidPhase = new SkipEvent(game.getCurrentPlayer());
-    assertThrows(InvalidPhaseException.class, () -> {
-      controller.update(evtInvalidPhase);
-    });
-
-    game.setCurrentPhase(game.getCurrentPlayer().getGodCard().computeNextPhase(game));
-    game.setCurrentPhase(Phase.End);
-    game.setCurrentPhase(game.getCurrentPlayer().getGodCard().computeNextPhase(game));
-
-    // invalidPlayer: wrong player
-    NextPlayerEvent evtInvalidPlayer = new NextPlayerEvent(game.getPlayers()[0]);
-    assertThrows(WrongPlayerException.class, () -> {
-      controller.update(evtInvalidPlayer);
-    });
-  }
-
   @Test
   @DisplayName("Tests the undo function that undoes the last performed move.")
   void undoTest() {
@@ -424,7 +325,7 @@ public class ControllerTests {
 
   @Test
   @DisplayName("Tests that a correct SpwanWorkerEvent places the currentWorker in the right place, which is the target parameter")
-  void SpawnWorkerTest() {
+  void spawnWorkerTest() {
     game.getCurrentPlayer().setCurrentSex(Sex.Male);
 
     Point target = new Point(0, 0);
@@ -467,6 +368,25 @@ public class ControllerTests {
       controller.update(evtOverwrittenWorker);
     });
 
+  }
+
+  @ParameterizedTest
+  @MethodSource("provideAllPhases")
+  @DisplayName("Tests that for each currentPhase, the nextPhase is correctly computed and updated")
+  void skipTest(Phase currentPhase){
+
+    SkipEvent evt = new SkipEvent(game.getCurrentPlayer());
+    game.setCurrentPhase(currentPhase);
+    try {
+      controller.update(evt);
+    } catch (WrongPlayerException ignored){}
+    catch (UnskippablePhaseException ignored){}
+
+    assertTrue(game.getCurrentPhase().equals(currentPhase.next()));
+
+    if (currentPhase.equals(Phase.End)){
+      assertTrue(game.getCurrentPlayer().equals(game.getPlayers()[1]));
+    }
   }
 
 
