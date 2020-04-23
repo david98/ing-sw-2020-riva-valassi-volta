@@ -2,6 +2,8 @@ package it.polimi.vovarini.model.godcards;
 
 import it.polimi.vovarini.model.Game;
 import it.polimi.vovarini.common.exceptions.InvalidNumberOfPlayersException;
+import it.polimi.vovarini.model.Player;
+import it.polimi.vovarini.model.moves.Move;
 import it.polimi.vovarini.model.moves.Movement;
 import it.polimi.vovarini.model.Point;
 import it.polimi.vovarini.model.board.Board;
@@ -10,134 +12,101 @@ import it.polimi.vovarini.common.exceptions.BoxFullException;
 import it.polimi.vovarini.common.exceptions.InvalidPositionException;
 import it.polimi.vovarini.model.board.items.Block;
 import it.polimi.vovarini.model.board.items.Worker;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
+
+import java.util.LinkedList;
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 public class PanTests {
 
-    Game game;
+    private static Game game;
+    private static GodCard pan;
 
-    @BeforeEach
-    public void createPanItems() {
-        try {
+    @BeforeAll
+    public static void init(){
+        try{
             game = new Game(2);
-        } catch (InvalidNumberOfPlayersException ignored) {
 
-        }
-        try {
             game.addPlayer("Guest01");
             game.addPlayer("Guest02");
-        } catch (InvalidNumberOfPlayersException ignored) {
-        }
 
-        GodCard pan = GodCardFactory.create(GodName.Pan);
-        game.getCurrentPlayer().setGodCard(pan);
-        pan.setGame(game);
+            pan = GodCardFactory.create(GodName.Pan);
+            pan.setGame(game);
+            for (Player player: game.getPlayers()){
+                player.setGodCard(pan);
+            }
+        } catch (InvalidNumberOfPlayersException e){
+            e.printStackTrace();;
+        }
     }
 
-    @Test
-    @DisplayName("Test that a GodCard of type Pan can be instantiated correctly")
-    public void panCreation() {
-        assertEquals(game.getCurrentPlayer().getGodCard().name, GodName.Pan);
+    @BeforeEach
+    private void resetGame(){
+        Board b = game.getBoard();
+        for (int x = 0; x < b.getSize(); x++){
+            for (int y = 0; y < b.getSize(); y++){
+                Point cur = new Point(x, y);
+                while (true){
+                    try {
+                        b.remove(cur);
+                    } catch (BoxEmptyException | InvalidPositionException e){
+                        break;
+                    }
+                }
+            }
+        }
     }
 
-    @Test
-    @DisplayName("Test a movementWinning with a GodCard of type Pan")
-    public void movementNoWinning() {
-        GodCard pan = game.getCurrentPlayer().getGodCard();
-        Board board = game.getBoard();
-        Point start = new Point(0,0);
-        Point end = new Point (1,1);
-        Worker currentWorker = game.getCurrentPlayer().getCurrentWorker();
+    private static Stream<Arguments> provideAllPossibleWinningMoves() {
+        LinkedList<Arguments> args = new LinkedList<>();
 
-        // from 1 to 0
-        try {
-            board.place(Block.blocks[0], start);
-            board.place(currentWorker, start);
-        } catch (InvalidPositionException ignored) {
-        } catch (BoxFullException ignored) {
+        for (int lStart = Block.MIN_LEVEL; lStart <= Block.MAX_LEVEL; lStart++){
+            for (int lEnd = Block.MIN_LEVEL; lEnd <= Block.MAX_LEVEL; lEnd++) {
+                args.add(Arguments.of(lStart, lEnd));
+            }
         }
-        assertFalse(pan.isMovementWinning(new Movement(board, start, end)));
 
-        // from 2 to 1
-        try {
-            board.remove(start);
-            board.place(Block.blocks[1], start);
-            board.place(currentWorker, start);
-            board.place(Block.blocks[0], end);
-        } catch (InvalidPositionException ignored) {
-        } catch (BoxFullException ignored) {
-        } catch (BoxEmptyException ignored) {
-        }
-        assertFalse(pan.isMovementWinning(new Movement(board, start, end)));
-
-        // from 3 to 2
-        try {
-            board.remove(start);
-            board.place(Block.blocks[2], start);
-            board.place(currentWorker, start);
-            board.place(Block.blocks[1], end);
-        } catch (InvalidPositionException ignored) {
-        } catch (BoxFullException ignored) {
-        } catch (BoxEmptyException ignored) {
-        }
-        assertFalse(pan.isMovementWinning(new Movement(board, start, end)));
+        return args.stream();
     }
 
-    @Test
-    @DisplayName("Test a movementWinning with a GodCard of type Pan")
-    public void movementWinning() {
-        GodCard pan = game.getCurrentPlayer().getGodCard();
-        Board board = game.getBoard();
-        Point start = new Point(0,0);
-        Point end = new Point (1,1);
-        Worker currentWorker = game.getCurrentPlayer().getCurrentWorker();
-
-        // from 2 to 0
-        try {
-            board.place(Block.blocks[0], start);
-            board.place(Block.blocks[1], start);
-            board.place(currentWorker, start);
-        } catch (InvalidPositionException ignored) {
-        } catch (BoxFullException ignored) {
+    @ParameterizedTest
+    @MethodSource("provideAllPossibleWinningMoves")
+    @DisplayName("Test that Pan's winning conditions are correctly applied")
+    void testWinningCondition(int startLevel, int endLevel){
+        Point start = new Point(0, 0);
+        Point end = new Point(0, 1);
+        for (int i = 0; i < startLevel; i++){
+            try {
+                game.getBoard().place(Block.blocks[i], start);
+            } catch (InvalidPositionException | BoxFullException e){
+                e.printStackTrace();
+            }
         }
-        assertTrue(pan.isMovementWinning(new Movement(board, start, end)));
-
-        // from 3 to 0
         try {
-            board.remove(start);
-            board.place(Block.blocks[2], start);
-            board.place(currentWorker, start);
-        } catch (InvalidPositionException ignored) {
-        } catch (BoxFullException ignored) {
-        } catch (BoxEmptyException ignored) {
+            game.getBoard().place(game.getCurrentPlayer().getCurrentWorker(), start);
+        } catch (InvalidPositionException | BoxFullException e){
+            e.printStackTrace();
         }
-        assertTrue(pan.isMovementWinning(new Movement(board, start, end)));
 
-        // from 3 to 1
-        try {
-            board.place(Block.blocks[0], end);
-        } catch (InvalidPositionException ignored) {
-        } catch (BoxFullException ignored) {
+        for (int i = 0; i < endLevel; i++){
+            try {
+                game.getBoard().place(Block.blocks[i], end);
+            } catch (InvalidPositionException | BoxFullException e){
+                e.printStackTrace();
+            }
         }
-        assertTrue(pan.isMovementWinning(new Movement(board, start, end)));
 
-        // from 2 to 3 (general rules)
-        try {
-            board.remove(start);
-            board.remove(start);
-            board.place(currentWorker, start);
-            board.place(Block.blocks[1], end);
-            board.place(Block.blocks[2], end);
-        } catch (InvalidPositionException ignored) {
-        } catch (BoxFullException ignored) {
-        } catch (BoxEmptyException ignored) {
-        }
-        assertTrue(pan.isMovementWinning(new Movement(board, start, end)));
+        Movement m = new Movement(game.getBoard(), start, end);
+        assertEquals((startLevel - endLevel >= 2) ||
+                (endLevel == Block.WIN_LEVEL && startLevel < Block.WIN_LEVEL),
+                pan.isMovementWinning(m));
     }
-
-
 }
