@@ -203,6 +203,11 @@ public class GodCard implements Cloneable{
     return reachablePoints;
   }
 
+  /**
+   *
+   * @param movement The move to be analysed
+   * @return true if the movement Move leads to victory, false otherwise
+   */
   public boolean isMovementWinning(Movement movement) {
     return !movement.isForced() && winningConditions.stream().anyMatch(cond -> cond.test(movement)) &&
             winningConstraints.stream().noneMatch(cond -> cond.test(movement));
@@ -243,10 +248,6 @@ public class GodCard implements Cloneable{
     return nextPhase.apply(game);
   }
 
-  public GodName getName(){
-    return name;
-  }
-
   /**
    * @param movement Movement to be analysed
    * @return list of movements to be made sequentially
@@ -256,6 +257,10 @@ public class GodCard implements Cloneable{
   }
 
   public void consequences() {
+  }
+
+  public GodName getName(){
+    return name;
   }
 
   public void setGame(Game game) {

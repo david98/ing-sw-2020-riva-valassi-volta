@@ -135,5 +135,30 @@ public class Reachability extends Behavior {
         return false;
     }
 
+    public static boolean isPointReachableAthena(Game game, Point point) {
+        try{
+            Worker currentWorker = game.getCurrentPlayer().getCurrentWorker();
+            Point currentWorkerPosition = game.getBoard().getItemPosition(currentWorker);
+            if (!point.isAdjacent(currentWorkerPosition)) {
+                return false;
+            }
+
+            try {
+                Box destinationBox = game.getBoard().getBox(point);
+                Stack<Item> destinationItems = destinationBox.getItems();
+                int destinationLevel = destinationBox.getLevel();
+                int currentWorkerLevel = game.getBoard().getBox(currentWorkerPosition).getLevel();
+                return (destinationLevel - currentWorkerLevel < 1)
+                        && currentWorker.canBePlacedOn(destinationItems.peek());
+            } catch (BoxEmptyException ignored) {
+                return true;
+            }
+
+        } catch (ItemNotFoundException ignored) {
+            System.err.println("This really should never happen...");
+        }
+        return false;
+    }
+
 
 }
