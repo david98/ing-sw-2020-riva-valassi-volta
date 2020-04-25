@@ -158,6 +158,8 @@ public class ControllerTests {
     } catch (InvalidPositionException ignored) {
     } catch (InvalidMoveException ignored) {
     }
+    assertFalse(game.getCurrentPlayer().getMovementList().isEmpty());
+    game.getCurrentPlayer().getMovementList().clear();
 
     Point invalidMovePoint = new Point(3, 3);
     MovementEvent evtInvalidMove = new MovementEvent(game.getCurrentPlayer(), invalidMovePoint);
@@ -181,6 +183,7 @@ public class ControllerTests {
     assertThrows(InvalidMoveException.class, () -> {
       controller.update(evtInvalidLevel);
     });
+    assertTrue(game.getCurrentPlayer().getMovementList().isEmpty());
 
     Point negativePoint = new Point(-1, -1);
     MovementEvent evtInvalidPos = new MovementEvent(game.getCurrentPlayer(), negativePoint);
@@ -188,6 +191,7 @@ public class ControllerTests {
     assertThrows(InvalidPositionException.class, () -> {
       controller.update(evtInvalidPos);
     });
+    assertTrue(game.getCurrentPlayer().getMovementList().isEmpty());
 
     game.setCurrentPhase(Phase.End);
     game.setCurrentPhase(game.getCurrentPlayer().getGodCard().computeNextPhase(game));
@@ -198,6 +202,7 @@ public class ControllerTests {
     assertThrows(WrongPlayerException.class, () -> {
       controller.update(evtInvalidPlayer);
     });
+    assertTrue(game.getCurrentPlayer().getMovementList().isEmpty());
 
     game.setCurrentPhase(Phase.End);
     game.setCurrentPhase(game.getCurrentPlayer().getGodCard().computeNextPhase(game));
@@ -211,6 +216,7 @@ public class ControllerTests {
     assertThrows(InvalidPhaseException.class, () -> {
       controller.update(evtInvalidPhase);
     });
+    assertTrue(game.getCurrentPlayer().getMovementList().isEmpty());
 
   }
 
