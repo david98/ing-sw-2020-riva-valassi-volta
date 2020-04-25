@@ -13,6 +13,7 @@ import it.polimi.vovarini.model.board.Box;
 import it.polimi.vovarini.model.board.items.Block;
 import it.polimi.vovarini.model.board.items.Item;
 import it.polimi.vovarini.model.board.items.Worker;
+import it.polimi.vovarini.model.moves.Construction;
 import it.polimi.vovarini.model.moves.Movement;
 
 import java.util.*;
@@ -145,11 +146,18 @@ public class GodCard implements Cloneable{
    * @param movement Candidate to be a Movement destination
    * @return if the candidate point can be reached returns true, false otherwise
    */
-  BiFunction<Game, Movement, List<Movement>> listEffects =
+  BiFunction<Game, Movement, List<Movement>> listMovementEffects =
           (Game game, Movement movement) -> {
             List<Movement> movementList = new LinkedList<>();
             movementList.add(movement);
             return movementList;
+          };
+
+  BiFunction<Game, Construction, List<Construction>> listConstructionEffects =
+          (Game game, Construction construction) -> {
+            List<Construction> constructionList = new LinkedList<>();
+            constructionList.add(construction);
+            return constructionList;
           };
 
   /**
@@ -268,7 +276,11 @@ public class GodCard implements Cloneable{
   }
 
   public List<Movement> consequences(Movement movement) {
-    return listEffects.apply(game, movement);
+    return listMovementEffects.apply(game, movement);
+  }
+
+  public List<Construction> consequences(Construction construction){
+    return listConstructionEffects.apply(game, construction);
   }
 
   public void setGame(Game game) {

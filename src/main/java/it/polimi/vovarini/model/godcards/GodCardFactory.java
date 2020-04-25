@@ -50,7 +50,7 @@ public class GodCardFactory {
     private static GodCard createMinotaur() {
         GodCard minotaur = new GodCard(GodName.Minotaur);
         minotaur.movementConditions.add(ReachabilityDecider::isPointReachableConditionedExchange);
-        minotaur.listEffects = ConsequencesDecider::listEffectsMinotaur;
+        minotaur.listMovementEffects = ConsequencesDecider::listEffectsMinotaur;
         return minotaur;
     }
 
