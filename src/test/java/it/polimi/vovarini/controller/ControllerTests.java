@@ -93,6 +93,7 @@ public class ControllerTests {
     } catch (WrongPlayerException ignored) {
     }
     assertEquals(game.getCurrentPlayer().getCurrentWorker().getSex(), Sex.Female);
+    assertTrue(game.getCurrentPlayer().isWorkerSelected());
 
     WorkerSelectionEvent evtM = new WorkerSelectionEvent(game.getCurrentPlayer(), Sex.Male);
     try {
@@ -103,7 +104,9 @@ public class ControllerTests {
     } catch (WrongPlayerException ignored) {
     }
     assertEquals(game.getCurrentPlayer().getCurrentWorker().getSex(), Sex.Male);
+    assertTrue(game.getCurrentPlayer().isWorkerSelected());
 
+    game.getCurrentPlayer().setWorkerSelected(false);
     WorkerSelectionEvent evtWrongPlayer =
             new WorkerSelectionEvent(game.getPlayers()[1], Sex.Male);
     assertThrows(
@@ -111,7 +114,9 @@ public class ControllerTests {
             () -> {
               controller.update(evtWrongPlayer);
             });
+    assertFalse(game.getCurrentPlayer().isWorkerSelected());
 
+    game.getCurrentPlayer().setWorkerSelected(false);
     game.setCurrentPhase(game.getCurrentPlayer().getGodCard().computeNextPhase(game));
     WorkerSelectionEvent evtNextPhase =
             new WorkerSelectionEvent(game.getCurrentPlayer(), Sex.Female);
@@ -120,6 +125,7 @@ public class ControllerTests {
             () -> {
               controller.update(evtNextPhase);
             });
+    assertFalse(game.getCurrentPlayer().isWorkerSelected());
   }
 
   @Test

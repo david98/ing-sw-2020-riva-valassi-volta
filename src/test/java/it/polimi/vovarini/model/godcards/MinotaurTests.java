@@ -68,7 +68,7 @@ public class MinotaurTests {
             board.place(otherWorker, end);
 
             if (game.validateMove(movement)) {
-                List<Movement> movementList = minotaur.listEffects(movement);
+                List<Movement> movementList = minotaur.consequences(movement);
                 for (Movement m : movementList) {
                     game.performMove(m);
                 }
@@ -113,7 +113,7 @@ public class MinotaurTests {
             board.place(otherWorker, forcedDestination);
 
             if(game.validateMove(movement)) {
-                List<Movement> movementList = minotaur.listEffects(movement);
+                List<Movement> movementList = minotaur.consequences(movement);
                 for(Movement m : movementList) {
                     game.performMove(m);
                 }
@@ -162,7 +162,7 @@ public class MinotaurTests {
             board.place(Block.blocks[2], forcedDestination);
 
             if(game.validateMove(movement)) {
-                List<Movement> movementList = minotaur.listEffects(movement);
+                List<Movement> movementList = minotaur.consequences(movement);
                 for(Movement m : movementList) {
                     game.performMove(m);
                 }
@@ -212,7 +212,7 @@ public class MinotaurTests {
             assertFalse(minotaur.isMovementWinning(movement));
 
             if(game.validateMove(movement)) {
-                List<Movement> movementList = minotaur.listEffects(movement);
+                List<Movement> movementList = minotaur.consequences(movement);
                 for(Movement m : movementList) {
                     game.performMove(m);
                 }
@@ -264,7 +264,7 @@ public class MinotaurTests {
             assertTrue(minotaur.isMovementWinning(movement));
 
             if(game.validateMove(movement)) {
-                List<Movement> movementList = minotaur.listEffects(movement);
+                List<Movement> movementList = minotaur.consequences(movement);
                 for(Movement m : movementList) {
                     game.performMove(m);
                 }

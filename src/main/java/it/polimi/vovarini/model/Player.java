@@ -101,7 +101,15 @@ public class Player implements Cloneable{
   }
 
   public void setBoardStatus(Board gameBoard){
-    boardStatus = gameBoard.clone();
+    boardStatus = gameBoard;
+  }
+
+  public List<Movement> getMovementList() {
+    return movementList;
+  }
+
+  public List<Construction> getConstructionList() {
+    return constructionList;
   }
 
   public Player clone() {

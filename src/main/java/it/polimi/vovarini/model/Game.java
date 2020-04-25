@@ -105,6 +105,10 @@ public class Game {
   public void performMove(Move move) {
     undoneMoves.clear();
     moves.push(move);
+    if (getCurrentPhase().equals(Phase.Movement)) getCurrentPlayer().getMovementList().add( (Movement) move);
+    if (getCurrentPhase().equals(Phase.Construction)) getCurrentPlayer().getConstructionList().add( (Construction) move);
+
+    for(Move executableMove : getCurrentPlayer().getGodCard().consequences(move))
     move.execute();
   }
 

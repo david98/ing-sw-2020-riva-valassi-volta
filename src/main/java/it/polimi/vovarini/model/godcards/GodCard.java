@@ -103,7 +103,6 @@ public class GodCard implements Cloneable{
         return false;
       };
 
-
   /**
    * Lambda function presenting the base Behavior for Buildability. Gets injected dynamically by code in the Buildability class
    * @param game Instance of game currently played by all the players
@@ -251,22 +250,25 @@ public class GodCard implements Cloneable{
 
     if(next.equals(Phase.Start)){
       game.nextPlayer();
+      updatePlayerInfo(game);
     }
 
     return next;
+  }
 
-
+  private void updatePlayerInfo(Game game){
+    game.getCurrentPlayer().setWorkerSelected(false);
+    game.getCurrentPlayer().getMovementList().clear();
+    game.getCurrentPlayer().getConstructionList().clear();
+    game.getCurrentPlayer().setBoardStatus(game.getBoard().clone());
   }
 
   public GodName getName(){
     return name;
   }
 
-  public List<Movement> listEffects(Movement movement) {
+  public List<Movement> consequences(Movement movement) {
     return listEffects.apply(game, movement);
-  }
-
-  public void consequences() {
   }
 
   public void setGame(Game game) {

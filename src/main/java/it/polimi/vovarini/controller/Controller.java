@@ -103,6 +103,7 @@ public class Controller implements EventListener {
       throw new InvalidPhaseException();
 
     game.getCurrentPlayer().setCurrentSex(evt.getSex());
+    game.getCurrentPlayer().setWorkerSelected(true);
   }
 
   /**
@@ -204,12 +205,6 @@ public class Controller implements EventListener {
 
       Movement movement = new Movement(game.getBoard(), start, end);
       if (!game.validateMove(movement)) throw new InvalidMoveException();
-
-      List<Movement> movementList = currentPlayer.getGodCard().listEffects(movement);
-      for(Movement m : movementList) {
-        game.performMove(m);
-      }
-
 
       game.performMove(movement);
 
