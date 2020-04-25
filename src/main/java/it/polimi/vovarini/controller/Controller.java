@@ -201,17 +201,20 @@ public class Controller implements EventListener {
     Worker currentWorker = currentPlayer.getCurrentWorker();
 
     try {
-      if (game.getBoard().getItemPosition(currentWorker) != null) {
-        // Worker già posizionato
-        throw new OverwrittenWorkerException();
-      }
+      game.getBoard().getItemPosition(currentWorker);  // se scatena ItemNotFoundExc, può essere piazzato
+      // worker già piazzato
+      throw new OverwrittenWorkerException();
+
     } catch (ItemNotFoundException e) {
       try {
-        if(!currentWorker.canBePlacedOn(game.getBoard().getItems(target).peek())) {
+        if (!currentWorker.canBePlacedOn(game.getBoard().getItems(target).peek())) {
           // Worker sopra altro worker
-          throw new OverwrittenWorkerException();
+          throw new OverwrittenWorkerException(); // TODO: creare eccezione apposita??
         }
+
         // non dovrebbe mai arrivare qui, viene sempre scatenata BoxEmptyException
+        // se arrivo qui, la cella è libera da worker e cupola, ma non è al livello 0 (impossibile per regole)
+
       } catch (BoxEmptyException ex) {
         try {
           game.getBoard().place(currentPlayer.getCurrentWorker(), target);

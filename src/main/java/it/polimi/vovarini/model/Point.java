@@ -49,10 +49,6 @@ public class Point {
     return x * 10 + y;
   }
 
-  public boolean isValidPoint() {
-    return x >= 0 && x < 5 && y >= 0 && y < 5;
-  }
-
   public static Point random(int xBound, int yBound){
     Random r = new Random();
     return new Point(r.nextInt(xBound), r.nextInt(yBound));

@@ -20,17 +20,6 @@ public class Reachability extends Behavior {
     private static ArrayList<Point> blockedPoints = new ArrayList<Point>();
 
     /**
-     * This method applies the Malus of the GodCard "Athena", blocking points that are a level higher than the current worker destination
-     * It will fill the blockedPoints attribute. In default cases, the attribute is an empty list and it will remain that as long as constraintAthena
-     * is not applied. ConstraintAthena gets applied by Athena on every player different than the current, if the current player moved up a level
-     * @param game is the current game played by all the players
-     * @param destination is the box chosen as destination by the current player, performing a Movement move.
-     * @author Mattia Valassi
-     */
-    public void constraintAthena(Game game, Point destination) {
-    }
-
-    /**
      * This method checks if, after applying Apollo's effect, the point chosen by the player can de reached with a Movement move
      * (Apollo adds the possibility of exchanging with an adjacent worker of an opponent)
      * @param game is the game currently played by all the players
@@ -92,29 +81,38 @@ public class Reachability extends Behavior {
                 if(destinationItems.peek().canBeRemoved() && !destinationItems.peek().equals(otherWorker)) {
                     Worker enemysWorker = (Worker) destinationItems.peek();
 
+                    // direzione = end - start
+                    // destinazioneForzata = end + direzione = (2 * end) - start
                     int x = 2*point.getX() - currentWorkerPosition.getX();
                     int y = 2*point.getY() - currentWorkerPosition.getY();
                     Point forcedDestination = new Point(x,y);
 
-                    Box forcedDestinationBox = game.getBoard().getBox(forcedDestination);
-                    Item forcedDestinationItem = null;
+                    // se il punto calcolato è fuori dalla plancia di gioco
+                    if(!game.getBoard().isPositionValid(forcedDestination)) {
+                        return false;
+                    }
 
-                    // se la casella successiva nella stessa direzione del movimento è vuota
-                    try { forcedDestinationItem = forcedDestinationBox.getItems().peek();
+                    try {
+                        Box forcedDestinationBox = game.getBoard().getBox(forcedDestination);
+                        Item forcedDestinationItem = forcedDestinationBox.getItems().peek();
+
+                        // se la casella successiva nella stessa direzione del movimento è libera
+                        if(enemysWorker.canBePlacedOn(forcedDestinationItem)) {
+                            return true;
+                        }
+                        // se la casella successiva nella stessa direzione del movimento è vuota
                     } catch (BoxEmptyException ignored) {
                         return true;
                     }
 
-                    // se la casella successiva nella stessa direzione del movimento è libera
-                    if(enemysWorker.canBePlacedOn(forcedDestinationItem)) {
-                        return true;
-                    }
                 }
             }
 
         } catch (ItemNotFoundException ignored) {
             System.err.println("This really should never happen...");
         } catch (BoxEmptyException ignored) {
+            // se la cella dove voglio spostarmi è vuota, la mossa è permessa
+            // grazie alle regole generali, non grazie al potere del Minotauro
             return false;
         }
         return false;
@@ -135,7 +133,15 @@ public class Reachability extends Behavior {
         return false;
     }
 
-    public static boolean isPointReachableAthena(Game game, Point point) {
+    /**
+     * This method applies the Malus of the GodCard "Athena", blocking points that are a level higher than the current worker destination
+     * It will fill the blockedPoints attribute. In default cases, the attribute is an empty list and it will remain that as long as constraintAthena
+     * is not applied. ConstraintAthena gets applied by Athena on every player different than the current, if the current player moved up a level
+     * @param game is the current game played by all the players
+     * @param point is the box chosen as destination by the current player, performing a Movement move.
+     * @author Mattia Valassi, Marco Riva
+     */
+    public static boolean constraintAthena(Game game, Point point) {
         try{
             Worker currentWorker = game.getCurrentPlayer().getCurrentWorker();
             Point currentWorkerPosition = game.getBoard().getItemPosition(currentWorker);
@@ -159,6 +165,4 @@ public class Reachability extends Behavior {
         }
         return false;
     }
-
-
 }
