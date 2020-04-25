@@ -393,6 +393,9 @@ public class ControllerTests {
 
     if (currentPhase.equals(Phase.End)){
       assertTrue(game.getCurrentPlayer().equals(game.getPlayers()[1]));
+      assertFalse(game.getCurrentPlayer().isWorkerSelected());
+      assertTrue(game.getCurrentPlayer().getMovementList().isEmpty());
+      assertTrue(game.getCurrentPlayer().getConstructionList().isEmpty());
     }
   }
 
