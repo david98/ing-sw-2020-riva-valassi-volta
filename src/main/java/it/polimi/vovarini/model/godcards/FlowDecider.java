@@ -42,6 +42,7 @@ public class FlowDecider extends Decider {
      */
     public static Phase nextPhaseExtendsMovement (Game game){
         if (game.getCurrentPhase().equals((Phase.Movement)) && !restoration){
+
             restoration = true;
             return Phase.Movement;
         }

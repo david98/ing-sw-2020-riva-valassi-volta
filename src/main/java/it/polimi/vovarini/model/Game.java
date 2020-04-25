@@ -5,8 +5,6 @@ import it.polimi.vovarini.common.events.GameEventManager;
 import it.polimi.vovarini.common.events.PhaseUpdateEvent;
 import it.polimi.vovarini.common.exceptions.*;
 import it.polimi.vovarini.model.board.Board;
-import it.polimi.vovarini.model.board.Box;
-import it.polimi.vovarini.model.board.items.Item;
 import it.polimi.vovarini.model.moves.Construction;
 import it.polimi.vovarini.model.moves.Move;
 import it.polimi.vovarini.model.moves.Movement;
@@ -49,6 +47,13 @@ public class Game {
     currentPhase = Phase.Start;
   }
 
+  /**
+   * This method adds a new player into the game with the nickname already
+   * validated through {@link Player#validateNickname(String)}
+   *
+   * @param nickname the name of the player to be added
+   * @throws InvalidNumberOfPlayersException if there is already the maximum number of players
+   */
   public void addPlayer(String nickname)
       throws InvalidNumberOfPlayersException {
 
@@ -65,38 +70,6 @@ public class Game {
       }
     }
   }
-
-
-
-  /*public boolean validateMove(Movement movement) {
-
-    try {
-      Collection<Point> reachablePoints = getCurrentPlayer().getGodCard().computeReachablePoints();
-
-      return reachablePoints.contains(movement.getEnd());
-    } catch (CurrentPlayerLosesException e){
-      return false;
-    }
-  }
-
-  public boolean validateMove(Construction construction) {
-
-    try {
-      Collection<Point> buildablePoints = getCurrentPlayer().getGodCard().computeBuildablePoints();
-      Box destinationBox = getBoard().getBox(construction.getTarget());
-
-
-      return buildablePoints.contains(construction.getTarget()) && construction.getBlock().canBePlacedOn(destinationBox.getItems().peek());
-
-
-    } catch (CurrentPlayerLosesException e) {
-      return false;
-    }
-    catch (BoxEmptyException e){
-      return construction.getBlock().getLevel() == 1;
-    }
-
-  }*/
 
   public void performMove(Movement move) {
 

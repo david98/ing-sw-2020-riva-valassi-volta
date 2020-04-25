@@ -17,6 +17,10 @@ public class GodCardFactory {
       {
         return createApollo();
       }
+      case Athena:
+      {
+        return createAthena();
+      }
       case Minotaur:
       {
           return createMinotaur();
@@ -41,6 +45,15 @@ public class GodCardFactory {
       GodCard apollo = new GodCard(GodName.Apollo);
       apollo.movementConditions.add(ReachabilityDecider::isPointReachableCanExchangeWithWorker);
       return apollo;
+    }
+
+    /**
+     * This method injects a generic GodCard with all the Behaviors modified by the card Athena
+     * @return an instance of a GodCard in the mold of Santorini's Athena card
+     */
+    private static GodCard createAthena() {
+      GodCard athena = new GodCard(GodName.Athena);
+      return athena;
     }
 
     /**

@@ -143,6 +143,7 @@ public class GodCard implements Cloneable{
   Function<Game, Phase> nextPhase =
           (Game game) -> game.getCurrentPhase().next();
 
+
   /**
    * Lambda function presenting the base Behavior for consequences, regarding the Movements
    * @param game Instance of game currently played by all the players
@@ -150,6 +151,7 @@ public class GodCard implements Cloneable{
    * @return list of moves to execute
    */
   BiFunction<Game, Movement, List<Movement>> listMovementEffects =
+
           (Game game, Movement movement) -> {
             List<Movement> movementList = new LinkedList<>();
             movementList.add(movement);
@@ -255,9 +257,15 @@ public class GodCard implements Cloneable{
   }
 
   /**
+<<<<<<< HEAD
    * Function that computes if a player has won thanks to a valid movement he wants to perform
    * @param movement is the movement move that the player wants to perform
    * @return true if the movement allows the player to win, false otherwise
+=======
+   *
+   * @param movement The move to be analysed
+   * @return true if the movement Move leads to victory, false otherwise
+>>>>>>> godcards/mengi
    */
   public boolean isMovementWinning(Movement movement) {
     return !movement.isForced() && winningConditions.stream().anyMatch(cond -> cond.test(movement)) &&
@@ -304,6 +312,7 @@ public class GodCard implements Cloneable{
     Phase next = nextPhase.apply(game);
 
     if(next.equals(Phase.Start)){
+
       game.nextPlayer();
       resetPlayerInfo(game);
     }
@@ -324,11 +333,13 @@ public class GodCard implements Cloneable{
 
   public List<Movement> consequences(Movement movement) {
     return listMovementEffects.apply(game, movement);
+
   }
 
   public List<Construction> consequences(Construction construction){
     return listConstructionEffects.apply(game, construction);
   }
+
 
   public boolean validate(List<Point> list, Movement movement){
     return validateMovement.apply(list, movement);
@@ -339,10 +350,10 @@ public class GodCard implements Cloneable{
   }
 
 
+
   public GodName getName(){
     return name;
   }
-
 
   public void setGame(Game game) {
     this.game = game;

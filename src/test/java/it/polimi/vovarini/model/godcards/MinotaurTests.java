@@ -288,4 +288,44 @@ public class MinotaurTests {
         } catch (InvalidPositionException ignored) {
         }
     }
+
+    @Test
+    @DisplayName("Test an invalid movement with a GodCard of type Minotaur")
+    /** status
+     *  startBox: lv 0 + currentWorker
+     *  endBox: lv 0 + enemy's Worker
+     *  forcedDestinationBox: outside the board
+     */
+    public void invalidMovementForcedDestinationInvalidPoint() {
+
+        try {
+            GodCard minotaur = game.getCurrentPlayer().getGodCard();
+            Worker currentWorker = game.getCurrentPlayer().getCurrentWorker();
+            Player enemysPlayer = game.getPlayers()[1];
+            Worker enemysWorker = enemysPlayer.getCurrentWorker();
+
+            Board board = game.getBoard();
+            Point start = new Point(1, 1);
+            Point end = new Point(0, 0);
+            Movement movement = new Movement(board, start, end);
+
+            board.place(currentWorker, start);
+            board.place(enemysWorker, end);
+
+            if(minotaur.validate(minotaur.computeReachablePoints(), movement)) {
+                List<Movement> movementList = minotaur.consequences(movement);
+                for(Movement m : movementList) {
+                    game.performMove(m);
+                }
+            }
+
+            assertFalse(ReachabilityDecider.isPointReachableConditionedExchange(game, end));
+            assertEquals(currentWorker, board.getBox(start).getItems().peek());
+            assertEquals(enemysWorker, board.getBox(end).getItems().peek());
+
+        } catch (BoxFullException ignored) {
+        } catch (BoxEmptyException ignored) {
+        } catch (InvalidPositionException ignored) {
+        }
+    }
 }
