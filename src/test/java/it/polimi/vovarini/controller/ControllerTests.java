@@ -377,26 +377,149 @@ public class ControllerTests {
 
   }
 
-  @ParameterizedTest
-  @MethodSource("provideAllPhases")
-  @DisplayName("Tests that for each currentPhase, the nextPhase is correctly computed and updated")
-  void skipTest(Phase currentPhase){
+  @Test
+  @DisplayName("Tests that the game skips the Start phase only if a worker has been selected")
+  void skipStartTest(){
+    game.setCurrentPhase(Phase.Start);
+
+    WorkerSelectionEvent wse_evt = new WorkerSelectionEvent(game.getCurrentPlayer(), Sex.Female);
+    try{
+      controller.update(wse_evt);
+    }catch (InvalidPhaseException ignored){}
+    catch (WrongPlayerException ignored){}
 
     SkipEvent evt = new SkipEvent(game.getCurrentPlayer());
-    game.setCurrentPhase(currentPhase);
-    try {
+    try{
       controller.update(evt);
-    } catch (WrongPlayerException ignored){}
+    }catch (WrongPlayerException ignored){}
     catch (UnskippablePhaseException ignored){}
 
-    assertTrue(game.getCurrentPhase().equals(currentPhase.next()));
+    assertTrue(game.getCurrentPhase().equals(Phase.Movement));
+    game.getCurrentPlayer().setWorkerSelected(false);
 
-    if (currentPhase.equals(Phase.End)){
-      assertTrue(game.getCurrentPlayer().equals(game.getPlayers()[1]));
-      assertFalse(game.getCurrentPlayer().isWorkerSelected());
-      assertTrue(game.getCurrentPlayer().getMovementList().isEmpty());
-      assertTrue(game.getCurrentPlayer().getConstructionList().isEmpty());
+    game.setCurrentPhase(Phase.Start);
+    SkipEvent invalidStartEvt = new SkipEvent(game.getCurrentPlayer());
+    assertThrows(UnskippablePhaseException.class, () -> {
+      controller.update(invalidStartEvt);
+    });
+
+
+
+  }
+
+  @Test
+  @DisplayName("Tests that the game skips the Movement phase only if a movement has been performed")
+  void skipMovementTest(){
+    game.setCurrentPhase(Phase.Start);
+    Point point = new Point(0, 1);
+
+
+    game.getCurrentPlayer().setCurrentSex(Sex.Male);
+    try {
+      game.getBoard().place(game.getCurrentPlayer().getCurrentWorker(), new Point(0, 0));
+    } catch (InvalidPositionException ignored) {
+    } catch (BoxFullException ignored) {
     }
+
+    game.setCurrentPhase(Phase.Movement);
+    MovementEvent mv_evt = new MovementEvent(game.getCurrentPlayer(), point);
+    try{
+      controller.update(mv_evt);
+    }catch (InvalidPhaseException ignored) {
+    } catch (WrongPlayerException ignored) {
+    } catch (InvalidPositionException ignored) {
+    } catch (InvalidMoveException ignored) {
+    }
+
+    SkipEvent evt = new SkipEvent(game.getCurrentPlayer());
+    try{
+      controller.update(evt);
+    }catch (WrongPlayerException ignored){}
+    catch (UnskippablePhaseException ignored){}
+
+    assertTrue(game.getCurrentPhase().equals(Phase.Construction));
+    game.getCurrentPlayer().getMovementList().clear();
+
+    game.setCurrentPhase(Phase.Movement);
+    SkipEvent evtMovementListEmpty = new SkipEvent(game.getCurrentPlayer());
+    assertThrows(UnskippablePhaseException.class, () -> {
+      controller.update(evtMovementListEmpty);
+    });
+
+
+
+
+  }
+
+  @Test
+  @DisplayName("Tests that the game skips the Construction phase only if a construction has been performed")
+  void skipConstructionTest(){
+    game.setCurrentPhase(Phase.Start);
+
+    game.getCurrentPlayer().setCurrentSex(Sex.Female);
+
+    Point femalePos = new Point(0, 1);
+    try {
+      game.getBoard().place(game.getCurrentPlayer().getCurrentWorker(), femalePos);
+    } catch (InvalidPositionException ignored) {
+    } catch (BoxFullException ignored) {
+    }
+
+    game.getCurrentPlayer().setCurrentSex(Sex.Male);
+
+    Point malePos = new Point(0, 0);
+    try {
+      game.getBoard().place(game.getCurrentPlayer().getCurrentWorker(), malePos);
+    } catch (InvalidPositionException ignored) {
+    } catch (BoxFullException ignored) {
+    }
+
+    game.setCurrentPhase(game.getCurrentPlayer().getGodCard().computeNextPhase(game));
+    game.setCurrentPhase(game.getCurrentPlayer().getGodCard().computeNextPhase(game));
+
+    assertEquals(game.getCurrentPhase(), Phase.Construction);
+
+    Point target = new Point(1, 1);
+    int level = 1;
+
+    BuildEvent bd_evt = new BuildEvent(game.getCurrentPlayer(), target, level);
+
+    try {
+      controller.update(bd_evt);
+    } catch (InvalidPositionException ignored) {
+    } catch (InvalidPhaseException ignored) {
+    } catch (WrongPlayerException ignored) {
+    } catch (InvalidMoveException ignored) {
+    }
+
+    SkipEvent evt = new SkipEvent(game.getCurrentPlayer());
+    try{
+      controller.update(evt);
+    }catch (WrongPlayerException ignored){}
+    catch (UnskippablePhaseException ignored){}
+
+    assertTrue(game.getCurrentPhase().equals(Phase.End));
+    game.getCurrentPlayer().getConstructionList().clear();
+
+    game.setCurrentPhase(Phase.Construction);
+    SkipEvent evtConstructionNotPerformed = new SkipEvent(game.getCurrentPlayer());
+
+    assertThrows(UnskippablePhaseException.class, () -> {
+      controller.update(evtConstructionNotPerformed);
+    });
+
+
+  }
+
+  @ParameterizedTest
+  @MethodSource("provideAllPhases")
+  @DisplayName("Tests that for every phase, if another player tries to skip the controller will always throw a WrongPlayerException")
+  void skipWrongPlayerTest(Phase current){
+    SkipEvent evt = new SkipEvent(game.getPlayers()[1]);
+
+    assertThrows(WrongPlayerException.class, () -> {
+      controller.update(evt);
+    });
   }
 
 

@@ -61,6 +61,7 @@ public class Player implements Cloneable{
 
   public void setCurrentSex(Sex sex) {
     currentSex = sex;
+    isWorkerSelected = true;
   }
 
   public Worker getCurrentWorker() {
@@ -123,10 +124,6 @@ public class Player implements Cloneable{
       throw new RuntimeException(e);
     }
   }
-
-
-
-
 
   @Override
   public int hashCode() {

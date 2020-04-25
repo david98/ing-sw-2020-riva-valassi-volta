@@ -103,7 +103,7 @@ public class Controller implements EventListener {
       throw new InvalidPhaseException();
 
     game.getCurrentPlayer().setCurrentSex(evt.getSex());
-    game.getCurrentPlayer().setWorkerSelected(true);
+
   }
 
   /**
@@ -240,6 +240,10 @@ public class Controller implements EventListener {
 
     Player currentPlayer = game.getCurrentPlayer();
     if (!currentPlayer.equals(evt.getSource())) throw new WrongPlayerException();
+
+    if (game.getCurrentPhase().equals(Phase.Start) && !currentPlayer.isWorkerSelected()) throw new UnskippablePhaseException();
+    if (game.getCurrentPhase().equals(Phase.Movement) && currentPlayer.getMovementList().isEmpty()) throw new UnskippablePhaseException();
+    if (game.getCurrentPhase().equals(Phase.Construction) && currentPlayer.getConstructionList().isEmpty()) throw new UnskippablePhaseException();
 
     game.setCurrentPhase(game.getCurrentPlayer().getGodCard().computeNextPhase(game));
   }
