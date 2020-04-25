@@ -57,7 +57,6 @@ public class AthenaTests {
         Point enemysEnd = new Point (2,3);
 
         try {
-
             board.place(athenaWorker, athenaStart);
             board.place(enemysWorker, enemysStart);
             board.place(Block.blocks[0], enemysEnd);
@@ -77,7 +76,7 @@ public class AthenaTests {
             /*
                 Provo a far salire l'avversario e controllo che la mossa non è stata eseguita
 
-                next player;
+                next player: game.setCurrentPhase(athena.computeNextPhase(game)); x 4
                 performMove(enemysMovement);
                 assertEquals(enemysWorker, board.getBox(enemysStart).getItems().peek());
              */
