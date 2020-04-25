@@ -66,13 +66,9 @@ public class Game {
     }
   }
 
-  /**
-   * Returns true if movement is valid for the current player and their current worker.
-   *
-   * @param movement The move to be validated.
-   * @return If movement is valid.
-   */
-  public boolean validateMove(Movement movement) {
+
+
+  /*public boolean validateMove(Movement movement) {
 
     try {
       Collection<Point> reachablePoints = getCurrentPlayer().getGodCard().computeReachablePoints();
@@ -100,7 +96,7 @@ public class Game {
       return construction.getBlock().getLevel() == 1;
     }
 
-  }
+  }*/
 
   public void performMove(Movement move) {
 

@@ -160,6 +160,24 @@ public class GodCard implements Cloneable{
             return constructionList;
           };
 
+  BiFunction<List<Point>, Movement, Boolean> validateMovement =
+          (List<Point> list, Movement movement) -> {
+            return list.contains(movement.getEnd());
+  };
+
+  BiFunction<List<Point>, Construction, Boolean> validateConstruction =
+          (List<Point> list, Construction construction) -> {
+            try {
+                  return list.contains(construction.getTarget()) && construction.getBlock().canBePlacedOn(game.getBoard().getItems(construction.getTarget()).peek());
+            } catch (InvalidPositionException ignored){
+              System.err.println("This should really never happen...");
+            } catch (BoxEmptyException e){
+              return construction.getBlock().getLevel() == 1;
+            }
+
+            return false;
+          };
+
   /**
    * Predicate for checking if a player has won with the Movement he wants to perform (applied before the movement itself)
    * @param movement The Movement move the player wants to execute.
@@ -281,6 +299,14 @@ public class GodCard implements Cloneable{
 
   public List<Construction> consequences(Construction construction){
     return listConstructionEffects.apply(game, construction);
+  }
+
+  public boolean validate(List<Point> list, Movement movement){
+    return validateMovement.apply(list, movement);
+  }
+
+  public boolean validate(List<Point> list, Construction construction){
+    return validateConstruction.apply(list, construction);
   }
 
   public void setGame(Game game) {

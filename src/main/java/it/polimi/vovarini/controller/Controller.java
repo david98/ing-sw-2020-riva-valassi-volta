@@ -174,7 +174,13 @@ public class Controller implements EventListener {
 
     Construction build = new Construction(board, toBuild, target, false);
 
-    if (!game.validateMove(build)) throw new InvalidMoveException();
+    try {
+      if (!game.getCurrentPlayer().getGodCard().validate(game.getCurrentPlayer().getGodCard().computeReachablePoints(), build))
+        throw new InvalidMoveException();
+    } catch (CurrentPlayerLosesException e){
+      //to discuss
+    }
+
 
     game.performMove(build);
   }
@@ -204,7 +210,12 @@ public class Controller implements EventListener {
       if (!game.getBoard().isPositionValid(end)) throw new InvalidPositionException();
 
       Movement movement = new Movement(game.getBoard(), start, end);
-      if (!game.validateMove(movement)) throw new InvalidMoveException();
+      try {
+        if (!game.getCurrentPlayer().getGodCard().validate(game.getCurrentPlayer().getGodCard().computeReachablePoints(), movement))
+          throw new InvalidMoveException();
+      } catch (CurrentPlayerLosesException e){
+        //to discuss
+      }
 
       game.performMove(movement);
 
