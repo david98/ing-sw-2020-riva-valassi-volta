@@ -85,11 +85,8 @@ public class GameView {
   public void handlePhaseUpdate(PhaseUpdateEvent e){
     currentPhase = e.getNewPhase();
     if (currentPhase == Phase.Construction){
-      try {
         boardRenderer.markPoints(owner.getGodCard().computeBuildablePoints());
-      } catch (CurrentPlayerLosesException ex){
-        handlePlayerLoss();
-      }
+        if (owner.isHasLost()) handlePlayerLoss();
     }
     reRenderNeeded = true;
   }
@@ -179,17 +176,18 @@ public class GameView {
    * the current phase is Construction.
    */
   private void selectWhenConstructionPhase(){
-    try {
+
       Point dest = boardRenderer.getCursorLocation();
       Collection<Point> buildablePoints = owner.getGodCard().computeBuildablePoints();
+      if (owner.isHasLost()) handlePlayerLoss();
       if (buildablePoints.contains(dest)){
         int nextLevel = board.getBox(dest).getLevel() + 1;
         deSelect();
         GameEventManager.raise(new BuildEvent(owner, dest, nextLevel));
       }
-    } catch (CurrentPlayerLosesException e){
-      handlePlayerLoss();
-    }
+
+
+
   }
 
   /**
@@ -212,6 +210,7 @@ public class GameView {
       // check if one of the player's workers is under the cursor
       try {
         Item item = board.getItems(boardRenderer.getCursorLocation()).peek();
+        if (owner.isHasLost()) handlePlayerLoss();
 
         if (owner.getWorkers().values().stream().anyMatch(w -> w.equals(item))) {
           currentStart = boardRenderer.getCursorLocation();
@@ -230,8 +229,6 @@ public class GameView {
         }
       } catch (BoxEmptyException ignored) {
       } catch (InvalidPositionException ignored) {
-      } catch (CurrentPlayerLosesException ignored) {
-        handlePlayerLoss();
       }
 
     }

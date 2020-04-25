@@ -67,12 +67,14 @@ public class MinotaurTests {
             board.place(currentWorker, start);
             board.place(otherWorker, end);
 
-            if (game.validateMove(movement)) {
-                List<Movement> movementList = minotaur.consequences(movement);
-                for (Movement m : movementList) {
-                    game.performMove(m);
+
+                if (game.getCurrentPlayer().getGodCard().validate(game.getCurrentPlayer().getGodCard().computeReachablePoints(), movement)) {
+                    List<Movement> movementList = minotaur.consequences(movement);
+                    for (Movement m : movementList) {
+                        game.performMove(m);
+                    }
                 }
-            }
+
 
             assertFalse(ReachabilityDecider.isPointReachableConditionedExchange(game, end));
             assertEquals(currentWorker, board.getBox(start).getItems().peek());
@@ -112,12 +114,14 @@ public class MinotaurTests {
             board.place(enemysWorker, end);
             board.place(otherWorker, forcedDestination);
 
-            if(game.validateMove(movement)) {
-                List<Movement> movementList = minotaur.consequences(movement);
-                for(Movement m : movementList) {
-                    game.performMove(m);
+
+                if (game.getCurrentPlayer().getGodCard().validate(game.getCurrentPlayer().getGodCard().computeReachablePoints(), movement)) {
+                    List<Movement> movementList = minotaur.consequences(movement);
+                    for (Movement m : movementList) {
+                        game.performMove(m);
+                    }
                 }
-            }
+
 
             assertFalse(ReachabilityDecider.isPointReachableConditionedExchange(game, end));
             assertEquals(currentWorker, board.getBox(start).getItems().peek());
@@ -161,12 +165,14 @@ public class MinotaurTests {
             board.place(Block.blocks[1], forcedDestination);
             board.place(Block.blocks[2], forcedDestination);
 
-            if(game.validateMove(movement)) {
-                List<Movement> movementList = minotaur.consequences(movement);
-                for(Movement m : movementList) {
-                    game.performMove(m);
+
+                if (game.getCurrentPlayer().getGodCard().validate(game.getCurrentPlayer().getGodCard().computeReachablePoints(), movement)) {
+                    List<Movement> movementList = minotaur.consequences(movement);
+                    for (Movement m : movementList) {
+                        game.performMove(m);
+                    }
                 }
-            }
+
 
             assertFalse(ReachabilityDecider.isPointReachableConditionedExchange(game, end));
             assertEquals(currentWorker, board.getBox(start).getItems().peek());
@@ -211,12 +217,14 @@ public class MinotaurTests {
             assertTrue(ReachabilityDecider.isPointReachableConditionedExchange(game, end));
             assertFalse(minotaur.isMovementWinning(movement));
 
-            if(game.validateMove(movement)) {
-                List<Movement> movementList = minotaur.consequences(movement);
-                for(Movement m : movementList) {
-                    game.performMove(m);
+
+                if (game.getCurrentPlayer().getGodCard().validate(game.getCurrentPlayer().getGodCard().computeReachablePoints(), movement)) {
+                    List<Movement> movementList = minotaur.consequences(movement);
+                    for (Movement m : movementList) {
+                        game.performMove(m);
+                    }
                 }
-            }
+
 
             assertEquals(currentWorker, board.getBox(end).getItems().peek());
             assertEquals(enemysWorker, board.getBox(forcedDestination).getItems().peek());
@@ -263,12 +271,14 @@ public class MinotaurTests {
             assertTrue(ReachabilityDecider.isPointReachableConditionedExchange(game, end));
             assertTrue(minotaur.isMovementWinning(movement));
 
-            if(game.validateMove(movement)) {
-                List<Movement> movementList = minotaur.consequences(movement);
-                for(Movement m : movementList) {
-                    game.performMove(m);
+
+                if (game.getCurrentPlayer().getGodCard().validate(game.getCurrentPlayer().getGodCard().computeReachablePoints(), movement)) {
+                    List<Movement> movementList = minotaur.consequences(movement);
+                    for (Movement m : movementList) {
+                        game.performMove(m);
+                    }
                 }
-            }
+
 
             assertEquals(currentWorker, board.getBox(end).getItems().peek());
             assertEquals(enemysWorker, board.getBox(forcedDestination).getItems().peek());

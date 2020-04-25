@@ -24,6 +24,7 @@ public class Player implements Cloneable{
   private List<Movement> movementList;
   private List<Construction> constructionList;
   private Board boardStatus;
+  private boolean hasLost;
 
   public Player(String nickname) {
     workers = new EnumMap<>(Sex.class);
@@ -37,6 +38,7 @@ public class Player implements Cloneable{
     movementList = new LinkedList<>();
     constructionList = new LinkedList<>();
     boardStatus = new Board(Board.DEFAULT_SIZE);
+    hasLost = false;
 
   }
 
@@ -53,6 +55,7 @@ public class Player implements Cloneable{
     movementList = new LinkedList<>();
     constructionList = new LinkedList<>();
     boardStatus = new Board(Board.DEFAULT_SIZE);
+    hasLost = false;
   }
 
   public Map<Sex, Worker> getWorkers() {
@@ -111,6 +114,17 @@ public class Player implements Cloneable{
 
   public List<Construction> getConstructionList() {
     return constructionList;
+  }
+
+  public void setHasLost(boolean hasLost) {
+    this.hasLost = hasLost;
+    if(hasLost){
+      //throw event to inform everyone of the loss
+    }
+  }
+
+  public boolean isHasLost() {
+    return hasLost;
   }
 
   public Player clone() {

@@ -209,7 +209,7 @@ public class GodCard implements Cloneable{
    * @return a list of points that the player can reach from his currentWorker position
    * @throws CurrentPlayerLosesException if the list of points is empty it means that the current player cannot move, thus losing the game
    */
-  public List<Point> computeReachablePoints() throws CurrentPlayerLosesException {
+  public List<Point> computeReachablePoints()   {
     List<Point> reachablePoints = new LinkedList<>();
 
     try {
@@ -229,7 +229,7 @@ public class GodCard implements Cloneable{
     }
 
     if (reachablePoints.isEmpty()) {
-      throw new CurrentPlayerLosesException();
+      game.getCurrentPlayer().setHasLost(true);
     }
     return reachablePoints;
   }
@@ -244,7 +244,7 @@ public class GodCard implements Cloneable{
    * @return a list of points that the player can build upon from his currentWorker position
    * @throws CurrentPlayerLosesException if the list of points is empty it means that the current player cannot build, thus losing the game
    */
-  public List<Point> computeBuildablePoints() throws CurrentPlayerLosesException {
+  public List<Point> computeBuildablePoints()   {
     List<Point> buildablePoints = new LinkedList<>();
 
     try {
@@ -265,7 +265,7 @@ public class GodCard implements Cloneable{
     }
 
     if (buildablePoints.isEmpty()) {
-      throw new CurrentPlayerLosesException();
+      game.getCurrentPlayer().setHasLost(true);
     }
     return buildablePoints;
   }
