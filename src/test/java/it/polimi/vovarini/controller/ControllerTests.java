@@ -243,16 +243,10 @@ public class ControllerTests {
     } catch (BoxFullException ignored) {
     }
 
-    // Move in Construction phase
     game.setCurrentPhase(game.getCurrentPlayer().getGodCard().computeNextPhase(game));
     game.setCurrentPhase(game.getCurrentPlayer().getGodCard().computeNextPhase(game));
 
     assertEquals(game.getCurrentPhase(), Phase.Construction);
-
-    // Ok, now let's test on Construction
-
-    // Remember: FemaleWorker is on the point (0,1)
-    //           MaleWorker (=currentWorker) is on the point (0,0)
 
     Point target = new Point(1, 1);
     int level = 1;
@@ -274,49 +268,50 @@ public class ControllerTests {
     } catch (InvalidPositionException ignored) {
     }
 
-    // Now level of (1,1) is 1
+    assertFalse(game.getCurrentPlayer().getConstructionList().isEmpty());
+    game.getCurrentPlayer().getConstructionList().clear();
 
     target = new Point(1, 0);
 
-    // invalidMove: target not adjacent
     Point notAdjacentPoint = new Point(3, 3);
     BuildEvent evtInvalidMove = new BuildEvent(game.getCurrentPlayer(), notAdjacentPoint, level);
     assertThrows(InvalidMoveException.class, () -> {
       controller.update(evtInvalidMove);
     });
+    assertTrue(game.getCurrentPlayer().getConstructionList().isEmpty());
 
-    // invalidMove: femaleWorker on the top of target (target = femalePosition)
     BuildEvent evtInvalidMove2 = new BuildEvent(game.getCurrentPlayer(), femalePos, level);
     assertThrows(InvalidMoveException.class, () -> {
       controller.update(evtInvalidMove);
     });
+    assertTrue(game.getCurrentPlayer().getConstructionList().isEmpty());
 
-    // invalidMove: invalidLevel
     BuildEvent evtInvalidLevel = new BuildEvent(game.getCurrentPlayer(), target, 3);
     assertThrows(InvalidMoveException.class, () -> {
       controller.update(evtInvalidLevel);
     });
+    assertTrue(game.getCurrentPlayer().getConstructionList().isEmpty());
 
-    // invalidPosition: negative target
     Point negativePoint = new Point(-1, -1);
     BuildEvent evtInvalidPos = new BuildEvent(game.getCurrentPlayer(), negativePoint, level);
     assertThrows(InvalidPositionException.class, () -> {
       controller.update(evtInvalidPos);
     });
+    assertTrue(game.getCurrentPlayer().getConstructionList().isEmpty());
 
-    // invalidPlayer: wrong player
     BuildEvent evtInvalidPlayer = new BuildEvent(game.getPlayers()[1], target, level);
     assertThrows(WrongPlayerException.class, () -> {
       controller.update(evtInvalidPlayer);
     });
+    assertTrue(game.getCurrentPlayer().getConstructionList().isEmpty());
 
-    // invalidPhase: Start phase
     game.setCurrentPhase(Phase.End);
     game.setCurrentPhase(game.getCurrentPlayer().getGodCard().computeNextPhase(game));
     BuildEvent evtInvalidPhase = new BuildEvent(game.getCurrentPlayer(), target, level);
     assertThrows(InvalidPhaseException.class, () -> {
       controller.update(evtInvalidPhase);
     });
+    assertTrue(game.getCurrentPlayer().getConstructionList().isEmpty());
   }
 
   @Test
