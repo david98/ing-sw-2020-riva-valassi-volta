@@ -172,7 +172,7 @@ public class GodCard implements Cloneable{
 
   /**
    * Lambda function with base validation of movements
-   * @param list is the list of points computed by the pre-move method ComputeReachablePoints
+   * @param list is the list of points computed by the pre-move method {@link #computeReachablePoints()} ()}
    * @param movement is the movement move the player wants to perform
    * @return if the move that the player wants to perform is valid returns true, false otherwise
    */
@@ -183,7 +183,7 @@ public class GodCard implements Cloneable{
 
   /**
    * Lambda function with base validation of constructions
-   * @param list is the list of points computed by the pre-move method ComputeBuildablePoints
+   * @param list is the list of points computed by the pre-move method {@link #computeBuildablePoints()}
    * @param construction is the construction move the player wants to perform
    * @return if the move that the player wants to perform is valid returns true, false otherwise
    */
@@ -216,6 +216,16 @@ public class GodCard implements Cloneable{
 
         return currentLevel < Block.WIN_LEVEL;
       };
+
+  /**
+   * Lambda function with base constraint of movements
+   * @param game Instance of game currently played by all the players
+   * @param point is the destination of movement selected by the current player
+   * @return if the move that the player wants to perform is valid returns true, false otherwise
+   */
+  BiFunction<Game, Point, Boolean> constraintMovement = (Game game, Point p) -> {
+    return true;
+  };
 
     Collection<BiFunction<Game, Point, Boolean>> movementConditions;
     Collection<BiFunction<Game, Point, Boolean>> movementConstraints;
@@ -332,13 +342,11 @@ public class GodCard implements Cloneable{
 
   public List<Movement> consequences(Movement movement) {
     return listMovementEffects.apply(game, movement);
-
   }
 
   public List<Construction> consequences(Construction construction){
     return listConstructionEffects.apply(game, construction);
   }
-
 
   public boolean validate(List<Point> list, Movement movement){
     return validateMovement.apply(list, movement);
@@ -348,7 +356,15 @@ public class GodCard implements Cloneable{
     return validateConstruction.apply(list, construction);
   }
 
-
+  /**
+   * Messaggio per Valas: alla fine questo è solo un contenitore di vincoli relativi ai movement
+   * @param game
+   * @param p
+   * @return
+   */
+  public boolean constraintMovement(Game game, Point p) {
+    return constraintMovement.apply(game, p);
+  }
 
   public GodName getName(){
     return name;

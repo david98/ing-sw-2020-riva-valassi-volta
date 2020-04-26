@@ -17,6 +17,10 @@ public class GodCardFactory {
       {
         return createApollo();
       }
+      case Artemis:
+      {
+        return createArtemis();
+      }
       case Athena:
       {
         return createAthena();
@@ -49,6 +53,17 @@ public class GodCardFactory {
       GodCard apollo = new GodCard(GodName.Apollo);
       apollo.movementConditions.add(ReachabilityDecider::isPointReachableCanExchangeWithWorker);
       return apollo;
+    }
+
+    /**
+     * This method injects a generic GodCard with all the Behaviors modified by the card Artemis
+     * @return an instance of a GodCard in the mold of Santorini's Artemis card
+     */
+    private static GodCard createArtemis(){
+      GodCard artemis = new GodCard(GodName.Artemis);
+      artemis.nextPhase = FlowDecider::nextPhaseExtendsMovement;
+      artemis.constraintMovement = ReachabilityDecider::isPointReachablePreviousBoxDenied;
+      return artemis;
     }
 
     /**
@@ -101,13 +116,6 @@ public class GodCardFactory {
       GodCard hephy = new GodCard(GodName.Hephaestus);
       hephy.nextPhase = FlowDecider::nextPhaseExtendsConstruction;
       return hephy;
-    }
-
-    private static GodCard createArtemis(){
-      GodCard artemis = new GodCard(GodName.Artemis);
-      artemis.nextPhase = FlowDecider::nextPhaseExtendsMovement;
-      artemis.movementConditions.add(ReachabilityDecider::isPointReachablePreviousBoxDenied);
-      return artemis;
     }
 
     private static GodCard createPrometheus(){
