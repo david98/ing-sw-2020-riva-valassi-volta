@@ -33,7 +33,7 @@ import java.util.Scanner;
 
 import static com.sun.jna.platform.win32.Wincon.ENABLE_LINE_INPUT;
 
-public class GameView {
+public class GameView extends View{
 
   private ViewData data;
 
@@ -49,7 +49,7 @@ public class GameView {
   private int printedLineCount;
 
   public GameView() throws IOException {
-    GameEventManager.bindListeners(this);
+    super();
 
     data = new ViewData();
 
@@ -73,7 +73,7 @@ public class GameView {
   }
 
   @GameEventListener
-  public void handlePlayerUpdate(CurrentPlayerChangedEvent e){
+  public void handleCurrentPlayerUpdate(CurrentPlayerChangedEvent e){
     data.setCurrentPlayer(e.getNewPlayer());
     // for the purpose of this demo, we also update owner so that the game can continue
     data.setOwner(e.getNewPlayer());
@@ -95,6 +95,11 @@ public class GameView {
   @GameEventListener
   public void handleGameStart(GameStartEvent e){
     startMatch();
+  }
+
+  @Override
+  public void handleNewPlayer(NewPlayerEvent e) {
+    data.addPlayer(e.getNewPlayer().clone());
   }
 
   private String getPhasePrompt(Phase phase){
@@ -181,7 +186,7 @@ public class GameView {
       if (buildablePoints.contains(dest)){
         int nextLevel = data.getBoard().getBox(dest).getLevel() + 1;
         deSelect();
-        GameEventManager.raise(new BuildEvent(data.getOwner(), dest, nextLevel));
+        client.raise(new BuildEvent(data.getOwner(), dest, nextLevel));
       }
     } catch (CurrentPlayerLosesException e){
       handlePlayerLoss();
@@ -198,7 +203,7 @@ public class GameView {
         deSelect();
       } else if (boardRenderer.getMarkedPoints().contains(boardRenderer.getCursorLocation())){
         boardRenderer.resetMarkedPoints();
-        GameEventManager.raise(new MovementEvent(
+        client.raise(new MovementEvent(
                 data.getOwner(),
                 boardRenderer.getCursorLocation())
         );
@@ -211,7 +216,7 @@ public class GameView {
         if (data.getOwner().getWorkers().values().stream().anyMatch(w -> w.equals(item))) {
           data.setCurrentStart(boardRenderer.getCursorLocation());
           data.setSelectedWorker((Worker) item);
-          GameEventManager.raise(
+          client.raise(
                   new WorkerSelectionEvent(
                           data.getOwner(),
                           data.getSelectedWorker().getSex())
@@ -278,7 +283,7 @@ public class GameView {
           break;
         }
         case 110: { //N
-          GameEventManager.raise(new SkipEvent(data.getCurrentPlayer()));
+          client.raise(new SkipEvent(data.getCurrentPlayer()));
           break;
         }
         default: {
@@ -290,6 +295,8 @@ public class GameView {
 
   public void startMatch() {
     try {
+
+      PlayerRenderer.getInstance().setPlayers(data.getPlayers().toArray(new Player[0]));
 
       if(System.getProperty("os.name").startsWith("Windows"))
       {
@@ -318,6 +325,8 @@ public class GameView {
 
       reader = terminal.reader();
 
+      gameLoop();
+
     } catch (IOException e) {
       System.err.println("Could not allocate terminal.\n");
       e.printStackTrace();
@@ -335,53 +344,42 @@ public class GameView {
       System.out.print("Invalid nickname, type a new one: ");
       nickname = sc.next();
     }
-    GameEventManager.raise(new RegistrationEvent(this, nickname));
+    client.raise(new RegistrationEvent(this, nickname));
+    data.setOwner(new Player(nickname));
     System.out.println("Now waiting for other players...");
+    try {
+      while (true) {
+        GameEvent evtFromServer = client.getServerEvents().take();
+        System.out.println(evtFromServer.toString());
+        GameEventManager.raise(evtFromServer);
+      }
+    } catch (InterruptedException e){
+      e.printStackTrace();
+    }
+  }
+
+  public void gameLoop(){
+    render();
+    while (true) {
+      GameEvent evt;
+      // consume events from the server
+      while ( (evt = client.getServerEvents().peek()) != null) {
+        GameEventManager.raise(evt);
+      }
+      try {
+        handleInput();
+      } catch (IOException e){
+        e.printStackTrace();
+      }
+      render();
+    }
   }
 
   public static void main(String[] args){
     try {
-      Game game = new Game(2);
       GameView view = new GameView();
-      Controller controller = new Controller(game);
-
       view.gameSetup();
-
-      GameEventManager.raise(new RegistrationEvent(view,"Marcantonio"));
-
-      PlayerRenderer.getInstance().setPlayers(game.getPlayers());
-
-      // some initialization for testing purposes
-      for (Player player: game.getPlayers()){
-        player.setGodCard(GodCardFactory.create(GodName.Nobody));
-        player.getGodCard().setGame(game);
-      }
-
-      view.data.setPlayers(game.getPlayers().clone());
-      view.data.setOwner(view.data.getPlayers()[0].clone());
-      view.data.setCurrentPlayer(view.data.getPlayers()[0].clone());
-      view.data.setBoard(game.getBoard().clone());
-
-      GameEventManager.raise(new WorkerSelectionEvent(game.getCurrentPlayer(), Sex.Female));
-      GameEventManager.raise(new SpawnWorkerEvent(game.getCurrentPlayer(), new Point(0, 0)));
-      GameEventManager.raise(new WorkerSelectionEvent(game.getCurrentPlayer(), Sex.Male));
-      GameEventManager.raise(new SpawnWorkerEvent(game.getCurrentPlayer(), new Point (2, 0)));
-
-      game.nextPlayer();
-
-      GameEventManager.raise(new WorkerSelectionEvent(game.getPlayers()[1], Sex.Female));
-      GameEventManager.raise(new SpawnWorkerEvent(game.getPlayers()[1], new Point(4, 0)));
-      GameEventManager.raise(new WorkerSelectionEvent(game.getPlayers()[1], Sex.Male));
-      GameEventManager.raise(new SpawnWorkerEvent(game.getPlayers()[1], new Point (1, 1)));
-
-      game.nextPlayer();
-
-      view.render();
-      while (true) {
-        view.handleInput();
-        view.render();
-      }
-    } catch (Exception e){
+    } catch (IOException e){
       e.printStackTrace();
     }
   }

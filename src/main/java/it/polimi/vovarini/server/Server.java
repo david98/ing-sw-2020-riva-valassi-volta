@@ -1,5 +1,12 @@
 package it.polimi.vovarini.server;
 
+import it.polimi.vovarini.common.exceptions.InvalidNumberOfPlayersException;
+import it.polimi.vovarini.controller.Controller;
+import it.polimi.vovarini.model.Game;
+import it.polimi.vovarini.model.Player;
+import it.polimi.vovarini.model.godcards.GodCardFactory;
+import it.polimi.vovarini.model.godcards.GodName;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -22,11 +29,31 @@ public class Server implements Runnable{
   public Server(int port) throws IOException{
     serverSocket = new ServerSocket(port);
     pool = Executors.newFixedThreadPool(DEFAULT_MAX_THREADS);
+    init();
   }
 
   public Server(int port, int nThreads) throws IOException{
     serverSocket = new ServerSocket(port);
-    pool = Executors.newFixedThreadPool(nThreads);
+    pool = Executors.newFixedThreadPool(DEFAULT_MAX_THREADS);
+    init();
+  }
+
+  private void init(){
+    try {
+      Game game = new Game(2);
+      Controller controller = new Controller(game);
+
+      // test
+      game.addPlayer("Marcantonio");
+      for (Player player: game.getPlayers()){
+        if (player != null) {
+          player.setGodCard(GodCardFactory.create(GodName.Nobody));
+          player.getGodCard().setGame(game);
+        }
+      }
+    } catch (InvalidNumberOfPlayersException e){
+      e.printStackTrace();
+    }
   }
 
   public void run(){
@@ -58,7 +85,7 @@ public class Server implements Runnable{
     }
   }
 
-  public static void main(String[] args) throws IOException {
+  public static void main(String[] args) throws IOException, InvalidNumberOfPlayersException {
     Server server = new Server(DEFAULT_PORT);
     server.run();
   }

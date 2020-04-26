@@ -2,6 +2,7 @@ package it.polimi.vovarini.model;
 
 import it.polimi.vovarini.common.events.CurrentPlayerChangedEvent;
 import it.polimi.vovarini.common.events.GameEventManager;
+import it.polimi.vovarini.common.events.NewPlayerEvent;
 import it.polimi.vovarini.common.events.PhaseUpdateEvent;
 import it.polimi.vovarini.common.exceptions.*;
 import it.polimi.vovarini.model.board.Board;
@@ -61,6 +62,7 @@ public class Game {
     for (int i = 0; i < players.length; i++) {
       if (players[i] == null) {
         players[i] = player;
+        GameEventManager.raise(new NewPlayerEvent(this, player));
         return;
       }
     }

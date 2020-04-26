@@ -7,12 +7,13 @@ import it.polimi.vovarini.model.godcards.GodCard;
 import it.polimi.vovarini.model.moves.Construction;
 import it.polimi.vovarini.model.moves.Movement;
 
+import java.io.Serializable;
 import java.util.EnumMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-public class Player implements Cloneable{
+public class Player implements Cloneable, Serializable {
 
   private EnumMap<Sex, Worker> workers;
   private Sex currentSex;

@@ -34,13 +34,17 @@ public class GameClient {
     pool.execute(new SocketReader<>(socket, serverEvents, GameEvent.class));
   }
 
-  public void send(GameEvent evt) {
+  public void raise(GameEvent evt) {
     clientEvents.add(evt);
   }
 
   public static void main(String[] args) throws IOException {
     GameClient client = new GameClient("127.0.0.1", 6666);
     WorkerSelectionEvent evt = new WorkerSelectionEvent(client, Sex.Male);
-    client.send(evt);
+    client.raise(evt);
+  }
+
+  public BlockingQueue<GameEvent> getServerEvents() {
+    return serverEvents;
   }
 }

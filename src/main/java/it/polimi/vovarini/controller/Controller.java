@@ -59,7 +59,8 @@ public class Controller implements EventListener {
     try {
       game.addPlayer(evt.getNickname());
       if (game.isFull()){
-        GameEventManager.raise(new GameStartEvent(this));
+        GameEventManager.raise(new CurrentPlayerChangedEvent(game, game.getCurrentPlayer()));
+        GameEventManager.raise(new GameStartEvent(game));
       }
     } catch (InvalidNumberOfPlayersException e) {
       throw new InvalidNumberOfPlayersException();

@@ -7,6 +7,9 @@ import it.polimi.vovarini.model.board.Board;
 import it.polimi.vovarini.model.board.items.Worker;
 
 import java.io.Serializable;
+import java.util.LinkedHashSet;
+import java.util.LinkedList;
+import java.util.Set;
 
 /**
  * Data that is needed by any kind of view.
@@ -16,7 +19,7 @@ import java.io.Serializable;
 public class ViewData implements Serializable {
   private Player owner;
   private Player currentPlayer;
-  private Player[] players;
+  private final Set<Player> players;
   private Phase currentPhase;
 
   private Board board;
@@ -26,6 +29,8 @@ public class ViewData implements Serializable {
 
   public ViewData(){
     currentPhase = Phase.Start;
+    board = new Board(Board.DEFAULT_SIZE);
+    players = new LinkedHashSet<>();
   }
 
   public Phase getCurrentPhase() {
@@ -52,12 +57,12 @@ public class ViewData implements Serializable {
     this.currentPlayer = currentPlayer;
   }
 
-  public Player[] getPlayers() {
+  public Set<Player> getPlayers() {
     return players;
   }
 
-  public void setPlayers(Player[] players) {
-    this.players = players;
+  public void addPlayer(Player player) {
+    this.players.add(player);
   }
 
   public Board getBoard() {

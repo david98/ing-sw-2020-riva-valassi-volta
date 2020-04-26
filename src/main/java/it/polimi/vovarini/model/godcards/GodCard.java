@@ -15,6 +15,7 @@ import it.polimi.vovarini.model.board.items.Item;
 import it.polimi.vovarini.model.board.items.Worker;
 import it.polimi.vovarini.model.moves.Movement;
 
+import java.io.Serializable;
 import java.util.*;
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -32,7 +33,7 @@ import java.util.stream.Collectors;
  * @version 0.2
  * @since 0.1
  */
-public class GodCard implements Cloneable{
+public class GodCard implements Cloneable, Serializable {
   protected Game game;
   protected GodName name;
 
