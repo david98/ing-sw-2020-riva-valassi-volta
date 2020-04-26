@@ -99,8 +99,8 @@ public class MinotaurTests {
             GodCard minotaur = game.getCurrentPlayer().getGodCard();
             Worker currentWorker = game.getCurrentPlayer().getCurrentWorker();
             Worker otherWorker = game.getCurrentPlayer().getOtherWorker();
-            Player enemysPlayer = game.getPlayers()[1];
-            Worker enemysWorker = enemysPlayer.getCurrentWorker();
+            Player enemyPlayer = game.getPlayers()[1];
+            Worker enemyWorker = enemyPlayer.getCurrentWorker();
 
             Board board = game.getBoard();
             Point start = new Point(0, 0);
@@ -111,7 +111,7 @@ public class MinotaurTests {
             board.place(Block.blocks[0], start);
             board.place(Block.blocks[1], start);
             board.place(currentWorker, start);
-            board.place(enemysWorker, end);
+            board.place(enemyWorker, end);
             board.place(otherWorker, forcedDestination);
 
 
@@ -125,7 +125,7 @@ public class MinotaurTests {
 
             assertFalse(ReachabilityDecider.isPointReachableConditionedExchange(game, end));
             assertEquals(currentWorker, board.getBox(start).getItems().peek());
-            assertEquals(enemysWorker, board.getBox(end).getItems().peek());
+            assertEquals(enemyWorker, board.getBox(end).getItems().peek());
             assertEquals(otherWorker, board.getBox(forcedDestination).getItems().peek());
 
         } catch (BoxFullException ignored) {
@@ -146,8 +146,8 @@ public class MinotaurTests {
         try {
             GodCard minotaur = game.getCurrentPlayer().getGodCard();
             Worker currentWorker = game.getCurrentPlayer().getCurrentWorker();
-            Player enemysPlayer = game.getPlayers()[1];
-            Worker enemysWorker = enemysPlayer.getCurrentWorker();
+            Player enemyPlayer = game.getPlayers()[1];
+            Worker enemyWorker = enemyPlayer.getCurrentWorker();
 
             Board board = game.getBoard();
             Point start = new Point(0, 0);
@@ -160,7 +160,7 @@ public class MinotaurTests {
             board.place(Block.blocks[0], end);
             board.place(Block.blocks[1], end);
             board.place(Block.blocks[2], end);
-            board.place(enemysWorker, end);
+            board.place(enemyWorker, end);
             board.place(Block.blocks[0], forcedDestination);
             board.place(Block.blocks[1], forcedDestination);
             board.place(Block.blocks[2], forcedDestination);
@@ -176,7 +176,7 @@ public class MinotaurTests {
 
             assertFalse(ReachabilityDecider.isPointReachableConditionedExchange(game, end));
             assertEquals(currentWorker, board.getBox(start).getItems().peek());
-            assertEquals(enemysWorker, board.getBox(end).getItems().peek());
+            assertEquals(enemyWorker, board.getBox(end).getItems().peek());
 
         } catch (BoxFullException ignored) {
         } catch (BoxEmptyException ignored) {
@@ -197,8 +197,8 @@ public class MinotaurTests {
             GodCard minotaur = game.getCurrentPlayer().getGodCard();
             Worker currentWorker = game.getCurrentPlayer().getCurrentWorker();
             Worker otherWorker = game.getCurrentPlayer().getOtherWorker();
-            Player enemysPlayer = game.getPlayers()[1];
-            Worker enemysWorker = enemysPlayer.getCurrentWorker();
+            Player enemyPlayer = game.getPlayers()[1];
+            Worker enemyWorker = enemyPlayer.getCurrentWorker();
 
             Board board = game.getBoard();
             Point start = new Point(0, 0);
@@ -209,7 +209,7 @@ public class MinotaurTests {
             board.place(Block.blocks[0], start);
             board.place(Block.blocks[1], start);
             board.place(currentWorker, start);
-            board.place(enemysWorker, end);
+            board.place(enemyWorker, end);
             board.place(Block.blocks[0], forcedDestination);
             board.place(Block.blocks[1], forcedDestination);
             board.place(Block.blocks[2], forcedDestination);
@@ -227,7 +227,7 @@ public class MinotaurTests {
 
 
             assertEquals(currentWorker, board.getBox(end).getItems().peek());
-            assertEquals(enemysWorker, board.getBox(forcedDestination).getItems().peek());
+            assertEquals(enemyWorker, board.getBox(forcedDestination).getItems().peek());
 
         } catch (BoxFullException ignored) {
         } catch (BoxEmptyException ignored) {
@@ -248,8 +248,8 @@ public class MinotaurTests {
             GodCard minotaur = game.getCurrentPlayer().getGodCard();
             Worker currentWorker = game.getCurrentPlayer().getCurrentWorker();
             Worker otherWorker = game.getCurrentPlayer().getOtherWorker();
-            Player enemysPlayer = game.getPlayers()[1];
-            Worker enemysWorker = enemysPlayer.getCurrentWorker();
+            Player enemyPlayer = game.getPlayers()[1];
+            Worker enemyWorker = enemyPlayer.getCurrentWorker();
 
             Board board = game.getBoard();
             Point start = new Point(0, 0);
@@ -263,7 +263,7 @@ public class MinotaurTests {
             board.place(Block.blocks[0], end);
             board.place(Block.blocks[1], end);
             board.place(Block.blocks[2], end);
-            board.place(enemysWorker, end);
+            board.place(enemyWorker, end);
             board.place(Block.blocks[0], forcedDestination);
             board.place(Block.blocks[1], forcedDestination);
             board.place(Block.blocks[2], forcedDestination);
@@ -281,7 +281,7 @@ public class MinotaurTests {
 
 
             assertEquals(currentWorker, board.getBox(end).getItems().peek());
-            assertEquals(enemysWorker, board.getBox(forcedDestination).getItems().peek());
+            assertEquals(enemyWorker, board.getBox(forcedDestination).getItems().peek());
 
         } catch (BoxFullException ignored) {
         } catch (BoxEmptyException ignored) {
@@ -301,8 +301,8 @@ public class MinotaurTests {
         try {
             GodCard minotaur = game.getCurrentPlayer().getGodCard();
             Worker currentWorker = game.getCurrentPlayer().getCurrentWorker();
-            Player enemysPlayer = game.getPlayers()[1];
-            Worker enemysWorker = enemysPlayer.getCurrentWorker();
+            Player enemyPlayer = game.getPlayers()[1];
+            Worker enemyWorker = enemyPlayer.getCurrentWorker();
 
             Board board = game.getBoard();
             Point start = new Point(1, 1);
@@ -310,7 +310,7 @@ public class MinotaurTests {
             Movement movement = new Movement(board, start, end);
 
             board.place(currentWorker, start);
-            board.place(enemysWorker, end);
+            board.place(enemyWorker, end);
 
             if(minotaur.validate(minotaur.computeReachablePoints(), movement)) {
                 List<Movement> movementList = minotaur.consequences(movement);
@@ -321,7 +321,7 @@ public class MinotaurTests {
 
             assertFalse(ReachabilityDecider.isPointReachableConditionedExchange(game, end));
             assertEquals(currentWorker, board.getBox(start).getItems().peek());
-            assertEquals(enemysWorker, board.getBox(end).getItems().peek());
+            assertEquals(enemyWorker, board.getBox(end).getItems().peek());
 
         } catch (BoxFullException ignored) {
         } catch (BoxEmptyException ignored) {

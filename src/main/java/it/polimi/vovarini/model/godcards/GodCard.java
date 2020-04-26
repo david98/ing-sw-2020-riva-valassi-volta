@@ -151,7 +151,6 @@ public class GodCard implements Cloneable{
    * @return list of moves to execute
    */
   BiFunction<Game, Movement, List<Movement>> listMovementEffects =
-
           (Game game, Movement movement) -> {
             List<Movement> movementList = new LinkedList<>();
             movementList.add(movement);
@@ -185,7 +184,7 @@ public class GodCard implements Cloneable{
   /**
    * Lambda function with base validation of constructions
    * @param list is the list of points computed by the pre-move method ComputeBuildablePoints
-   * @param movement is the construction move the player wants to perform
+   * @param construction is the construction move the player wants to perform
    * @return if the move that the player wants to perform is valid returns true, false otherwise
    */
   BiFunction<List<Point>, Construction, Boolean> validateConstruction =

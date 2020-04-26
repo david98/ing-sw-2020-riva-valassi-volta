@@ -47,22 +47,22 @@ public class AthenaTests {
     public void consequencesApplied() {
         GodCard athena = game.getCurrentPlayer().getGodCard();
         Worker athenaWorker = game.getCurrentPlayer().getCurrentWorker();
-        Player enemysPlayer = game.getPlayers()[1];
-        Worker enemysWorker = enemysPlayer.getCurrentWorker();
+        Player enemyPlayer = game.getPlayers()[1];
+        Worker enemyWorker = enemyPlayer.getCurrentWorker();
 
         Board board = game.getBoard();
         Point athenaStart = new Point(0, 0);
         Point athenaEnd = new Point(1, 1);
-        Point enemysStart = new Point(2,2);
-        Point enemysEnd = new Point (2,3);
+        Point enemyStart = new Point(2,2);
+        Point enemyEnd = new Point (2,3);
 
         try {
             board.place(athenaWorker, athenaStart);
-            board.place(enemysWorker, enemysStart);
-            board.place(Block.blocks[0], enemysEnd);
+            board.place(enemyWorker, enemyStart);
+            board.place(Block.blocks[0], enemyEnd);
 
             Movement athenaMovement = new Movement(board, athenaStart, athenaEnd);
-            Movement enemysMovement = new Movement(board, enemysStart, enemysEnd);
+            Movement enemyMovement = new Movement(board, enemyStart, enemyEnd);
 
             game.performMove(athenaMovement);
             /* dentro performMove():
@@ -77,8 +77,8 @@ public class AthenaTests {
                 Provo a far salire l'avversario e controllo che la mossa non è stata eseguita
 
                 next player: game.setCurrentPhase(athena.computeNextPhase(game)); x 4
-                performMove(enemysMovement);
-                assertEquals(enemysWorker, board.getBox(enemysStart).getItems().peek());
+                performMove(enemyMovement);
+                assertEquals(enemyWorker, board.getBox(enemyStart).getItems().peek());
              */
 
 

@@ -21,6 +21,10 @@ public class GodCardFactory {
       {
         return createAthena();
       }
+      case Atlas:
+      {
+        return createAtlas();
+      }
       case Minotaur:
       {
           return createMinotaur();
@@ -54,6 +58,16 @@ public class GodCardFactory {
     private static GodCard createAthena() {
       GodCard athena = new GodCard(GodName.Athena);
       return athena;
+    }
+
+    /**
+     * This method injects a generic GodCard with all the Behaviors modified by the card Atlas
+     * @return an instance of a GodCard in the mold of Santorini's Atlas card
+     */
+    private static GodCard createAtlas() {
+      GodCard atlas = new GodCard(GodName.Atlas);
+      atlas.validateConstruction = ValidationDecider::validateConstructionAtlas;
+      return atlas;
     }
 
     /**
