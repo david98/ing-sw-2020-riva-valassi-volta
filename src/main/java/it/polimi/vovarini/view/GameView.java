@@ -83,11 +83,10 @@ public class GameView extends View{
   public void handlePhaseUpdate(PhaseUpdateEvent e){
     data.setCurrentPhase(e.getNewPhase());
     if (data.getCurrentPhase() == Phase.Construction){
-      try {
         boardRenderer.markPoints(data.getOwner().getGodCard().computeBuildablePoints());
-      } catch (CurrentPlayerLosesException ex){
-        handlePlayerLoss();
-      }
+        if (data.getOwner().isHasLost()){
+          handlePlayerLoss();
+        }
     }
     reRenderNeeded = true;
   }
@@ -180,17 +179,22 @@ public class GameView extends View{
    * the current phase is Construction.
    */
   private void selectWhenConstructionPhase(){
-    try {
+
       Point dest = boardRenderer.getCursorLocation();
+
       Collection<Point> buildablePoints = data.getOwner().getGodCard().computeBuildablePoints();
+
+      if (data.getOwner().isHasLost()){
+        handlePlayerLoss();
+      }
       if (buildablePoints.contains(dest)){
         int nextLevel = data.getBoard().getBox(dest).getLevel() + 1;
         deSelect();
         client.raise(new BuildEvent(data.getOwner(), dest, nextLevel));
       }
-    } catch (CurrentPlayerLosesException e){
-      handlePlayerLoss();
-    }
+
+
+
   }
 
   /**
@@ -212,6 +216,9 @@ public class GameView extends View{
       // check if one of the player's workers is under the cursor
       try {
         Item item = data.getBoard().getItems(boardRenderer.getCursorLocation()).peek();
+        if (data.getOwner().isHasLost()){
+          handlePlayerLoss();
+        }
 
         if (data.getOwner().getWorkers().values().stream().anyMatch(w -> w.equals(item))) {
           data.setCurrentStart(boardRenderer.getCursorLocation());
@@ -230,8 +237,6 @@ public class GameView extends View{
         }
       } catch (BoxEmptyException ignored) {
       } catch (InvalidPositionException ignored) {
-      } catch (CurrentPlayerLosesException ignored) {
-        handlePlayerLoss();
       }
 
     }

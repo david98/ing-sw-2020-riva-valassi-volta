@@ -1,11 +1,15 @@
 package it.polimi.vovarini.model.godcards;
 
+import it.polimi.vovarini.common.exceptions.BoxEmptyException;
 import it.polimi.vovarini.model.Game;
 import it.polimi.vovarini.model.Point;
+import it.polimi.vovarini.model.board.Box;
+import it.polimi.vovarini.model.board.items.Item;
 import it.polimi.vovarini.model.moves.Movement;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Stack;
 
 public class ConsequencesDecider extends Decider {
 
@@ -13,18 +17,26 @@ public class ConsequencesDecider extends Decider {
 
         List<Movement> movementList = new LinkedList<>();
 
-        if(ReachabilityDecider.isPointReachableConditionedExchange(game, movement.getEnd())) {
+        Point start = movement.getStart();
+        Point end = movement.getEnd();
 
-            Point start = movement.getStart();
-            Point end = movement.getEnd();
+        try {
+            Box destinationBox = game.getBoard().getBox(end);
+            Stack<Item> destinationItems = destinationBox.getItems();
 
-            int x = 2*end.getX() - start.getX();
-            int y = 2*end.getY() - start.getY();
+            // se sul punto end è presente un worker
+            if(destinationItems.peek().canBeRemoved()) {
 
-            Point forcedDestination = new Point(x,y);
+                // direzione = end - start
+                // destinazioneForzata = end + direzione = (2 * end) - start
+                int x = 2*end.getX() - start.getX();
+                int y = 2*end.getY() - start.getY();
+                Point forcedDestination = new Point(x,y);
 
-            Movement forcedMovement = new Movement(game.getBoard(), end,forcedDestination, true);
-            movementList.add(forcedMovement);
+                Movement forcedMovement = new Movement(game.getBoard(), end,forcedDestination, true);
+                movementList.add(forcedMovement);
+            }
+        } catch (BoxEmptyException ignored) {
         }
 
         movementList.add(movement);

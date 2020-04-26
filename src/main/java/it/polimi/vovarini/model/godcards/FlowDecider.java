@@ -41,7 +41,11 @@ public class FlowDecider extends Decider {
      *      * Returns Phase.Movement if we are in the Movement phase for the first time, returns Phase.Construction if we are in the second iteration of Movement
      */
     public static Phase nextPhaseExtendsMovement (Game game){
+
+        GodCard currentPlayerGodcard = game.getCurrentPlayer().getGodCard();
+
         if (game.getCurrentPhase().equals((Phase.Movement)) && !restoration){
+            currentPlayerGodcard.movementConstraints.add(currentPlayerGodcard.constraintMovement);
             restoration = true;
             return Phase.Movement;
         }

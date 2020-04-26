@@ -17,6 +17,18 @@ public class GodCardFactory {
       {
         return createApollo();
       }
+      case Artemis:
+      {
+        return createArtemis();
+      }
+      case Athena:
+      {
+        return createAthena();
+      }
+      case Atlas:
+      {
+        return createAtlas();
+      }
       case Minotaur:
       {
           return createMinotaur();
@@ -44,13 +56,43 @@ public class GodCardFactory {
     }
 
     /**
+     * This method injects a generic GodCard with all the Behaviors modified by the card Artemis
+     * @return an instance of a GodCard in the mold of Santorini's Artemis card
+     */
+    private static GodCard createArtemis(){
+      GodCard artemis = new GodCard(GodName.Artemis);
+      artemis.nextPhase = FlowDecider::nextPhaseExtendsMovement;
+      artemis.constraintMovement = ReachabilityDecider::isPointReachablePreviousBoxDenied;
+      return artemis;
+    }
+
+    /**
+     * This method injects a generic GodCard with all the Behaviors modified by the card Athena
+     * @return an instance of a GodCard in the mold of Santorini's Athena card
+     */
+    private static GodCard createAthena() {
+      GodCard athena = new GodCard(GodName.Athena);
+      return athena;
+    }
+
+    /**
+     * This method injects a generic GodCard with all the Behaviors modified by the card Atlas
+     * @return an instance of a GodCard in the mold of Santorini's Atlas card
+     */
+    private static GodCard createAtlas() {
+      GodCard atlas = new GodCard(GodName.Atlas);
+      atlas.validateConstruction = ValidationDecider::validateConstructionAtlas;
+      return atlas;
+    }
+
+    /**
      * This method injects a generic GodCard with all the Behaviors modified by the card Minotaur
      * @return an instance of a GodCard in the mold of Santorini's Minotaur card
      */
     private static GodCard createMinotaur() {
         GodCard minotaur = new GodCard(GodName.Minotaur);
         minotaur.movementConditions.add(ReachabilityDecider::isPointReachableConditionedExchange);
-        minotaur.listEffects = ConsequencesDecider::listEffectsMinotaur;
+        minotaur.listMovementEffects = ConsequencesDecider::listEffectsMinotaur;
         return minotaur;
     }
 
@@ -74,13 +116,6 @@ public class GodCardFactory {
       GodCard hephy = new GodCard(GodName.Hephaestus);
       hephy.nextPhase = FlowDecider::nextPhaseExtendsConstruction;
       return hephy;
-    }
-
-    private static GodCard createArtemis(){
-      GodCard artemis = new GodCard(GodName.Artemis);
-      artemis.nextPhase = FlowDecider::nextPhaseExtendsMovement;
-      artemis.movementConditions.add(ReachabilityDecider::isPointReachablePreviousBoxDenied);
-      return artemis;
     }
 
     private static GodCard createPrometheus(){

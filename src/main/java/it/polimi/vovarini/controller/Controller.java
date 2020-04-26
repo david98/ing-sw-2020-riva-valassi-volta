@@ -104,7 +104,7 @@ public class Controller implements EventListener {
       throw new InvalidPhaseException();
 
     game.getCurrentPlayer().setCurrentSex(evt.getSex());
-    game.getCurrentPlayer().setWorkerSelected(true);
+
   }
 
   /**
@@ -126,17 +126,20 @@ public class Controller implements EventListener {
     Worker currentWorker = currentPlayer.getCurrentWorker();
 
     try {
-      if (game.getBoard().getItemPosition(currentWorker) != null) {
-        // Worker già posizionato
-        throw new OverwrittenWorkerException();
-      }
+      game.getBoard().getItemPosition(currentWorker);  // se scatena ItemNotFoundExc, può essere piazzato
+      // worker già piazzato
+      throw new OverwrittenWorkerException();
+
     } catch (ItemNotFoundException e) {
       try {
-        if(!currentWorker.canBePlacedOn(game.getBoard().getItems(target).peek())) {
+        if (!currentWorker.canBePlacedOn(game.getBoard().getItems(target).peek())) {
           // Worker sopra altro worker
-          throw new OverwrittenWorkerException();
+          throw new OverwrittenWorkerException(); // TODO: creare eccezione apposita??
         }
+
         // non dovrebbe mai arrivare qui, viene sempre scatenata BoxEmptyException
+        // se arrivo qui, la cella è libera da worker e cupola, ma non è al livello 0 (impossibile per regole)
+
       } catch (BoxEmptyException ex) {
         try {
           game.getBoard().place(currentPlayer.getCurrentWorker(), target);
@@ -175,7 +178,8 @@ public class Controller implements EventListener {
 
     Construction build = new Construction(board, toBuild, target, false);
 
-    if (!game.validateMove(build)) throw new InvalidMoveException();
+    if (!game.getCurrentPlayer().getGodCard().validate(game.getCurrentPlayer().getGodCard().computeReachablePoints(), build))
+        throw new InvalidMoveException();
 
     game.performMove(build);
   }
@@ -205,7 +209,10 @@ public class Controller implements EventListener {
       if (!game.getBoard().isPositionValid(end)) throw new InvalidPositionException();
 
       Movement movement = new Movement(game.getBoard(), start, end);
-      if (!game.validateMove(movement)) throw new InvalidMoveException();
+
+        if (!game.getCurrentPlayer().getGodCard().validate(game.getCurrentPlayer().getGodCard().computeReachablePoints(), movement))
+          throw new InvalidMoveException();
+
 
       game.performMove(movement);
 
@@ -229,7 +236,6 @@ public class Controller implements EventListener {
     game.undoLastMove();
   }
 
-
   /**
    *
    * @param evt is the SkipEvent the view generates when a player wants to skip to the next phase
@@ -242,9 +248,16 @@ public class Controller implements EventListener {
     Player currentPlayer = game.getCurrentPlayer();
     if (!currentPlayer.equals(evt.getSource())) throw new WrongPlayerException();
 
+    if (game.getCurrentPhase().equals(Phase.Start) && !currentPlayer.isWorkerSelected()) throw new UnskippablePhaseException();
+    if (game.getCurrentPhase().equals(Phase.Movement) && currentPlayer.getMovementList().isEmpty()) throw new UnskippablePhaseException();
+    if (game.getCurrentPhase().equals(Phase.Construction) && currentPlayer.getConstructionList().isEmpty()) throw new UnskippablePhaseException();
+
     game.setCurrentPhase(game.getCurrentPlayer().getGodCard().computeNextPhase(game));
   }
 
 
-  public static void main(String[] args) {}
+
+
+
+public static void main(String[] args) {}
 }
