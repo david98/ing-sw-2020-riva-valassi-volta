@@ -172,7 +172,7 @@ public class GodCard implements Cloneable{
 
   /**
    * Lambda function with base validation of movements
-   * @param list is the list of points computed by the pre-move method ComputeBuildablePoints
+   * @param list is the list of points computed by the pre-move method ComputeReachablePoints
    * @param movement is the movement move the player wants to perform
    * @return if the move that the player wants to perform is valid returns true, false otherwise
    */

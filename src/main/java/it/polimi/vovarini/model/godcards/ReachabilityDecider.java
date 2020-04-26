@@ -20,7 +20,7 @@ public class ReachabilityDecider extends Decider {
     private static ArrayList<Point> blockedPoints = new ArrayList<Point>();
 
     /**
-     * This method checks if, after applying Apollo's effect, the point chosen by the player can de reached with a Movement move
+     * This method checks if, after applying Apollo's effect, the point chosen by the player can be reached with a Movement move
      * (Apollo adds the possibility of exchanging with an adjacent worker of an opponent)
      * @param game is the game currently played by all the players
      * @param point is the destination of movement selected by the current player
@@ -52,7 +52,7 @@ public class ReachabilityDecider extends Decider {
     }
 
     /**
-     * This method checks if, after applying Minotaur's effect, the point chosen by the player can de reached with a Movement move
+     * This method checks if, after applying Minotaur's effect, the point chosen by the player can be reached with a Movement move
      * (Minotaur adds the possibility to force an opponent's worker to move in the same direction you're moving, and then take the previous position as yours)
      * @param game is the game currently played by all the players
      * @param point is the destination of movement selected by the current player

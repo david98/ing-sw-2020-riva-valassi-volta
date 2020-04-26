@@ -10,6 +10,13 @@ import java.util.List;
 
 public class ValidationDecider extends Decider {
 
+    /**
+     * This method checks if, after applying Atlas' effect, it is possible to build a cupola
+     * on the point chosen by the player. (Atlas adds the possibility to build a cupola at any level)
+     * @param list is the list of points computed by the pre-move method ComputeBuildablePoints
+     * @param construction is the construction move the player wants to perform
+     * @return if the move that the player wants to perform is valid returns true, false otherwise
+     */
     public static boolean validateConstructionAtlas(List<Point> list, Construction construction) {
         try {
             if(construction.getBlock().getLevel() != Block.MAX_LEVEL) {
