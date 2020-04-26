@@ -217,15 +217,7 @@ public class GodCard implements Cloneable{
         return currentLevel < Block.WIN_LEVEL;
       };
 
-  /**
-   * Lambda function with base constraint of movements
-   * @param game Instance of game currently played by all the players
-   * @param point is the destination of movement selected by the current player
-   * @return if the move that the player wants to perform is valid returns true, false otherwise
-   */
-  BiFunction<Game, Point, Boolean> constraintMovement = (Game game, Point p) -> {
-    return true;
-  };
+
 
     Collection<BiFunction<Game, Point, Boolean>> movementConditions;
     Collection<BiFunction<Game, Point, Boolean>> movementConstraints;
@@ -356,15 +348,7 @@ public class GodCard implements Cloneable{
     return validateConstruction.apply(list, construction);
   }
 
-  /**
-   * Messaggio per Valas: alla fine questo è solo un contenitore di vincoli relativi ai movement
-   * @param game
-   * @param p
-   * @return
-   */
-  public boolean constraintMovement(Game game, Point p) {
-    return constraintMovement.apply(game, p);
-  }
+
 
   public GodName getName(){
     return name;

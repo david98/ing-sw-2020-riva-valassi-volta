@@ -45,7 +45,10 @@ public class FlowDecider extends Decider {
         GodCard currentPlayerGodcard = game.getCurrentPlayer().getGodCard();
 
         if (game.getCurrentPhase().equals((Phase.Movement)) && !restoration){
-            currentPlayerGodcard.movementConstraints.add(currentPlayerGodcard.constraintMovement);
+            switch (currentPlayerGodcard.getName()){
+                case Artemis:
+                    currentPlayerGodcard.movementConstraints.add(ReachabilityDecider::isPointReachablePreviousBoxDenied);
+            }
             restoration = true;
             return Phase.Movement;
         }

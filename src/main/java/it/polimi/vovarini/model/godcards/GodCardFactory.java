@@ -62,7 +62,6 @@ public class GodCardFactory {
     private static GodCard createArtemis(){
       GodCard artemis = new GodCard(GodName.Artemis);
       artemis.nextPhase = FlowDecider::nextPhaseExtendsMovement;
-      artemis.constraintMovement = ReachabilityDecider::isPointReachablePreviousBoxDenied;
       return artemis;
     }
 
