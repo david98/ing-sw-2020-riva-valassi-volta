@@ -108,8 +108,8 @@ public class Game {
     if (getCurrentPhase().equals(Phase.Movement)) getCurrentPlayer().getMovementList().add( (Movement) move);
     if (getCurrentPhase().equals(Phase.Construction)) getCurrentPlayer().getConstructionList().add( (Construction) move);
 
-    for(Move executableMove : getCurrentPlayer().getGodCard().consequences(move))
-    move.execute();
+    //for(Move executableMove : getCurrentPlayer().getGodCard().consequences(move))
+    //move.execute();
   }
 
   public Phase getCurrentPhase() {

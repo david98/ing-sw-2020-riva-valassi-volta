@@ -21,6 +21,8 @@ import it.polimi.vovarini.model.board.items.Worker;
 import it.polimi.vovarini.model.godcards.GodCardFactory;
 import it.polimi.vovarini.model.godcards.GodName;
 import it.polimi.vovarini.model.moves.Movement;
+import it.polimi.vovarini.server.GameClient;
+import it.polimi.vovarini.server.Server;
 import org.jline.terminal.Terminal;
 import org.jline.terminal.TerminalBuilder;
 
@@ -33,16 +35,9 @@ import static com.sun.jna.platform.win32.Wincon.ENABLE_LINE_INPUT;
 
 public class GameView {
 
-  private Player owner;
-  private Player currentPlayer;
-  private Player[] players;
-  private Phase currentPhase;
+  private ViewData data;
 
-  private Board board;
-
-  private Worker selectedWorker;
-  private Point currentStart;
-  private Point currentEnd;
+  private GameClient client;
 
   private boolean reRenderNeeded;
 
@@ -53,15 +48,18 @@ public class GameView {
 
   private int printedLineCount;
 
-  public GameView(){
+  public GameView() throws IOException {
     GameEventManager.bindListeners(this);
 
-    this.currentPhase = Phase.Start;
+    data = new ViewData();
+
     this.reRenderNeeded = true;
 
     boardRenderer = new BoardRenderer();
 
     printedLineCount = 0;
+
+    client = new GameClient("127.0.0.1", Server.DEFAULT_PORT);
   }
 
   private void handlePlayerLoss(){
@@ -70,23 +68,23 @@ public class GameView {
 
   @GameEventListener
   public void handleBoardUpdate(BoardUpdateEvent e){
-    board = e.getNewBoard().clone();
+    data.setBoard(e.getNewBoard());
     reRenderNeeded = true;
   }
 
   @GameEventListener
   public void handlePlayerUpdate(CurrentPlayerChangedEvent e){
-    currentPlayer = e.getNewPlayer();
+    data.setCurrentPlayer(e.getNewPlayer());
     // for the purpose of this demo, we also update owner so that the game can continue
-    owner = e.getNewPlayer();
+    data.setOwner(e.getNewPlayer());
   }
 
   @GameEventListener
   public void handlePhaseUpdate(PhaseUpdateEvent e){
-    currentPhase = e.getNewPhase();
-    if (currentPhase == Phase.Construction){
+    data.setCurrentPhase(e.getNewPhase());
+    if (data.getCurrentPhase() == Phase.Construction){
       try {
-        boardRenderer.markPoints(owner.getGodCard().computeBuildablePoints());
+        boardRenderer.markPoints(data.getOwner().getGodCard().computeBuildablePoints());
       } catch (CurrentPlayerLosesException ex){
         handlePlayerLoss();
       }
@@ -100,20 +98,19 @@ public class GameView {
   }
 
   private String getPhasePrompt(Phase phase){
-    switch (phase){
-      case Start:{
-        break;
+    switch (phase) {
+      case Start -> {
       }
-      case Movement: {
+      case Movement -> {
         return "MOVEMENT - Select a Worker, then select a destination.";
       }
-      case Construction: {
+      case Construction -> {
         return "CONSTRUCTION - Where do you want to build?";
       }
-      case End: {
+      case End -> {
         return "END";
       }
-      default: {
+      default -> {
         return "";
       }
     }
@@ -127,13 +124,13 @@ public class GameView {
   }
 
   private void renderPlayers(){
-    for (Player player: players){
+    for (Player player: data.getPlayers()){
       StringBuilder playerLine = new StringBuilder();
       playerLine.append(PlayerRenderer.getInstance().render(player));
-      if (player.equals(owner)){
+      if (player.equals(data.getOwner())){
         playerLine.insert(0, "YOU --> ");
       }
-      if (player.equals(currentPlayer)){
+      if (player.equals(data.getCurrentPlayer())){
         playerLine.insert(0, "*");
         playerLine.append("*");
       }
@@ -145,11 +142,11 @@ public class GameView {
     if (reRenderNeeded) {
       clearScreen();
       renderPlayers();
-      printLine(boardRenderer.render(board));
-      if (owner.equals(currentPlayer)) {
-        printLine(getPhasePrompt(currentPhase));
+      printLine(boardRenderer.render(data.getBoard()));
+      if (data.getOwner().equals(data.getCurrentPlayer())) {
+        printLine(getPhasePrompt(data.getCurrentPhase()));
       } else {
-        printLine("It's " + currentPlayer.getNickname() + "'s turn.");
+        printLine("It's " + data.getCurrentPlayer().getNickname() + "'s turn.");
       }
 
       reRenderNeeded = false;
@@ -166,9 +163,8 @@ public class GameView {
   }
 
   private void deSelect(){
-    selectedWorker = null;
-    currentStart = null;
-    currentEnd = null;
+    data.setSelectedWorker(null);
+    data.setCurrentStart(null);
     boardRenderer.resetMarkedPoints();
 
     reRenderNeeded = true;
@@ -181,11 +177,11 @@ public class GameView {
   private void selectWhenConstructionPhase(){
     try {
       Point dest = boardRenderer.getCursorLocation();
-      Collection<Point> buildablePoints = owner.getGodCard().computeBuildablePoints();
+      Collection<Point> buildablePoints = data.getOwner().getGodCard().computeBuildablePoints();
       if (buildablePoints.contains(dest)){
-        int nextLevel = board.getBox(dest).getLevel() + 1;
+        int nextLevel = data.getBoard().getBox(dest).getLevel() + 1;
         deSelect();
-        GameEventManager.raise(new BuildEvent(owner, dest, nextLevel));
+        GameEventManager.raise(new BuildEvent(data.getOwner(), dest, nextLevel));
       }
     } catch (CurrentPlayerLosesException e){
       handlePlayerLoss();
@@ -197,33 +193,32 @@ public class GameView {
    * the current phase is Movement.
    */
   private void selectWhenMovementPhase(){
-    if (selectedWorker != null){
-      if (boardRenderer.getCursorLocation().equals(currentStart)){
+    if (data.getSelectedWorker() != null){
+      if (boardRenderer.getCursorLocation().equals(data.getCurrentStart())){
         deSelect();
       } else if (boardRenderer.getMarkedPoints().contains(boardRenderer.getCursorLocation())){
         boardRenderer.resetMarkedPoints();
-        System.out.println("MOVIMENTO!");
         GameEventManager.raise(new MovementEvent(
-                owner,
+                data.getOwner(),
                 boardRenderer.getCursorLocation())
         );
       }
     } else {
       // check if one of the player's workers is under the cursor
       try {
-        Item item = board.getItems(boardRenderer.getCursorLocation()).peek();
+        Item item = data.getBoard().getItems(boardRenderer.getCursorLocation()).peek();
 
-        if (owner.getWorkers().values().stream().anyMatch(w -> w.equals(item))) {
-          currentStart = boardRenderer.getCursorLocation();
-          selectedWorker = (Worker) item;
+        if (data.getOwner().getWorkers().values().stream().anyMatch(w -> w.equals(item))) {
+          data.setCurrentStart(boardRenderer.getCursorLocation());
+          data.setSelectedWorker((Worker) item);
           GameEventManager.raise(
                   new WorkerSelectionEvent(
-                          owner,
-                          selectedWorker.getSex())
+                          data.getOwner(),
+                          data.getSelectedWorker().getSex())
           );
           // mark points reachable by the selected worker
           boardRenderer.markPoints(
-                  owner.getGodCard().computeReachablePoints()
+                  data.getOwner().getGodCard().computeReachablePoints()
           );
 
           reRenderNeeded = true;
@@ -242,7 +237,7 @@ public class GameView {
    * on the current Phase and the game status.
    */
   private void select(){
-    switch (currentPhase){
+    switch (data.getCurrentPhase()){
       case Start:
       case Movement:
         selectWhenMovementPhase();
@@ -254,7 +249,7 @@ public class GameView {
   }
 
   public void handleInput() throws IOException{
-    if (owner.equals(currentPlayer)) {
+    if (data.getOwner().equals(data.getCurrentPlayer())) {
       int input = reader.read();
 
       switch (input) {
@@ -283,7 +278,7 @@ public class GameView {
           break;
         }
         case 110: { //N
-          GameEventManager.raise(new SkipEvent(currentPlayer));
+          GameEventManager.raise(new SkipEvent(data.getCurrentPlayer()));
           break;
         }
         default: {
@@ -362,10 +357,10 @@ public class GameView {
         player.getGodCard().setGame(game);
       }
 
-      view.players = game.getPlayers();
-      view.owner = view.players[0].clone();
-      view.currentPlayer = view.players[0].clone();
-      view.board = game.getBoard().clone();
+      view.data.setPlayers(game.getPlayers().clone());
+      view.data.setOwner(view.data.getPlayers()[0].clone());
+      view.data.setCurrentPlayer(view.data.getPlayers()[0].clone());
+      view.data.setBoard(game.getBoard().clone());
 
       GameEventManager.raise(new WorkerSelectionEvent(game.getCurrentPlayer(), Sex.Female));
       GameEventManager.raise(new SpawnWorkerEvent(game.getCurrentPlayer(), new Point(0, 0)));
