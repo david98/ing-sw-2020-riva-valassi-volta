@@ -29,6 +29,14 @@ public class GodCardFactory {
       {
         return createAtlas();
       }
+      case Demeter:
+      {
+        return createDemeter();
+      }
+      case Hephaestus:
+      {
+        return createHephaestus();
+      }
       case Minotaur:
       {
           return createMinotaur();
@@ -85,6 +93,26 @@ public class GodCardFactory {
     }
 
     /**
+     * This method injects a generic GodCard with all the Behaviors modified by the card Demeter
+     * @return an instance of a GodCard in the mold of Santorini's Demeter card
+     */
+    private static GodCard createDemeter() {
+      GodCard demeter = new GodCard(GodName.Demeter);
+      demeter.nextPhase = FlowDecider::nextPhaseExtendsConstruction;
+      return demeter;
+    }
+
+    /**
+     * This method injects a generic GodCard with all the Behaviors modified by the card Hephaestus
+     * @return an instance of a GodCard in the mold of Santorini's Hephaestus card
+     */
+    private static GodCard createHephaestus(){
+      GodCard hephy = new GodCard(GodName.Hephaestus);
+      hephy.nextPhase = FlowDecider::nextPhaseExtendsConstruction;
+      return hephy;
+    }
+
+    /**
      * This method injects a generic GodCard with all the Behaviors modified by the card Minotaur
      * @return an instance of a GodCard in the mold of Santorini's Minotaur card
      */
@@ -103,18 +131,6 @@ public class GodCardFactory {
       GodCard pan = new GodCard(GodName.Pan);
       pan.winningConditions.add(WinDecider::isWinningPan);
       return pan;
-    }
-
-    private static GodCard createDemeter() {
-      GodCard demeter = new GodCard(GodName.Demeter);
-      demeter.nextPhase = FlowDecider::nextPhaseExtendsConstruction;
-      return demeter;
-    }
-
-    private static GodCard createHephaestus(){
-      GodCard hephy = new GodCard(GodName.Hephaestus);
-      hephy.nextPhase = FlowDecider::nextPhaseExtendsConstruction;
-      return hephy;
     }
 
     private static GodCard createPrometheus(){
