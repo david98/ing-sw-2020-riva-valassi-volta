@@ -71,7 +71,6 @@ public class ArtemisTests {
 
         Movement invalidMovement = new Movement(board, end, start);
         assertFalse(artemis.validate(artemis.computeReachablePoints(), invalidMovement));
-        //assertFalse(artemis.constraintMovement(game,start)); // questo non so come sostituirlo, fallo tu Marco
     }
 
 }

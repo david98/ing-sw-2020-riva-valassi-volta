@@ -216,8 +216,6 @@ public class GodCard implements Cloneable{
         return currentLevel < Block.WIN_LEVEL;
       };
 
-
-
     Collection<BiFunction<Game, Point, Boolean>> movementConditions;
     Collection<BiFunction<Game, Point, Boolean>> movementConstraints;
 
@@ -348,8 +346,6 @@ public class GodCard implements Cloneable{
   public boolean validate(List<Point> list, Construction construction){
     return validateConstruction.apply(list, construction);
   }
-
-
 
   public GodName getName(){
     return name;

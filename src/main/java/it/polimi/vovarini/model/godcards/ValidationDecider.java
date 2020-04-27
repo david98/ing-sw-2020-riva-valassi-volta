@@ -22,9 +22,10 @@ public class ValidationDecider extends Decider {
             if(construction.getBlock().getLevel() != Block.MAX_LEVEL) {
                 return list.contains(construction.getTarget())
                         && construction.getBlock().canBePlacedOn(construction.getBoard().getItems(construction.getTarget()).peek());
-            } else {
-                return list.contains(construction.getTarget());
             }
+
+            return list.contains(construction.getTarget());
+
         } catch (InvalidPositionException ignored){
             System.err.println("This should really never happen...");
         } catch (BoxEmptyException e){

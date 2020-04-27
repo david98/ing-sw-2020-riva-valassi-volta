@@ -25,9 +25,19 @@ public class FlowDecider extends Decider {
      * Returns Phase.Construction if we are in the Construction phase for the first time, returns Phase.End if we are in the second iteration of Construction
      */
     public static Phase nextPhaseExtendsConstruction (Game game){
-
+        GodCard currentPlayerGodCard = game.getCurrentPlayer().getGodCard();
 
         if (game.getCurrentPhase().equals(Phase.Construction) && game.getCurrentPlayer().getConstructionList().size() == 1){
+            switch (currentPlayerGodCard.getName()){
+                case Demeter:
+                    currentPlayerGodCard.constructionConstraints.add(BuildabilityDecider::previousTargetDenied);
+                    break;
+                case Hephaestus:
+                    currentPlayerGodCard.constructionConstraints.add(BuildabilityDecider::additionalBlockOnFirstBlock);
+                    break;
+                default:
+                    break;
+            }
             return Phase.Construction;
         }
         else {
@@ -46,12 +56,15 @@ public class FlowDecider extends Decider {
      */
     public static Phase nextPhaseExtendsMovement (Game game){
 
-        GodCard currentPlayerGodcard = game.getCurrentPlayer().getGodCard();
+        GodCard currentPlayerGodCard = game.getCurrentPlayer().getGodCard();
 
         if (game.getCurrentPhase().equals((Phase.Movement)) && game.getCurrentPlayer().getMovementList().size() == 1){
-            switch (currentPlayerGodcard.getName()){
+            switch (currentPlayerGodCard.getName()){
                 case Artemis:
-                    currentPlayerGodcard.movementConstraints.add(ReachabilityDecider::isPointReachablePreviousBoxDenied);
+                    currentPlayerGodCard.movementConstraints.add(ReachabilityDecider::previousBoxDenied);
+                    break;
+                default:
+                    break;
             }
             return Phase.Movement;
         }
@@ -61,6 +74,9 @@ public class FlowDecider extends Decider {
     }
 
     public static Phase nextPhaseConstructionTwice (Game game){
+
+        GodCard currentPlayerGodCard = game.getCurrentPlayer().getGodCard();
+
         if (game.getCurrentPhase().equals(Phase.Start)){
             try {
                 game.getCurrentPlayer().getConstructionList().add(new Construction(game.getBoard(), new Block(Block.MAX_LEVEL), new Point(0, 0), true));
@@ -77,7 +93,7 @@ public class FlowDecider extends Decider {
             return Phase.Movement;
         }
         else if (game.getCurrentPlayer().getConstructionList().size() == 2){
-            game.getCurrentPlayer().getGodCard().movementConstraints.add(ReachabilityDecider::constraintAthena);
+            game.getCurrentPlayer().getGodCard().movementConstraints.add(ReachabilityDecider::cannotMoveUp);
             return Phase.Movement;
         }
         else {
@@ -93,7 +109,7 @@ public class FlowDecider extends Decider {
                     if (!otherPlayer.equals(game.getCurrentPlayer())){
                         switch (game.getCurrentPlayer().getGodCard().getName()){
                             case Athena:{
-                                otherPlayer.getGodCard().movementConstraints.add(ReachabilityDecider::constraintAthena);
+                                otherPlayer.getGodCard().movementConstraints.add(ReachabilityDecider::cannotMoveUp);
                                 return Phase.Start;
                             }
                         }
