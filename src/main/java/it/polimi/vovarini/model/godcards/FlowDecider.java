@@ -29,19 +29,10 @@ public class FlowDecider extends Decider {
         if (game.getCurrentPhase().equals(Phase.Construction) && !restoration){
             switch (currentPlayerGodCard.getName()){
                 case Demeter:
-                    currentPlayerGodCard.buildingConstraints.add(BuildabilityDecider::isPointBuildablePreviousTargetDenied);
-                    if(currentPlayerGodCard.computeBuildablePoints().isEmpty()) {
-                        // se dopo aver applicato il vincolo, non esiste una costruzione che posso effettuare,
-                        // significa che il potere della carta non può essere utilizzato, quindi passo
-                        // direttamente alla endPhase
-                        return game.getCurrentPhase().next();
-                    }
+                    currentPlayerGodCard.buildingConstraints.add(BuildabilityDecider::previousTargetDenied);
                     break;
                 case Hephaestus:
                     currentPlayerGodCard.buildingConstraints.add(BuildabilityDecider::additionalBlockOnFirstBlock);
-                    if(currentPlayerGodCard.computeBuildablePoints().isEmpty()) {
-                        return game.getCurrentPhase().next();
-                    }
                     break;
                 default:
                     break;
@@ -69,7 +60,10 @@ public class FlowDecider extends Decider {
         if (game.getCurrentPhase().equals((Phase.Movement)) && !restoration){
             switch (currentPlayerGodCard.getName()){
                 case Artemis:
-                    currentPlayerGodCard.movementConstraints.add(ReachabilityDecider::isPointReachablePreviousBoxDenied);
+                    currentPlayerGodCard.movementConstraints.add(ReachabilityDecider::previousBoxDenied);
+                    break;
+                default:
+                    break;
             }
             restoration = true;
             return Phase.Movement;
@@ -81,6 +75,9 @@ public class FlowDecider extends Decider {
     }
 
     public static Phase nextPhaseConstructionTwice (Game game){
+
+        GodCard currentPlayerGodCard = game.getCurrentPlayer().getGodCard();
+
         if (game.getCurrentPhase().equals(Phase.Start)){
             restoration = true;
             return Phase.Construction;

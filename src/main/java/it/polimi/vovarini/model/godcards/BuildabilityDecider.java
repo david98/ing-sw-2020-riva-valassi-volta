@@ -12,7 +12,7 @@ import it.polimi.vovarini.model.Point;
  */
 public class BuildabilityDecider extends Decider {
 
-    public static boolean isPointBuildablePreviousTargetDenied(Game game, Point point) {
+    public static boolean previousTargetDenied(Game game, Point point) {
 
         // mi fido che arrivati qui, la lista abbia una costruzione, quindi non controllo se è vuota
         // anche se sarebbe buona norma farlo... se è vuota, manda eccezione
@@ -33,7 +33,8 @@ public class BuildabilityDecider extends Decider {
         Player currentPlayer = game.getCurrentPlayer();
         int size = currentPlayer.getConstructionList().size();
 
-        if(currentPlayer.getConstructionList().get(size-1).getTarget().equals(point)) {
+        if(currentPlayer.getConstructionList().get(size-1).getTarget().equals(point)
+            && game.getBoard().getBox(point).getLevel() < 3) {
             return true;
         }
 

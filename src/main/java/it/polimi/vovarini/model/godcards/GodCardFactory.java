@@ -45,6 +45,10 @@ public class GodCardFactory {
       {
         return createPan();
       }
+      case Prometheus:
+      {
+        return createPrometheus();
+      }
       case Nobody:
       default:
         {
@@ -133,6 +137,10 @@ public class GodCardFactory {
       return pan;
     }
 
+    /**
+     * This method injects a generic GodCard with all the Behaviors modified by the card Prometheus
+     * @return an instance of a GodCard in the mold of Santorini's Prometheus card
+     */
     private static GodCard createPrometheus(){
       GodCard prometheus = new GodCard(GodName.Prometheus);
       prometheus.nextPhase = FlowDecider::nextPhaseConstructionTwice;

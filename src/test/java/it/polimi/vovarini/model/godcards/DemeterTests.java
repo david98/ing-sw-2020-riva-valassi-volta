@@ -45,7 +45,7 @@ public class DemeterTests {
     }
 
     @Test
-    @DisplayName("Test an invalid movement with a GodCard of type Demeter")
+    @DisplayName("Test an invalid construction with a GodCard of type Demeter")
     public void invalidConstructionPreviousTarget() {
         GodCard demeter = game.getCurrentPlayer().getGodCard();
         Worker currentWorker = game.getCurrentPlayer().getCurrentWorker();
@@ -65,6 +65,7 @@ public class DemeterTests {
         assertEquals(game.getCurrentPhase(), Phase.Construction);
 
         Construction firstConstruction = new Construction(board, Block.blocks[0], target);
+        assertTrue(demeter.validate(demeter.computeBuildablePoints(), firstConstruction));
         game.performMove(firstConstruction);
 
         game.setCurrentPhase(demeter.computeNextPhase(game));
@@ -75,7 +76,9 @@ public class DemeterTests {
     }
 
     @Test
-    public void secondConstructionSkipped() {
+    @DisplayName("Test an invalid construction with a GodCard of type Demeter")
+    // a questo punto, probabilmente inutile
+    public void secondConstructionIgnored() {
         GodCard demeter = game.getCurrentPlayer().getGodCard();
         Worker currentWorker = game.getCurrentPlayer().getCurrentWorker();
 
@@ -105,12 +108,53 @@ public class DemeterTests {
         assertEquals(game.getCurrentPhase(), Phase.Construction);
 
         Construction firstConstruction = new Construction(board, Block.blocks[0], target);
+        assertTrue(demeter.validate(demeter.computeBuildablePoints(), firstConstruction));
         game.performMove(firstConstruction);
 
         // dopo la prima costruzione, non mi è possibile effettuare la seconda costruzione, perchè l'unica
         // cella dovo posso costruire è bloccata dal vincolo di Demeter (stessa cella della prima costruzione)
+        // però vado lo stesso in fase di costruzione, ci penserà qualcun altro a mandarmi in fase end
         game.setCurrentPhase(demeter.computeNextPhase(game));
-        assertEquals(game.getCurrentPhase(), Phase.End);
+        assertEquals(game.getCurrentPhase(), Phase.Construction);
+
+        // non arriverà mai una mossa, ma in ogni caso, quest'ultima non verrà convalidata
+        Construction invalidConstruction = new Construction(board, Block.blocks[1], target);
+        assertFalse(demeter.validate(demeter.computeBuildablePoints(), invalidConstruction));
+    }
+
+    @Test
+    @DisplayName("Test a valid construction with a GodCard of type Demeter")
+    public void validSecondConstruction() {
+        GodCard demeter = game.getCurrentPlayer().getGodCard();
+        Worker currentWorker = game.getCurrentPlayer().getCurrentWorker();
+
+        Board board = game.getBoard();
+        Point start = new Point(0, 0);
+        Point target = new Point(1, 1);
+
+        try {
+            board.place(currentWorker, start);
+        } catch (InvalidPositionException ignored) {
+        } catch (BoxFullException ignored) {
+        }
+
+        game.setCurrentPhase(demeter.computeNextPhase(game));
+        game.setCurrentPhase(demeter.computeNextPhase(game));
+        assertEquals(game.getCurrentPhase(), Phase.Construction);
+
+        Construction firstConstruction = new Construction(board, Block.blocks[0], target);
+        assertTrue(demeter.validate(demeter.computeBuildablePoints(), firstConstruction));
+        game.performMove(firstConstruction);
+
+        game.setCurrentPhase(demeter.computeNextPhase(game));
+        assertEquals(game.getCurrentPhase(), Phase.Construction);
+
+        List buildablePoints = demeter.computeBuildablePoints();
+
+        for(int i = 0; i < buildablePoints.size(); i++) {
+            Construction validConstruction = new Construction(board, Block.blocks[0], (Point) buildablePoints.get(i));
+            assertTrue(demeter.validate(demeter.computeBuildablePoints(), validConstruction));
+        }
     }
 
 }

@@ -14,7 +14,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class AthenaTests {
 
@@ -44,10 +44,13 @@ public class AthenaTests {
     }
 
     @Test
-    public void consequencesApplied() {
-        GodCard athena = game.getCurrentPlayer().getGodCard();
-        Worker athenaWorker = game.getCurrentPlayer().getCurrentWorker();
+    public void invalidEnemyMoveUp() {
+        Player currentPlayer = game.getCurrentPlayer();
+        GodCard athena = currentPlayer.getGodCard();
+        Worker athenaWorker = currentPlayer.getCurrentWorker();
         Player enemyPlayer = game.getPlayers()[1];
+        enemyPlayer.setGodCard(new GodCard(GodName.Nobody));
+        GodCard enemyGodCard = enemyPlayer.getGodCard();
         Worker enemyWorker = enemyPlayer.getCurrentWorker();
 
         Board board = game.getBoard();
@@ -60,34 +63,26 @@ public class AthenaTests {
             board.place(athenaWorker, athenaStart);
             board.place(enemyWorker, enemyStart);
             board.place(Block.blocks[0], enemyEnd);
-
-            Movement athenaMovement = new Movement(board, athenaStart, athenaEnd);
-            Movement enemyMovement = new Movement(board, enemyStart, enemyEnd);
-
-            game.performMove(athenaMovement);
-            /* dentro performMove():
-               aggiungere chiamata a metodo che controlla se il potere di Athena è stato attivato
-               e in caso affermativo fa la push di constraintAthena() dentro la collezione
-               movementConstraint dei Player avversari
-            */
-
-
-            // ora controllo che effettivamente gli avversari non possono salire di livello
-            /*
-                Provo a far salire l'avversario e controllo che la mossa non è stata eseguita
-
-                next player: game.setCurrentPhase(athena.computeNextPhase(game)); x 4
-                performMove(enemyMovement);
-                assertEquals(enemyWorker, board.getBox(enemyStart).getItems().peek());
-             */
-
-
         } catch (InvalidPositionException ignored) {
         } catch (BoxFullException ignored) {
         }
 
+        Movement athenaMovement = new Movement(board, athenaStart, athenaEnd);
+        assertTrue(athena.validate(athena.computeReachablePoints(),athenaMovement));
+        game.performMove(athenaMovement);
+
+        // QUI mettere chiamata a metodo che controlla se è stato attivato il potere di Athena
+        // (tramite movementList su Player). A seguito della chiamata, la collezione movementConstraint
+        // degli avversari conterrà il metodo cannotMoveUp() presente su ReachabilityDecider
+
+        // Provo a far salire l'avversario
+        /*
+
+        game.nextPlayer();
+        Movement enemyMovement = new Movement(board, enemyStart, enemyEnd);
+        assertFalse(enemyGodCard.validate(enemyGodCard.computeReachablePoints(), enemyMovement));
+
+         */
     }
-
-
 
 }

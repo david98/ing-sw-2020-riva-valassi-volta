@@ -122,7 +122,7 @@ public class ReachabilityDecider extends Decider {
         return false;
     }
 
-    public static boolean isPointReachablePreviousBoxDenied(Game game, Point point) {
+    public static boolean previousBoxDenied(Game game, Point point) {
 
         // mi fido che arrivati qui, la lista abbia un movimento, quindi non controllo se è vuoto
         // anche se sarebbe buona norma farlo... se è vuota, manda eccezione
@@ -145,24 +145,16 @@ public class ReachabilityDecider extends Decider {
      * @param point is the box chosen as destination by the current player, performing a Movement move.
      * @author Mattia Valassi, Marco Riva
      */
-    public static boolean constraintAthena(Game game, Point point) {
+    public static boolean cannotMoveUp(Game game, Point point) {
         try {
             Worker currentWorker = game.getCurrentPlayer().getCurrentWorker();
             Point currentWorkerPosition = game.getBoard().getItemPosition(currentWorker);
-            if (!point.isAdjacent(currentWorkerPosition)) {
-                return false;
-            }
 
-            try {
-                Box destinationBox = game.getBoard().getBox(point);
-                Stack<Item> destinationItems = destinationBox.getItems();
-                int destinationLevel = destinationBox.getLevel();
-                int currentWorkerLevel = game.getBoard().getBox(currentWorkerPosition).getLevel();
-                return (destinationLevel - currentWorkerLevel < 1)
-                        && currentWorker.canBePlacedOn(destinationItems.peek());
-            } catch (BoxEmptyException ignored) {
-                return true;
-            }
+            Box destinationBox = game.getBoard().getBox(point);
+            int destinationLevel = destinationBox.getLevel();
+            int currentWorkerLevel = game.getBoard().getBox(currentWorkerPosition).getLevel();
+
+            return (destinationLevel - currentWorkerLevel < 1);
 
         } catch (ItemNotFoundException ignored) {
             System.err.println("This really should never happen...");
