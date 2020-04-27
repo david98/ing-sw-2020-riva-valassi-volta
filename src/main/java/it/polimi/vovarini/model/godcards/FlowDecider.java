@@ -3,6 +3,10 @@ package it.polimi.vovarini.model.godcards;
 import it.polimi.vovarini.model.Game;
 import it.polimi.vovarini.model.Phase;
 import it.polimi.vovarini.model.Player;
+import it.polimi.vovarini.model.Point;
+import it.polimi.vovarini.model.board.items.Block;
+import it.polimi.vovarini.model.board.items.InvalidLevelException;
+import it.polimi.vovarini.model.moves.Construction;
 
 /**
  * TurnFlow is an extension of Behavior. It represents in specific the "Phase" behavior. Here, all methods influenced by cards acting on the Phase aspect
@@ -11,10 +15,7 @@ import it.polimi.vovarini.model.Player;
  */
 public class FlowDecider extends Decider {
 
-    /**
-     * restoration = false -> The flow is normal, not modified. restoration -> The flow is not normal, has been modified
-     */
-    private static boolean restoration = false;
+    //needs new version of javaDoc
 
     /**
      * The method extends the construction phase, necessary for Hephaestus and Demeter. It allows you to make back-to-back constructions.
@@ -26,12 +27,10 @@ public class FlowDecider extends Decider {
     public static Phase nextPhaseExtendsConstruction (Game game){
 
 
-        if (game.getCurrentPhase().equals(Phase.Construction) && !restoration){
-            restoration = true;
+        if (game.getCurrentPhase().equals(Phase.Construction) && game.getCurrentPlayer().getConstructionList().size() == 1){
             return Phase.Construction;
         }
         else {
-            restoration = false;
             return game.getCurrentPhase().next();
         }
 
@@ -49,32 +48,39 @@ public class FlowDecider extends Decider {
 
         GodCard currentPlayerGodcard = game.getCurrentPlayer().getGodCard();
 
-        if (game.getCurrentPhase().equals((Phase.Movement)) && !restoration){
+        if (game.getCurrentPhase().equals((Phase.Movement)) && game.getCurrentPlayer().getMovementList().size() == 1){
             switch (currentPlayerGodcard.getName()){
                 case Artemis:
                     currentPlayerGodcard.movementConstraints.add(ReachabilityDecider::isPointReachablePreviousBoxDenied);
             }
-            restoration = true;
             return Phase.Movement;
         }
         else {
-            restoration = false;
             return game.getCurrentPhase().next();
         }
     }
 
     public static Phase nextPhaseConstructionTwice (Game game){
         if (game.getCurrentPhase().equals(Phase.Start)){
-            restoration = true;
+            try {
+                game.getCurrentPlayer().getConstructionList().add(new Construction(game.getBoard(), new Block(Block.MAX_LEVEL), new Point(0, 0), true));
+            } catch (InvalidLevelException ignored) {}
             return Phase.Construction;
         }
 
-        if (game.getCurrentPhase().equals(Phase.Construction) && restoration){
-            restoration = false;
+        if (
+            game.getCurrentPhase().equals(Phase.Construction) &&
+            game.getCurrentPlayer().getConstructionList().size() == 1 &&
+            game.getCurrentPlayer().getConstructionList().get(0).isForced()
+        ){
+            game.getCurrentPlayer().getConstructionList().clear();
+            return Phase.Movement;
+        }
+        else if (game.getCurrentPlayer().getConstructionList().size() == 2){
+            game.getCurrentPlayer().getGodCard().movementConstraints.add(ReachabilityDecider::constraintAthena);
             return Phase.Movement;
         }
         else {
-            restoration = false;
             return game.getCurrentPhase().next();
         }
 
