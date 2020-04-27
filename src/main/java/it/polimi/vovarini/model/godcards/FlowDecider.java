@@ -2,6 +2,7 @@ package it.polimi.vovarini.model.godcards;
 
 import it.polimi.vovarini.model.Game;
 import it.polimi.vovarini.model.Phase;
+import it.polimi.vovarini.model.Player;
 
 /**
  * TurnFlow is an extension of Behavior. It represents in specific the "Phase" behavior. Here, all methods influenced by cards acting on the Phase aspect
@@ -23,6 +24,8 @@ public class FlowDecider extends Decider {
      * Returns Phase.Construction if we are in the Construction phase for the first time, returns Phase.End if we are in the second iteration of Construction
      */
     public static Phase nextPhaseExtendsConstruction (Game game){
+
+
         if (game.getCurrentPhase().equals(Phase.Construction) && !restoration){
             restoration = true;
             return Phase.Construction;
@@ -31,6 +34,8 @@ public class FlowDecider extends Decider {
             restoration = false;
             return game.getCurrentPhase().next();
         }
+
+
     }
 
     /**
@@ -73,6 +78,25 @@ public class FlowDecider extends Decider {
             return game.getCurrentPhase().next();
         }
 
+    }
+
+    public static Phase nextPhaseApplyMalus (Game game){
+        if (game.getCurrentPhase().equals(Phase.End)){
+            if (game.getCurrentPlayer().hasPlayerRisen(game)){
+                for (Player otherPlayer : game.getPlayers()){
+                    if (!otherPlayer.equals(game.getCurrentPlayer())){
+                        switch (game.getCurrentPlayer().getGodCard().getName()){
+                            case Athena:{
+                                otherPlayer.getGodCard().movementConstraints.add(ReachabilityDecider::constraintAthena);
+                                return Phase.Start;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        return game.getCurrentPhase().next();
     }
 
 }

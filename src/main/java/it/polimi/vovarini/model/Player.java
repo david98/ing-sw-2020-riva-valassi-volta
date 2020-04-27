@@ -127,6 +127,15 @@ public class Player implements Cloneable{
     return hasLost;
   }
 
+  public boolean hasPlayerRisen(Game game){
+
+    for (Movement movement : movementList){
+      if (game.getBoard().getBox(movement.getEnd()).getLevel() - game.getBoard().getBox(movement.getStart()).getLevel() == 1) return true;
+    }
+
+    return false;
+  }
+
   public Player clone() {
     try {
       Player p = (Player) super.clone();

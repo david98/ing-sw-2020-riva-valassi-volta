@@ -1,7 +1,6 @@
 package it.polimi.vovarini.model.godcards;
 
 import it.polimi.vovarini.common.exceptions.BoxEmptyException;
-import it.polimi.vovarini.common.exceptions.CurrentPlayerLosesException;
 import it.polimi.vovarini.common.exceptions.InvalidPositionException;
 import it.polimi.vovarini.common.exceptions.ItemNotFoundException;
 import it.polimi.vovarini.model.Game;
@@ -64,14 +63,14 @@ public class GodCard implements Cloneable{
     movementConditions = new HashSet<>();
     movementConstraints = new HashSet<>();
 
-    buildingConditions = new HashSet<>();
-    buildingConstraints = new HashSet<>();
+    constructionConditions = new HashSet<>();
+    constructionConstraints = new HashSet<>();
 
     winningConditions = new HashSet<>();
     winningConstraints = new HashSet<>();
 
     movementConditions.add(isPointReachable);
-    buildingConditions.add(isPointBuildable);
+    constructionConditions.add(isPointBuildable);
     winningConditions.add(isMovementWinning);
   }
 
@@ -222,8 +221,8 @@ public class GodCard implements Cloneable{
     Collection<BiFunction<Game, Point, Boolean>> movementConditions;
     Collection<BiFunction<Game, Point, Boolean>> movementConstraints;
 
-    Collection<BiFunction<Game, Point, Boolean>> buildingConditions;
-    Collection<BiFunction<Game, Point, Boolean>> buildingConstraints;
+    Collection<BiFunction<Game, Point, Boolean>> constructionConditions;
+    Collection<BiFunction<Game, Point, Boolean>> constructionConstraints;
 
     Collection<Predicate<Movement>> winningConditions;
     Collection<Predicate<Movement>> winningConstraints;
@@ -290,8 +289,8 @@ public class GodCard implements Cloneable{
 
       buildablePoints =
           candidatePositions.stream()
-                .filter(p -> buildingConditions.stream().anyMatch(cond -> cond.apply(game, p)))
-                .filter(p -> buildingConstraints.stream().allMatch(cond -> cond.apply(game, p)))
+                .filter(p -> constructionConditions.stream().anyMatch(cond -> cond.apply(game, p)))
+                .filter(p -> constructionConstraints.stream().allMatch(cond -> cond.apply(game, p)))
                 .collect(Collectors.toList());
 
     } catch (ItemNotFoundException ignored) {
@@ -316,6 +315,8 @@ public class GodCard implements Cloneable{
 
       game.nextPlayer();
       resetPlayerInfo(game);
+      game.getCurrentPlayer().getGodCard().movementConstraints.clear();
+      game.getCurrentPlayer().getGodCard().constructionConstraints.clear();
     }
 
     return next;

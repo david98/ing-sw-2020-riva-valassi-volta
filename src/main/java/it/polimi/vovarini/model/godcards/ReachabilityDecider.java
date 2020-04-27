@@ -122,6 +122,14 @@ public class ReachabilityDecider extends Decider {
         return false;
     }
 
+    /**
+     * This method is a constraint to apply to the second movement phase of a player when he's owning the Artemis card.
+     * It denies to the player the opportunity to move to his previous box
+     * @param game is the game currently played by all the players
+     * @param point is the destination of movement selected by the current player
+     * @return if the chosen position is reachable, false if it isn't
+     * @author Marco Riva, Mattia Valassi
+     */
     public static boolean isPointReachablePreviousBoxDenied(Game game, Point point) {
 
         // mi fido che arrivati qui, la lista abbia un movimento, quindi non controllo se è vuoto

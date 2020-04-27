@@ -71,6 +71,7 @@ public class GodCardFactory {
      */
     private static GodCard createAthena() {
       GodCard athena = new GodCard(GodName.Athena);
+      athena.nextPhase = FlowDecider::nextPhaseApplyMalus;
       return athena;
     }
 
