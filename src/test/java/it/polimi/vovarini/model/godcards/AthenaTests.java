@@ -14,6 +14,13 @@ import it.polimi.vovarini.model.moves.Movement;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
+
+import java.util.LinkedList;
+import java.util.List;
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -49,9 +56,41 @@ public class AthenaTests {
         assertEquals(game.getCurrentPlayer().getGodCard().name, GodName.Athena);
     }
 
-    @Test
+    private static Stream<Arguments> provideAllPossibleMoveUp() {
+        LinkedList<Arguments> args = new LinkedList<>();
+
+        Board board = new Board(Board.DEFAULT_SIZE);
+        LinkedList<Point> allPoints = new LinkedList<>();
+
+        for (int x = 0; x < board.getSize(); x++) {
+            for (int y = 0; y < board.getSize(); y++) {
+                allPoints.add(new Point(x, y));
+            }
+        }
+
+        Point notAllowedStart = new Point(0,0);
+        Point notAllowedEnd = new Point (1,1);
+
+        for(Point start : allPoints) {
+            List<Point> adjacentPositions = board.getAdjacentPositions(start);
+            for(Point end : adjacentPositions) {
+                for (int endLevel = 1; endLevel < Block.MAX_LEVEL; endLevel++) {
+                    for(int startLevel = endLevel-1; startLevel < endLevel; startLevel++) {
+                        if(!start.equals(notAllowedStart) && !start.equals(notAllowedEnd)
+                            && !end.equals(notAllowedStart) && !end.equals(notAllowedEnd))
+                        args.add(Arguments.of(start, end, startLevel, endLevel));
+                    }
+                }
+            }
+        }
+
+        return args.stream();
+    }
+
+    @ParameterizedTest
+    @MethodSource("provideAllPossibleMoveUp")
     @DisplayName("Test an invalid movement after applying the malus of the GodCard Athena")
-    public void invalidEnemyMoveUp() {
+    public void invalidEnemyMoveUp(Point enemyStart, Point enemyEnd, int lEnemyStart, int lEnemyEnd) {
 
         Player currentPlayer = game.getCurrentPlayer();
         GodCard athena = currentPlayer.getGodCard();
@@ -64,14 +103,19 @@ public class AthenaTests {
         Board board = game.getBoard();
         Point athenaStart = new Point(0, 0);
         Point athenaEnd = new Point(1, 1);
-        Point enemyStart = new Point(2,2);
-        Point enemyEnd = new Point (2,3);
 
         try {
             board.place(athenaWorker, athenaStart);
             board.place(Block.blocks[0], athenaEnd);
+
+            for(int i = 0; i < lEnemyStart; i++) {
+                board.place(Block.blocks[i], enemyStart);
+            }
             board.place(enemyWorker, enemyStart);
-            board.place(Block.blocks[1], enemyEnd);
+
+            for(int i = 0; i < lEnemyEnd; i++) {
+                board.place(Block.blocks[i], enemyEnd);
+            }
         } catch (InvalidPositionException ignored) {
         } catch (BoxFullException ignored) {
         }
@@ -97,9 +141,10 @@ public class AthenaTests {
         assertFalse(enemyGodCard.validate(enemyGodCard.computeReachablePoints(), enemyMovement));
     }
 
-    @Test
+    @ParameterizedTest
+    @MethodSource("provideAllPossibleMoveUp")
     @DisplayName("Test that the enemy can move up following a movement by Athena that does not unleash her power")
-    public void validEnemyMoveUp() {
+    public void validEnemyMoveUp(Point enemyStart, Point enemyEnd, int lEnemyStart, int lEnemyEnd) {
         Player currentPlayer = game.getCurrentPlayer();
         GodCard athena = currentPlayer.getGodCard();
         Worker athenaWorker = currentPlayer.getCurrentWorker();
@@ -111,13 +156,18 @@ public class AthenaTests {
         Board board = game.getBoard();
         Point athenaStart = new Point(0, 0);
         Point athenaEnd = new Point(1, 1);
-        Point enemyStart = new Point(2,2);
-        Point enemyEnd = new Point (2,3);
 
         try {
             board.place(athenaWorker, athenaStart);
+
+            for(int i = 0; i < lEnemyStart; i++) {
+                board.place(Block.blocks[i], enemyStart);
+            }
             board.place(enemyWorker, enemyStart);
-            board.place(Block.blocks[1], enemyEnd);
+
+            for(int i = 0; i < lEnemyEnd; i++) {
+                board.place(Block.blocks[i], enemyEnd);
+            }
         } catch (InvalidPositionException ignored) {
         } catch (BoxFullException ignored) {
         }
