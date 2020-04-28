@@ -73,4 +73,6 @@ public class ArtemisTests {
         assertFalse(artemis.validate(artemis.computeReachablePoints(), invalidMovement));
     }
 
+
+
 }

@@ -311,10 +311,10 @@ public class GodCard implements Cloneable{
 
     if(next.equals(Phase.Start)){
 
-      game.nextPlayer();
       resetPlayerInfo(game);
       game.getCurrentPlayer().getGodCard().movementConstraints.clear();
       game.getCurrentPlayer().getGodCard().constructionConstraints.clear();
+      game.nextPlayer();
     }
 
     return next;

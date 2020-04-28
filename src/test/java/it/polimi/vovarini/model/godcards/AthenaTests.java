@@ -4,6 +4,7 @@ import it.polimi.vovarini.common.exceptions.BoxFullException;
 import it.polimi.vovarini.common.exceptions.InvalidNumberOfPlayersException;
 import it.polimi.vovarini.common.exceptions.InvalidPositionException;
 import it.polimi.vovarini.model.Game;
+import it.polimi.vovarini.model.Phase;
 import it.polimi.vovarini.model.Player;
 import it.polimi.vovarini.model.Point;
 import it.polimi.vovarini.model.board.Board;
@@ -35,6 +36,11 @@ public class AthenaTests {
         GodCard athena = GodCardFactory.create(GodName.Athena);
         game.getCurrentPlayer().setGodCard(athena);
         athena.setGame(game);
+
+        GodCard enemyGodCard = GodCardFactory.create(GodName.Nobody);
+        game.getPlayers()[1].setGodCard(enemyGodCard);
+        enemyGodCard.setGame(game);
+
     }
 
     @Test
@@ -44,12 +50,61 @@ public class AthenaTests {
     }
 
     @Test
+    @DisplayName("Test an invalid movement after applying the malus of the GodCard Athena")
     public void invalidEnemyMoveUp() {
+
         Player currentPlayer = game.getCurrentPlayer();
         GodCard athena = currentPlayer.getGodCard();
         Worker athenaWorker = currentPlayer.getCurrentWorker();
+
         Player enemyPlayer = game.getPlayers()[1];
-        enemyPlayer.setGodCard(new GodCard(GodName.Nobody));
+        GodCard enemyGodCard = enemyPlayer.getGodCard();
+        Worker enemyWorker = enemyPlayer.getCurrentWorker();
+
+        Board board = game.getBoard();
+        Point athenaStart = new Point(0, 0);
+        Point athenaEnd = new Point(1, 1);
+        Point enemyStart = new Point(2,2);
+        Point enemyEnd = new Point (2,3);
+
+        try {
+            board.place(athenaWorker, athenaStart);
+            board.place(Block.blocks[0], athenaEnd);
+            board.place(enemyWorker, enemyStart);
+            board.place(Block.blocks[1], enemyEnd);
+        } catch (InvalidPositionException ignored) {
+        } catch (BoxFullException ignored) {
+        }
+
+        game.setCurrentPhase(athena.computeNextPhase(game));
+        assertEquals(game.getCurrentPhase(), Phase.Movement);
+
+        Movement athenaMovement = new Movement(board, athenaStart, athenaEnd);
+        assertTrue(athena.validate(athena.computeReachablePoints(),athenaMovement));
+        game.performMove(athenaMovement);
+
+        game.setCurrentPhase(athena.computeNextPhase(game));
+        game.setCurrentPhase(athena.computeNextPhase(game));
+        game.setCurrentPhase(athena.computeNextPhase(game));
+
+        assertEquals(game.getCurrentPlayer(), enemyPlayer);
+
+        game.setCurrentPhase(enemyGodCard.computeNextPhase(game));
+        assertEquals(game.getCurrentPhase(), Phase.Movement);
+
+        // Provo a far salire l'avversario
+        Movement enemyMovement = new Movement(board, enemyStart, enemyEnd);
+        assertFalse(enemyGodCard.validate(enemyGodCard.computeReachablePoints(), enemyMovement));
+    }
+
+    @Test
+    @DisplayName("Test that the enemy can move up following a movement by Athena that does not unleash her power")
+    public void validEnemyMoveUp() {
+        Player currentPlayer = game.getCurrentPlayer();
+        GodCard athena = currentPlayer.getGodCard();
+        Worker athenaWorker = currentPlayer.getCurrentWorker();
+
+        Player enemyPlayer = game.getPlayers()[1];
         GodCard enemyGodCard = enemyPlayer.getGodCard();
         Worker enemyWorker = enemyPlayer.getCurrentWorker();
 
@@ -62,27 +117,30 @@ public class AthenaTests {
         try {
             board.place(athenaWorker, athenaStart);
             board.place(enemyWorker, enemyStart);
-            board.place(Block.blocks[0], enemyEnd);
+            board.place(Block.blocks[1], enemyEnd);
         } catch (InvalidPositionException ignored) {
         } catch (BoxFullException ignored) {
         }
+
+        game.setCurrentPhase(athena.computeNextPhase(game));
+        assertEquals(game.getCurrentPhase(), Phase.Movement);
 
         Movement athenaMovement = new Movement(board, athenaStart, athenaEnd);
         assertTrue(athena.validate(athena.computeReachablePoints(),athenaMovement));
         game.performMove(athenaMovement);
 
-        // QUI mettere chiamata a metodo che controlla se è stato attivato il potere di Athena
-        // (tramite movementList su Player). A seguito della chiamata, la collezione movementConstraint
-        // degli avversari conterrà il metodo cannotMoveUp() presente su ReachabilityDecider
+        game.setCurrentPhase(athena.computeNextPhase(game));
+        game.setCurrentPhase(athena.computeNextPhase(game));
+        game.setCurrentPhase(athena.computeNextPhase(game));
+
+        assertEquals(game.getCurrentPlayer(), enemyPlayer);
+
+        game.setCurrentPhase(enemyGodCard.computeNextPhase(game));
+        assertEquals(game.getCurrentPhase(), Phase.Movement);
 
         // Provo a far salire l'avversario
-        /*
-
-        game.nextPlayer();
         Movement enemyMovement = new Movement(board, enemyStart, enemyEnd);
-        assertFalse(enemyGodCard.validate(enemyGodCard.computeReachablePoints(), enemyMovement));
-
-         */
+        assertTrue(enemyGodCard.validate(enemyGodCard.computeReachablePoints(), enemyMovement));
     }
 
 }
