@@ -51,7 +51,7 @@ public class DemeterTests {
         assertEquals(game.getCurrentPlayer().getGodCard().name, GodName.Demeter);
     }
 
-    private static Stream<Arguments> provideAllPossibleTrajectorias() {
+    private static Stream<Arguments> provideAllPossibleTarget() {
         LinkedList<Arguments> args = new LinkedList<>();
 
         Board board = new Board(Board.DEFAULT_SIZE);
@@ -74,7 +74,7 @@ public class DemeterTests {
     }
 
     @ParameterizedTest
-    @MethodSource("provideAllPossibleTrajectorias")
+    @MethodSource("provideAllPossibleTarget")
     @DisplayName("Test an invalid construction with a GodCard of type Demeter")
     public void invalidConstructionPreviousTarget(Point start, Point target) {
         GodCard demeter = game.getCurrentPlayer().getGodCard();
@@ -151,7 +151,7 @@ public class DemeterTests {
     }
 
     @ParameterizedTest
-    @MethodSource("provideAllPossibleTrajectorias")
+    @MethodSource("provideAllPossibleTarget")
     @DisplayName("Test a valid construction with a GodCard of type Demeter")
     public void validSecondConstruction(Point start, Point target) {
         GodCard demeter = game.getCurrentPlayer().getGodCard();
@@ -170,12 +170,10 @@ public class DemeterTests {
             assertTrue(demeter.validate(demeter.computeBuildablePoints(), firstConstruction));
             game.performMove(firstConstruction);
 
-            Point secondStart = board.getItemPosition(currentWorker);
-
             game.setCurrentPhase(demeter.computeNextPhase(game));
             assertEquals(game.getCurrentPhase(), Phase.Construction);
 
-            List<Point> adjacentPoints = board.getAdjacentPositions(secondStart);
+            List<Point> adjacentPoints = board.getAdjacentPositions(start);
 
             for(Point secondTarget : adjacentPoints) {
                 if(!secondTarget.equals(target)) {
@@ -186,7 +184,6 @@ public class DemeterTests {
 
         } catch (InvalidPositionException ignored) {
         } catch (BoxFullException ignored) {
-        } catch (ItemNotFoundException ignored) {
         }
     }
 
