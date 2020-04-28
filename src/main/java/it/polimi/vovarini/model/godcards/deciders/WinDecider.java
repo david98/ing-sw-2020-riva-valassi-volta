@@ -1,4 +1,4 @@
-package it.polimi.vovarini.model.godcards;
+package it.polimi.vovarini.model.godcards.deciders;
 
 import it.polimi.vovarini.model.moves.Movement;
 

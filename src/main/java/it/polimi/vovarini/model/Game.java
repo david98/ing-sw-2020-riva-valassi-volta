@@ -99,10 +99,6 @@ public class Game {
     return currentPhase;
   }
 
-  public Phase nextPhase() {
-    setCurrentPhase(currentPhase.next());
-    return currentPhase;
-  }
 
   public Player[] getPlayers() {
     return players;

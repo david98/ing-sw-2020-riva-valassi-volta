@@ -1,4 +1,4 @@
-package it.polimi.vovarini.model.godcards;
+package it.polimi.vovarini.model.godcards.deciders;
 
 import it.polimi.vovarini.common.exceptions.BoxEmptyException;
 import it.polimi.vovarini.common.exceptions.ItemNotFoundException;
@@ -8,9 +8,7 @@ import it.polimi.vovarini.model.Point;
 import it.polimi.vovarini.model.board.Box;
 import it.polimi.vovarini.model.board.items.Item;
 import it.polimi.vovarini.model.board.items.Worker;
-import it.polimi.vovarini.model.moves.Movement;
 
-import java.util.ArrayList;
 import java.util.Stack;
 
 /**
@@ -19,7 +17,6 @@ import java.util.Stack;
  */
 public class ReachabilityDecider extends Decider {
 
-    private static ArrayList<Point> blockedPoints = new ArrayList<Point>();
 
     /**
      * This method checks if, after applying Apollo's effect, the point chosen by the player can be reached with a Movement move

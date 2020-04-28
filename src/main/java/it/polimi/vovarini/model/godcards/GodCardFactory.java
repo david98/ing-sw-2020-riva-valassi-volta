@@ -1,5 +1,7 @@
 package it.polimi.vovarini.model.godcards;
 
+import it.polimi.vovarini.model.godcards.deciders.*;
+
 /**
  * GodCardFactory creates a specific GodCard injecting dynamically
  * particular methods that pertain to a particular card

@@ -1,9 +1,10 @@
-package it.polimi.vovarini.model.godcards;
+package it.polimi.vovarini.model.godcards.deciders;
 
 import it.polimi.vovarini.common.exceptions.BoxEmptyException;
 import it.polimi.vovarini.common.exceptions.InvalidPositionException;
 import it.polimi.vovarini.model.Point;
 import it.polimi.vovarini.model.board.items.Block;
+import it.polimi.vovarini.model.godcards.GodCard;
 import it.polimi.vovarini.model.moves.Construction;
 
 import java.util.List;

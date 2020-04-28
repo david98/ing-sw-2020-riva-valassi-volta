@@ -216,14 +216,14 @@ public class GodCard implements Cloneable{
         return currentLevel < Block.WIN_LEVEL;
       };
 
-    Collection<BiFunction<Game, Point, Boolean>> movementConditions;
-    Collection<BiFunction<Game, Point, Boolean>> movementConstraints;
+    public Collection<BiFunction<Game, Point, Boolean>> movementConditions;
+    public Collection<BiFunction<Game, Point, Boolean>> movementConstraints;
 
-    Collection<BiFunction<Game, Point, Boolean>> constructionConditions;
-    Collection<BiFunction<Game, Point, Boolean>> constructionConstraints;
+    public Collection<BiFunction<Game, Point, Boolean>> constructionConditions;
+    public Collection<BiFunction<Game, Point, Boolean>> constructionConstraints;
 
-    Collection<Predicate<Movement>> winningConditions;
-    Collection<Predicate<Movement>> winningConstraints;
+    public Collection<Predicate<Movement>> winningConditions;
+    public Collection<Predicate<Movement>> winningConstraints;
 
   /**
    * Function that computes a list of all the points where moving is possible
@@ -311,10 +311,12 @@ public class GodCard implements Cloneable{
 
     if(next.equals(Phase.Start)){
 
-      game.nextPlayer();
       resetPlayerInfo(game);
       game.getCurrentPlayer().getGodCard().movementConstraints.clear();
       game.getCurrentPlayer().getGodCard().constructionConstraints.clear();
+
+      game.nextPlayer();
+
     }
 
     return next;
