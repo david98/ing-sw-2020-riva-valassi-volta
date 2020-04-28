@@ -3,6 +3,7 @@ package it.polimi.vovarini.model.godcards;
 import it.polimi.vovarini.common.exceptions.BoxFullException;
 import it.polimi.vovarini.common.exceptions.InvalidNumberOfPlayersException;
 import it.polimi.vovarini.common.exceptions.InvalidPositionException;
+import it.polimi.vovarini.common.exceptions.ItemNotFoundException;
 import it.polimi.vovarini.model.Game;
 import it.polimi.vovarini.model.Phase;
 import it.polimi.vovarini.model.Point;
@@ -13,7 +14,13 @@ import it.polimi.vovarini.model.moves.Construction;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
+
+import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -44,15 +51,36 @@ public class DemeterTests {
         assertEquals(game.getCurrentPlayer().getGodCard().name, GodName.Demeter);
     }
 
-    @Test
+    private static Stream<Arguments> provideAllPossibleTrajectorias() {
+        LinkedList<Arguments> args = new LinkedList<>();
+
+        Board board = new Board(Board.DEFAULT_SIZE);
+        LinkedList<Point> allPoints = new LinkedList<>();
+
+        for (int x = 0; x < board.getSize(); x++) {
+            for (int y = 0; y < board.getSize(); y++) {
+                allPoints.add(new Point(x, y));
+            }
+        }
+
+        for(Point start : allPoints) {
+            List<Point> adjacentPositions = board.getAdjacentPositions(start);
+            for(Point target : adjacentPositions) {
+                args.add(Arguments.of(start, target));
+            }
+        }
+
+        return args.stream();
+    }
+
+    @ParameterizedTest
+    @MethodSource("provideAllPossibleTrajectorias")
     @DisplayName("Test an invalid construction with a GodCard of type Demeter")
-    public void invalidConstructionPreviousTarget() {
+    public void invalidConstructionPreviousTarget(Point start, Point target) {
         GodCard demeter = game.getCurrentPlayer().getGodCard();
         Worker currentWorker = game.getCurrentPlayer().getCurrentWorker();
 
         Board board = game.getBoard();
-        Point start = new Point(0, 0);
-        Point target = new Point(1, 1);
 
         try {
             board.place(currentWorker, start);
@@ -122,38 +150,43 @@ public class DemeterTests {
         assertFalse(demeter.validate(demeter.computeBuildablePoints(), invalidConstruction));
     }
 
-    @Test
+    @ParameterizedTest
+    @MethodSource("provideAllPossibleTrajectorias")
     @DisplayName("Test a valid construction with a GodCard of type Demeter")
-    public void validSecondConstruction() {
+    public void validSecondConstruction(Point start, Point target) {
         GodCard demeter = game.getCurrentPlayer().getGodCard();
         Worker currentWorker = game.getCurrentPlayer().getCurrentWorker();
 
         Board board = game.getBoard();
-        Point start = new Point(0, 0);
-        Point target = new Point(1, 1);
 
         try {
             board.place(currentWorker, start);
+
+            game.setCurrentPhase(demeter.computeNextPhase(game));
+            game.setCurrentPhase(demeter.computeNextPhase(game));
+            assertEquals(game.getCurrentPhase(), Phase.Construction);
+
+            Construction firstConstruction = new Construction(board, Block.blocks[0], target);
+            assertTrue(demeter.validate(demeter.computeBuildablePoints(), firstConstruction));
+            game.performMove(firstConstruction);
+
+            Point secondStart = board.getItemPosition(currentWorker);
+
+            game.setCurrentPhase(demeter.computeNextPhase(game));
+            assertEquals(game.getCurrentPhase(), Phase.Construction);
+
+            List<Point> adjacentPoints = board.getAdjacentPositions(secondStart);
+
+            for(Point secondTarget : adjacentPoints) {
+                if(!secondTarget.equals(target)) {
+                    Construction validConstruction = new Construction(board, Block.blocks[0], secondTarget);
+                    assertTrue(demeter.validate(demeter.computeBuildablePoints(), validConstruction));
+                }
+            }
+
         } catch (InvalidPositionException ignored) {
         } catch (BoxFullException ignored) {
-        }
-
-        game.setCurrentPhase(demeter.computeNextPhase(game));
-        game.setCurrentPhase(demeter.computeNextPhase(game));
-        assertEquals(game.getCurrentPhase(), Phase.Construction);
-
-        Construction firstConstruction = new Construction(board, Block.blocks[0], target);
-        assertTrue(demeter.validate(demeter.computeBuildablePoints(), firstConstruction));
-        game.performMove(firstConstruction);
-
-        game.setCurrentPhase(demeter.computeNextPhase(game));
-        assertEquals(game.getCurrentPhase(), Phase.Construction);
-
-        List buildablePoints = demeter.computeBuildablePoints();
-
-        for(int i = 0; i < buildablePoints.size(); i++) {
-            Construction validConstruction = new Construction(board, Block.blocks[0], (Point) buildablePoints.get(i));
-            assertTrue(demeter.validate(demeter.computeBuildablePoints(), validConstruction));
+        } catch (ItemNotFoundException ignored) {
         }
     }
 
