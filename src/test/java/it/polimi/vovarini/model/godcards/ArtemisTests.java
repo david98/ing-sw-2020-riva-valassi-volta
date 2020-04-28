@@ -1,15 +1,13 @@
 package it.polimi.vovarini.model.godcards;
 
-import it.polimi.vovarini.common.exceptions.BoxFullException;
-import it.polimi.vovarini.common.exceptions.InvalidNumberOfPlayersException;
-import it.polimi.vovarini.common.exceptions.InvalidPositionException;
-import it.polimi.vovarini.common.exceptions.ItemNotFoundException;
+import it.polimi.vovarini.common.exceptions.*;
 import it.polimi.vovarini.model.Game;
 import it.polimi.vovarini.model.Phase;
+import it.polimi.vovarini.model.Player;
 import it.polimi.vovarini.model.Point;
 import it.polimi.vovarini.model.board.Board;
-import it.polimi.vovarini.model.board.items.Worker;
 import it.polimi.vovarini.model.moves.Movement;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -25,32 +23,48 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class ArtemisTests {
 
-    Game game;
+    private static Game game;
+    private static GodCard artemis;
 
-    @BeforeEach
-    public void createArtemisItems() {
-        try {
+    @BeforeAll
+    public static void init(){
+        try{
             game = new Game(2);
-        } catch (InvalidNumberOfPlayersException ignored) {
 
-        }
-        try {
             game.addPlayer("Guest01");
             game.addPlayer("Guest02");
-        } catch (InvalidNumberOfPlayersException ignored) {
+
+            artemis = GodCardFactory.create(GodName.Artemis);
+            artemis.setGame(game);
+            for (Player player: game.getPlayers()){
+                player.setGodCard(artemis);
+            }
+        } catch (InvalidNumberOfPlayersException e){
+            e.printStackTrace();;
         }
-        GodCard artemis = GodCardFactory.create(GodName.Artemis);
-        game.getCurrentPlayer().setGodCard(artemis);
-        artemis.setGame(game);
     }
 
-    @Test
-    @DisplayName("Test that a GodCard of type Artemis can be instantiated correctly")
-    public void artemisCreation() {
-        assertEquals(game.getCurrentPlayer().getGodCard().name, GodName.Artemis);
+    @BeforeEach
+    private void resetGame(){
+        Board b = game.getBoard();
+        for (int x = 0; x < b.getSize(); x++){
+            for (int y = 0; y < b.getSize(); y++){
+                Point cur = new Point(x, y);
+                while (true){
+                    try {
+                        b.remove(cur);
+                    } catch (BoxEmptyException | InvalidPositionException e){
+                        break;
+                    }
+                }
+            }
+        }
+        game.setCurrentPhase(Phase.Start);
+        game.getCurrentPlayer().getMovementList().clear();
+        artemis.movementConstraints.clear();
     }
 
-    private static Stream<Arguments> provideAllPossibleTrajectorias() {
+    private static Stream<Arguments> provideAllPossibleMovementMoves() {
         LinkedList<Arguments> args = new LinkedList<>();
 
         Board board = new Board(Board.DEFAULT_SIZE);
@@ -63,82 +77,47 @@ public class ArtemisTests {
         }
 
         for(Point start : allPoints) {
-            List<Point> adjacentPositions = board.getAdjacentPositions(start);
-            for(Point end : adjacentPositions) {
-                args.add(Arguments.of(start, end));
+            List<Point> startAdjacentPositions = board.getAdjacentPositions(start);
+            for(Point endStart : startAdjacentPositions) {
+                List<Point> endStartAdjacentPositions = board.getAdjacentPositions(endStart);
+                for(Point secondEnd : endStartAdjacentPositions) {
+                    args.add(Arguments.of(start, endStart, secondEnd));
+                }
             }
         }
 
         return args.stream();
     }
 
+    @Test
+    @DisplayName("Test that a GodCard of type Artemis can be instantiated correctly")
+    public void artemisCreation() {
+        assertEquals(GodName.Artemis, game.getCurrentPlayer().getGodCard().name);
+    }
+
     @ParameterizedTest
-    @MethodSource("provideAllPossibleTrajectorias")
-    @DisplayName("Test an invalid movement with a GodCard of type Artemis")
-    public void invalidMovementInitialSpace(Point start, Point end) {
-        GodCard artemis = game.getCurrentPlayer().getGodCard();
-        Worker currentWorker = game.getCurrentPlayer().getCurrentWorker();
+    @MethodSource("provideAllPossibleMovementMoves")
+    @DisplayName("Test that Artemis' movement constraints are correctly applied")
+    public void testMovementConstraint(Point start, Point endStart, Point secondEnd) {
 
         Board board = game.getBoard();
 
         try {
-            board.place(currentWorker, start);
-        } catch (InvalidPositionException ignored) {
-        } catch (BoxFullException ignored) {
+            board.place(game.getCurrentPlayer().getCurrentWorker(), start);
+        } catch (InvalidPositionException | BoxFullException ignored) {
         }
 
         game.setCurrentPhase(artemis.computeNextPhase(game));
-        assertEquals(game.getCurrentPhase(), Phase.Movement);
+        assertEquals(Phase.Movement, game.getCurrentPhase());
 
-        Movement firstMovement = new Movement(board, start, end);
+        Movement firstMovement = new Movement(board, start, endStart);
+        assertTrue(artemis.validate(artemis.computeReachablePoints(), firstMovement));
         game.performMove(firstMovement);
 
         game.setCurrentPhase(artemis.computeNextPhase(game));
-        assertEquals(game.getCurrentPhase(), Phase.Movement);
+        assertEquals(Phase.Movement, game.getCurrentPhase());
 
-        Movement invalidMovement = new Movement(board, end, start);
-        assertFalse(artemis.validate(artemis.computeReachablePoints(), invalidMovement));
+        Movement secondMovement = new Movement(board, endStart, secondEnd);
+        assertEquals(!start.equals(secondEnd), artemis.validate(artemis.computeReachablePoints(), secondMovement));
     }
-
-    @ParameterizedTest
-    @MethodSource("provideAllPossibleTrajectorias")
-    @DisplayName("Test a valid movement with a GodCard of type Artemis")
-    public void validSecondMovement(Point start, Point end) {
-        GodCard artemis = game.getCurrentPlayer().getGodCard();
-        Worker currentWorker = game.getCurrentPlayer().getCurrentWorker();
-
-        Board board = game.getBoard();
-
-        try {
-            board.place(currentWorker, start);
-
-            game.setCurrentPhase(artemis.computeNextPhase(game));
-            assertEquals(game.getCurrentPhase(), Phase.Movement);
-
-            Movement firstMovement = new Movement(board, start, end);
-            game.performMove(firstMovement);
-
-            Point secondStart = board.getItemPosition(currentWorker);
-
-            game.setCurrentPhase(artemis.computeNextPhase(game));
-            assertEquals(game.getCurrentPhase(), Phase.Movement);
-
-            List<Point> adjacentPoints = board.getAdjacentPositions(secondStart);
-
-            for(Point secondEnd : adjacentPoints) {
-                if(!secondEnd.equals(start)) {
-                    Movement validMovement = new Movement(board, secondStart, secondEnd);
-                    assertTrue(artemis.validate(artemis.computeReachablePoints(), validMovement));
-                }
-            }
-
-        } catch (InvalidPositionException ignored) {
-        } catch (BoxFullException ignored) {
-        } catch (ItemNotFoundException ignored) {
-        }
-
-    }
-
-
-
 }
