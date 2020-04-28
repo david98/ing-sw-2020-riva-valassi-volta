@@ -6,6 +6,8 @@ import it.polimi.vovarini.common.events.NewPlayerEvent;
 import it.polimi.vovarini.common.events.PhaseUpdateEvent;
 import it.polimi.vovarini.common.exceptions.*;
 import it.polimi.vovarini.model.board.Board;
+import it.polimi.vovarini.model.godcards.GodCardFactory;
+import it.polimi.vovarini.model.godcards.GodName;
 import it.polimi.vovarini.model.moves.Construction;
 import it.polimi.vovarini.model.moves.Move;
 import it.polimi.vovarini.model.moves.Movement;
@@ -68,6 +70,8 @@ public class Game implements Serializable {
     for (int i = 0; i < players.length; i++) {
       if (players[i] == null) {
         players[i] = player;
+        player.setGodCard(GodCardFactory.create(GodName.Nobody)); // MERDA PER TEST!!!
+        player.getGodCard().setGame(this);                        // RIPETO MERDA PER TEST!!!
         GameEventManager.raise(new NewPlayerEvent(this, player));
         return;
       }

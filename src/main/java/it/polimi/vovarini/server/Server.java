@@ -43,14 +43,6 @@ public class Server implements Runnable{
       Game game = new Game(2);
       Controller controller = new Controller(game);
 
-      // test
-      game.addPlayer("Marcantonio");
-      for (Player player: game.getPlayers()){
-        if (player != null) {
-          player.setGodCard(GodCardFactory.create(GodName.Nobody));
-          player.getGodCard().setGame(game);
-        }
-      }
     } catch (InvalidNumberOfPlayersException e){
       e.printStackTrace();
     }

@@ -15,6 +15,7 @@ import it.polimi.vovarini.model.moves.Construction;
 import it.polimi.vovarini.model.moves.Movement;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.EventListener;
 import java.util.List;
 
@@ -60,7 +61,8 @@ public class Controller implements EventListener {
       game.addPlayer(evt.getNickname());
       if (game.isFull()){
         GameEventManager.raise(new CurrentPlayerChangedEvent(game, game.getCurrentPlayer()));
-        GameEventManager.raise(new GameStartEvent(game));
+        Player[] clonedPlayers = Arrays.stream(game.getPlayers()).map(Player::clone).toArray(Player[]::new);
+        GameEventManager.raise(new GameStartEvent(game, clonedPlayers));
       }
     } catch (InvalidNumberOfPlayersException e) {
       throw new InvalidNumberOfPlayersException();

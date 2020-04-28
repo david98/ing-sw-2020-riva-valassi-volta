@@ -8,6 +8,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import it.polimi.vovarini.common.events.*;
+import it.polimi.vovarini.model.Player;
 import it.polimi.vovarini.view.View;
 import it.polimi.vovarini.view.ViewData;
 
@@ -71,6 +72,9 @@ public class RemoteView extends View implements ClientConnectionHandler {
   @Override
   @GameEventListener
   public void handleGameStart(GameStartEvent e) {
+    for (Player p: e.getPlayers()){
+      data.addPlayer(p);
+    }
     serverEvents.add(e);
   }
 

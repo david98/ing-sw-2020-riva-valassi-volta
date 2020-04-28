@@ -75,8 +75,6 @@ public class GameView extends View{
   @GameEventListener
   public void handleCurrentPlayerUpdate(CurrentPlayerChangedEvent e){
     data.setCurrentPlayer(e.getNewPlayer());
-    // for the purpose of this demo, we also update owner so that the game can continue
-    data.setOwner(e.getNewPlayer());
   }
 
   @GameEventListener
@@ -93,6 +91,9 @@ public class GameView extends View{
 
   @GameEventListener
   public void handleGameStart(GameStartEvent e){
+    for (Player p: e.getPlayers()){
+      data.addPlayer(p);
+    }
     startMatch();
   }
 
