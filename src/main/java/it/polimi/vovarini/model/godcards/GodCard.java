@@ -27,7 +27,6 @@ import java.util.stream.Collectors;
  * name references one of the cards available in the base set of Santorini
  *
  * @author Mattia Valassi
- * @author Marco Riva
  * @author Davide Volta
  * @version 0.2
  * @since 0.1

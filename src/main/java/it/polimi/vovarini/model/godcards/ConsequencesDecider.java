@@ -11,8 +11,23 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Stack;
 
+/**
+ * ConsequencesDecider is an extension of Behavior. It represents in specific the "Consequences" behavior.
+ * Here, all methods influenced by cards which, following a move, have consequences
+ * @author Mattia Valassi
+ * @author Marco Riva
+ */
 public class ConsequencesDecider extends Decider {
 
+    /**
+     * This method presents the consequences of the Minotaur card. When the Minotaur's effect is used,
+     * the forced movement move that moves the enemy's worker according to the rules of the game is generated.
+     *
+     * @param game is the game all players are currently playing
+     * @param movement is the movement move the player wants to perform, which is already been validated
+     * @return list of movement moves to execute
+     * @author Marco Riva
+     */
     public static List<Movement> listEffectsMinotaur(Game game, Movement movement) {
 
         List<Movement> movementList = new LinkedList<>();

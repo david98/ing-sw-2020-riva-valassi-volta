@@ -9,8 +9,8 @@ import it.polimi.vovarini.model.board.items.InvalidLevelException;
 import it.polimi.vovarini.model.moves.Construction;
 
 /**
- * TurnFlow is an extension of Behavior. It represents in specific the "Phase" behavior. Here, all methods influenced by cards acting on the Phase aspect
- * of the Game are listed
+ * TurnFlow is an extension of Behavior. It represents in specific the "Phase" behavior.
+ * Here, all methods influenced by cards acting on the Phase aspect of the Game are listed
  * @author Mattia Valassi
  */
 public class FlowDecider extends Decider {

@@ -3,6 +3,9 @@ package it.polimi.vovarini.model.godcards;
 /**
  * GodCardFactory creates a specific GodCard injecting dynamically
  * particular methods that pertain to a particular card
+ *
+ * @author Mattia Valassi
+ * @author Marco Riva
  */
 public class GodCardFactory {
 
@@ -150,9 +153,10 @@ public class GodCardFactory {
 
     /**
      * This method just generates an empty card without any effect on the game
-     * @return a generic instance of an "empty" GodCard, if someone wants to play with the std set of rules and without the influence of a card
+     * @return a generic instance of an "empty" GodCard, if someone wants to play with the standard
+     * set of rules and without the influence of a card
      */
     private static GodCard createNobody() {
-    return new GodCard(GodName.Nobody);
+      return new GodCard(GodName.Nobody);
   }
 }

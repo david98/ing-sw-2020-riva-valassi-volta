@@ -10,5 +10,5 @@ public enum GodName {
   Minotaur,
   Pan,
   Prometheus,
-  Nobody;
+  Nobody
 }
