@@ -11,9 +11,17 @@ import it.polimi.vovarini.model.board.Board;
 import it.polimi.vovarini.model.board.items.Block;
 import it.polimi.vovarini.model.board.items.Worker;
 import it.polimi.vovarini.model.moves.Construction;
+import it.polimi.vovarini.model.moves.Movement;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
+
+import java.util.LinkedList;
+import java.util.List;
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -46,17 +54,71 @@ public class PrometheusTests {
         assertEquals(game.getCurrentPlayer().getGodCard().name, GodName.Prometheus);
     }
 
-    @Test
-    public void invalidMoveUp() {
+    private static Stream<Arguments> provideAllPossibleTrajectories() {
+        LinkedList<Arguments> args = new LinkedList<>();
+
+        Board board = new Board(Board.DEFAULT_SIZE);
+        LinkedList<Point> allPoints = new LinkedList<>();
+
+        for (int x = 0; x < board.getSize(); x++) {
+            for (int y = 0; y < board.getSize(); y++) {
+                allPoints.add(new Point(x, y));
+            }
+        }
+
+        for(Point start : allPoints) {
+            List<Point> adjacentPositions = board.getAdjacentPositions(start);
+            for(Point end : adjacentPositions) {
+                for (int level = 0; level < Block.MAX_LEVEL; level++) {
+                        args.add(Arguments.of(start, end, level));
+                }
+            }
+        }
+
+        return args.stream();
+    }
+
+    private static Stream<Arguments> provideAllPossibleMoveUp() {
+        LinkedList<Arguments> args = new LinkedList<>();
+
+        Board board = new Board(Board.DEFAULT_SIZE);
+        LinkedList<Point> allPoints = new LinkedList<>();
+
+        for (int x = 0; x < board.getSize(); x++) {
+            for (int y = 0; y < board.getSize(); y++) {
+                allPoints.add(new Point(x, y));
+            }
+        }
+
+        for(Point start : allPoints) {
+            List<Point> adjacentPositions = board.getAdjacentPositions(start);
+            for(Point end : adjacentPositions) {
+                for (int endLevel = 1; endLevel < Block.MAX_LEVEL; endLevel++) {
+                    for(int startLevel = endLevel-1; startLevel < endLevel; startLevel++) {
+                        args.add(Arguments.of(start, end, startLevel, endLevel));
+                    }
+                }
+            }
+        }
+
+        return args.stream();
+    }
+
+    @ParameterizedTest
+    @MethodSource("provideAllPossibleTrajectories")
+    @DisplayName("Test an invalid movement after applying the malus of the GodCard Prometheus")
+    public void invalidMoveUp(Point start, Point target, int level) {
         Player currentPlayer = game.getCurrentPlayer();
         GodCard prometheus = currentPlayer.getGodCard();
         Worker currentWorker = currentPlayer.getCurrentWorker();
 
         Board board = game.getBoard();
-        Point start = new Point(0, 0);
-        Point target = new Point(1,1);
 
         try {
+            for(int i = 0; i < level; i++) {
+                board.place(Block.blocks[i], start);
+                board.place(Block.blocks[i], target);
+            }
             board.place(currentWorker, start);
         } catch (InvalidPositionException ignored) {
         } catch (BoxFullException ignored) {
@@ -65,23 +127,54 @@ public class PrometheusTests {
         game.setCurrentPhase(prometheus.computeNextPhase(game));
         assertEquals(game.getCurrentPhase(), Phase.Construction);
 
-        Construction firstConstruction = new Construction(board, Block.blocks[0], target);
+        Construction firstConstruction = new Construction(board, Block.blocks[level], target);
         assertTrue(prometheus.validate(prometheus.computeReachablePoints(),firstConstruction));
         game.performMove(firstConstruction);
 
         game.setCurrentPhase(prometheus.computeNextPhase(game));
         assertEquals(game.getCurrentPhase(), Phase.Movement);
 
-        // QUI mettere chiamata a metodo che controlla se è stato attivato il potere di Prometheus
-        // (tramite movementList su Player). A seguito della chiamata, la collezione movementConstraint
-        // di Prometheus conterrà il metodo cannotMoveUp() presente su ReachabilityDecider
-
-        /*
-
-        Movement invalidMovement = new Movement(board, start, target);
+        Point end = target;
+        Movement invalidMovement = new Movement(board, start, end);
         assertFalse(prometheus.validate(prometheus.computeReachablePoints(),invalidMovement));
+    }
 
-         */
+    @ParameterizedTest
+    @MethodSource("provideAllPossibleMoveUp")
+    @DisplayName("Test that the player can move up if Prometheus does not unleash his power")
+    public void validMoveUp(Point start, Point end, int lStart, int lEnd) {
+        Player currentPlayer = game.getCurrentPlayer();
+        GodCard prometheus = currentPlayer.getGodCard();
+        Worker currentWorker = currentPlayer.getCurrentWorker();
+
+        Board board = game.getBoard();
+
+        try {
+            for(int i = 0; i < lStart; i++) {
+                board.place(Block.blocks[i], start);
+            }
+            board.place(currentWorker, start);
+
+            for(int i = 0; i < lEnd; i++) {
+                board.place(Block.blocks[i], end);
+            }
+        } catch (InvalidPositionException ignored) {
+        } catch (BoxFullException ignored) {
+        }
+
+        game.setCurrentPhase(prometheus.computeNextPhase(game));
+        assertEquals(game.getCurrentPhase(), Phase.Construction);
+
+        game.setCurrentPhase(prometheus.computeNextPhase(game));
+        assertEquals(game.getCurrentPhase(), Phase.Movement);
+
+        Movement validMoveUp = new Movement(board, start, end);
+        assertTrue(prometheus.validate(prometheus.computeReachablePoints(),validMoveUp));
+        game.performMove(validMoveUp);
+
+        game.setCurrentPhase(prometheus.computeNextPhase(game));
+        assertEquals(game.getCurrentPhase(), Phase.Construction);
+
     }
 
 
