@@ -97,8 +97,13 @@ public class GameView extends View{
   }
 
   @Override
+  @GameEventListener
   public void handleNewPlayer(NewPlayerEvent e) {
-    data.addPlayer(e.getNewPlayer().clone());
+    Player p = e.getNewPlayer().clone();
+    if (p.equals(data.getOwner())){
+      data.setOwner(p);
+    }
+    data.addPlayer(p);
   }
 
   private String getPhasePrompt(Phase phase){
@@ -190,7 +195,7 @@ public class GameView extends View{
       if (buildablePoints.contains(dest)){
         int nextLevel = data.getBoard().getBox(dest).getLevel() + 1;
         deSelect();
-        client.raise(new BuildEvent(data.getOwner(), dest, nextLevel));
+        client.raise(new BuildEvent(data.getOwner().getNickname(), dest, nextLevel));
       }
 
 
@@ -208,7 +213,7 @@ public class GameView extends View{
       } else if (boardRenderer.getMarkedPoints().contains(boardRenderer.getCursorLocation())){
         boardRenderer.resetMarkedPoints();
         client.raise(new MovementEvent(
-                data.getOwner(),
+                data.getOwner().getNickname(),
                 boardRenderer.getCursorLocation())
         );
       }
@@ -225,7 +230,7 @@ public class GameView extends View{
           data.setSelectedWorker((Worker) item);
           client.raise(
                   new WorkerSelectionEvent(
-                          data.getOwner(),
+                          data.getOwner().getNickname(),
                           data.getSelectedWorker().getSex())
           );
           // mark points reachable by the selected worker
@@ -288,7 +293,7 @@ public class GameView extends View{
           break;
         }
         case 110: { //N
-          client.raise(new SkipEvent(data.getCurrentPlayer()));
+          client.raise(new SkipEvent(data.getOwner().getNickname()));
           break;
         }
         default: {
@@ -349,13 +354,12 @@ public class GameView extends View{
       System.out.print("Invalid nickname, type a new one: ");
       nickname = sc.next();
     }
-    client.raise(new RegistrationEvent(this, nickname));
+    client.raise(new RegistrationEvent(client.getIPv4Address(), nickname));
     data.setOwner(new Player(nickname));
     System.out.println("Now waiting for other players...");
     try {
       while (true) {
         GameEvent evtFromServer = client.getServerEvents().take();
-        System.out.println(evtFromServer.toString());
         GameEventManager.raise(evtFromServer);
       }
     } catch (InterruptedException e){

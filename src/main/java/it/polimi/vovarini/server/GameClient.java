@@ -47,4 +47,8 @@ public class GameClient {
   public BlockingQueue<GameEvent> getServerEvents() {
     return serverEvents;
   }
+
+  public String getIPv4Address(){
+    return socket.getLocalAddress().getHostAddress();
+  }
 }

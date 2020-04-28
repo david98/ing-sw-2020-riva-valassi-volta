@@ -10,9 +10,10 @@ import it.polimi.vovarini.model.moves.Construction;
 import it.polimi.vovarini.model.moves.Move;
 import it.polimi.vovarini.model.moves.Movement;
 
+import java.io.Serializable;
 import java.util.*;
 
-public class Game {
+public class Game implements Serializable {
 
   public static final int MIN_PLAYERS = 2;
   public static final int MAX_PLAYERS = 3;

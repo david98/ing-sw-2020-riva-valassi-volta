@@ -14,8 +14,10 @@ import it.polimi.vovarini.model.board.items.Block;
 import it.polimi.vovarini.model.board.items.Item;
 import it.polimi.vovarini.model.board.items.Worker;
 import it.polimi.vovarini.model.moves.Construction;
+import it.polimi.vovarini.model.moves.Move;
 import it.polimi.vovarini.model.moves.Movement;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.*;
 import java.util.function.BiFunction;
@@ -82,7 +84,7 @@ public class GodCard implements Cloneable, Serializable {
    * @param point Candidate to be a Movement destination
    * @return if the candidate point can be reached returns true, false otherwise
    */
-  BiFunction<Game, Point, Boolean> isPointReachable =
+  BiFunction<Game, Point, Boolean> isPointReachable = (BiFunction<Game, Point, Boolean> & Serializable)
       (Game game, Point point) -> {
         try {
           Worker currentWorker = game.getCurrentPlayer().getCurrentWorker();
@@ -114,7 +116,7 @@ public class GodCard implements Cloneable, Serializable {
    * @param point Candidate to be a Construction destination
    * @return if the candidate point can be built upon returns true, false otherwise
    */
-  BiFunction<Game, Point, Boolean> isPointBuildable =
+  BiFunction<Game, Point, Boolean> isPointBuildable = (BiFunction<Game, Point, Boolean> & Serializable)
       (Game game, Point point) -> {
         try {
           Worker currentWorker = game.getCurrentPlayer().getCurrentWorker();
@@ -141,7 +143,7 @@ public class GodCard implements Cloneable, Serializable {
    * @param game Instance of game currently played by all the players
    * @return the next phase to play, according to the normal flow of the game
    */
-  Function<Game, Phase> nextPhase =
+  Function<Game, Phase> nextPhase = (Function<Game, Phase> & Serializable)
           (Game game) -> game.getCurrentPhase().next();
 
 
@@ -152,6 +154,7 @@ public class GodCard implements Cloneable, Serializable {
    * @return list of moves to execute
    */
   BiFunction<Game, Movement, List<Movement>> listMovementEffects =
+          (BiFunction<Game, Movement, List<Movement>> & Serializable)
           (Game game, Movement movement) -> {
             List<Movement> movementList = new LinkedList<>();
             movementList.add(movement);
@@ -165,6 +168,7 @@ public class GodCard implements Cloneable, Serializable {
    * @return list of moves to execute
    */
   BiFunction<Game, Construction, List<Construction>> listConstructionEffects =
+          (BiFunction<Game, Construction, List<Construction>> & Serializable)
           (Game game, Construction construction) -> {
             List<Construction> constructionList = new LinkedList<>();
             constructionList.add(construction);
@@ -178,9 +182,8 @@ public class GodCard implements Cloneable, Serializable {
    * @return if the move that the player wants to perform is valid returns true, false otherwise
    */
   BiFunction<List<Point>, Movement, Boolean> validateMovement =
-          (List<Point> list, Movement movement) -> {
-            return list.contains(movement.getEnd());
-  };
+          (BiFunction<List<Point>, Movement, Boolean> & Serializable)
+          (List<Point> list, Movement movement) -> list.contains(movement.getEnd());
 
   /**
    * Lambda function with base validation of constructions
@@ -189,6 +192,7 @@ public class GodCard implements Cloneable, Serializable {
    * @return if the move that the player wants to perform is valid returns true, false otherwise
    */
   BiFunction<List<Point>, Construction, Boolean> validateConstruction =
+          (BiFunction<List<Point>, Construction, Boolean> & Serializable)
           (List<Point> list, Construction construction) -> {
             try {
                   return list.contains(construction.getTarget()) && construction.getBlock().canBePlacedOn(game.getBoard().getItems(construction.getTarget()).peek());
@@ -208,6 +212,7 @@ public class GodCard implements Cloneable, Serializable {
    * A Forced movement always return false (the system itself must not make a player win)
    */
   Predicate<Movement> isMovementWinning =
+          (Predicate<Movement> & Serializable)
       (Movement movement) -> {
         int endLevel = movement.getBoard().getBox(movement.getEnd()).getLevel();
         if (endLevel != Block.WIN_LEVEL) {
@@ -224,18 +229,17 @@ public class GodCard implements Cloneable, Serializable {
    * @param point is the destination of movement selected by the current player
    * @return if the move that the player wants to perform is valid returns true, false otherwise
    */
-  BiFunction<Game, Point, Boolean> constraintMovement = (Game game, Point p) -> {
-    return true;
-  };
+  BiFunction<Game, Point, Boolean> constraintMovement = (BiFunction<Game, Point, Boolean> & Serializable)
+          (Game game, Point p) -> true;
 
-    Collection<BiFunction<Game, Point, Boolean>> movementConditions;
-    Collection<BiFunction<Game, Point, Boolean>> movementConstraints;
+  Collection<BiFunction<Game, Point, Boolean>> movementConditions;
+  Collection<BiFunction<Game, Point, Boolean>> movementConstraints;
 
-    Collection<BiFunction<Game, Point, Boolean>> buildingConditions;
-    Collection<BiFunction<Game, Point, Boolean>> buildingConstraints;
+  Collection<BiFunction<Game, Point, Boolean>> buildingConditions;
+  Collection<BiFunction<Game, Point, Boolean>> buildingConstraints;
 
-    Collection<Predicate<Movement>> winningConditions;
-    Collection<Predicate<Movement>> winningConstraints;
+  Collection<Predicate<Movement>> winningConditions;
+  Collection<Predicate<Movement>> winningConstraints;
 
   /**
    * Function that computes a list of all the points where moving is possible
