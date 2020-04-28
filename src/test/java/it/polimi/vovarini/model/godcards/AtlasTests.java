@@ -5,7 +5,6 @@ import it.polimi.vovarini.common.exceptions.BoxFullException;
 import it.polimi.vovarini.common.exceptions.InvalidNumberOfPlayersException;
 import it.polimi.vovarini.common.exceptions.InvalidPositionException;
 import it.polimi.vovarini.model.Game;
-import it.polimi.vovarini.model.Phase;
 import it.polimi.vovarini.model.Player;
 import it.polimi.vovarini.model.Point;
 import it.polimi.vovarini.model.board.Board;
@@ -63,7 +62,6 @@ public class AtlasTests {
                 }
             }
         }
-        game.setCurrentPhase(Phase.Start);
     }
 
     private static Stream<Arguments> provideAllPossibleConstruction() {
@@ -89,8 +87,6 @@ public class AtlasTests {
     @DisplayName("Test that Atlas' validation rules are correctly applied")
     public void validConstruction(int startLevel, int targetLevel) {
 
-        GodCard atlas = game.getCurrentPlayer().getGodCard();
-        Worker currentWorker = game.getCurrentPlayer().getCurrentWorker();
         Board board = game.getBoard();
         Point start = new Point(0, 1);
         Point target = new Point(0, 0);
@@ -103,7 +99,7 @@ public class AtlasTests {
             }
         }
         try {
-            board.place(currentWorker, start);
+            board.place(game.getCurrentPlayer().getCurrentWorker(), start);
         } catch (InvalidPositionException | BoxFullException e) {
             e.printStackTrace();
         }
@@ -127,17 +123,13 @@ public class AtlasTests {
      *  targetBox: lv 0 + enemy's Worker
      */
     public void invalidConstructionTargetOccupied() {
-        GodCard atlas = game.getCurrentPlayer().getGodCard();
-        Worker currentWorker = game.getCurrentPlayer().getCurrentWorker();
-        Player enemyPlayer = game.getPlayers()[1];
-        Worker enemyWorker = enemyPlayer.getCurrentWorker();
-
+        Worker enemyWorker = game.getPlayers()[1].getCurrentWorker();
         Board board = game.getBoard();
         Point start = new Point(0, 1);
         Point target = new Point(0, 0);
 
         try {
-            board.place(currentWorker, start);
+            board.place(game.getCurrentPlayer().getCurrentWorker(), start);
             board.place(enemyWorker, target);
         } catch (BoxFullException | InvalidPositionException e) {
             e.printStackTrace();
