@@ -65,12 +65,6 @@ public class DemeterTests {
         demeter.constructionConstraints.clear();
     }
 
-    @Test
-    @DisplayName("Test that a GodCard of type Demeter can be instantiated correctly")
-    public void demeterCreation() {
-        assertEquals(game.getCurrentPlayer().getGodCard().name, GodName.Demeter);
-    }
-
     private static Stream<Arguments> provideAllPossibleTarget() {
         LinkedList<Arguments> args = new LinkedList<>();
 
@@ -95,14 +89,21 @@ public class DemeterTests {
         return args.stream();
     }
 
+    @Test
+    @DisplayName("Test that a GodCard of type Demeter can be instantiated correctly")
+    public void demeterCreation() {
+        assertEquals(game.getCurrentPlayer().getGodCard().name, GodName.Demeter);
+    }
+
     @ParameterizedTest
     @MethodSource("provideAllPossibleTarget")
-    @DisplayName("Test an invalid construction with a GodCard of type Demeter")
+    @DisplayName("Test that Demeter's construction constraints are correctly applied")
     public void testConstructionConstraint(Point start, Point firstTarget, Point secondTarget) {
         Board board = game.getBoard();
 
         try {
             board.place(game.getCurrentPlayer().getCurrentWorker(), start);
+            board.place(Block.blocks[0], secondTarget);
         } catch (InvalidPositionException | BoxFullException e) {
             e.printStackTrace();
         }
@@ -118,11 +119,7 @@ public class DemeterTests {
         game.setCurrentPhase(demeter.computeNextPhase(game));
         assertEquals(game.getCurrentPhase(), Phase.Construction);
 
-        Construction secondConstruction = new Construction(board, Block.blocks[0], secondTarget);
-        if(secondTarget.equals(firstTarget)) {
-            secondConstruction = new Construction(board, Block.blocks[1], secondTarget);
-        }
-
+        Construction secondConstruction = new Construction(board, Block.blocks[1], secondTarget);
         assertEquals(!secondTarget.equals(firstTarget), demeter.validate(demeter.computeBuildablePoints(), secondConstruction));
     }
 
