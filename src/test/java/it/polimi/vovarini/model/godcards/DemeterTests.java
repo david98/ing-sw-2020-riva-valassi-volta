@@ -118,10 +118,10 @@ public class DemeterTests {
         game.setCurrentPhase(demeter.computeNextPhase(game));
         assertEquals(game.getCurrentPhase(), Phase.Construction);
 
-        if(secondTarget.equals(firstTarget)) {
-            Construction secondConstruction = new Construction(board, Block.blocks[1], secondTarget);
-        }
         Construction secondConstruction = new Construction(board, Block.blocks[0], secondTarget);
+        if(secondTarget.equals(firstTarget)) {
+            secondConstruction = new Construction(board, Block.blocks[1], secondTarget);
+        }
 
         assertEquals(!secondTarget.equals(firstTarget), demeter.validate(demeter.computeBuildablePoints(), secondConstruction));
     }
