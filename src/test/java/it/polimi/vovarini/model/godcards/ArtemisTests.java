@@ -65,6 +65,7 @@ public class ArtemisTests {
     }
 
     private static Stream<Arguments> provideAllPossibleMovementMoves() {
+
         LinkedList<Arguments> args = new LinkedList<>();
 
         Board board = new Board(Board.DEFAULT_SIZE);
