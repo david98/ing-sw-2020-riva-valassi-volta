@@ -103,7 +103,9 @@ public class DemeterTests {
 
         try {
             board.place(game.getCurrentPlayer().getCurrentWorker(), start);
-            board.place(Block.blocks[0], secondTarget);
+            if(!firstTarget.equals(secondTarget)) {
+                board.place(Block.blocks[0], secondTarget);
+            }
         } catch (InvalidPositionException | BoxFullException e) {
             e.printStackTrace();
         }
