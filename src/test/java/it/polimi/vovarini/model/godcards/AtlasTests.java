@@ -85,7 +85,7 @@ public class AtlasTests {
     @ParameterizedTest
     @MethodSource("provideAllPossibleConstruction")
     @DisplayName("Test that Atlas' validation rules are correctly applied")
-    public void validConstruction(int startLevel, int targetLevel) {
+    public void testValidationCondition(int startLevel, int targetLevel) {
 
         Board board = game.getBoard();
         Point start = new Point(0, 1);

@@ -7,6 +7,7 @@ import it.polimi.vovarini.model.Point;
 import it.polimi.vovarini.model.board.items.Block;
 import it.polimi.vovarini.model.board.items.InvalidLevelException;
 import it.polimi.vovarini.model.moves.Construction;
+import it.polimi.vovarini.model.moves.Move;
 
 /**
  * TurnFlow is an extension of Behavior. It represents in specific the "Phase" behavior.
@@ -75,8 +76,6 @@ public class FlowDecider extends Decider {
 
     public static Phase nextPhaseConstructionTwice (Game game){
 
-        GodCard currentPlayerGodCard = game.getCurrentPlayer().getGodCard();
-
         if (game.getCurrentPhase().equals(Phase.Start)){
             try {
                 game.getCurrentPlayer().getConstructionList().add(new Construction(game.getBoard(), new Block(Block.MAX_LEVEL), new Point(0, 0), true));
@@ -93,6 +92,7 @@ public class FlowDecider extends Decider {
             return Phase.Movement;
         }
         else if (game.getCurrentPlayer().getConstructionList().size() == 2){
+            game.getCurrentPlayer().getConstructionList().removeIf(Move::isForced);
             game.getCurrentPlayer().getGodCard().movementConstraints.add(ReachabilityDecider::cannotMoveUp);
             return Phase.Movement;
         }
