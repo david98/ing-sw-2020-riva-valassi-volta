@@ -383,11 +383,16 @@ public class GodCard implements Cloneable, Serializable {
   }
 
   public GodCard clone(){
-    try{
-      return (GodCard) super.clone();
-    } catch (CloneNotSupportedException e){
-      throw new RuntimeException(e);
-    }
+    GodCard clone = GodCardFactory.create(name);
+    clone.movementConditions = new HashSet<>(movementConditions);
+    clone.movementConstraints = new HashSet<>(movementConstraints);
+
+    clone.buildingConditions = new HashSet<>(buildingConditions);
+    clone.buildingConstraints = new HashSet<>(buildingConstraints);
+
+    clone.winningConditions = new HashSet<>(winningConditions);
+    clone.winningConstraints = new HashSet<>(winningConstraints);
+    return clone;
   }
 
   @Override

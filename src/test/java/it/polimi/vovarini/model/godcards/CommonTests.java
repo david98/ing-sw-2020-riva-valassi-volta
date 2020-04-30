@@ -38,7 +38,7 @@ public class CommonTests {
   }
 
   @Test
-  @DisplayName("Tests that a GodCard can be serialized and deserialized over a socket")
+  @DisplayName("Tests that a GodCard clone can be serialized and deserialized over a socket")
   void serializationAndDeserializationSocket() throws IOException, ClassNotFoundException {
     pool.execute(() -> {
       try{
@@ -46,7 +46,7 @@ public class CommonTests {
         ServerSocket serverSocket = new ServerSocket(Server.DEFAULT_PORT);
         Socket clientSocket = serverSocket.accept();
         try (ObjectOutputStream oos = new ObjectOutputStream(clientSocket.getOutputStream())) {
-          oos.writeObject(nb);
+          oos.writeObject(nb.clone());
         }
       } catch (UnknownHostException e) {
         e.printStackTrace();

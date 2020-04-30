@@ -81,7 +81,7 @@ public class RemoteView extends View implements ClientConnectionHandler {
   @Override
   @GameEventListener
   public void handleNewPlayer(NewPlayerEvent e) {
-    data.addPlayer(e.getNewPlayer().clone());
+    data.addPlayer(e.getNewPlayer());
     serverEvents.add(e);
   }
 }
