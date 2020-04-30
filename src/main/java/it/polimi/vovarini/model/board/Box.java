@@ -66,7 +66,7 @@ public class Box implements Cloneable, Serializable {
   public String toString(){
     StringBuilder rep = new StringBuilder();
     for (Item item: items){
-      rep.append(item.toString() + " - ");
+      rep.append(item.toString()).append(" - ");
     }
     return rep.toString();
   }

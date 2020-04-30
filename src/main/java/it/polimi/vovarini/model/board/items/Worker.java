@@ -1,7 +1,7 @@
 package it.polimi.vovarini.model.board.items;
 
 public class Worker extends Item {
-  private Sex sex;
+  private final Sex sex;
 
   public Worker(Sex sex) {
     this.sex = sex;

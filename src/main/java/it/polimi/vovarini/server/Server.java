@@ -22,7 +22,7 @@ public class Server implements Runnable{
   public static final int DEFAULT_PORT = 6666;
   public static final int DEFAULT_MAX_THREADS = 4;
 
-  private ServerSocket serverSocket;
+  private final ServerSocket serverSocket;
 
   private final ExecutorService pool;
 
@@ -34,7 +34,7 @@ public class Server implements Runnable{
 
   public Server(int port, int nThreads) throws IOException{
     serverSocket = new ServerSocket(port);
-    pool = Executors.newFixedThreadPool(DEFAULT_MAX_THREADS);
+    pool = Executors.newFixedThreadPool(nThreads);
     init();
   }
 
@@ -79,6 +79,7 @@ public class Server implements Runnable{
 
   public static void main(String[] args) throws IOException, InvalidNumberOfPlayersException {
     Server server = new Server(DEFAULT_PORT);
-    server.run();
+    Thread thread = new Thread(server);
+    thread.start();
   }
 }

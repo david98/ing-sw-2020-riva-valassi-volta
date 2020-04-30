@@ -132,7 +132,7 @@ public class GodCard implements Cloneable, Serializable {
           } catch (BoxEmptyException ignored) {
             return true;
           }
-        } catch (ItemNotFoundException | InvalidPositionException ignored) {
+        } catch (ItemNotFoundException | InvalidPositionException e) {
           System.err.println("This really should never happen...");
         }
         return false;
@@ -195,15 +195,18 @@ public class GodCard implements Cloneable, Serializable {
           (BiFunction<List<Point>, Construction, Boolean> & Serializable)
           (List<Point> list, Construction construction) -> {
             try {
-                  return list.contains(construction.getTarget()) && construction.getBlock().canBePlacedOn(game.getBoard().getItems(construction.getTarget()).peek());
-            } catch (InvalidPositionException ignored){
-              System.err.println("This should really never happen...");
-            } catch (BoxEmptyException e){
+              Block b = construction.getBlock();
+              Point t = construction.getTarget();
+              Stack<Item> s = game.getBoard().getBox(t).getItems();
+              return list.contains(construction.getTarget()) &&
+                          b.canBePlacedOn(s.peek());
+            } catch (BoxEmptyException ignored){
+            } catch (EmptyStackException e){
               return construction.getBlock().getLevel() == 1;
             }
 
             return false;
-          };
+   };
 
   /**
    * Predicate for checking if a player has won with the Movement he wants to perform (applied before the movement itself)

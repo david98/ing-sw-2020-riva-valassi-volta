@@ -81,7 +81,7 @@ public class GodCardFactory {
      */
     private static GodCard createAtlas() {
       GodCard atlas = new GodCard(GodName.Atlas);
-      atlas.validateConstruction = ValidationDecider::validateConstructionAtlas;
+      //atlas.validateConstruction = ValidationDecider::validateConstructionAtlas;
       return atlas;
     }
 
