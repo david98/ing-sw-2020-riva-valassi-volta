@@ -3,19 +3,20 @@ package it.polimi.vovarini.model.godcards.deciders;
 import it.polimi.vovarini.model.moves.Movement;
 
 /**
- * @class WinningCondition is an extension of Behavior. It represents in specific the "Win" behavior. Here, all methods influenced by cards acting on the Win aspect
- * of the Game are listed
+ * WinDecider is an extension of Decider. It decides if a player was able to win with his last performed move
  * @author Mattia Valassi
+ * @version 2.0
+ * @since 1.0
  */
 public class WinDecider extends Decider {
 
     /**
-     * This method checks if, after applying Pan's effect, the current player wins after the execution of the Movement move he wants to perform
-     * (Pan modifies the winning condition, adding the possibility to win if a worker can descend two or more levels in a Movement move)
-     * @param movement the Movement move the player would like to perform
-     * @return true if the player wins performing the movement, false otherwise
+     * This method adds a winning condition, making the player able to win if he moves down two or more levels in a single Movement
+     * @param movement is the Movement move the player wants to perform
+     * @return true if the Movement makes the player move down two or more levels, false otherwise
+     * @author Marco Riva
      */
-    public static boolean isWinningPan(Movement movement) {
+    public static boolean downTwoLevels(Movement movement) {
         int endLevel = movement.getBoard().getBox(movement.getEnd()).getLevel();
         int currentLevel = movement.getBoard().getBox(movement.getStart()).getLevel();
 

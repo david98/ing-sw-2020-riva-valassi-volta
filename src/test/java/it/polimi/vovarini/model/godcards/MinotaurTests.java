@@ -77,7 +77,7 @@ public class MinotaurTests {
                 }
 
 
-            assertFalse(ReachabilityDecider.isPointReachableConditionedExchange(game, end));
+            assertFalse(ReachabilityDecider.conditionedExchange(game, end));
             assertEquals(currentWorker, board.getBox(start).getItems().peek());
             assertEquals(otherWorker, board.getBox(end).getItems().peek());
 
@@ -124,7 +124,7 @@ public class MinotaurTests {
                 }
 
 
-            assertFalse(ReachabilityDecider.isPointReachableConditionedExchange(game, end));
+            assertFalse(ReachabilityDecider.conditionedExchange(game, end));
             assertEquals(currentWorker, board.getBox(start).getItems().peek());
             assertEquals(enemyWorker, board.getBox(end).getItems().peek());
             assertEquals(otherWorker, board.getBox(forcedDestination).getItems().peek());
@@ -175,7 +175,7 @@ public class MinotaurTests {
                 }
 
 
-            assertFalse(ReachabilityDecider.isPointReachableConditionedExchange(game, end));
+            assertFalse(ReachabilityDecider.conditionedExchange(game, end));
             assertEquals(currentWorker, board.getBox(start).getItems().peek());
             assertEquals(enemyWorker, board.getBox(end).getItems().peek());
 
@@ -215,7 +215,7 @@ public class MinotaurTests {
             board.place(Block.blocks[1], forcedDestination);
             board.place(Block.blocks[2], forcedDestination);
 
-            assertTrue(ReachabilityDecider.isPointReachableConditionedExchange(game, end));
+            assertTrue(ReachabilityDecider.conditionedExchange(game, end));
             assertFalse(minotaur.isMovementWinning(movement));
 
 
@@ -269,7 +269,7 @@ public class MinotaurTests {
             board.place(Block.blocks[1], forcedDestination);
             board.place(Block.blocks[2], forcedDestination);
 
-            assertTrue(ReachabilityDecider.isPointReachableConditionedExchange(game, end));
+            assertTrue(ReachabilityDecider.conditionedExchange(game, end));
             assertTrue(minotaur.isMovementWinning(movement));
 
 
@@ -320,7 +320,7 @@ public class MinotaurTests {
                 }
             }
 
-            assertFalse(ReachabilityDecider.isPointReachableConditionedExchange(game, end));
+            assertFalse(ReachabilityDecider.conditionedExchange(game, end));
             assertEquals(currentWorker, board.getBox(start).getItems().peek());
             assertEquals(enemyWorker, board.getBox(end).getItems().peek());
 

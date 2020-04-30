@@ -10,31 +10,29 @@ import it.polimi.vovarini.model.godcards.GodCard;
 import it.polimi.vovarini.model.moves.Construction;
 
 /**
- * TurnFlow is an extension of Behavior. It represents in specific the "Phase" behavior. Here, all methods influenced by cards acting on the Phase aspect
- * of the Game are listed
+ * FlowDecider is an extension of Decider. It decides what is the next phase the player should be into, based upon card effects
  * @author Mattia Valassi
+ * @version 2.0
+ * @since 1.0
  */
 public class FlowDecider extends Decider {
 
-    //needs new version of javaDoc
-
     /**
-     * The method extends the construction phase, necessary for Hephaestus and Demeter. It allows you to make back-to-back constructions.
-     * @param game the game all players currently play
-     * @return the next phase you have to get in. Restoration tells the method if it's the first time you access the extension of the construction phase.
-     * If not alerted, we would never leave the construction phase.
-     * Returns Phase.Construction if we are in the Construction phase for the first time, returns Phase.End if we are in the second iteration of Construction
+     * This method allows you to be in the Construction phase twice in a row, injecting the constraints connected to the player's GodCard
+     * @param game the game all players are currently playing
+     * @return Phase.Construction if you called the method while in your first Construction phase. Otherwise, whatever is the next phase
+     * @author Mattia Valassi, Marco Riva
      */
-    public static Phase nextPhaseExtendsConstruction (Game game){
+    public static Phase extendsConstruction(Game game){
         GodCard currentPlayerGodCard = game.getCurrentPlayer().getGodCard();
 
         if (game.getCurrentPhase().equals(Phase.Construction) && game.getCurrentPlayer().getConstructionList().size() == 1){
             switch (currentPlayerGodCard.getName()){
                 case Demeter:
-                    currentPlayerGodCard.constructionConstraints.add(BuildabilityDecider::previousTargetDenied);
+                    currentPlayerGodCard.constructionConstraints.add(BuildabilityDecider::denyPreviousTarget);
                     break;
                 case Hephaestus:
-                    currentPlayerGodCard.constructionConstraints.add(BuildabilityDecider::additionalBlockOnFirstBlock);
+                    currentPlayerGodCard.constructionConstraints.add(BuildabilityDecider::buildOnSameTarget);
                     break;
                 default:
                     break;
@@ -49,13 +47,12 @@ public class FlowDecider extends Decider {
     }
 
     /**
-     * The method extends the movement phase, necessary for Artemis. It allows you to make back-to-back movements.
-     * @param game the game all players currently play
-     * @return the next phase you have to get in. Restoration tells the method if it's the first time you access the extension of the movement phase.
-     *      * If not alerted, we would never leave the movement phase.
-     *      * Returns Phase.Movement if we are in the Movement phase for the first time, returns Phase.Construction if we are in the second iteration of Movement
+     * This method allows you to be in the Movement phase twice in a row, injecting the constraints connected to the player's GodCard
+     * @param game the game all players are currently playing
+     * @return Phase.Movement if you called the method while in your first Movement phase. Otherwise, whatever is the next phase
+     * @author Mattia Valassi, Marco Riva
      */
-    public static Phase nextPhaseExtendsMovement (Game game){
+    public static Phase extendsMovement(Game game){
 
         GodCard currentPlayerGodCard = game.getCurrentPlayer().getGodCard();
 
@@ -74,9 +71,13 @@ public class FlowDecider extends Decider {
         }
     }
 
-    public static Phase nextPhaseConstructionTwice (Game game){
-
-        GodCard currentPlayerGodCard = game.getCurrentPlayer().getGodCard();
+    /**
+     * This method allows you to be in the Construction phase before and after the Movement phase, if certain conditions connected to the player's GodCard are verified
+     * @param game the game all players are currently playing
+     * @return Phase.Construction if you are in the Start Phase. Otherwise, whatever is the next phase
+     * @author Mattia Valassi
+     */
+    public static Phase buildBeforeAndAfter(Game game){
 
         if (game.getCurrentPhase().equals(Phase.Start)){
             try {
@@ -103,7 +104,13 @@ public class FlowDecider extends Decider {
 
     }
 
-    public static Phase nextPhaseApplyMalus (Game game){
+    /**
+     * This method allows you to apply a malus to the players following you, all during your End phase, if certain conditions connected to the player's GodCard are verified
+     * @param game the game all players are currently playing
+     * @return Whatever is the next phase
+     * @author Mattia Valassi
+     */
+    public static Phase applyMalus(Game game){
         if (game.getCurrentPhase().equals(Phase.End)){
             if (game.getCurrentPlayer().hasPlayerRisen(game)){
                 for (Player otherPlayer : game.getPlayers()){
@@ -111,7 +118,6 @@ public class FlowDecider extends Decider {
                         switch (game.getCurrentPlayer().getGodCard().getName()){
                             case Athena:{
                                 otherPlayer.getGodCard().movementConstraints.add(ReachabilityDecider::cannotMoveUp);
-                                return Phase.Start;
                             }
                         }
                     }

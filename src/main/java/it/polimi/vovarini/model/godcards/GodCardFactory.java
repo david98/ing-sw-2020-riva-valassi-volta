@@ -65,7 +65,7 @@ public class GodCardFactory {
      */
     private static GodCard createApollo() {
       GodCard apollo = new GodCard(GodName.Apollo);
-      apollo.movementConditions.add(ReachabilityDecider::isPointReachableCanExchangeWithWorker);
+      apollo.movementConditions.add(ReachabilityDecider::canExchangeWithWorker);
       return apollo;
     }
 
@@ -75,7 +75,7 @@ public class GodCardFactory {
      */
     private static GodCard createArtemis(){
       GodCard artemis = new GodCard(GodName.Artemis);
-      artemis.nextPhase = FlowDecider::nextPhaseExtendsMovement;
+      artemis.nextPhase = FlowDecider::extendsMovement;
       return artemis;
     }
 
@@ -85,7 +85,7 @@ public class GodCardFactory {
      */
     private static GodCard createAthena() {
       GodCard athena = new GodCard(GodName.Athena);
-      athena.nextPhase = FlowDecider::nextPhaseApplyMalus;
+      athena.nextPhase = FlowDecider::applyMalus;
       return athena;
     }
 
@@ -95,7 +95,7 @@ public class GodCardFactory {
      */
     private static GodCard createAtlas() {
       GodCard atlas = new GodCard(GodName.Atlas);
-      atlas.validateConstruction = ValidationDecider::validateConstructionAtlas;
+      atlas.validateConstruction = ValidationDecider::allowDome;
       return atlas;
     }
 
@@ -105,7 +105,7 @@ public class GodCardFactory {
      */
     private static GodCard createDemeter() {
       GodCard demeter = new GodCard(GodName.Demeter);
-      demeter.nextPhase = FlowDecider::nextPhaseExtendsConstruction;
+      demeter.nextPhase = FlowDecider::extendsConstruction;
       return demeter;
     }
 
@@ -115,7 +115,7 @@ public class GodCardFactory {
      */
     private static GodCard createHephaestus(){
       GodCard hephy = new GodCard(GodName.Hephaestus);
-      hephy.nextPhase = FlowDecider::nextPhaseExtendsConstruction;
+      hephy.nextPhase = FlowDecider::extendsConstruction;
       return hephy;
     }
 
@@ -125,8 +125,8 @@ public class GodCardFactory {
      */
     private static GodCard createMinotaur() {
         GodCard minotaur = new GodCard(GodName.Minotaur);
-        minotaur.movementConditions.add(ReachabilityDecider::isPointReachableConditionedExchange);
-        minotaur.listMovementEffects = ConsequencesDecider::listEffectsMinotaur;
+        minotaur.movementConditions.add(ReachabilityDecider::conditionedExchange);
+        minotaur.listMovementEffects = ConsequencesDecider::forceOpponentWorker;
         return minotaur;
     }
 
@@ -136,7 +136,7 @@ public class GodCardFactory {
      */
     private static GodCard createPan() {
       GodCard pan = new GodCard(GodName.Pan);
-      pan.winningConditions.add(WinDecider::isWinningPan);
+      pan.winningConditions.add(WinDecider::downTwoLevels);
       return pan;
     }
 
@@ -146,7 +146,7 @@ public class GodCardFactory {
      */
     private static GodCard createPrometheus(){
       GodCard prometheus = new GodCard(GodName.Prometheus);
-      prometheus.nextPhase = FlowDecider::nextPhaseConstructionTwice;
+      prometheus.nextPhase = FlowDecider::buildBeforeAndAfter;
       return prometheus;
     }
 

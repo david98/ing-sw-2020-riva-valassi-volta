@@ -12,22 +12,21 @@ import it.polimi.vovarini.model.board.items.Worker;
 import java.util.Stack;
 
 /**
- * @class Reachability is an extension of Behavior. It represents in specific the "Move" behavior. Here, all methods influenced by cards acting on the Moving aspect
- * of the Game are listed
+ * ReachabilityDecider is an extension of Decider. It decides what boxes a player can move to
+ * @version 2.0
+ * @since 1.0
+ * @author Mattia Valassi
  */
 public class ReachabilityDecider extends Decider {
 
-
     /**
-     * This method checks if, after applying Apollo's effect, the point chosen by the player can be reached with a Movement move
-     * (Apollo adds the possibility of exchanging with an adjacent worker of an opponent)
-     *
+     * This method represents an alternative condition on reachability, allowing you to reach an adjacent box occupied by an opponent's worker
      * @param game  is the game currently played by all the players
      * @param point is the destination of movement selected by the current player
      * @return true if the chosen position is reachable, false if it isn't
      * @author Davide Volta
      */
-    public static boolean isPointReachableCanExchangeWithWorker(Game game, Point point) {
+    public static boolean canExchangeWithWorker(Game game, Point point) {
         try {
             Worker currentWorker = game.getCurrentPlayer().getCurrentWorker();
             Point currentWorkerPosition = game.getBoard().getItemPosition(currentWorker);
@@ -52,15 +51,14 @@ public class ReachabilityDecider extends Decider {
     }
 
     /**
-     * This method checks if, after applying Minotaur's effect, the point chosen by the player can be reached with a Movement move
-     * (Minotaur adds the possibility to force an opponent's worker to move in the same direction you're moving, and then take the previous position as yours)
-     *
+     * This method represents an alternative condition on reachability, allowing you to reach an adjacent box occupied by an opponent's worker
+     * if conditions connected to the player's GodCard are verified
      * @param game  is the game currently played by all the players
      * @param point is the destination of movement selected by the current player
      * @return if the chosen position is reachable, false if it isn't
      * @author Marco Riva
      */
-    public static boolean isPointReachableConditionedExchange(Game game, Point point) {
+    public static boolean conditionedExchange(Game game, Point point) {
         try {
             Worker currentWorker = game.getCurrentPlayer().getCurrentWorker();
             Point currentWorkerPosition = game.getBoard().getItemPosition(currentWorker);
@@ -121,8 +119,7 @@ public class ReachabilityDecider extends Decider {
 
 
     /**
-     * This method is a constraint to apply to the second movement phase of a player when he's owning the Artemis card.
-     * It denies to the player the opportunity to move to his previous box
+     * This method represents a constraint on reachability, denying you to reach your previous box if you are performing two movements in a row
      * @param game is the game currently played by all the players
      * @param point is the destination of movement selected by the current player
      * @return if the chosen position is reachable, false if it isn't
@@ -142,10 +139,8 @@ public class ReachabilityDecider extends Decider {
     }
 
     /**
-     * This method applies the Malus of the GodCard "Athena", blocking points that are a level higher than the current worker destination
-     * It will fill the blockedPoints attribute. In default cases, the attribute is an empty list and it will remain that as long as constraintAthena
-     * is not applied. ConstraintAthena gets applied by Athena on every player different than the current, if the current player moved up a level
-     *
+     * This method represents a constraint on reachability, denying the other players to level up with a movement if the player
+     * currently playing did not level up in his turn
      * @param game  is the current game played by all the players
      * @param point is the box chosen as destination by the current player, performing a Movement move.
      * @author Mattia Valassi, Marco Riva
