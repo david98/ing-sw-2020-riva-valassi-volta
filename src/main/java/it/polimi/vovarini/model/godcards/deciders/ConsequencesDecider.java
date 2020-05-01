@@ -26,7 +26,6 @@ public class ConsequencesDecider extends Decider {
      * @author Marco Riva
      */
     public static List<Movement> forceOpponentWorker(Game game, Movement movement) {
-
         List<Movement> movementList = new LinkedList<>();
 
         Point start = movement.getStart();

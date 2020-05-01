@@ -8,9 +8,11 @@ import it.polimi.vovarini.model.board.items.Block;
 import it.polimi.vovarini.model.board.items.InvalidLevelException;
 import it.polimi.vovarini.model.godcards.GodCard;
 import it.polimi.vovarini.model.moves.Construction;
+import it.polimi.vovarini.model.moves.Move;
 
 /**
- * FlowDecider is an extension of Decider. It decides what is the next phase the player should be into, based upon card effects
+ * FlowDecider is an extension of Decider. It decides what is the next phase the player should be into,
+ * based upon card effects
  * @author Mattia Valassi
  * @version 2.0
  * @since 1.0
@@ -29,10 +31,10 @@ public class FlowDecider extends Decider {
         if (game.getCurrentPhase().equals(Phase.Construction) && game.getCurrentPlayer().getConstructionList().size() == 1){
             switch (currentPlayerGodCard.getName()){
                 case Demeter:
-                    currentPlayerGodCard.constructionConstraints.add(BuildabilityDecider::denyPreviousTarget);
+                    currentPlayerGodCard.getConstructionConstraints().add(BuildabilityDecider::denyPreviousTarget);
                     break;
                 case Hephaestus:
-                    currentPlayerGodCard.constructionConstraints.add(BuildabilityDecider::buildOnSameTarget);
+                    currentPlayerGodCard.getConstructionConstraints().add(BuildabilityDecider::buildOnSameTarget);
                     break;
                 default:
                     break;
@@ -59,7 +61,7 @@ public class FlowDecider extends Decider {
         if (game.getCurrentPhase().equals((Phase.Movement)) && game.getCurrentPlayer().getMovementList().size() == 1){
             switch (currentPlayerGodCard.getName()){
                 case Artemis:
-                    currentPlayerGodCard.movementConstraints.add(ReachabilityDecider::previousBoxDenied);
+                    currentPlayerGodCard.getMovementConstraints().add(ReachabilityDecider::previousBoxDenied);
                     break;
                 default:
                     break;
@@ -78,7 +80,6 @@ public class FlowDecider extends Decider {
      * @author Mattia Valassi
      */
     public static Phase buildBeforeAndAfter(Game game){
-
         if (game.getCurrentPhase().equals(Phase.Start)){
             try {
                 game.getCurrentPlayer().getConstructionList().add(new Construction(game.getBoard(), new Block(Block.MAX_LEVEL), new Point(0, 0), true));
@@ -95,7 +96,8 @@ public class FlowDecider extends Decider {
             return Phase.Movement;
         }
         else if (game.getCurrentPlayer().getConstructionList().size() == 2){
-            game.getCurrentPlayer().getGodCard().movementConstraints.add(ReachabilityDecider::cannotMoveUp);
+            game.getCurrentPlayer().getConstructionList().removeIf(Move::isForced);
+            game.getCurrentPlayer().getGodCard().getMovementConstraints().add(ReachabilityDecider::cannotMoveUp);
             return Phase.Movement;
         }
         else {
@@ -117,7 +119,7 @@ public class FlowDecider extends Decider {
                     if (!otherPlayer.equals(game.getCurrentPlayer())){
                         switch (game.getCurrentPlayer().getGodCard().getName()){
                             case Athena:{
-                                otherPlayer.getGodCard().movementConstraints.add(ReachabilityDecider::cannotMoveUp);
+                                otherPlayer.getGodCard().getMovementConstraints().add(ReachabilityDecider::cannotMoveUp);
                             }
                         }
                     }

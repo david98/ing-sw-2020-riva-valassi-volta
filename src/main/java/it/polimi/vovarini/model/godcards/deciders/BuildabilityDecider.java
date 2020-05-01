@@ -26,11 +26,11 @@ public class BuildabilityDecider extends Decider {
         Player currentPlayer = game.getCurrentPlayer();
         int size = currentPlayer.getConstructionList().size();
 
-        if(currentPlayer.getConstructionList().get(size-1).getTarget().equals(target)) {
-            return false;
+        try {
+            return !currentPlayer.getConstructionList().get(size - 1).getTarget().equals(target);
+        } catch (ArrayIndexOutOfBoundsException e){
+            throw new RuntimeException(e);
         }
-
-        return true;
     }
 
     /**
@@ -47,12 +47,12 @@ public class BuildabilityDecider extends Decider {
         Player currentPlayer = game.getCurrentPlayer();
         int size = currentPlayer.getConstructionList().size();
 
-        if(currentPlayer.getConstructionList().get(size-1).getTarget().equals(target)
-            && game.getBoard().getBox(target).getLevel() < 3) {
-            return true;
+        try {
+            return currentPlayer.getConstructionList().get(size - 1).getTarget().equals(target)
+                    && game.getBoard().getBox(target).getLevel() < 3;
+        } catch (ArrayIndexOutOfBoundsException e){
+            throw new RuntimeException(e);
         }
-
-        return false;
     }
 
 

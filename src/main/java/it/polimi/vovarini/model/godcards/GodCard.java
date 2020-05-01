@@ -30,7 +30,6 @@ import java.util.stream.Collectors;
  * name references one of the cards available in the base set of Santorini
  *
  * @author Mattia Valassi
- * @author Marco Riva
  * @author Davide Volta
  * @version 0.2
  * @since 0.1
@@ -328,7 +327,6 @@ public class GodCard implements Cloneable, Serializable {
       game.getCurrentPlayer().getGodCard().constructionConstraints.clear();
 
       game.nextPlayer();
-
     }
 
     return next;
@@ -394,5 +392,29 @@ public class GodCard implements Cloneable, Serializable {
     } else {
       return super.equals(obj);
     }
+  }
+
+  public Collection<BiFunction<Game, Point, Boolean>> getMovementConditions() {
+    return movementConditions;
+  }
+
+  public Collection<BiFunction<Game, Point, Boolean>> getMovementConstraints() {
+    return movementConstraints;
+  }
+
+  public Collection<BiFunction<Game, Point, Boolean>> getConstructionConditions() {
+    return constructionConditions;
+  }
+
+  public Collection<BiFunction<Game, Point, Boolean>> getConstructionConstraints() {
+    return constructionConstraints;
+  }
+
+  public Collection<Predicate<Movement>> getWinningConditions() {
+    return winningConditions;
+  }
+
+  public Collection<Predicate<Movement>> getWinningConstraints() {
+    return winningConstraints;
   }
 }

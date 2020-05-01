@@ -11,6 +11,7 @@ import it.polimi.vovarini.model.board.Board;
 import it.polimi.vovarini.model.board.items.Block;
 import it.polimi.vovarini.model.board.items.Worker;
 import it.polimi.vovarini.model.moves.Construction;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -25,30 +26,49 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class AtlasTests {
 
-    Game game;
+    private static Game game;
+    private static GodCard atlas;
 
-    @BeforeEach
-    public void createAtlasItems() {
-        try {
+    @BeforeAll
+    public static void init(){
+        try{
             game = new Game(2);
-        } catch (InvalidNumberOfPlayersException ignored) {
 
-        }
-        try {
             game.addPlayer("Guest01");
             game.addPlayer("Guest02");
-        } catch (InvalidNumberOfPlayersException ignored) {
+
+            atlas = GodCardFactory.create(GodName.Atlas);
+            atlas.setGame(game);
+            for (Player player: game.getPlayers()){
+                player.setGodCard(atlas);
+            }
+        } catch (InvalidNumberOfPlayersException e){
+            e.printStackTrace();;
         }
-        GodCard atlas = GodCardFactory.create(GodName.Atlas);
-        game.getCurrentPlayer().setGodCard(atlas);
-        atlas.setGame(game);
+    }
+
+    @BeforeEach
+    private void resetGame(){
+        Board b = game.getBoard();
+        for (int x = 0; x < b.getSize(); x++){
+            for (int y = 0; y < b.getSize(); y++){
+                Point cur = new Point(x, y);
+                while (true){
+                    try {
+                        b.remove(cur);
+                    } catch (BoxEmptyException | InvalidPositionException e){
+                        break;
+                    }
+                }
+            }
+        }
     }
 
     private static Stream<Arguments> provideAllPossibleConstruction() {
         LinkedList<Arguments> args = new LinkedList<>();
 
         for (int lStart = 0; lStart < Block.MAX_LEVEL; lStart++) {
-            for (int lTarget = 0; lTarget < Block.MAX_LEVEL; lTarget++) {
+            for (int lTarget = 0; lTarget <= Block.MAX_LEVEL; lTarget++) {
                 args.add(Arguments.of(lStart, lTarget));
             }
         }
@@ -64,14 +84,12 @@ public class AtlasTests {
 
     @ParameterizedTest
     @MethodSource("provideAllPossibleConstruction")
-    @DisplayName("Test a valid construction with a GodCard of type Atlas")
-    public void validConstruction(int startLevel, int targetLevel) {
+    @DisplayName("Test that Atlas' validation rules are correctly applied")
+    public void testValidationCondition(int startLevel, int targetLevel) {
 
-        GodCard atlas = game.getCurrentPlayer().getGodCard();
-        Worker currentWorker = game.getCurrentPlayer().getCurrentWorker();
         Board board = game.getBoard();
-        Point start = new Point(0, 0);
-        Point target = new Point(0, 1);
+        Point start = new Point(0, 1);
+        Point target = new Point(0, 0);
 
         for (int i = 0; i < startLevel; i++) {
             try {
@@ -81,7 +99,7 @@ public class AtlasTests {
             }
         }
         try {
-            board.place(currentWorker, start);
+            board.place(game.getCurrentPlayer().getCurrentWorker(), start);
         } catch (InvalidPositionException | BoxFullException e) {
             e.printStackTrace();
         }
@@ -94,43 +112,8 @@ public class AtlasTests {
             }
         }
 
-        try {
-            Construction construction = new Construction(board, Block.blocks[3], target);
-            assertTrue(atlas.validate(atlas.computeBuildablePoints(), construction));
-            game.performMove(construction);
-            assertEquals(Block.blocks[3], board.getBox(target).getItems().peek());
-        } catch (BoxEmptyException e) {
-            e.printStackTrace();
-        }
-    }
-
-    @Test
-    @DisplayName("Test an invalid construction with a GodCard of type Atlas")
-    /** status
-     *  startBox: lv 0 + currentWorker
-     *  targetBox: lv 4 + free
-     */
-    public void invalidConstructionTargetLevel() {
-        GodCard atlas = game.getCurrentPlayer().getGodCard();
-        Worker currentWorker = game.getCurrentPlayer().getCurrentWorker();
-
-        Board board = game.getBoard();
-        Point start = new Point(0, 0);
-        Point target = new Point(0, 1);
-
-        try {
-            board.place(currentWorker, start);
-            board.place(Block.blocks[0], target);
-            board.place(Block.blocks[1], target);
-            board.place(Block.blocks[2], target);
-            board.place(Block.blocks[3], target);
-
-            Construction construction = new Construction(board, Block.blocks[3], target);
-            assertFalse(atlas.validate(atlas.computeBuildablePoints(), construction));
-
-        } catch (BoxFullException ignored) {
-        } catch (InvalidPositionException ignored) {
-        }
+        Construction construction = new Construction(board, Block.blocks[3], target);
+        assertEquals(Block.MAX_LEVEL != targetLevel, atlas.validate(atlas.computeBuildablePoints(), construction));
     }
 
     @Test
@@ -140,24 +123,19 @@ public class AtlasTests {
      *  targetBox: lv 0 + enemy's Worker
      */
     public void invalidConstructionTargetOccupied() {
-        GodCard atlas = game.getCurrentPlayer().getGodCard();
-        Worker currentWorker = game.getCurrentPlayer().getCurrentWorker();
-        Player enemyPlayer = game.getPlayers()[1];
-        Worker enemyWorker = enemyPlayer.getCurrentWorker();
-
+        Worker enemyWorker = game.getPlayers()[1].getCurrentWorker();
         Board board = game.getBoard();
-        Point start = new Point(0, 0);
-        Point target = new Point(0, 1);
+        Point start = new Point(0, 1);
+        Point target = new Point(0, 0);
 
         try {
-            board.place(currentWorker, start);
+            board.place(game.getCurrentPlayer().getCurrentWorker(), start);
             board.place(enemyWorker, target);
-
-            Construction construction = new Construction(board, Block.blocks[3], target);
-            assertFalse(atlas.validate(atlas.computeBuildablePoints(), construction));
-
-        } catch (BoxFullException ignored) {
-        } catch (InvalidPositionException ignored) {
+        } catch (BoxFullException | InvalidPositionException e) {
+            e.printStackTrace();
         }
+
+        Construction construction = new Construction(board, Block.blocks[3], target);
+        assertFalse(atlas.validate(atlas.computeBuildablePoints(), construction));
     }
 }

@@ -25,6 +25,7 @@ public class ReachabilityDecider extends Decider {
      * @param point is the destination of movement selected by the current player
      * @return true if the chosen position is reachable, false if it isn't
      * @author Davide Volta
+     * @author Marco Riva
      */
     public static boolean canExchangeWithWorker(Game game, Point point) {
         try {
@@ -41,7 +42,7 @@ public class ReachabilityDecider extends Decider {
 
                 return ((destinationItems.peek().canBeRemoved() && !destinationItems.peek().equals(otherWorker)));
             } catch (BoxEmptyException ignored) {
-                return true;
+                return false;
             }
 
         } catch (ItemNotFoundException ignored) {
@@ -55,7 +56,8 @@ public class ReachabilityDecider extends Decider {
      * if conditions connected to the player's GodCard are verified
      * @param game  is the game currently played by all the players
      * @param point is the destination of movement selected by the current player
-     * @return if the chosen position is reachable, false if it isn't
+     * @return true if there is an opponent's worker on the point chosen as the destination and if the opponent's
+     * worker can be forced one space straight backwards to an unoccupied space at any level, false otherwise
      * @author Marco Riva
      */
     public static boolean conditionedExchange(Game game, Point point) {
@@ -119,11 +121,13 @@ public class ReachabilityDecider extends Decider {
 
 
     /**
-     * This method represents a constraint on reachability, denying you to reach your previous box if you are performing two movements in a row
+     * This method represents a constraint on reachability, denying you to reach your previous box if you are
+     * performing two movements in a row
      * @param game is the game currently played by all the players
      * @param point is the destination of movement selected by the current player
-     * @return if the chosen position is reachable, false if it isn't
-     * @author Marco Riva, Mattia Valassi
+     * @return false if the destination point is the initial point, true otherwise
+     * @author Mattia Valassi
+     * @author Marco Riva
      */
     public static boolean previousBoxDenied(Game game, Point point) {
         // mi fido che arrivati qui, la lista abbia un movimento, quindi non controllo se è vuoto
@@ -131,19 +135,17 @@ public class ReachabilityDecider extends Decider {
         Player currentPlayer = game.getCurrentPlayer();
         int size = currentPlayer.getMovementList().size();
 
-        if(currentPlayer.getMovementList().get(size-1).getStart().equals(point)) {
-            return false;
-        }
-
-        return true;
+        return !currentPlayer.getMovementList().get(size-1).getStart().equals(point);
     }
 
     /**
-     * This method represents a constraint on reachability, denying the other players to level up with a movement if the player
-     * currently playing did not level up in his turn
+     * This method represents a constraint on reachability, denying the other players to level up with a movement
+     * if the player currently playing did not level up in his turn
      * @param game  is the current game played by all the players
-     * @param point is the box chosen as destination by the current player, performing a Movement move.
-     * @author Mattia Valassi, Marco Riva
+     * @param point is the destination of movement selected by the current player
+     * @return false if the destination point is higher than the current worker position, true otherwise
+     * @author Mattia Valassi
+     * @author Marco Riva
      */
     public static boolean cannotMoveUp(Game game, Point point) {
         try {
@@ -154,12 +156,11 @@ public class ReachabilityDecider extends Decider {
             int destinationLevel = destinationBox.getLevel();
             int currentWorkerLevel = game.getBoard().getBox(currentWorkerPosition).getLevel();
 
-            return (destinationLevel - currentWorkerLevel < 1);
+            return destinationLevel - currentWorkerLevel < 1;
 
         } catch (ItemNotFoundException ignored) {
             System.err.println("This really should never happen...");
         }
         return false;
     }
-
 }
