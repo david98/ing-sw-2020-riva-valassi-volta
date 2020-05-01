@@ -201,7 +201,7 @@ public class GodCard implements Cloneable, Serializable {
               return list.contains(construction.getTarget()) &&
                           b.canBePlacedOn(s.peek());
             } catch (BoxEmptyException ignored){
-              return construction.getBlock().getLevel() == 1;
+              return list.contains(construction.getTarget()) && construction.getBlock().getLevel() == 1;
             }
           };
 
