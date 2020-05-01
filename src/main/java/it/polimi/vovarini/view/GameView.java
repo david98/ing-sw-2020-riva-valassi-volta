@@ -35,9 +35,7 @@ import java.util.Scanner;
 import static com.sun.jna.platform.win32.Wincon.ENABLE_LINE_INPUT;
 
 public class GameView extends View{
-
-  private final ViewData data;
-
+  
   private final GameClient client;
 
   private boolean reRenderNeeded;
