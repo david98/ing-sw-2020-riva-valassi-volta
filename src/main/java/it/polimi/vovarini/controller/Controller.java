@@ -16,7 +16,6 @@ import it.polimi.vovarini.model.moves.Movement;
 
 import java.util.ArrayList;
 import java.util.EventListener;
-import java.util.List;
 
 /**
  * Class that represents the Controller concept of the MVC pattern. Acts as a Listener to events triggered from the View, and updates the Model about it, notifying him
@@ -66,14 +65,14 @@ public class Controller implements EventListener {
     }
   }
 
-  // Not part of the 1vs1 simulation we want to develop now
+  // to rewrite
   @GameEventListener
-  public void update(CardChoiceEvent evt) {
+  public void update(AvailableCardsEvent evt) {
     this.selectedCards.addAll(evt.getSelectedCards());
   }
 
-  // Not part of the 1vs1 simulation we want to develop now
-  public void update(CardAssignmentEvent evt)
+// to rewrite
+  public void update(CardChoiceEvent evt)
           throws CardsNotSelectedException, InvalidCardException {
     if (this.selectedCards.isEmpty()) {
       throw new CardsNotSelectedException();
