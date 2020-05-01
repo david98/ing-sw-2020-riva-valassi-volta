@@ -1,5 +1,7 @@
 package it.polimi.vovarini.model.godcards.deciders;
 
+import it.polimi.vovarini.common.events.GameEventManager;
+import it.polimi.vovarini.common.events.GodCardUpdateEvent;
 import it.polimi.vovarini.model.Game;
 import it.polimi.vovarini.model.Phase;
 import it.polimi.vovarini.model.Player;
@@ -31,11 +33,13 @@ public class FlowDecider extends Decider {
         if (game.getCurrentPhase().equals(Phase.Construction) && game.getCurrentPlayer().getConstructionList().size() == 1){
             switch (currentPlayerGodCard.getName()){
                 case Demeter:
-                    currentPlayerGodCard.getConstructionConstraints().add(BuildabilityDecider::denyPreviousTarget);
-                    break;
+                  currentPlayerGodCard.getConstructionConstraints().add(BuildabilityDecider::denyPreviousTarget);
+                  GameEventManager.raise(new GodCardUpdateEvent(currentPlayerGodCard, game.getCurrentPlayer()));
+                  break;
                 case Hephaestus:
-                    currentPlayerGodCard.getConstructionConstraints().add(BuildabilityDecider::buildOnSameTarget);
-                    break;
+                  currentPlayerGodCard.getConstructionConstraints().add(BuildabilityDecider::buildOnSameTarget);
+                  GameEventManager.raise(new GodCardUpdateEvent(currentPlayerGodCard, game.getCurrentPlayer()));
+                  break;
                 default:
                     break;
             }
@@ -61,10 +65,11 @@ public class FlowDecider extends Decider {
         if (game.getCurrentPhase().equals((Phase.Movement)) && game.getCurrentPlayer().getMovementList().size() == 1){
             switch (currentPlayerGodCard.getName()){
                 case Artemis:
-                    currentPlayerGodCard.getMovementConstraints().add(ReachabilityDecider::previousBoxDenied);
-                    break;
+                  currentPlayerGodCard.getMovementConstraints().add(ReachabilityDecider::previousBoxDenied);
+                  GameEventManager.raise(new GodCardUpdateEvent(currentPlayerGodCard, game.getCurrentPlayer()));
+                  break;
                 default:
-                    break;
+                  break;
             }
             return Phase.Movement;
         }
@@ -95,10 +100,12 @@ public class FlowDecider extends Decider {
             game.getCurrentPlayer().getConstructionList().clear();
             return Phase.Movement;
         }
-        else if (game.getCurrentPlayer().getConstructionList().size() == 2){
-            game.getCurrentPlayer().getConstructionList().removeIf(Move::isForced);
-            game.getCurrentPlayer().getGodCard().getMovementConstraints().add(ReachabilityDecider::cannotMoveUp);
-            return Phase.Movement;
+        else if (game.getCurrentPlayer().getConstructionList().size() == 2
+                && game.getCurrentPhase().equals(Phase.Construction)){
+          game.getCurrentPlayer().getConstructionList().removeIf(Move::isForced);
+          game.getCurrentPlayer().getGodCard().getMovementConstraints().add(ReachabilityDecider::cannotMoveUp);
+          GameEventManager.raise(new GodCardUpdateEvent(game.getCurrentPlayer().getGodCard(), game.getCurrentPlayer()));
+          return Phase.Movement;
         }
         else {
             return game.getCurrentPhase().next();
@@ -120,6 +127,8 @@ public class FlowDecider extends Decider {
                         switch (game.getCurrentPlayer().getGodCard().getName()){
                             case Athena:{
                                 otherPlayer.getGodCard().getMovementConstraints().add(ReachabilityDecider::cannotMoveUp);
+                                GameEventManager.raise(new GodCardUpdateEvent(otherPlayer.getGodCard(), otherPlayer));
+                                return Phase.Start;
                             }
                         }
                     }

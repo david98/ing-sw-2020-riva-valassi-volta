@@ -18,6 +18,7 @@ import it.polimi.vovarini.model.board.Board;
 import it.polimi.vovarini.model.board.items.Item;
 import it.polimi.vovarini.model.board.items.Sex;
 import it.polimi.vovarini.model.board.items.Worker;
+import it.polimi.vovarini.model.godcards.GodCard;
 import it.polimi.vovarini.model.godcards.GodCardFactory;
 import it.polimi.vovarini.model.godcards.GodName;
 import it.polimi.vovarini.model.moves.Movement;
@@ -101,7 +102,7 @@ public class GameView extends View{
   @GameEventListener
   public void handleNewPlayer(NewPlayerEvent e) {
     Player p = e.getNewPlayer().clone();
-    if (p.equals(data.getOwner())){
+    if (p.equals(data.getOwner())) {
       data.setOwner(p);
     }
     data.addPlayer(p);
