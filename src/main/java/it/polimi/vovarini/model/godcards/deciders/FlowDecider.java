@@ -1,5 +1,7 @@
 package it.polimi.vovarini.model.godcards.deciders;
 
+import it.polimi.vovarini.common.events.GameEventManager;
+import it.polimi.vovarini.common.events.GodCardUpdateEvent;
 import it.polimi.vovarini.model.Game;
 import it.polimi.vovarini.model.Phase;
 import it.polimi.vovarini.model.Player;
@@ -32,9 +34,11 @@ public class FlowDecider extends Decider {
             switch (currentPlayerGodCard.getName()){
                 case Demeter:
                     currentPlayerGodCard.constructionConstraints.add(BuildabilityDecider::previousTargetDenied);
+                    GameEventManager.raise(new GodCardUpdateEvent(currentPlayerGodCard, game.getCurrentPlayer()));
                     break;
                 case Hephaestus:
                     currentPlayerGodCard.constructionConstraints.add(BuildabilityDecider::additionalBlockOnFirstBlock);
+                    GameEventManager.raise(new GodCardUpdateEvent(currentPlayerGodCard, game.getCurrentPlayer()));
                     break;
                 default:
                     break;
@@ -63,6 +67,7 @@ public class FlowDecider extends Decider {
             switch (currentPlayerGodCard.getName()){
                 case Artemis:
                     currentPlayerGodCard.movementConstraints.add(ReachabilityDecider::previousBoxDenied);
+                    GameEventManager.raise(new GodCardUpdateEvent(currentPlayerGodCard, game.getCurrentPlayer()));
                     break;
                 default:
                     break;
@@ -95,6 +100,7 @@ public class FlowDecider extends Decider {
         }
         else if (game.getCurrentPlayer().getConstructionList().size() == 2){
             game.getCurrentPlayer().getGodCard().movementConstraints.add(ReachabilityDecider::cannotMoveUp);
+            GameEventManager.raise(new GodCardUpdateEvent(currentPlayerGodCard, game.getCurrentPlayer()));
             return Phase.Movement;
         }
         else {
@@ -111,6 +117,7 @@ public class FlowDecider extends Decider {
                         switch (game.getCurrentPlayer().getGodCard().getName()){
                             case Athena:{
                                 otherPlayer.getGodCard().movementConstraints.add(ReachabilityDecider::cannotMoveUp);
+                                GameEventManager.raise(new GodCardUpdateEvent(otherPlayer.getGodCard(), otherPlayer));
                                 return Phase.Start;
                             }
                         }

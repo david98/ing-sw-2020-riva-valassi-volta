@@ -1,5 +1,7 @@
 package it.polimi.vovarini.model.godcards;
 
+import it.polimi.vovarini.common.events.GameEventManager;
+import it.polimi.vovarini.common.events.GodCardUpdateEvent;
 import it.polimi.vovarini.common.exceptions.BoxEmptyException;
 import it.polimi.vovarini.common.exceptions.InvalidPositionException;
 import it.polimi.vovarini.common.exceptions.ItemNotFoundException;
@@ -314,7 +316,7 @@ public class GodCard implements Cloneable{
       resetPlayerInfo(game);
       game.getCurrentPlayer().getGodCard().movementConstraints.clear();
       game.getCurrentPlayer().getGodCard().constructionConstraints.clear();
-
+      GameEventManager.raise(new GodCardUpdateEvent(this, game.getCurrentPlayer()));
       game.nextPlayer();
 
     }

@@ -151,10 +151,11 @@ public class DemeterTests {
 
         List buildablePoints = demeter.computeBuildablePoints();
 
-        for(int i = 0; i < buildablePoints.size(); i++) {
+        for (int i = 0; i < buildablePoints.size(); i++) {
             Construction validConstruction = new Construction(board, Block.blocks[0], (Point) buildablePoints.get(i));
             assertTrue(demeter.validate(demeter.computeBuildablePoints(), validConstruction));
         }
+
     }
 
 }
