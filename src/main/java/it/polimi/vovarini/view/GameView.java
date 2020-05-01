@@ -35,13 +35,13 @@ import static com.sun.jna.platform.win32.Wincon.ENABLE_LINE_INPUT;
 
 public class GameView extends View{
 
-  private ViewData data;
+  private final ViewData data;
 
-  private GameClient client;
+  private final GameClient client;
 
   private boolean reRenderNeeded;
 
-  private BoardRenderer boardRenderer;
+  private final BoardRenderer boardRenderer;
 
   private Terminal terminal;
   private Reader reader;
@@ -110,9 +110,10 @@ public class GameView extends View{
   private String getPhasePrompt(Phase phase){
     switch (phase) {
       case Start -> {
+        return "START - Select a Worker";
       }
       case Movement -> {
-        return "MOVEMENT - Select a Worker, then select a destination.";
+        return "MOVEMENT - Select a destination.";
       }
       case Construction -> {
         return "CONSTRUCTION - Where do you want to build?";
@@ -124,7 +125,6 @@ public class GameView extends View{
         return "";
       }
     }
-    return "";
   }
 
   private void printLine(String line){
@@ -203,6 +203,37 @@ public class GameView extends View{
 
   }
 
+  private void selectWorker(){
+    if (data.getSelectedWorker() == null){
+      if (boardRenderer.getCursorLocation().equals(data.getCurrentStart())) {
+        deSelect();
+      } else {
+        try {
+          Item item = data.getBoard().getItems(boardRenderer.getCursorLocation()).peek();
+          if (data.getOwner().isHasLost()){
+            handlePlayerLoss();
+          }
+
+          if (data.getOwner().getWorkers().values().stream().anyMatch(w -> w.equals(item))) {
+            data.setCurrentStart(boardRenderer.getCursorLocation());
+            data.setSelectedWorker((Worker) item);
+            // mark points reachable by the selected worker
+            boardRenderer.markPoints(
+                    data.getOwner().getGodCard().computeReachablePoints()
+            );
+
+            reRenderNeeded = true;
+          }
+        } catch (BoxEmptyException ignored) {
+        } catch (InvalidPositionException ignored) {
+        }
+
+      }
+    } else {
+      deSelect();
+    }
+  }
+
   /**
    * This method handles a spacebar press when
    * the current phase is Movement.
@@ -254,11 +285,23 @@ public class GameView extends View{
    */
   private void select(){
     switch (data.getCurrentPhase()){
+      case Start ->
+        selectWorker();
+      case Movement ->
+        selectWhenMovementPhase();
+      case Construction ->
+        selectWhenConstructionPhase();
+    }
+  }
+
+  /**
+   * This method handles a
+   */
+  private void confirm(){
+    switch (data.getCurrentPhase()){
       case Start:
       case Movement:
-        selectWhenMovementPhase();
       case Construction:
-        selectWhenConstructionPhase();
       case End:
       default:
     }
@@ -294,8 +337,11 @@ public class GameView extends View{
           break;
         }
         case 110: { //N
-          client.raise(new SkipEvent(data.getOwner().getNickname()));
+          client.raise(new SkipEvent(data.getOwner()));
           break;
+        }
+        case 79: { //O
+          confirm();
         }
         default: {
           break;
