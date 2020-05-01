@@ -1,6 +1,8 @@
 package it.polimi.vovarini.model.board.items;
 
-public abstract class Item {
+import java.io.Serializable;
+
+public abstract class Item implements Serializable {
 
   public boolean canBePlacedOn(Item item) {
     return false;

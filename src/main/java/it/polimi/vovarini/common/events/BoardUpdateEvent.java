@@ -12,7 +12,7 @@ import it.polimi.vovarini.model.board.Board;
  */
 public class BoardUpdateEvent extends GameEvent{
 
-  private Board newBoard;
+  private final Board newBoard;
 
   /**
    *

@@ -9,11 +9,12 @@ import it.polimi.vovarini.common.exceptions.ItemNotFoundException;
 import it.polimi.vovarini.model.Point;
 import it.polimi.vovarini.model.board.items.Item;
 
+import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Stack;
 
-public class Board implements Cloneable{
+public class Board implements Cloneable, Serializable {
 
   public static final int DEFAULT_SIZE = 5;
 

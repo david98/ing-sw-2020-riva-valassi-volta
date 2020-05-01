@@ -18,9 +18,12 @@ import it.polimi.vovarini.model.board.Board;
 import it.polimi.vovarini.model.board.items.Item;
 import it.polimi.vovarini.model.board.items.Sex;
 import it.polimi.vovarini.model.board.items.Worker;
+import it.polimi.vovarini.model.godcards.GodCard;
 import it.polimi.vovarini.model.godcards.GodCardFactory;
 import it.polimi.vovarini.model.godcards.GodName;
 import it.polimi.vovarini.model.moves.Movement;
+import it.polimi.vovarini.server.GameClient;
+import it.polimi.vovarini.server.Server;
 import org.jline.terminal.Terminal;
 import org.jline.terminal.TerminalBuilder;
 
@@ -31,37 +34,33 @@ import java.util.Scanner;
 
 import static com.sun.jna.platform.win32.Wincon.ENABLE_LINE_INPUT;
 
-public class GameView {
+public class GameView extends View{
 
-  private Player owner;
-  private Player currentPlayer;
-  private Player[] players;
-  private Phase currentPhase;
+  private final ViewData data;
 
-  private Board board;
-
-  private Worker selectedWorker;
-  private Point currentStart;
-  private Point currentEnd;
+  private final GameClient client;
 
   private boolean reRenderNeeded;
 
-  private BoardRenderer boardRenderer;
+  private final BoardRenderer boardRenderer;
 
   private Terminal terminal;
   private Reader reader;
 
   private int printedLineCount;
 
-  public GameView(){
-    GameEventManager.bindListeners(this);
+  public GameView() throws IOException {
+    super();
 
-    this.currentPhase = Phase.Start;
+    data = new ViewData();
+
     this.reRenderNeeded = true;
 
     boardRenderer = new BoardRenderer();
 
     printedLineCount = 0;
+
+    client = new GameClient("127.0.0.1", Server.DEFAULT_PORT);
   }
 
   private void handlePlayerLoss(){
@@ -70,54 +69,63 @@ public class GameView {
 
   @GameEventListener
   public void handleBoardUpdate(BoardUpdateEvent e){
-    board = e.getNewBoard().clone();
+    data.setBoard(e.getNewBoard());
     reRenderNeeded = true;
   }
 
   @GameEventListener
-  public void handlePlayerUpdate(CurrentPlayerChangedEvent e){
-    currentPlayer = e.getNewPlayer();
-    // for the purpose of this demo, we also update owner so that the game can continue
-    owner = e.getNewPlayer();
+  public void handleCurrentPlayerUpdate(CurrentPlayerChangedEvent e){
+    data.setCurrentPlayer(e.getNewPlayer());
   }
 
   @GameEventListener
   public void handlePhaseUpdate(PhaseUpdateEvent e){
-    currentPhase = e.getNewPhase();
-    if (currentPhase == Phase.Construction){
-      try {
-        boardRenderer.markPoints(owner.getGodCard().computeBuildablePoints());
-      } catch (CurrentPlayerLosesException ex){
-        handlePlayerLoss();
-      }
+    data.setCurrentPhase(e.getNewPhase());
+    if (data.getCurrentPhase() == Phase.Construction){
+        boardRenderer.markPoints(data.getOwner().getGodCard().computeBuildablePoints());
+        if (data.getOwner().isHasLost()){
+          handlePlayerLoss();
+        }
     }
     reRenderNeeded = true;
   }
 
   @GameEventListener
   public void handleGameStart(GameStartEvent e){
+    for (Player p: e.getPlayers()){
+      data.addPlayer(p);
+    }
     startMatch();
   }
 
+  @Override
+  @GameEventListener
+  public void handleNewPlayer(NewPlayerEvent e) {
+    Player p = e.getNewPlayer().clone();
+    if (p.equals(data.getOwner())) {
+      data.setOwner(p);
+    }
+    data.addPlayer(p);
+  }
+
   private String getPhasePrompt(Phase phase){
-    switch (phase){
-      case Start:{
-        break;
+    switch (phase) {
+      case Start -> {
+        return "START - Select a Worker";
       }
-      case Movement: {
-        return "MOVEMENT - Select a Worker, then select a destination.";
+      case Movement -> {
+        return "MOVEMENT - Select a destination.";
       }
-      case Construction: {
+      case Construction -> {
         return "CONSTRUCTION - Where do you want to build?";
       }
-      case End: {
+      case End -> {
         return "END";
       }
-      default: {
+      default -> {
         return "";
       }
     }
-    return "";
   }
 
   private void printLine(String line){
@@ -127,13 +135,13 @@ public class GameView {
   }
 
   private void renderPlayers(){
-    for (Player player: players){
+    for (Player player: data.getPlayers()){
       StringBuilder playerLine = new StringBuilder();
       playerLine.append(PlayerRenderer.getInstance().render(player));
-      if (player.equals(owner)){
+      if (player.equals(data.getOwner())){
         playerLine.insert(0, "YOU --> ");
       }
-      if (player.equals(currentPlayer)){
+      if (player.equals(data.getCurrentPlayer())){
         playerLine.insert(0, "*");
         playerLine.append("*");
       }
@@ -145,11 +153,11 @@ public class GameView {
     if (reRenderNeeded) {
       clearScreen();
       renderPlayers();
-      printLine(boardRenderer.render(board));
-      if (owner.equals(currentPlayer)) {
-        printLine(getPhasePrompt(currentPhase));
+      printLine(boardRenderer.render(data.getBoard()));
+      if (data.getOwner().equals(data.getCurrentPlayer())) {
+        printLine(getPhasePrompt(data.getCurrentPhase()));
       } else {
-        printLine("It's " + currentPlayer.getNickname() + "'s turn.");
+        printLine("It's " + data.getCurrentPlayer().getNickname() + "'s turn.");
       }
 
       reRenderNeeded = false;
@@ -166,9 +174,8 @@ public class GameView {
   }
 
   private void deSelect(){
-    selectedWorker = null;
-    currentStart = null;
-    currentEnd = null;
+    data.setSelectedWorker(null);
+    data.setCurrentStart(null);
     boardRenderer.resetMarkedPoints();
 
     reRenderNeeded = true;
@@ -179,16 +186,52 @@ public class GameView {
    * the current phase is Construction.
    */
   private void selectWhenConstructionPhase(){
-    try {
+
       Point dest = boardRenderer.getCursorLocation();
-      Collection<Point> buildablePoints = owner.getGodCard().computeBuildablePoints();
-      if (buildablePoints.contains(dest)){
-        int nextLevel = board.getBox(dest).getLevel() + 1;
-        deSelect();
-        GameEventManager.raise(new BuildEvent(owner, dest, nextLevel));
+
+      Collection<Point> buildablePoints = data.getOwner().getGodCard().computeBuildablePoints();
+
+      if (data.getOwner().isHasLost()){
+        handlePlayerLoss();
       }
-    } catch (CurrentPlayerLosesException e){
-      handlePlayerLoss();
+      if (buildablePoints.contains(dest)){
+        int nextLevel = data.getBoard().getBox(dest).getLevel() + 1;
+        deSelect();
+        client.raise(new BuildEvent(data.getOwner().getNickname(), dest, nextLevel));
+      }
+
+
+
+  }
+
+  private void selectWorker(){
+    if (data.getSelectedWorker() == null){
+      if (boardRenderer.getCursorLocation().equals(data.getCurrentStart())) {
+        deSelect();
+      } else {
+        try {
+          Item item = data.getBoard().getItems(boardRenderer.getCursorLocation()).peek();
+          if (data.getOwner().isHasLost()){
+            handlePlayerLoss();
+          }
+
+          if (data.getOwner().getWorkers().values().stream().anyMatch(w -> w.equals(item))) {
+            data.setCurrentStart(boardRenderer.getCursorLocation());
+            data.setSelectedWorker((Worker) item);
+            // mark points reachable by the selected worker
+            boardRenderer.markPoints(
+                    data.getOwner().getGodCard().computeReachablePoints()
+            );
+
+            reRenderNeeded = true;
+          }
+        } catch (BoxEmptyException ignored) {
+        } catch (InvalidPositionException ignored) {
+        }
+
+      }
+    } else {
+      deSelect();
     }
   }
 
@@ -197,41 +240,41 @@ public class GameView {
    * the current phase is Movement.
    */
   private void selectWhenMovementPhase(){
-    if (selectedWorker != null){
-      if (boardRenderer.getCursorLocation().equals(currentStart)){
+    if (data.getSelectedWorker() != null){
+      if (boardRenderer.getCursorLocation().equals(data.getCurrentStart())){
         deSelect();
       } else if (boardRenderer.getMarkedPoints().contains(boardRenderer.getCursorLocation())){
         boardRenderer.resetMarkedPoints();
-        System.out.println("MOVIMENTO!");
-        GameEventManager.raise(new MovementEvent(
-                owner,
+        client.raise(new MovementEvent(
+                data.getOwner().getNickname(),
                 boardRenderer.getCursorLocation())
         );
       }
     } else {
       // check if one of the player's workers is under the cursor
       try {
-        Item item = board.getItems(boardRenderer.getCursorLocation()).peek();
+        Item item = data.getBoard().getItems(boardRenderer.getCursorLocation()).peek();
+        if (data.getOwner().isHasLost()){
+          handlePlayerLoss();
+        }
 
-        if (owner.getWorkers().values().stream().anyMatch(w -> w.equals(item))) {
-          currentStart = boardRenderer.getCursorLocation();
-          selectedWorker = (Worker) item;
-          GameEventManager.raise(
+        if (data.getOwner().getWorkers().values().stream().anyMatch(w -> w.equals(item))) {
+          data.setCurrentStart(boardRenderer.getCursorLocation());
+          data.setSelectedWorker((Worker) item);
+          client.raise(
                   new WorkerSelectionEvent(
-                          owner,
-                          selectedWorker.getSex())
+                          data.getOwner().getNickname(),
+                          data.getSelectedWorker().getSex())
           );
           // mark points reachable by the selected worker
           boardRenderer.markPoints(
-                  owner.getGodCard().computeReachablePoints()
+                  data.getOwner().getGodCard().computeReachablePoints()
           );
 
           reRenderNeeded = true;
         }
       } catch (BoxEmptyException ignored) {
       } catch (InvalidPositionException ignored) {
-      } catch (CurrentPlayerLosesException ignored) {
-        handlePlayerLoss();
       }
 
     }
@@ -242,19 +285,31 @@ public class GameView {
    * on the current Phase and the game status.
    */
   private void select(){
-    switch (currentPhase){
+    switch (data.getCurrentPhase()){
+      case Start ->
+        selectWorker();
+      case Movement ->
+        selectWhenMovementPhase();
+      case Construction ->
+        selectWhenConstructionPhase();
+    }
+  }
+
+  /**
+   * This method handles a
+   */
+  private void confirm(){
+    switch (data.getCurrentPhase()){
       case Start:
       case Movement:
-        selectWhenMovementPhase();
       case Construction:
-        selectWhenConstructionPhase();
       case End:
       default:
     }
   }
 
   public void handleInput() throws IOException{
-    if (owner.equals(currentPlayer)) {
+    if (data.getOwner().equals(data.getCurrentPlayer())) {
       int input = reader.read();
 
       switch (input) {
@@ -283,8 +338,11 @@ public class GameView {
           break;
         }
         case 110: { //N
-          GameEventManager.raise(new SkipEvent(currentPlayer));
+          client.raise(new SkipEvent(data.getOwner()));
           break;
+        }
+        case 79: { //O
+          confirm();
         }
         default: {
           break;
@@ -295,6 +353,8 @@ public class GameView {
 
   public void startMatch() {
     try {
+
+      PlayerRenderer.getInstance().setPlayers(data.getPlayers().toArray(new Player[0]));
 
       if(System.getProperty("os.name").startsWith("Windows"))
       {
@@ -323,6 +383,8 @@ public class GameView {
 
       reader = terminal.reader();
 
+      gameLoop();
+
     } catch (IOException e) {
       System.err.println("Could not allocate terminal.\n");
       e.printStackTrace();
@@ -340,53 +402,41 @@ public class GameView {
       System.out.print("Invalid nickname, type a new one: ");
       nickname = sc.next();
     }
-    GameEventManager.raise(new RegistrationEvent(this, nickname));
+    client.raise(new RegistrationEvent(client.getIPv4Address(), nickname));
+    data.setOwner(new Player(nickname));
     System.out.println("Now waiting for other players...");
+    try {
+      while (true) {
+        GameEvent evtFromServer = client.getServerEvents().take();
+        GameEventManager.raise(evtFromServer);
+      }
+    } catch (InterruptedException e){
+      e.printStackTrace();
+    }
+  }
+
+  public void gameLoop(){
+    render();
+    while (true) {
+      GameEvent evt;
+      // consume events from the server
+      while ( (evt = client.getServerEvents().peek()) != null) {
+        GameEventManager.raise(evt);
+      }
+      try {
+        handleInput();
+      } catch (IOException e){
+        e.printStackTrace();
+      }
+      render();
+    }
   }
 
   public static void main(String[] args){
     try {
-      Game game = new Game(2);
       GameView view = new GameView();
-      Controller controller = new Controller(game);
-
       view.gameSetup();
-
-      GameEventManager.raise(new RegistrationEvent(view,"Marcantonio"));
-
-      PlayerRenderer.getInstance().setPlayers(game.getPlayers());
-
-      // some initialization for testing purposes
-      for (Player player: game.getPlayers()){
-        player.setGodCard(GodCardFactory.create(GodName.Nobody));
-        player.getGodCard().setGame(game);
-      }
-
-      view.players = game.getPlayers();
-      view.owner = view.players[0].clone();
-      view.currentPlayer = view.players[0].clone();
-      view.board = game.getBoard().clone();
-
-      GameEventManager.raise(new WorkerSelectionEvent(game.getCurrentPlayer(), Sex.Female));
-      GameEventManager.raise(new SpawnWorkerEvent(game.getCurrentPlayer(), new Point(0, 0)));
-      GameEventManager.raise(new WorkerSelectionEvent(game.getCurrentPlayer(), Sex.Male));
-      GameEventManager.raise(new SpawnWorkerEvent(game.getCurrentPlayer(), new Point (2, 0)));
-
-      game.nextPlayer();
-
-      GameEventManager.raise(new WorkerSelectionEvent(game.getPlayers()[1], Sex.Female));
-      GameEventManager.raise(new SpawnWorkerEvent(game.getPlayers()[1], new Point(4, 0)));
-      GameEventManager.raise(new WorkerSelectionEvent(game.getPlayers()[1], Sex.Male));
-      GameEventManager.raise(new SpawnWorkerEvent(game.getPlayers()[1], new Point (1, 1)));
-
-      game.nextPlayer();
-
-      view.render();
-      while (true) {
-        view.handleInput();
-        view.render();
-      }
-    } catch (Exception e){
+    } catch (IOException e){
       e.printStackTrace();
     }
   }
