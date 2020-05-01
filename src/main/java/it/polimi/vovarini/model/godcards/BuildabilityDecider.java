@@ -10,7 +10,7 @@ import it.polimi.vovarini.model.Point;
  * @author Mattia Valassi
  * @author Marco Riva
  */
-public class BuildabilityDecider extends Decider {
+public class BuildabilityDecider {
 
     /**
      * This method presents the construction constraint of the Demeter card.
