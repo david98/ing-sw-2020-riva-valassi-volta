@@ -1,7 +1,6 @@
 package it.polimi.vovarini.model.godcards;
 
 import it.polimi.vovarini.common.exceptions.BoxEmptyException;
-import it.polimi.vovarini.common.exceptions.CurrentPlayerLosesException;
 import it.polimi.vovarini.common.exceptions.InvalidPositionException;
 import it.polimi.vovarini.common.exceptions.ItemNotFoundException;
 import it.polimi.vovarini.model.Game;
@@ -67,14 +66,14 @@ public class GodCard implements Cloneable, Serializable {
     movementConditions = new HashSet<>();
     movementConstraints = new HashSet<>();
 
-    buildingConditions = new HashSet<>();
-    buildingConstraints = new HashSet<>();
+    constructionConditions = new HashSet<>();
+    constructionConstraints = new HashSet<>();
 
     winningConditions = new HashSet<>();
     winningConstraints = new HashSet<>();
 
     movementConditions.add(isPointReachable);
-    buildingConditions.add(isPointBuildable);
+    constructionConditions.add(isPointBuildable);
     winningConditions.add(isMovementWinning);
   }
 
@@ -238,8 +237,8 @@ public class GodCard implements Cloneable, Serializable {
   Collection<BiFunction<Game, Point, Boolean>> movementConditions;
   Collection<BiFunction<Game, Point, Boolean>> movementConstraints;
 
-  Collection<BiFunction<Game, Point, Boolean>> buildingConditions;
-  Collection<BiFunction<Game, Point, Boolean>> buildingConstraints;
+  Collection<BiFunction<Game, Point, Boolean>> constructionConditions;
+  Collection<BiFunction<Game, Point, Boolean>> constructionConstraints;
 
   Collection<Predicate<Movement>> winningConditions;
   Collection<Predicate<Movement>> winningConstraints;
@@ -274,15 +273,9 @@ public class GodCard implements Cloneable, Serializable {
   }
 
   /**
-<<<<<<< HEAD
    * Function that computes if a player has won thanks to a valid movement he wants to perform
    * @param movement is the movement move that the player wants to perform
    * @return true if the movement allows the player to win, false otherwise
-=======
-   *
-   * @param movement The move to be analysed
-   * @return true if the movement Move leads to victory, false otherwise
->>>>>>> godcards/mengi
    */
   public boolean isMovementWinning(Movement movement) {
     return !movement.isForced() && winningConditions.stream().anyMatch(cond -> cond.test(movement)) &&
@@ -306,8 +299,8 @@ public class GodCard implements Cloneable, Serializable {
 
       buildablePoints =
           candidatePositions.stream()
-                .filter(p -> buildingConditions.stream().anyMatch(cond -> cond.apply(game, p)))
-                .filter(p -> buildingConstraints.stream().allMatch(cond -> cond.apply(game, p)))
+                .filter(p -> constructionConditions.stream().anyMatch(cond -> cond.apply(game, p)))
+                .filter(p -> constructionConstraints.stream().allMatch(cond -> cond.apply(game, p)))
                 .collect(Collectors.toList());
 
     } catch (ItemNotFoundException ignored) {
@@ -330,8 +323,12 @@ public class GodCard implements Cloneable, Serializable {
 
     if(next.equals(Phase.Start)){
 
-      game.nextPlayer();
       resetPlayerInfo(game);
+      game.getCurrentPlayer().getGodCard().movementConstraints.clear();
+      game.getCurrentPlayer().getGodCard().constructionConstraints.clear();
+
+      game.nextPlayer();
+
     }
 
     return next;
@@ -364,16 +361,6 @@ public class GodCard implements Cloneable, Serializable {
     return validateConstruction.apply(list, construction);
   }
 
-  /**
-   * Messaggio per Valas: alla fine questo è solo un contenitore di vincoli relativi ai movement
-   * @param game
-   * @param p
-   * @return
-   */
-  public boolean constraintMovement(Game game, Point p) {
-    return constraintMovement.apply(game, p);
-  }
-
   public GodName getName(){
     return name;
   }
@@ -387,8 +374,8 @@ public class GodCard implements Cloneable, Serializable {
     clone.movementConditions = new HashSet<>(movementConditions);
     clone.movementConstraints = new HashSet<>(movementConstraints);
 
-    clone.buildingConditions = new HashSet<>(buildingConditions);
-    clone.buildingConstraints = new HashSet<>(buildingConstraints);
+    clone.constructionConditions = new HashSet<>(constructionConditions);
+    clone.constructionConstraints = new HashSet<>(constructionConstraints);
 
     clone.winningConditions = new HashSet<>(winningConditions);
     clone.winningConstraints = new HashSet<>(winningConstraints);

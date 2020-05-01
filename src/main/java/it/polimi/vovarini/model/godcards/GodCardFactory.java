@@ -1,5 +1,7 @@
 package it.polimi.vovarini.model.godcards;
 
+import it.polimi.vovarini.model.godcards.deciders.*;
+
 /**
  * GodCardFactory creates a specific GodCard injecting dynamically
  * particular methods that pertain to a particular card
@@ -29,6 +31,14 @@ public class GodCardFactory {
       {
         return createAtlas();
       }
+      case Demeter:
+      {
+        return createDemeter();
+      }
+      case Hephaestus:
+      {
+        return createHephaestus();
+      }
       case Minotaur:
       {
           return createMinotaur();
@@ -36,6 +46,10 @@ public class GodCardFactory {
       case Pan:
       {
         return createPan();
+      }
+      case Prometheus:
+      {
+        return createPrometheus();
       }
       case Nobody:
       default:
@@ -51,7 +65,7 @@ public class GodCardFactory {
      */
     private static GodCard createApollo() {
       GodCard apollo = new GodCard(GodName.Apollo);
-      apollo.movementConditions.add(ReachabilityDecider::isPointReachableCanExchangeWithWorker);
+      apollo.movementConditions.add(ReachabilityDecider::canExchangeWithWorker);
       return apollo;
     }
 
@@ -61,8 +75,7 @@ public class GodCardFactory {
      */
     private static GodCard createArtemis(){
       GodCard artemis = new GodCard(GodName.Artemis);
-      artemis.nextPhase = FlowDecider::nextPhaseExtendsMovement;
-      artemis.constraintMovement = ReachabilityDecider::isPointReachablePreviousBoxDenied;
+      artemis.nextPhase = FlowDecider::extendsMovement;
       return artemis;
     }
 
@@ -72,6 +85,7 @@ public class GodCardFactory {
      */
     private static GodCard createAthena() {
       GodCard athena = new GodCard(GodName.Athena);
+      athena.nextPhase = FlowDecider::applyMalus;
       return athena;
     }
 
@@ -81,8 +95,28 @@ public class GodCardFactory {
      */
     private static GodCard createAtlas() {
       GodCard atlas = new GodCard(GodName.Atlas);
-      //atlas.validateConstruction = ValidationDecider::validateConstructionAtlas;
+      atlas.validateConstruction = ValidationDecider::allowDome;
       return atlas;
+    }
+
+    /**
+     * This method injects a generic GodCard with all the Behaviors modified by the card Demeter
+     * @return an instance of a GodCard in the mold of Santorini's Demeter card
+     */
+    private static GodCard createDemeter() {
+      GodCard demeter = new GodCard(GodName.Demeter);
+      demeter.nextPhase = FlowDecider::extendsConstruction;
+      return demeter;
+    }
+
+    /**
+     * This method injects a generic GodCard with all the Behaviors modified by the card Hephaestus
+     * @return an instance of a GodCard in the mold of Santorini's Hephaestus card
+     */
+    private static GodCard createHephaestus(){
+      GodCard hephy = new GodCard(GodName.Hephaestus);
+      hephy.nextPhase = FlowDecider::extendsConstruction;
+      return hephy;
     }
 
     /**
@@ -91,8 +125,8 @@ public class GodCardFactory {
      */
     private static GodCard createMinotaur() {
         GodCard minotaur = new GodCard(GodName.Minotaur);
-        minotaur.movementConditions.add(ReachabilityDecider::isPointReachableConditionedExchange);
-        minotaur.listMovementEffects = ConsequencesDecider::listEffectsMinotaur;
+        minotaur.movementConditions.add(ReachabilityDecider::conditionedExchange);
+        minotaur.listMovementEffects = ConsequencesDecider::forceOpponentWorker;
         return minotaur;
     }
 
@@ -102,25 +136,17 @@ public class GodCardFactory {
      */
     private static GodCard createPan() {
       GodCard pan = new GodCard(GodName.Pan);
-      pan.winningConditions.add(WinDecider::isWinningPan);
+      pan.winningConditions.add(WinDecider::downTwoLevels);
       return pan;
     }
 
-    private static GodCard createDemeter() {
-      GodCard demeter = new GodCard(GodName.Demeter);
-      demeter.nextPhase = FlowDecider::nextPhaseExtendsConstruction;
-      return demeter;
-    }
-
-    private static GodCard createHephaestus(){
-      GodCard hephy = new GodCard(GodName.Hephaestus);
-      hephy.nextPhase = FlowDecider::nextPhaseExtendsConstruction;
-      return hephy;
-    }
-
+    /**
+     * This method injects a generic GodCard with all the Behaviors modified by the card Prometheus
+     * @return an instance of a GodCard in the mold of Santorini's Prometheus card
+     */
     private static GodCard createPrometheus(){
       GodCard prometheus = new GodCard(GodName.Prometheus);
-      prometheus.nextPhase = FlowDecider::nextPhaseConstructionTwice;
+      prometheus.nextPhase = FlowDecider::buildBeforeAndAfter;
       return prometheus;
     }
 
