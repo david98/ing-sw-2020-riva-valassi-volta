@@ -135,7 +135,7 @@ public class Controller implements EventListener {
       try {
         if (!currentWorker.canBePlacedOn(game.getBoard().getItems(target).peek())) {
           // Worker sopra altro worker
-          throw new OverwrittenWorkerException(); // TODO: creare eccezione apposita??
+          throw new OverwrittenWorkerException();
         }
 
         // non dovrebbe mai arrivare qui, viene sempre scatenata BoxEmptyException
