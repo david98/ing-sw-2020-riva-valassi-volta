@@ -1,4 +1,4 @@
-package it.polimi.vovarini.view.cli;
+package it.polimi.vovarini.view.cli.console;
 
 import java.io.Reader;
 import java.util.Scanner;

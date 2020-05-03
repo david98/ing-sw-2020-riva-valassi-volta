@@ -12,9 +12,15 @@ import it.polimi.vovarini.server.GameClient;
 import it.polimi.vovarini.server.Server;
 import it.polimi.vovarini.view.View;
 import it.polimi.vovarini.view.ViewData;
+import it.polimi.vovarini.view.cli.console.Console;
+import it.polimi.vovarini.view.cli.console.FullScreenConsole;
+import it.polimi.vovarini.view.cli.elements.BoardElement;
+import it.polimi.vovarini.view.cli.elements.CliElement;
+import it.polimi.vovarini.view.cli.elements.PlayerList;
 
 import java.io.IOException;
 import java.util.Collection;
+import java.util.List;
 import java.util.Scanner;
 
 public class GameView extends View {
@@ -23,7 +29,8 @@ public class GameView extends View {
 
   private boolean reRenderNeeded;
 
-  private final BoardRenderer boardRenderer;
+  private final BoardElement boardElement;
+  private final PlayerList playerList;
 
   private final Console console;
 
@@ -34,7 +41,8 @@ public class GameView extends View {
 
     this.reRenderNeeded = true;
 
-    boardRenderer = new BoardRenderer();
+    boardElement = new BoardElement(data, Color.Green);
+    playerList = new PlayerList(data);
 
     console = new FullScreenConsole();
 
@@ -60,12 +68,11 @@ public class GameView extends View {
   public void handlePhaseUpdate(PhaseUpdateEvent e){
     data.setCurrentPhase(e.getNewPhase());
     if (data.getCurrentPhase() == Phase.Construction){
-        boardRenderer.markPoints(data.getOwner().getGodCard().computeBuildablePoints());
+        boardElement.markPoints(data.getOwner().getGodCard().computeBuildablePoints());
         if (data.getOwner().isHasLost()){
           handlePlayerLoss();
         }
     }
-    reRenderNeeded = true;
   }
 
   @GameEventListener
@@ -131,25 +138,14 @@ public class GameView extends View {
   }
 
   private void renderPlayers(){
-    for (Player player: data.getPlayers()){
-      StringBuilder playerLine = new StringBuilder();
-      playerLine.append(PlayerRenderer.getInstance().render(player));
-      if (player.equals(data.getOwner())){
-        playerLine.insert(0, "YOU --> ");
-      }
-      if (player.equals(data.getCurrentPlayer())){
-        playerLine.insert(0, "*");
-        playerLine.append("*");
-      }
-      console.println(playerLine.toString());
-    }
+    console.println(playerList.render());
   }
 
   public void render(){
     if (reRenderNeeded) {
       console.clear();
       renderPlayers();
-      console.println(boardRenderer.render(data.getBoard()));
+      console.println(boardElement.render());
       if (data.getOwner().equals(data.getCurrentPlayer())) {
         console.println(getPhasePrompt(data.getCurrentPhase()));
       } else {
@@ -163,7 +159,7 @@ public class GameView extends View {
   private void deSelect(){
     data.setSelectedWorker(null);
     data.setCurrentStart(null);
-    boardRenderer.resetMarkedPoints();
+    boardElement.resetMarkedPoints();
 
     reRenderNeeded = true;
   }
@@ -174,7 +170,7 @@ public class GameView extends View {
    */
   private void selectWhenConstructionPhase(){
 
-      Point dest = boardRenderer.getCursorLocation();
+      Point dest = boardElement.getCursorLocation();
 
       Collection<Point> buildablePoints = data.getOwner().getGodCard().computeBuildablePoints();
 
@@ -193,20 +189,20 @@ public class GameView extends View {
 
   private void selectWorker(){
     if (data.getSelectedWorker() == null){
-      if (boardRenderer.getCursorLocation().equals(data.getCurrentStart())) {
+      if (boardElement.getCursorLocation().equals(data.getCurrentStart())) {
         deSelect();
       } else {
         try {
-          Item item = data.getBoard().getItems(boardRenderer.getCursorLocation()).peek();
+          Item item = data.getBoard().getItems(boardElement.getCursorLocation()).peek();
           if (data.getOwner().isHasLost()){
             handlePlayerLoss();
           }
 
           if (data.getOwner().getWorkers().values().stream().anyMatch(w -> w.equals(item))) {
-            data.setCurrentStart(boardRenderer.getCursorLocation());
+            data.setCurrentStart(boardElement.getCursorLocation());
             data.setSelectedWorker((Worker) item);
             // mark points reachable by the selected worker
-            boardRenderer.markPoints(
+            boardElement.markPoints(
                     data.getOwner().getGodCard().computeReachablePoints()
             );
 
@@ -228,25 +224,25 @@ public class GameView extends View {
    */
   private void selectWhenMovementPhase(){
     if (data.getSelectedWorker() != null){
-      if (boardRenderer.getCursorLocation().equals(data.getCurrentStart())){
+      if (boardElement.getCursorLocation().equals(data.getCurrentStart())){
         deSelect();
-      } else if (boardRenderer.getMarkedPoints().contains(boardRenderer.getCursorLocation())){
-        boardRenderer.resetMarkedPoints();
+      } else if (boardElement.getMarkedPoints().contains(boardElement.getCursorLocation())){
+        boardElement.resetMarkedPoints();
         client.raise(new MovementEvent(
                 data.getOwner().getNickname(),
-                boardRenderer.getCursorLocation())
+                boardElement.getCursorLocation())
         );
       }
     } else {
       // check if one of the player's workers is under the cursor
       try {
-        Item item = data.getBoard().getItems(boardRenderer.getCursorLocation()).peek();
+        Item item = data.getBoard().getItems(boardElement.getCursorLocation()).peek();
         if (data.getOwner().isHasLost()){
           handlePlayerLoss();
         }
 
         if (data.getOwner().getWorkers().values().stream().anyMatch(w -> w.equals(item))) {
-          data.setCurrentStart(boardRenderer.getCursorLocation());
+          data.setCurrentStart(boardElement.getCursorLocation());
           data.setSelectedWorker((Worker) item);
           client.raise(
                   new WorkerSelectionEvent(
@@ -254,7 +250,7 @@ public class GameView extends View {
                           data.getSelectedWorker().getSex())
           );
           // mark points reachable by the selected worker
-          boardRenderer.markPoints(
+          boardElement.markPoints(
                   data.getOwner().getGodCard().computeReachablePoints()
           );
 
@@ -301,22 +297,22 @@ public class GameView extends View {
 
       switch (input) {
         case 97: { //A
-          boardRenderer.moveCursor(Direction.Left);
+          boardElement.moveCursor(Direction.Left);
           reRenderNeeded = true;
           break;
         }
         case 100: { //D
-          boardRenderer.moveCursor(Direction.Right);
+          boardElement.moveCursor(Direction.Right);
           reRenderNeeded = true;
           break;
         }
         case 119: { //W
-          boardRenderer.moveCursor(Direction.Up);
+          boardElement.moveCursor(Direction.Up);
           reRenderNeeded = true;
           break;
         }
         case 115: { //S
-          boardRenderer.moveCursor(Direction.Down);
+          boardElement.moveCursor(Direction.Down);
           reRenderNeeded = true;
           break;
         }
@@ -339,7 +335,6 @@ public class GameView extends View {
   }
 
   public void startMatch() {
-    PlayerRenderer.getInstance().setPlayers(data.getPlayers().toArray(new Player[0]));
     gameLoop();
   }
 

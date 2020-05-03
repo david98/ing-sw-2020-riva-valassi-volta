@@ -5,10 +5,10 @@ import it.polimi.vovarini.model.Player;
 import it.polimi.vovarini.model.Point;
 import it.polimi.vovarini.model.board.Board;
 import it.polimi.vovarini.model.board.items.Worker;
+import it.polimi.vovarini.view.cli.Color;
 
 import java.io.Serializable;
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Data that is needed by any kind of view.
@@ -19,6 +19,7 @@ public class ViewData implements Serializable {
   private Player owner;
   private Player currentPlayer;
   private final Set<Player> players;
+  private final Map<Player, Color> playersColors;
   private Phase currentPhase;
 
   private Board board;
@@ -30,6 +31,7 @@ public class ViewData implements Serializable {
     currentPhase = Phase.Start;
     board = new Board(Board.DEFAULT_SIZE);
     players = new LinkedHashSet<>();
+    playersColors = new HashMap<>();
   }
 
   public Phase getCurrentPhase() {
@@ -60,8 +62,14 @@ public class ViewData implements Serializable {
     return players;
   }
 
-  public void addPlayer(Player player) {
+  public void addPlayer(Player player, Color color) {
     this.players.add(player);
+    playersColors.put(player, color);
+  }
+
+  public void addPlayer(Player player){
+    Random rand = new Random();
+    addPlayer(player, new Color(rand.nextInt(255), rand.nextInt(255), rand.nextInt(255)));
   }
 
   public Board getBoard() {
@@ -86,5 +94,9 @@ public class ViewData implements Serializable {
 
   public void setCurrentStart(Point currentStart) {
     this.currentStart = currentStart;
+  }
+
+  public Map<Player, Color> getPlayersColors() {
+    return playersColors;
   }
 }

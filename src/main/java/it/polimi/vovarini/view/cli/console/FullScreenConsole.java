@@ -1,4 +1,4 @@
-package it.polimi.vovarini.view.cli;
+package it.polimi.vovarini.view.cli.console;
 
 import com.sun.jna.Function;
 import com.sun.jna.platform.win32.WinDef;
