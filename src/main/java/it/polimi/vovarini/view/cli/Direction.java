@@ -1,4 +1,4 @@
-package it.polimi.vovarini.view;
+package it.polimi.vovarini.view.cli;
 
 /**
  * Represents a direction.

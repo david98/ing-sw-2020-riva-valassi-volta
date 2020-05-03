@@ -83,4 +83,24 @@ public class RemoteView extends View implements ClientConnectionHandler {
     data.addPlayer(e.getNewPlayer());
     serverEvents.add(e);
   }
+
+  @Override
+  public void handleGodSelectionStart(GodSelectionStartEvent e) {
+    serverEvents.add(e);
+  }
+
+  @Override
+  public void handleSelectYourCard(SelectYourCardEvent e) {
+    serverEvents.add(e);
+  }
+
+  @Override
+  public void handleCardAssignment(CardAssignmentEvent e) {
+    serverEvents.add(e);
+  }
+
+  @Override
+  public void handlePlaceYourWorkers(PlaceYourWorkersEvent e) {
+    serverEvents.add(e);
+  }
 }

@@ -1,10 +1,5 @@
-package it.polimi.vovarini.view;
+package it.polimi.vovarini.view.cli;
 
-import com.sun.jna.Function;
-import com.sun.jna.platform.win32.WinDef.BOOL;
-import com.sun.jna.platform.win32.WinDef.DWORD;
-import com.sun.jna.platform.win32.WinDef.DWORDByReference;
-import com.sun.jna.platform.win32.WinNT.HANDLE;
 import it.polimi.vovarini.common.events.*;
 import it.polimi.vovarini.common.exceptions.BoxEmptyException;
 import it.polimi.vovarini.common.exceptions.InvalidPositionException;
@@ -15,17 +10,14 @@ import it.polimi.vovarini.model.board.items.Item;
 import it.polimi.vovarini.model.board.items.Worker;
 import it.polimi.vovarini.server.GameClient;
 import it.polimi.vovarini.server.Server;
-import org.jline.terminal.Terminal;
-import org.jline.terminal.TerminalBuilder;
+import it.polimi.vovarini.view.View;
+import it.polimi.vovarini.view.ViewData;
 
 import java.io.IOException;
-import java.io.Reader;
 import java.util.Collection;
 import java.util.Scanner;
 
-import static com.sun.jna.platform.win32.Wincon.ENABLE_LINE_INPUT;
-
-public class GameView extends View{
+public class GameView extends View {
 
   private final GameClient client;
 
@@ -33,10 +25,7 @@ public class GameView extends View{
 
   private final BoardRenderer boardRenderer;
 
-  private Terminal terminal;
-  private Reader reader;
-
-  private int printedLineCount;
+  private final Console console;
 
   public GameView() throws IOException {
     super();
@@ -47,13 +36,13 @@ public class GameView extends View{
 
     boardRenderer = new BoardRenderer();
 
-    printedLineCount = 0;
+    console = new FullScreenConsole();
 
     client = new GameClient("127.0.0.1", Server.DEFAULT_PORT);
   }
 
   private void handlePlayerLoss(){
-    printLine("Hai perso coglione!");
+    console.println("Hai perso coglione!");
   }
 
   @GameEventListener
@@ -97,6 +86,30 @@ public class GameView extends View{
     data.addPlayer(p);
   }
 
+  @Override
+  @GameEventListener
+  public void handleGodSelectionStart(GodSelectionStartEvent e) {
+
+  }
+
+  @Override
+  @GameEventListener
+  public void handleSelectYourCard(SelectYourCardEvent e) {
+
+  }
+
+  @Override
+  @GameEventListener
+  public void handleCardAssignment(CardAssignmentEvent e) {
+
+  }
+
+  @Override
+  @GameEventListener
+  public void handlePlaceYourWorkers(PlaceYourWorkersEvent e) {
+
+  }
+
   private String getPhasePrompt(Phase phase){
     switch (phase) {
       case Start -> {
@@ -117,12 +130,6 @@ public class GameView extends View{
     }
   }
 
-  private void printLine(String line){
-    System.out.println(line);
-    long newLines = line.chars().filter(ch -> ch == '\n').count();
-    printedLineCount += newLines + 1;
-  }
-
   private void renderPlayers(){
     for (Player player: data.getPlayers()){
       StringBuilder playerLine = new StringBuilder();
@@ -134,32 +141,23 @@ public class GameView extends View{
         playerLine.insert(0, "*");
         playerLine.append("*");
       }
-      printLine(playerLine.toString());
+      console.println(playerLine.toString());
     }
   }
 
   public void render(){
     if (reRenderNeeded) {
-      clearScreen();
+      console.clear();
       renderPlayers();
-      printLine(boardRenderer.render(data.getBoard()));
+      console.println(boardRenderer.render(data.getBoard()));
       if (data.getOwner().equals(data.getCurrentPlayer())) {
-        printLine(getPhasePrompt(data.getCurrentPhase()));
+        console.println(getPhasePrompt(data.getCurrentPhase()));
       } else {
-        printLine("It's " + data.getCurrentPlayer().getNickname() + "'s turn.");
+        console.println("It's " + data.getCurrentPlayer().getNickname() + "'s turn.");
       }
 
       reRenderNeeded = false;
     }
-  }
-
-  public void clearScreen() {
-    for (int i = 0; i < printedLineCount; i++) {
-      System.out.print("\033[F\r");
-    }
-    System.out.print("\033[H\033[2J");
-    System.out.flush();
-    printedLineCount = 0;
   }
 
   private void deSelect(){
@@ -299,7 +297,7 @@ public class GameView extends View{
 
   public void handleInput() throws IOException{
     if (data.getOwner().equals(data.getCurrentPlayer())) {
-      int input = reader.read();
+      int input = console.getReader().read();
 
       switch (input) {
         case 97: { //A
@@ -341,50 +339,15 @@ public class GameView extends View{
   }
 
   public void startMatch() {
-    try {
-
-      PlayerRenderer.getInstance().setPlayers(data.getPlayers().toArray(new Player[0]));
-
-      if(System.getProperty("os.name").startsWith("Windows"))
-      {
-        // Set output mode to handle virtual terminal sequences
-        Function GetStdHandleFunc = Function.getFunction("kernel32", "GetStdHandle");
-        DWORD STD_OUTPUT_HANDLE = new DWORD(-11);
-        HANDLE hOut = (HANDLE)GetStdHandleFunc.invoke(HANDLE.class, new Object[]{STD_OUTPUT_HANDLE});
-
-        DWORDByReference p_dwMode = new DWORDByReference(new DWORD(0));
-        Function GetConsoleModeFunc = Function.getFunction("kernel32", "GetConsoleMode");
-        GetConsoleModeFunc.invoke(BOOL.class, new Object[]{hOut, p_dwMode});
-
-        int ENABLE_VIRTUAL_TERMINAL_PROCESSING = 4;
-        DWORD dwMode = p_dwMode.getValue();
-        dwMode.setValue((dwMode.intValue() | ENABLE_VIRTUAL_TERMINAL_PROCESSING) &~ENABLE_LINE_INPUT);
-        Function SetConsoleModeFunc = Function.getFunction("kernel32", "SetConsoleMode");
-        SetConsoleModeFunc.invoke(BOOL.class, new Object[]{hOut, dwMode});
-      }
-
-      terminal = TerminalBuilder.builder()
-              .jna(true)
-              .system(true)
-              .build();
-      terminal.enterRawMode();
-
-
-      reader = terminal.reader();
-
-      gameLoop();
-
-    } catch (IOException e) {
-      System.err.println("Could not allocate terminal.\n");
-      e.printStackTrace();
-    }
+    PlayerRenderer.getInstance().setPlayers(data.getPlayers().toArray(new Player[0]));
+    gameLoop();
   }
 
   public void gameSetup(){
     // ask for nickname
-    Scanner sc = new Scanner(System.in);
-    clearScreen();
-    String nickname = null;
+    Scanner sc = console.getScanner();
+    console.clear();
+    String nickname;
     System.out.print("Type your nickname: ");
     nickname = sc.next();
     while ((nickname == null) || !nickname.matches("[A-Za-z0-9_]{4,16}$")){
@@ -394,6 +357,7 @@ public class GameView extends View{
     client.raise(new RegistrationEvent(client.getIPv4Address(), nickname));
     data.setOwner(new Player(nickname));
     System.out.println("Now waiting for other players...");
+    console.enterRawMode();
     try {
       while (true) {
         GameEvent evtFromServer = client.getServerEvents().take();

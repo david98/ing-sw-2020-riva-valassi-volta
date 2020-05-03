@@ -20,4 +20,12 @@ public abstract class View {
   public abstract void handleGameStart(GameStartEvent e);
 
   public abstract void handleNewPlayer(NewPlayerEvent e);
+
+  public abstract void handleGodSelectionStart(GodSelectionStartEvent e);
+
+  public abstract void handleSelectYourCard(SelectYourCardEvent e);
+
+  public abstract void handleCardAssignment(CardAssignmentEvent e);
+
+  public abstract void handlePlaceYourWorkers(PlaceYourWorkersEvent e);
 }

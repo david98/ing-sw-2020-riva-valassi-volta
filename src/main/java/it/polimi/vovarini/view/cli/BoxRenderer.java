@@ -1,4 +1,4 @@
-package it.polimi.vovarini.view;
+package it.polimi.vovarini.view.cli;
 
 import it.polimi.vovarini.common.exceptions.BoxEmptyException;
 import it.polimi.vovarini.model.board.Box;

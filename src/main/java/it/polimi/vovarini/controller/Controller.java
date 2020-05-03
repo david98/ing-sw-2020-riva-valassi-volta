@@ -68,27 +68,6 @@ public class Controller implements EventListener {
     }
   }
 
-  // to rewrite
-  @GameEventListener
-  public void update(AvailableCardsEvent evt) {
-    this.selectedCards.addAll(evt.getSelectedCards());
-  }
-
-// to rewrite
-  public void update(CardChoiceEvent evt)
-          throws CardsNotSelectedException, InvalidCardException {
-    if (this.selectedCards.isEmpty()) {
-      throw new CardsNotSelectedException();
-    } else {
-      if (!this.selectedCards.contains(evt.getAssignedCard())) {
-        throw new InvalidCardException();
-      }
-
-      // GodCard playerCard = new GodCard(game, evt.getAssignedCard()); (new card instance)
-      // game.getCurrentPlayer().setGodCard(playerCard);
-    }
-  }
-
   /**
    *
    * @param evt is the WorkerSelectionEvent the view generates when a player selects the Worker he wants to use
