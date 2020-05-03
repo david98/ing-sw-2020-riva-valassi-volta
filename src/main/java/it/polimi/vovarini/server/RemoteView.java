@@ -1,16 +1,15 @@
 package it.polimi.vovarini.server;
 
-import java.io.*;
+import it.polimi.vovarini.common.events.*;
+import it.polimi.vovarini.model.Player;
+import it.polimi.vovarini.view.View;
+
+import java.io.IOException;
 import java.net.Socket;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
-
-import it.polimi.vovarini.common.events.*;
-import it.polimi.vovarini.model.Player;
-import it.polimi.vovarini.view.View;
-import it.polimi.vovarini.view.ViewData;
 
 public class RemoteView extends View implements ClientConnectionHandler {
 

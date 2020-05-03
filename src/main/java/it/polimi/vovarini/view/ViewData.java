@@ -8,7 +8,6 @@ import it.polimi.vovarini.model.board.items.Worker;
 
 import java.io.Serializable;
 import java.util.LinkedHashSet;
-import java.util.LinkedList;
 import java.util.Set;
 
 /**

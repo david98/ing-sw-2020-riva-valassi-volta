@@ -7,21 +7,12 @@ import com.sun.jna.platform.win32.WinDef.DWORDByReference;
 import com.sun.jna.platform.win32.WinNT.HANDLE;
 import it.polimi.vovarini.common.events.*;
 import it.polimi.vovarini.common.exceptions.BoxEmptyException;
-import it.polimi.vovarini.common.exceptions.CurrentPlayerLosesException;
 import it.polimi.vovarini.common.exceptions.InvalidPositionException;
-import it.polimi.vovarini.controller.Controller;
-import it.polimi.vovarini.model.Game;
 import it.polimi.vovarini.model.Phase;
 import it.polimi.vovarini.model.Player;
 import it.polimi.vovarini.model.Point;
-import it.polimi.vovarini.model.board.Board;
 import it.polimi.vovarini.model.board.items.Item;
-import it.polimi.vovarini.model.board.items.Sex;
 import it.polimi.vovarini.model.board.items.Worker;
-import it.polimi.vovarini.model.godcards.GodCard;
-import it.polimi.vovarini.model.godcards.GodCardFactory;
-import it.polimi.vovarini.model.godcards.GodName;
-import it.polimi.vovarini.model.moves.Movement;
 import it.polimi.vovarini.server.GameClient;
 import it.polimi.vovarini.server.Server;
 import org.jline.terminal.Terminal;
@@ -35,7 +26,7 @@ import java.util.Scanner;
 import static com.sun.jna.platform.win32.Wincon.ENABLE_LINE_INPUT;
 
 public class GameView extends View{
-  
+
   private final GameClient client;
 
   private boolean reRenderNeeded;

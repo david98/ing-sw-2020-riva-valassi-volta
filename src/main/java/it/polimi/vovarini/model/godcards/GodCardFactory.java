@@ -1,6 +1,9 @@
 package it.polimi.vovarini.model.godcards;
 
-import it.polimi.vovarini.model.godcards.deciders.*;
+import it.polimi.vovarini.model.godcards.deciders.ConsequencesDecider;
+import it.polimi.vovarini.model.godcards.deciders.FlowDecider;
+import it.polimi.vovarini.model.godcards.deciders.ReachabilityDecider;
+import it.polimi.vovarini.model.godcards.deciders.ValidationDecider;
 
 /**
  * GodCardFactory creates a specific GodCard injecting dynamically

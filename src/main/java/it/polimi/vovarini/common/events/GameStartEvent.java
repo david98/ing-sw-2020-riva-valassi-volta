@@ -4,9 +4,8 @@ import it.polimi.vovarini.model.Player;
 
 /**
  * Represents the start of the game (all players have chosen
- * both a nickname and a {@link it.polimi.vovarini.model.godcards.GodCard}.
- * It also includes the players, so that even the last one to have connected
- * can know about the others.
+ * both a nickname and a {@link it.polimi.vovarini.model.godcards.GodCard},
+ * then they placed their workers on the board).
  *
  * @author Davide Volta
  * @version 0.1

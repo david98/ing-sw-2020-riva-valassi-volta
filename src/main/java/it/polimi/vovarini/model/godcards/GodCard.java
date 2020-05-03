@@ -15,10 +15,8 @@ import it.polimi.vovarini.model.board.items.Block;
 import it.polimi.vovarini.model.board.items.Item;
 import it.polimi.vovarini.model.board.items.Worker;
 import it.polimi.vovarini.model.moves.Construction;
-import it.polimi.vovarini.model.moves.Move;
 import it.polimi.vovarini.model.moves.Movement;
 
-import java.io.Serial;
 import java.io.Serializable;
 import java.util.*;
 import java.util.function.BiFunction;

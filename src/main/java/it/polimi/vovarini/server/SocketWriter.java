@@ -1,7 +1,5 @@
 package it.polimi.vovarini.server;
 
-import it.polimi.vovarini.common.events.GameEvent;
-
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.net.Socket;

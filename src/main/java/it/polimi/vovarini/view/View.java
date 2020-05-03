@@ -1,10 +1,6 @@
 package it.polimi.vovarini.view;
 
 import it.polimi.vovarini.common.events.*;
-import it.polimi.vovarini.common.exceptions.CurrentPlayerLosesException;
-import it.polimi.vovarini.model.Phase;
-
-import java.io.Serializable;
 
 public abstract class View {
   protected ViewData data;

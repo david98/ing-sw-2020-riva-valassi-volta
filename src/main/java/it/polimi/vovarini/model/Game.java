@@ -4,7 +4,7 @@ import it.polimi.vovarini.common.events.CurrentPlayerChangedEvent;
 import it.polimi.vovarini.common.events.GameEventManager;
 import it.polimi.vovarini.common.events.NewPlayerEvent;
 import it.polimi.vovarini.common.events.PhaseUpdateEvent;
-import it.polimi.vovarini.common.exceptions.*;
+import it.polimi.vovarini.common.exceptions.InvalidNumberOfPlayersException;
 import it.polimi.vovarini.model.board.Board;
 import it.polimi.vovarini.model.godcards.GodCardFactory;
 import it.polimi.vovarini.model.godcards.GodName;
@@ -13,7 +13,10 @@ import it.polimi.vovarini.model.moves.Move;
 import it.polimi.vovarini.model.moves.Movement;
 
 import java.io.Serializable;
-import java.util.*;
+import java.util.Arrays;
+import java.util.EmptyStackException;
+import java.util.Objects;
+import java.util.Stack;
 
 public class Game implements Serializable {
 

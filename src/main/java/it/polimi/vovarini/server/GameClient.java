@@ -2,12 +2,10 @@ package it.polimi.vovarini.server;
 
 import it.polimi.vovarini.common.events.GameEvent;
 import it.polimi.vovarini.common.events.WorkerSelectionEvent;
-import it.polimi.vovarini.model.Game;
 import it.polimi.vovarini.model.board.items.Sex;
-import it.polimi.vovarini.view.GameView;
 
-import java.io.*;
-import java.net.*;
+import java.io.IOException;
+import java.net.Socket;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
