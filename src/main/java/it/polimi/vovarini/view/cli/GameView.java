@@ -15,13 +15,13 @@ import it.polimi.vovarini.view.ViewData;
 import it.polimi.vovarini.view.cli.console.Console;
 import it.polimi.vovarini.view.cli.console.FullScreenConsole;
 import it.polimi.vovarini.view.cli.elements.BoardElement;
-import it.polimi.vovarini.view.cli.elements.CliElement;
 import it.polimi.vovarini.view.cli.elements.PlayerList;
+import it.polimi.vovarini.view.cli.screens.MatchScreen;
+import it.polimi.vovarini.view.cli.screens.Screen;
 
 import java.io.IOException;
-import java.util.Collection;
-import java.util.List;
-import java.util.Scanner;
+import java.lang.reflect.Array;
+import java.util.*;
 
 public class GameView extends View {
 
@@ -29,8 +29,7 @@ public class GameView extends View {
 
   private boolean reRenderNeeded;
 
-  private final BoardElement boardElement;
-  private final PlayerList playerList;
+  private Screen currentScreen;
 
   private final Console console;
 
@@ -41,43 +40,42 @@ public class GameView extends View {
 
     this.reRenderNeeded = true;
 
-    boardElement = new BoardElement(data, Color.Green);
-    playerList = new PlayerList(data);
-
     console = new FullScreenConsole();
 
     client = new GameClient("127.0.0.1", Server.DEFAULT_PORT);
   }
 
-  private void handlePlayerLoss(){
-    console.println("Hai perso coglione!");
-  }
 
   @GameEventListener
   public void handleBoardUpdate(BoardUpdateEvent e){
     data.setBoard(e.getNewBoard());
-    reRenderNeeded = true;
+    currentScreen.handleBoardUpdate(e);
   }
 
   @GameEventListener
   public void handleCurrentPlayerUpdate(CurrentPlayerChangedEvent e){
     data.setCurrentPlayer(e.getNewPlayer());
+    currentScreen.handleCurrentPlayerUpdate(e);
   }
 
   @GameEventListener
   public void handlePhaseUpdate(PhaseUpdateEvent e){
     data.setCurrentPhase(e.getNewPhase());
-    if (data.getCurrentPhase() == Phase.Construction){
-        boardElement.markPoints(data.getOwner().getGodCard().computeBuildablePoints());
-        if (data.getOwner().isHasLost()){
-          handlePlayerLoss();
-        }
-    }
+    currentScreen.handlePhaseUpdate(e);
   }
 
   @GameEventListener
   public void handleGameStart(GameStartEvent e){
-    for (Player p: e.getPlayers()){
+    Player[] players = e.getPlayers();
+    for (int i = 0; i < players.length; i++){
+      for (Player p: data.getPlayers()){
+        if (players[i].equals(p)){
+          players[i] = p;
+        }
+      }
+    }
+    data.getPlayers().clear();
+    for (Player p: players){
       data.addPlayer(p);
     }
     startMatch();
@@ -117,224 +115,18 @@ public class GameView extends View {
 
   }
 
-  private String getPhasePrompt(Phase phase){
-    switch (phase) {
-      case Start -> {
-        return "START - Select a Worker";
-      }
-      case Movement -> {
-        return "MOVEMENT - Select a destination.";
-      }
-      case Construction -> {
-        return "CONSTRUCTION - Where do you want to build?";
-      }
-      case End -> {
-        return "END";
-      }
-      default -> {
-        return "";
-      }
-    }
-  }
-
-  private void renderPlayers(){
-    console.println(playerList.render());
-  }
-
   public void render(){
-    if (reRenderNeeded) {
-      console.clear();
-      renderPlayers();
-      console.println(boardElement.render());
-      if (data.getOwner().equals(data.getCurrentPlayer())) {
-        console.println(getPhasePrompt(data.getCurrentPhase()));
-      } else {
-        console.println("It's " + data.getCurrentPlayer().getNickname() + "'s turn.");
-      }
-
-      reRenderNeeded = false;
-    }
-  }
-
-  private void deSelect(){
-    data.setSelectedWorker(null);
-    data.setCurrentStart(null);
-    boardElement.resetMarkedPoints();
-
-    reRenderNeeded = true;
-  }
-
-  /**
-   * This method handles a spacebar press when
-   * the current phase is Construction.
-   */
-  private void selectWhenConstructionPhase(){
-
-      Point dest = boardElement.getCursorLocation();
-
-      Collection<Point> buildablePoints = data.getOwner().getGodCard().computeBuildablePoints();
-
-      if (data.getOwner().isHasLost()){
-        handlePlayerLoss();
-      }
-      if (buildablePoints.contains(dest)){
-        int nextLevel = data.getBoard().getBox(dest).getLevel() + 1;
-        deSelect();
-        client.raise(new BuildEvent(data.getOwner().getNickname(), dest, nextLevel));
-      }
-
-
-
-  }
-
-  private void selectWorker(){
-    if (data.getSelectedWorker() == null){
-      if (boardElement.getCursorLocation().equals(data.getCurrentStart())) {
-        deSelect();
-      } else {
-        try {
-          Item item = data.getBoard().getItems(boardElement.getCursorLocation()).peek();
-          if (data.getOwner().isHasLost()){
-            handlePlayerLoss();
-          }
-
-          if (data.getOwner().getWorkers().values().stream().anyMatch(w -> w.equals(item))) {
-            data.setCurrentStart(boardElement.getCursorLocation());
-            data.setSelectedWorker((Worker) item);
-            // mark points reachable by the selected worker
-            boardElement.markPoints(
-                    data.getOwner().getGodCard().computeReachablePoints()
-            );
-
-            reRenderNeeded = true;
-          }
-        } catch (BoxEmptyException ignored) {
-        } catch (InvalidPositionException ignored) {
-        }
-
-      }
-    } else {
-      deSelect();
-    }
-  }
-
-  /**
-   * This method handles a spacebar press when
-   * the current phase is Movement.
-   */
-  private void selectWhenMovementPhase(){
-    if (data.getSelectedWorker() != null){
-      if (boardElement.getCursorLocation().equals(data.getCurrentStart())){
-        deSelect();
-      } else if (boardElement.getMarkedPoints().contains(boardElement.getCursorLocation())){
-        boardElement.resetMarkedPoints();
-        client.raise(new MovementEvent(
-                data.getOwner().getNickname(),
-                boardElement.getCursorLocation())
-        );
-      }
-    } else {
-      // check if one of the player's workers is under the cursor
-      try {
-        Item item = data.getBoard().getItems(boardElement.getCursorLocation()).peek();
-        if (data.getOwner().isHasLost()){
-          handlePlayerLoss();
-        }
-
-        if (data.getOwner().getWorkers().values().stream().anyMatch(w -> w.equals(item))) {
-          data.setCurrentStart(boardElement.getCursorLocation());
-          data.setSelectedWorker((Worker) item);
-          client.raise(
-                  new WorkerSelectionEvent(
-                          data.getOwner().getNickname(),
-                          data.getSelectedWorker().getSex())
-          );
-          // mark points reachable by the selected worker
-          boardElement.markPoints(
-                  data.getOwner().getGodCard().computeReachablePoints()
-          );
-
-          reRenderNeeded = true;
-        }
-      } catch (BoxEmptyException ignored) {
-      } catch (InvalidPositionException ignored) {
-      }
-
-    }
-  }
-
-  /**
-   * This method handles a spacebar press. The outcome depends
-   * on the current Phase and the game status.
-   */
-  private void select(){
-    switch (data.getCurrentPhase()){
-      case Start ->
-        selectWorker();
-      case Movement ->
-        selectWhenMovementPhase();
-      case Construction ->
-        selectWhenConstructionPhase();
-    }
-  }
-
-  /**
-   * This method handles a
-   */
-  private void confirm(){
-    switch (data.getCurrentPhase()){
-      case Start:
-      case Movement:
-      case Construction:
-      case End:
-      default:
-    }
+    console.println(currentScreen.render());
   }
 
   public void handleInput() throws IOException{
-    if (data.getOwner().equals(data.getCurrentPlayer())) {
-      int input = console.getReader().read();
-
-      switch (input) {
-        case 97: { //A
-          boardElement.moveCursor(Direction.Left);
-          reRenderNeeded = true;
-          break;
-        }
-        case 100: { //D
-          boardElement.moveCursor(Direction.Right);
-          reRenderNeeded = true;
-          break;
-        }
-        case 119: { //W
-          boardElement.moveCursor(Direction.Up);
-          reRenderNeeded = true;
-          break;
-        }
-        case 115: { //S
-          boardElement.moveCursor(Direction.Down);
-          reRenderNeeded = true;
-          break;
-        }
-        case 32: { //space
-          select();
-          break;
-        }
-        case 110: { //N
-          client.raise(new SkipEvent(data.getOwner()));
-          break;
-        }
-        case 79: { //O
-          confirm();
-        }
-        default: {
-          break;
-        }
-      }
-    }
+    int input = console.getReader().read();
+    console.println(Integer.toString(input));
+    currentScreen.handleKeyPress(input);
   }
 
   public void startMatch() {
+    currentScreen = new MatchScreen(data, client);
     gameLoop();
   }
 
@@ -372,11 +164,13 @@ public class GameView extends View {
         GameEventManager.raise(evt);
       }
       try {
-        handleInput();
+        if (data.getOwner().equals(data.getCurrentPlayer())) {
+          handleInput();
+          render();
+        }
       } catch (IOException e){
         e.printStackTrace();
       }
-      render();
     }
   }
 

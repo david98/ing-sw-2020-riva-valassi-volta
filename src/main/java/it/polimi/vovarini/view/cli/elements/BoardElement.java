@@ -6,16 +6,17 @@ import it.polimi.vovarini.model.Point;
 import it.polimi.vovarini.model.board.Board;
 import it.polimi.vovarini.model.board.Box;
 import it.polimi.vovarini.model.board.items.Item;
-import it.polimi.vovarini.view.ViewData;
 import it.polimi.vovarini.view.cli.Color;
 import it.polimi.vovarini.view.cli.Direction;
 import it.polimi.vovarini.view.cli.Utils;
 
 import java.util.*;
 
-public class BoardElement extends CliElement {
+public class BoardElement extends CLIElement {
 
-  private final ViewData data;
+  private Board board;
+  private final Set<Player> players;
+  private final Map<Player, Color> playersColors;
 
   private final Color markedColor;
   private final ArrayList<Point> markedPoints;
@@ -24,9 +25,12 @@ public class BoardElement extends CliElement {
 
   private final Map<Item, Player> ownerMap;
 
-  public BoardElement(ViewData data,
+  public BoardElement(Board board, Set<Player> players,
+                      Map<Player, Color> playersColors,
                       Color markedColor) {
-    this.data = data;
+    this.board = board;
+    this.players = players;
+    this.playersColors = playersColors;
     this.markedColor = markedColor;
     cursorLocation = new Point(0, 0);
     markedPoints = new ArrayList<>();
@@ -35,7 +39,6 @@ public class BoardElement extends CliElement {
 
   public String render() {
     StringBuilder boardRep = new StringBuilder();
-    Board board = data.getBoard();
     for (int y = 0; y < board.getSize(); y++) {
       boardRep.append("----".repeat(Math.max(0, board.getSize())));
       boardRep.append("\n");
@@ -43,14 +46,14 @@ public class BoardElement extends CliElement {
         Point cur = new Point(x, y);
         boolean marked = markedPoints.contains(cur);
 
-        boardRep.append(marked ? markedColor.wrap("|") : "|");
+        boardRep.append(marked ? markedColor.fgWrap("|") : "|");
         Box box = board.getBox(cur);
         boardRep.append(
                 marked ?
-                        markedColor.wrap(renderBox(box, cur.equals(cursorLocation))) :
+                        markedColor.fgWrap(renderBox(box, cur.equals(cursorLocation))) :
                         renderBox(box, cur.equals(cursorLocation))
         );
-        boardRep.append(marked ? markedColor.wrap("|") :"|");
+        boardRep.append(marked ? markedColor.fgWrap("|") :"|");
       }
       boardRep.append("\n");
     }
@@ -115,12 +118,12 @@ public class BoardElement extends CliElement {
       if (owner == null) {
         owner = findOwner(item);
       }
-      return data.getPlayersColors().get(owner).wrap(item.toString());
+      return playersColors.get(owner).fgWrap(item.toString());
     }
   }
 
   private Player findOwner(Item item) {
-    for (Player player : data.getPlayers()) {
+    for (Player player : players) {
       if (player.getWorkers().containsValue(item)) {
         ownerMap.put(item, player);
         return player;
@@ -145,4 +148,7 @@ public class BoardElement extends CliElement {
     return new ArrayList<>(markedPoints);
   }
 
+  public void setBoard(Board board) {
+    this.board = board;
+  }
 }

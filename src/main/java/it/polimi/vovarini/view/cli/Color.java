@@ -12,6 +12,7 @@ public class Color {
   public final static Color Red = new Color(255, 0, 0);
   public final static Color Green = new Color(0, 255,  0);
   public final static Color Blue = new Color(0, 0,  255);
+  public final static Color White = new Color(255, 255, 255);
 
   public int r, g, b;
 
@@ -39,8 +40,25 @@ public class Color {
    * @param s The string to be colored.
    * @return {@code s} surrounded by the correct escape sequences.
    */
-  public String wrap(String s) {
+  public String fgWrap(String s) {
     // 27 is \x1b which is not supported by Java lol
     return (char) 27 + "[38;2;" + r + ";" + g + ";" + b + "m" + s + (char) 27 + "[0m";
+  }
+
+  /**
+   * Wraps a string in ANSI escape sequences that produce output with the background
+   * color represented by this object (on terminals that support such escape sequences).
+   *
+   * @param s The string to be colored.
+   * @return {@code s} surrounded by the correct escape sequences.
+   */
+  public String bgWrap(String s) {
+    // 27 is \x1b which is not supported by Java lol
+    return (char) 27 + "[48;2;" + r + ";" + g + ";" + b + "m" + s + (char) 27 + "[0m";
+  }
+
+  public static void main(String[] args){
+    Color c = new Color(255, 0, 0);
+    System.out.println(c.bgWrap(Color.Green.fgWrap("hey")));
   }
 }
