@@ -24,16 +24,6 @@ public class MultiChoiceList<T> extends CLIElement {
     selectedOptions = new HashSet<>();
   }
 
-  public void select(T option){
-    if (options.contains(option) && selectedOptions.size() < maxChoices) {
-      this.selectedOptions.add(option);
-    }
-  }
-
-  public void deSelect(T option){
-    selectedOptions.remove(option);
-  }
-
   public Set<T> getSelectedOptions() {
     return new HashSet<>(selectedOptions);
   }

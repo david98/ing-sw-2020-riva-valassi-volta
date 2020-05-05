@@ -125,7 +125,7 @@ public class FlowDecider extends Decider {
                 for (Player otherPlayer : gameData.getPlayers()){
                     if (!otherPlayer.equals(gameData.getCurrentPlayer())){
                         switch (gameData.getCurrentPlayer().getGodCard().getName()){
-                            case Athena:{
+                            case Athena -> {
                                 otherPlayer.getGodCard().getMovementConstraints().add(ReachabilityDecider::cannotMoveUp);
                                 GameEventManager.raise(new GodCardUpdateEvent(otherPlayer.getGodCard(), otherPlayer));
                                 return Phase.Start;
