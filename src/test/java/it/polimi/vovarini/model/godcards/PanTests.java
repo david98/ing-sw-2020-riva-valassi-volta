@@ -3,7 +3,6 @@ package it.polimi.vovarini.model.godcards;
 import it.polimi.vovarini.model.Game;
 import it.polimi.vovarini.common.exceptions.InvalidNumberOfPlayersException;
 import it.polimi.vovarini.model.Player;
-import it.polimi.vovarini.model.moves.Move;
 import it.polimi.vovarini.model.moves.Movement;
 import it.polimi.vovarini.model.Point;
 import it.polimi.vovarini.model.board.Board;
@@ -11,11 +10,9 @@ import it.polimi.vovarini.common.exceptions.BoxEmptyException;
 import it.polimi.vovarini.common.exceptions.BoxFullException;
 import it.polimi.vovarini.common.exceptions.InvalidPositionException;
 import it.polimi.vovarini.model.board.items.Block;
-import it.polimi.vovarini.model.board.items.Worker;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -39,7 +36,7 @@ public class PanTests {
             game.addPlayer("Guest02");
 
             pan = GodCardFactory.create(GodName.Pan);
-            pan.setGame(game);
+            pan.setGameData(game);
             for (Player player: game.getPlayers()){
                 player.setGodCard(pan);
             }

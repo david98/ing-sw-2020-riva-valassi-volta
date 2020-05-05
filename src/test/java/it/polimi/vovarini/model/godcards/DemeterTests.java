@@ -36,7 +36,7 @@ public class DemeterTests {
             game.addPlayer("Guest02");
 
             demeter = GodCardFactory.create(GodName.Demeter);
-            demeter.setGame(game);
+            demeter.setGameData(game);
             for (Player player: game.getPlayers()){
                 player.setGodCard(demeter);
             }

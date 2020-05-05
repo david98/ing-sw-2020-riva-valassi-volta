@@ -35,7 +35,7 @@ public class MinotaurTests {
     }
     GodCard minotaur = GodCardFactory.create(GodName.Minotaur);
     game.getCurrentPlayer().setGodCard(minotaur);
-    minotaur.setGame(game);
+    minotaur.setGameData(game);
   }
 
   @Test

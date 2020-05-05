@@ -41,7 +41,7 @@ public class PrometheusTests {
             game.addPlayer("Guest02");
 
             prometheus = GodCardFactory.create(GodName.Prometheus);
-            prometheus.setGame(game);
+            prometheus.setGameData(game);
             for (Player player: game.getPlayers()){
                 player.setGodCard(prometheus);
             }

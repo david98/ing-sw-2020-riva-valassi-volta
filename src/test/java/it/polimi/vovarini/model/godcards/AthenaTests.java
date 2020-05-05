@@ -40,9 +40,9 @@ public class AthenaTests {
             game.addPlayer("Guest02");
 
             athena = GodCardFactory.create(GodName.Athena);
-            athena.setGame(game);
+            athena.setGameData(game);
             nobody = GodCardFactory.create(GodName.Nobody);
-            nobody.setGame(game);
+            nobody.setGameData(game);
             game.getPlayers()[0].setGodCard(athena);
             game.getPlayers()[1].setGodCard(nobody);
         } catch (InvalidNumberOfPlayersException e){

@@ -128,10 +128,10 @@ public class Player implements Cloneable, Serializable {
     return hasLost;
   }
 
-  public boolean hasPlayerRisen(Game game){
+  public boolean hasPlayerRisen(GameDataAccessor gameData){
 
     for (Movement movement : movementList){
-      if (game.getBoard().getBox(movement.getEnd()).getLevel() - game.getBoard().getBox(movement.getStart()).getLevel() == 1) return true;
+      if (gameData.getBoard().getBox(movement.getEnd()).getLevel() - gameData.getBoard().getBox(movement.getStart()).getLevel() == 1) return true;
     }
 
     return false;
