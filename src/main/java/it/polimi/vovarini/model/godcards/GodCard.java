@@ -192,12 +192,9 @@ public class GodCard implements Cloneable, Serializable {
               return list.contains(construction.getTarget()) &&
                           b.canBePlacedOn(s.peek());
             } catch (BoxEmptyException ignored){
-            } catch (EmptyStackException e){
-              return construction.getBlock().getLevel() == 1;
+              return list.contains(construction.getTarget()) && construction.getBlock().getLevel() == 1;
             }
-
-            return false;
-   };
+          };
 
   /**
    * Predicate for checking if a player has won with the Movement he wants to perform (applied before the movement itself)
