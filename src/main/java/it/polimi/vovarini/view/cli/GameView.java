@@ -20,6 +20,7 @@ import it.polimi.vovarini.view.cli.elements.PlayerList;
 import it.polimi.vovarini.view.cli.input.Key;
 import it.polimi.vovarini.view.cli.input.KeycodeToKey;
 import it.polimi.vovarini.view.cli.screens.ElectedPlayerScreen;
+import it.polimi.vovarini.view.cli.screens.GodCardSelectionScreen;
 import it.polimi.vovarini.view.cli.screens.MatchScreen;
 import it.polimi.vovarini.view.cli.screens.Screen;
 
@@ -104,7 +105,9 @@ public class GameView extends View {
   @Override
   @GameEventListener
   public void handleGodSelectionStart(GodSelectionStartEvent e) {
-
+    if (e.getElectedPlayer().equals(data.getOwner())) {
+      currentScreen = new ElectedPlayerScreen(data, client, Arrays.asList(e.getAllGods()));
+    }
   }
 
   @Override
@@ -139,8 +142,7 @@ public class GameView extends View {
   }
 
   public void startMatch() {
-    currentScreen = new ElectedPlayerScreen(data, client, Arrays.asList(GodName.values()));
-    //currentScreen = new MatchScreen(data, client);
+    currentScreen = new MatchScreen(data, client);
     gameLoop();
   }
 

@@ -12,59 +12,17 @@ import java.util.List;
 
 public class ElectedPlayerScreen extends Screen {
 
-
+  private final Text explanation;
   private final MultiChoiceList<GodName> godNameMultiChoiceList;
   private final Text confirmationPrompt;
 
   public ElectedPlayerScreen(ViewData data, GameClient client, List<GodName> allGods){
     super(data, client);
+    explanation = new Text(
+            "You are the chosen one. Choose which cards will be available during this game.\n\n"
+    );
     godNameMultiChoiceList = new MultiChoiceList<>(allGods, data.getPlayers().size());
     confirmationPrompt = new Text("Press O to confirm your choice.");
-  }
-
-  @Override
-  public void handleBoardUpdate(BoardUpdateEvent e) {
-
-  }
-
-  @Override
-  public void handleCurrentPlayerUpdate(CurrentPlayerChangedEvent e) {
-
-  }
-
-  @Override
-  public void handlePhaseUpdate(PhaseUpdateEvent e) {
-
-  }
-
-  @Override
-  public void handleGameStart(GameStartEvent e) {
-
-  }
-
-  @Override
-  public void handleNewPlayer(NewPlayerEvent e) {
-
-  }
-
-  @Override
-  public void handleGodSelectionStart(GodSelectionStartEvent e) {
-
-  }
-
-  @Override
-  public void handleSelectYourCard(SelectYourCardEvent e) {
-
-  }
-
-  @Override
-  public void handleCardAssignment(CardAssignmentEvent e) {
-
-  }
-
-  @Override
-  public void handlePlaceYourWorkers(PlaceYourWorkersEvent e) {
-
   }
 
   private void confirm(){
@@ -86,7 +44,8 @@ public class ElectedPlayerScreen extends Screen {
 
   @Override
   public String render(){
-    return godNameMultiChoiceList.render() +
+    return explanation.render() +
+            godNameMultiChoiceList.render() +
             (godNameMultiChoiceList.maxSelected() ? ("\n" + confirmationPrompt.render()) : "");
   }
 }
