@@ -5,7 +5,7 @@ import it.polimi.vovarini.model.Player;
 import it.polimi.vovarini.model.Point;
 import it.polimi.vovarini.model.board.Board;
 import it.polimi.vovarini.model.board.items.Worker;
-import it.polimi.vovarini.view.cli.Color;
+import it.polimi.vovarini.view.cli.styling.Color;
 
 import java.io.Serializable;
 import java.util.*;

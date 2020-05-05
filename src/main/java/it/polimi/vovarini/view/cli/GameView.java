@@ -8,6 +8,7 @@ import it.polimi.vovarini.model.Player;
 import it.polimi.vovarini.model.Point;
 import it.polimi.vovarini.model.board.items.Item;
 import it.polimi.vovarini.model.board.items.Worker;
+import it.polimi.vovarini.model.godcards.GodName;
 import it.polimi.vovarini.server.GameClient;
 import it.polimi.vovarini.server.Server;
 import it.polimi.vovarini.view.View;
@@ -16,6 +17,9 @@ import it.polimi.vovarini.view.cli.console.Console;
 import it.polimi.vovarini.view.cli.console.FullScreenConsole;
 import it.polimi.vovarini.view.cli.elements.BoardElement;
 import it.polimi.vovarini.view.cli.elements.PlayerList;
+import it.polimi.vovarini.view.cli.input.Key;
+import it.polimi.vovarini.view.cli.input.KeycodeToKey;
+import it.polimi.vovarini.view.cli.screens.ElectedPlayerScreen;
 import it.polimi.vovarini.view.cli.screens.MatchScreen;
 import it.polimi.vovarini.view.cli.screens.Screen;
 
@@ -49,19 +53,25 @@ public class GameView extends View {
   @GameEventListener
   public void handleBoardUpdate(BoardUpdateEvent e){
     data.setBoard(e.getNewBoard());
-    currentScreen.handleBoardUpdate(e);
+    if (currentScreen != null) {
+      currentScreen.handleBoardUpdate(e);
+    }
   }
 
   @GameEventListener
   public void handleCurrentPlayerUpdate(CurrentPlayerChangedEvent e){
     data.setCurrentPlayer(e.getNewPlayer());
-    currentScreen.handleCurrentPlayerUpdate(e);
+    if (currentScreen != null) {
+      currentScreen.handleCurrentPlayerUpdate(e);
+    }
   }
 
   @GameEventListener
   public void handlePhaseUpdate(PhaseUpdateEvent e){
     data.setCurrentPhase(e.getNewPhase());
-    currentScreen.handlePhaseUpdate(e);
+    if (currentScreen != null) {
+      currentScreen.handlePhaseUpdate(e);
+    }
   }
 
   @GameEventListener
@@ -116,17 +126,21 @@ public class GameView extends View {
   }
 
   public void render(){
+    console.clear();
     console.println(currentScreen.render());
   }
 
   public void handleInput() throws IOException{
     int input = console.getReader().read();
-    console.println(Integer.toString(input));
-    currentScreen.handleKeyPress(input);
+    Key key = KeycodeToKey.map.get(input);
+    if (key != null) {
+      currentScreen.handleKeyPress(key);
+    }
   }
 
   public void startMatch() {
-    currentScreen = new MatchScreen(data, client);
+    currentScreen = new ElectedPlayerScreen(data, client, Arrays.asList(GodName.values()));
+    //currentScreen = new MatchScreen(data, client);
     gameLoop();
   }
 

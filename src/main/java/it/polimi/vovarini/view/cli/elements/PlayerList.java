@@ -1,7 +1,7 @@
 package it.polimi.vovarini.view.cli.elements;
 
 import it.polimi.vovarini.model.Player;
-import it.polimi.vovarini.view.cli.Color;
+import it.polimi.vovarini.view.cli.styling.Color;
 
 import java.util.Map;
 import java.util.Set;

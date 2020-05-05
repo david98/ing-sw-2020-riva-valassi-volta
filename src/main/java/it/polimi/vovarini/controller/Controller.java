@@ -235,9 +235,14 @@ public class Controller implements EventListener {
     game.setCurrentPhase(game.getCurrentPlayer().getGodCard().computeNextPhase(game));
   }
 
+  @GameEventListener
+  public void update(AvailableCardsEvent evt){
+    System.out.println(Arrays.toString(evt.getSelectedGods()));
+  }
 
 
 
 
-public static void main(String[] args) {}
+
+  public static void main(String[] args) {}
 }

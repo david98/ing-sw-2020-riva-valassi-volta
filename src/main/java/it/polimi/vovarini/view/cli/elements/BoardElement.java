@@ -6,7 +6,7 @@ import it.polimi.vovarini.model.Point;
 import it.polimi.vovarini.model.board.Board;
 import it.polimi.vovarini.model.board.Box;
 import it.polimi.vovarini.model.board.items.Item;
-import it.polimi.vovarini.view.cli.Color;
+import it.polimi.vovarini.view.cli.styling.Color;
 import it.polimi.vovarini.view.cli.Direction;
 import it.polimi.vovarini.view.cli.Utils;
 

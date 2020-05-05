@@ -1,4 +1,4 @@
-package it.polimi.vovarini.view.cli;
+package it.polimi.vovarini.view.cli.styling;
 
 /**
  * Represents an RGB coded color.
@@ -13,6 +13,7 @@ public class Color {
   public final static Color Green = new Color(0, 255,  0);
   public final static Color Blue = new Color(0, 0,  255);
   public final static Color White = new Color(255, 255, 255);
+  public final static Color Black = new Color(0, 0, 0);
 
   public int r, g, b;
 

@@ -9,7 +9,8 @@ import it.polimi.vovarini.model.board.items.Item;
 import it.polimi.vovarini.model.board.items.Worker;
 import it.polimi.vovarini.server.GameClient;
 import it.polimi.vovarini.view.ViewData;
-import it.polimi.vovarini.view.cli.Color;
+import it.polimi.vovarini.view.cli.input.Key;
+import it.polimi.vovarini.view.cli.styling.Color;
 import it.polimi.vovarini.view.cli.Direction;
 import it.polimi.vovarini.view.cli.elements.BoardElement;
 import it.polimi.vovarini.view.cli.elements.PhasePrompt;
@@ -18,8 +19,6 @@ import it.polimi.vovarini.view.cli.elements.PlayerList;
 import java.util.Collection;
 
 public class MatchScreen extends Screen {
-
-  private final GameClient client;
 
   private final PlayerList playerList;
   private final BoardElement boardElement;
@@ -30,9 +29,7 @@ public class MatchScreen extends Screen {
   private String lastContent;
 
   public MatchScreen(ViewData data, GameClient client){
-    super(data);
-
-    this.client = client;
+    super(data, client);
 
     playerList = new PlayerList(data.getPlayers(), data.getOwner(), data.getPlayersColors());
     playerList.setCurrentPlayer(data.getCurrentPlayer());
@@ -43,37 +40,37 @@ public class MatchScreen extends Screen {
   }
 
   @Override
-  public void handleKeyPress(int keycode) {
-    switch (keycode) {
-      case 97: { //A
+  public void handleKeyPress(Key key) {
+    switch (key) {
+      case A: {
         boardElement.moveCursor(Direction.Left);
         reRenderNeeded = true;
         break;
       }
-      case 100: { //D
+      case D: {
         boardElement.moveCursor(Direction.Right);
         reRenderNeeded = true;
         break;
       }
-      case 119: { //W
+      case W: {
         boardElement.moveCursor(Direction.Up);
         reRenderNeeded = true;
         break;
       }
-      case 115: { //S
+      case S: {
         boardElement.moveCursor(Direction.Down);
         reRenderNeeded = true;
         break;
       }
-      case 32: { //space
+      case Spacebar: {
         select();
         break;
       }
-      case 110: { //N
+      case N: {
         client.raise(new SkipEvent(data.getOwner()));
         break;
       }
-      case 79: { //O
+      case O: {
         confirm();
       }
       default: {
