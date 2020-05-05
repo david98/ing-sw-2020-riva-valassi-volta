@@ -11,12 +11,14 @@ import it.polimi.vovarini.model.board.items.Block;
 import it.polimi.vovarini.model.board.items.OverwrittenWorkerException;
 import it.polimi.vovarini.model.board.items.Worker;
 import it.polimi.vovarini.model.godcards.GodCard;
+import it.polimi.vovarini.model.godcards.GodCardFactory;
 import it.polimi.vovarini.model.godcards.GodName;
 import it.polimi.vovarini.model.moves.Construction;
 import it.polimi.vovarini.model.moves.Movement;
 
 import java.util.Arrays;
 import java.util.EventListener;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -102,7 +104,7 @@ public class Controller implements EventListener {
     game.setupGodCards();
   }
 
-
+  @GameEventListener
   public void update(CardChoiceEvent evt)
           throws CardsNotSelectedException, InvalidCardException, WrongPlayerException {
 
@@ -117,13 +119,14 @@ public class Controller implements EventListener {
     Player currentPlayer = game.getCurrentPlayer();
     if (!currentPlayer.equals(evt.getSource())) throw new WrongPlayerException();
 
-    List<GodName> availableGods = Arrays.asList(game.getAvailableGodCards());
+    LinkedList<GodName> availableGods = new LinkedList<>(Arrays.asList(game.getAvailableGodCards()));
 
     if (!availableGods.contains(evt.getSelectedGod())) {
       throw new InvalidCardException();
     }
 
-    GodCard playerCard = new GodCard(evt.getSelectedGod(), game);
+    GodCard playerCard = GodCardFactory.create(evt.getSelectedGod());
+    playerCard.setGameData(game);
     currentPlayer.setGodCard(playerCard);
 
     // io questo 'raise' lo metterei su Player#setGodCard()
@@ -131,7 +134,7 @@ public class Controller implements EventListener {
 
     availableGods.remove(evt.getSelectedGod());
 
-    game.setAvailableGodCards((GodName[]) availableGods.toArray());
+    game.setAvailableGodCards(availableGods.toArray(GodName[]::new));
     game.setupGodCards();
   }
 

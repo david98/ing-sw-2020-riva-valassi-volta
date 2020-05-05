@@ -38,7 +38,7 @@ public class AtlasTests {
             game.addPlayer("Guest02");
 
             atlas = GodCardFactory.create(GodName.Atlas);
-            atlas.setGame(game);
+            atlas.setGameData(game);
             for (Player player: game.getPlayers()){
                 player.setGodCard(atlas);
             }

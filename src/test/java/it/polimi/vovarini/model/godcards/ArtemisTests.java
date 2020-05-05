@@ -35,7 +35,7 @@ public class ArtemisTests {
             game.addPlayer("Guest02");
 
             artemis = GodCardFactory.create(GodName.Artemis);
-            artemis.setGame(game);
+            artemis.setGameData(game);
             for (Player player: game.getPlayers()){
                 player.setGodCard(artemis);
             }

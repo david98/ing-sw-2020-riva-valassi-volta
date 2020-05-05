@@ -1,10 +1,12 @@
 package it.polimi.vovarini.view;
 
+import it.polimi.vovarini.model.GameDataAccessor;
 import it.polimi.vovarini.model.Phase;
 import it.polimi.vovarini.model.Player;
 import it.polimi.vovarini.model.Point;
 import it.polimi.vovarini.model.board.Board;
 import it.polimi.vovarini.model.board.items.Worker;
+import it.polimi.vovarini.model.godcards.GodName;
 import it.polimi.vovarini.view.cli.styling.Color;
 
 import java.io.Serializable;
@@ -15,7 +17,7 @@ import java.util.*;
  *
  * @author Davide Volta
  */
-public class ViewData implements Serializable {
+public class ViewData implements Serializable, GameDataAccessor {
   private Player owner;
   private Player currentPlayer;
   private final Set<Player> players;
@@ -42,6 +44,16 @@ public class ViewData implements Serializable {
     this.currentPhase = currentPhase;
   }
 
+  @Override
+  public boolean isFull() {
+    return false;
+  }
+
+  @Override
+  public void nextPlayer() {
+
+  }
+
   public Player getOwner() {
     return owner;
   }
@@ -58,8 +70,13 @@ public class ViewData implements Serializable {
     this.currentPlayer = currentPlayer;
   }
 
-  public Set<Player> getPlayers() {
+  public Set<Player> getPlayerSet() {
     return players;
+  }
+
+  @Override
+  public Player[] getPlayers() {
+    return players.toArray(Player[]::new);
   }
 
   public void addPlayer(Player player, Color color) {

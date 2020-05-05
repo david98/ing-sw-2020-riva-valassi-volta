@@ -1,31 +1,18 @@
 package it.polimi.vovarini.view.cli;
 
 import it.polimi.vovarini.common.events.*;
-import it.polimi.vovarini.common.exceptions.BoxEmptyException;
-import it.polimi.vovarini.common.exceptions.InvalidPositionException;
-import it.polimi.vovarini.model.Phase;
 import it.polimi.vovarini.model.Player;
-import it.polimi.vovarini.model.Point;
-import it.polimi.vovarini.model.board.items.Item;
-import it.polimi.vovarini.model.board.items.Worker;
-import it.polimi.vovarini.model.godcards.GodName;
 import it.polimi.vovarini.server.GameClient;
 import it.polimi.vovarini.server.Server;
 import it.polimi.vovarini.view.View;
 import it.polimi.vovarini.view.ViewData;
 import it.polimi.vovarini.view.cli.console.Console;
 import it.polimi.vovarini.view.cli.console.FullScreenConsole;
-import it.polimi.vovarini.view.cli.elements.BoardElement;
-import it.polimi.vovarini.view.cli.elements.PlayerList;
 import it.polimi.vovarini.view.cli.input.Key;
 import it.polimi.vovarini.view.cli.input.KeycodeToKey;
-import it.polimi.vovarini.view.cli.screens.ElectedPlayerScreen;
-import it.polimi.vovarini.view.cli.screens.GodCardSelectionScreen;
-import it.polimi.vovarini.view.cli.screens.MatchScreen;
-import it.polimi.vovarini.view.cli.screens.Screen;
+import it.polimi.vovarini.view.cli.screens.*;
 
 import java.io.IOException;
-import java.lang.reflect.Array;
 import java.util.*;
 
 public class GameView extends View {
@@ -48,6 +35,15 @@ public class GameView extends View {
     console = new FullScreenConsole();
 
     client = new GameClient("127.0.0.1", Server.DEFAULT_PORT);
+  }
+
+  private void waitForEvent(){
+    try {
+      GameEvent evtFromServer = client.getServerEvents().take();
+      GameEventManager.raise(evtFromServer);
+    } catch (InterruptedException e){
+      waitForEvent();
+    }
   }
 
 
@@ -95,33 +91,45 @@ public class GameView extends View {
   public void handleGodSelectionStart(GodSelectionStartEvent e) {
     Player[] players = e.getPlayers();
     for (int i = 0; i < players.length; i++){
-      for (Player p: data.getPlayers()){
+      for (Player p: data.getPlayerSet()){
         if (players[i].equals(p)){
           players[i] = p;
         }
       }
     }
-    data.getPlayers().clear();
+    data.getPlayerSet().clear();
     for (Player p: players){
       data.addPlayer(p);
     }
     if (e.getElectedPlayer().equals(data.getOwner())) {
       currentScreen = new ElectedPlayerScreen(data, client, Arrays.asList(e.getAllGods()));
       gameLoop();
+    } else {
+      currentScreen = new WaitGodCardsListScreen(data, client);
+      render();
+      waitForEvent();
     }
   }
 
   @Override
   @GameEventListener
   public void handleSelectYourCard(SelectYourCardEvent e) {
-
+    if (e.getTargetPlayer().equals(data.getOwner())){
+      currentScreen = new GodCardSelectionScreen(data, client, Arrays.asList(e.getGodsLeft()));
+      gameLoop();
+    } else {
+      currentScreen = new WaitPlayersGodSelectionScreen(data, client);
+      render();
+      waitForEvent();
+    }
   }
 
   @Override
   @GameEventListener
   public void handleCardAssignment(CardAssignmentEvent e) {
-    for (Player p: data.getPlayers()){
+    for (Player p: data.getPlayerSet()){
       if (p.equals(e.getTargetPlayer())){
+        e.getAssignedCard().setGameData(data);
         p.setGodCard(e.getAssignedCard());
       }
     }
@@ -130,7 +138,6 @@ public class GameView extends View {
   @Override
   @GameEventListener
   public void handlePlaceYourWorkers(PlaceYourWorkersEvent e) {
-
   }
 
   public void render(){
@@ -166,13 +173,13 @@ public class GameView extends View {
     data.setOwner(new Player(nickname));
     System.out.println("Now waiting for other players...");
     console.enterRawMode();
-    try {
-      while (true) {
+    while (true) {
+      try {
         GameEvent evtFromServer = client.getServerEvents().take();
         GameEventManager.raise(evtFromServer);
+      } catch (InterruptedException e){
+        e.printStackTrace();
       }
-    } catch (InterruptedException e){
-      e.printStackTrace();
     }
   }
 
@@ -181,15 +188,19 @@ public class GameView extends View {
     while (true) {
       GameEvent evt;
       // consume events from the server
-      while ( (evt = client.getServerEvents().peek()) != null) {
+      while ( client.getServerEvents().peek() != null) {
+        evt = client.getServerEvents().poll();
         GameEventManager.raise(evt);
       }
       try {
         if (data.getOwner().equals(data.getCurrentPlayer())) {
           handleInput();
           render();
+        } else {
+          // wait for event
+          GameEventManager.raise(client.getServerEvents().take());
         }
-      } catch (IOException e){
+      } catch (IOException | InterruptedException e){
         e.printStackTrace();
       }
     }

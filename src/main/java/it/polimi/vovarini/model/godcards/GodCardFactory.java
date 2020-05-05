@@ -1,9 +1,6 @@
 package it.polimi.vovarini.model.godcards;
 
-import it.polimi.vovarini.model.godcards.deciders.ConsequencesDecider;
-import it.polimi.vovarini.model.godcards.deciders.FlowDecider;
-import it.polimi.vovarini.model.godcards.deciders.ReachabilityDecider;
-import it.polimi.vovarini.model.godcards.deciders.ValidationDecider;
+import it.polimi.vovarini.model.godcards.deciders.*;
 
 /**
  * GodCardFactory creates a specific GodCard injecting dynamically
@@ -20,49 +17,38 @@ public class GodCardFactory {
      * @return the created GodCard with all the dynamic assignments of methods
      */
     public static GodCard create(GodName name) {
-    switch (name) {
-      case Apollo:
-      {
-        return createApollo();
-      }
-      case Artemis:
-      {
-        return createArtemis();
-      }
-      case Athena:
-      {
-        return createAthena();
-      }
-      case Atlas:
-      {
-        return createAtlas();
-      }
-      case Demeter:
-      {
-        return createDemeter();
-      }
-      case Hephaestus:
-      {
-        return createHephaestus();
-      }
-      case Minotaur:
-      {
+      switch (name) {
+        case Apollo -> {
+          return createApollo();
+        }
+        case Artemis -> {
+          return createArtemis();
+        }
+        case Athena -> {
+          return createAthena();
+        }
+        case Atlas -> {
+          return createAtlas();
+        }
+        case Demeter -> {
+          return createDemeter();
+        }
+        case Hephaestus -> {
+          return createHephaestus();
+        }
+        case Minotaur -> {
           return createMinotaur();
-      }
-      case Pan:
-      {
-        return createPan();
-      }
-      case Prometheus:
-      {
-        return createPrometheus();
-      }
-      case Nobody:
-      default:
-        {
+        }
+        case Pan -> {
+          return createPan();
+        }
+        case Prometheus -> {
+          return createPrometheus();
+        }
+        default -> {
           return createNobody();
         }
-    }
+      }
   }
 
     /**

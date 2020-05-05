@@ -21,11 +21,12 @@ public class ElectedPlayerScreen extends Screen {
     explanation = new Text(
             "You are the chosen one. Choose which cards will be available during this game.\n\n"
     );
-    godNameMultiChoiceList = new MultiChoiceList<>(allGods, data.getPlayers().size());
+    godNameMultiChoiceList = new MultiChoiceList<>(allGods, data.getPlayerSet().size());
     confirmationPrompt = new Text("Press O to confirm your choice.");
   }
 
   private void confirm(){
+    System.out.println("ooooi");
     if (godNameMultiChoiceList.maxSelected()) {
       client.raise(new AvailableCardsEvent(data.getOwner(),
               godNameMultiChoiceList.getSelectedOptions().toArray(GodName[]::new)));

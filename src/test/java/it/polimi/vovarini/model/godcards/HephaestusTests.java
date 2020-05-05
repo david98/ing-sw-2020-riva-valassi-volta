@@ -39,7 +39,7 @@ public class HephaestusTests {
             game.addPlayer("Guest02");
 
             hephaestus = GodCardFactory.create(GodName.Hephaestus);
-            hephaestus.setGame(game);
+            hephaestus.setGameData(game);
             for (Player player: game.getPlayers()){
                 player.setGodCard(hephaestus);
             }

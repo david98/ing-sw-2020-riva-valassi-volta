@@ -13,7 +13,7 @@ import it.polimi.vovarini.model.moves.Movement;
 import java.io.Serializable;
 import java.util.*;
 
-public class Game implements Serializable {
+public class Game implements Serializable, GameDataAccessor {
 
   public static final int MIN_PLAYERS = 2;
   public static final int MAX_PLAYERS = 3;
@@ -22,10 +22,6 @@ public class Game implements Serializable {
   private int currentPlayerIndex;
 
   private Phase currentPhase;
-
-  public Board getBoard() {
-    return board;
-  }
 
   private Board board;
 
@@ -52,6 +48,10 @@ public class Game implements Serializable {
     currentPhase = Phase.Start;
   }
 
+  public Board getBoard() {
+    return board;
+  }
+
   /**
    * This method adds a new player into the game with the nickname already
    * validated through {@link Player#validateNickname(String)}
@@ -72,7 +72,7 @@ public class Game implements Serializable {
       if (players[i] == null) {
         players[i] = player;
         player.setGodCard(GodCardFactory.create(GodName.Nobody)); // MERDA PER TEST!!!
-        player.getGodCard().setGame(this);                        // RIPETO MERDA PER TEST!!!
+        player.getGodCard().setGameData(this);                        // RIPETO MERDA PER TEST!!!
         GameEventManager.raise(new NewPlayerEvent(this, player));
         return;
       }
@@ -92,14 +92,15 @@ public class Game implements Serializable {
     nextPlayer();
 
     if(availableGodCards.length == 1) {
-      GodCard lastGodCard = new GodCard(availableGodCards[0], this);
+      GodCard lastGodCard = GodCardFactory.create(availableGodCards[0]);
+      lastGodCard.setGameData(this);
       getCurrentPlayer().setGodCard(lastGodCard);
       GameEventManager.raise(new CardAssignmentEvent(this, getCurrentPlayer(), lastGodCard));
 
       // settare currentPlayer a players[0], oppure potremmo proseguire il turno da qui, lasciando invariato il codice attuale
       GameEventManager.raise(new PlaceYourWorkersEvent(this, getCurrentPlayer().clone()));
     } else {
-      GameEventManager.raise(new SelectYourCardEvent(this, getCurrentPlayer().clone(), availableGodCards));
+      GameEventManager.raise(new SelectYourCardEvent(this, getCurrentPlayer(), availableGodCards));
     }
   }
 
@@ -149,10 +150,9 @@ public class Game implements Serializable {
     this.availableGodCards = availableGodCards;
   }
 
-  public Player nextPlayer() {
+  public void nextPlayer() {
     currentPlayerIndex = (currentPlayerIndex + 1) % players.length;
     GameEventManager.raise(new CurrentPlayerChangedEvent(this, players[currentPlayerIndex].clone()));
-    return players[currentPlayerIndex];
   }
 
   public void setCurrentPhase(Phase phase){

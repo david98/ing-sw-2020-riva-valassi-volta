@@ -31,9 +31,9 @@ public class MatchScreen extends Screen {
   public MatchScreen(ViewData data, GameClient client){
     super(data, client);
 
-    playerList = new PlayerList(data.getPlayers(), data.getOwner(), data.getPlayersColors());
+    playerList = new PlayerList(data.getPlayerSet(), data.getOwner(), data.getPlayersColors());
     playerList.setCurrentPlayer(data.getCurrentPlayer());
-    boardElement = new BoardElement(data.getBoard(), data.getPlayers(), data.getPlayersColors(), Color.Green);
+    boardElement = new BoardElement(data.getBoard(), data.getPlayerSet(), data.getPlayersColors(), Color.Green);
     phasePrompt = new PhasePrompt(data.getCurrentPhase());
 
     reRenderNeeded = true;
