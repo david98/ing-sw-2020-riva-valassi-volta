@@ -1,11 +1,9 @@
 package it.polimi.vovarini.model;
 
-import it.polimi.vovarini.common.events.CurrentPlayerChangedEvent;
-import it.polimi.vovarini.common.events.GameEventManager;
-import it.polimi.vovarini.common.events.NewPlayerEvent;
-import it.polimi.vovarini.common.events.PhaseUpdateEvent;
+import it.polimi.vovarini.common.events.*;
 import it.polimi.vovarini.common.exceptions.InvalidNumberOfPlayersException;
 import it.polimi.vovarini.model.board.Board;
+import it.polimi.vovarini.model.godcards.GodCard;
 import it.polimi.vovarini.model.godcards.GodCardFactory;
 import it.polimi.vovarini.model.godcards.GodName;
 import it.polimi.vovarini.model.moves.Construction;
@@ -13,10 +11,7 @@ import it.polimi.vovarini.model.moves.Move;
 import it.polimi.vovarini.model.moves.Movement;
 
 import java.io.Serializable;
-import java.util.Arrays;
-import java.util.EmptyStackException;
-import java.util.Objects;
-import java.util.Stack;
+import java.util.*;
 
 public class Game implements Serializable {
 
@@ -37,12 +32,15 @@ public class Game implements Serializable {
   private Stack<Move> moves;
   private Stack<Move> undoneMoves;
 
+  private GodName[] availableGodCards;
+
   public Game(int numberOfPlayers) throws InvalidNumberOfPlayersException {
     if (numberOfPlayers < MIN_PLAYERS || numberOfPlayers > MAX_PLAYERS) {
       throw new InvalidNumberOfPlayersException();
     }
 
     players = new Player[numberOfPlayers];
+    availableGodCards = new GodName[numberOfPlayers];
 
     currentPlayerIndex = 0;
 
@@ -81,6 +79,31 @@ public class Game implements Serializable {
     }
   }
 
+
+  public void drawElectedPlayer() {
+    Random r = new Random();
+    currentPlayerIndex = r.nextInt(players.length);
+    GameEventManager.raise(new CurrentPlayerChangedEvent(this, getCurrentPlayer()));
+  }
+
+  // se è rimasta solo una carta, la assegna, altrimenti chiede al prossimo giocatore la carta che vuole (tra quelle rimaste)
+  public void setupGodCards() {
+
+    nextPlayer();
+
+    if(availableGodCards.length == 1) {
+      GodCard lastGodCard = new GodCard(availableGodCards[0], this);
+      getCurrentPlayer().setGodCard(lastGodCard);
+      GameEventManager.raise(new CardAssignmentEvent(this, getCurrentPlayer(), lastGodCard));
+
+      // settare currentPlayer a players[0], oppure potremmo proseguire il turno da qui, lasciando invariato il codice attuale
+      GameEventManager.raise(new PlaceYourWorkersEvent(this, getCurrentPlayer().clone()));
+    } else {
+      GameEventManager.raise(new SelectYourCardEvent(this, getCurrentPlayer().clone(), availableGodCards));
+    }
+  }
+
+
   public void performMove(Movement move) {
 
     undoneMoves.clear();
@@ -105,10 +128,10 @@ public class Game implements Serializable {
     }
 
   }
+
   public Phase getCurrentPhase() {
     return currentPhase;
   }
-
 
   public Player[] getPlayers() {
     return players;
@@ -116,6 +139,14 @@ public class Game implements Serializable {
 
   public Player getCurrentPlayer() {
     return players[currentPlayerIndex];
+  }
+
+  public GodName[] getAvailableGodCards() {
+    return availableGodCards;
+  }
+
+  public void setAvailableGodCards(GodName[] availableGodCards) {
+    this.availableGodCards = availableGodCards;
   }
 
   public Player nextPlayer() {
@@ -153,4 +184,6 @@ public class Game implements Serializable {
   public boolean isFull(){
     return Arrays.stream(players).noneMatch(Objects::isNull);
   }
+
+  public boolean isAvailableCardsAlreadySet() { return Arrays.stream(availableGodCards).noneMatch(Objects::isNull); }
 }
