@@ -77,18 +77,6 @@ public class GameView extends View {
 
   @GameEventListener
   public void handleGameStart(GameStartEvent e){
-    Player[] players = e.getPlayers();
-    for (int i = 0; i < players.length; i++){
-      for (Player p: data.getPlayers()){
-        if (players[i].equals(p)){
-          players[i] = p;
-        }
-      }
-    }
-    data.getPlayers().clear();
-    for (Player p: players){
-      data.addPlayer(p);
-    }
     startMatch();
   }
 
@@ -105,8 +93,21 @@ public class GameView extends View {
   @Override
   @GameEventListener
   public void handleGodSelectionStart(GodSelectionStartEvent e) {
+    Player[] players = e.getPlayers();
+    for (int i = 0; i < players.length; i++){
+      for (Player p: data.getPlayers()){
+        if (players[i].equals(p)){
+          players[i] = p;
+        }
+      }
+    }
+    data.getPlayers().clear();
+    for (Player p: players){
+      data.addPlayer(p);
+    }
     if (e.getElectedPlayer().equals(data.getOwner())) {
       currentScreen = new ElectedPlayerScreen(data, client, Arrays.asList(e.getAllGods()));
+      gameLoop();
     }
   }
 
@@ -119,7 +120,11 @@ public class GameView extends View {
   @Override
   @GameEventListener
   public void handleCardAssignment(CardAssignmentEvent e) {
-
+    for (Player p: data.getPlayers()){
+      if (p.equals(e.getTargetPlayer())){
+        p.setGodCard(e.getAssignedCard());
+      }
+    }
   }
 
   @Override
