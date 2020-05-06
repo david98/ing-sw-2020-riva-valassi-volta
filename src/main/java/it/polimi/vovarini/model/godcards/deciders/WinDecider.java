@@ -1,5 +1,6 @@
 package it.polimi.vovarini.model.godcards.deciders;
 
+import it.polimi.vovarini.model.board.Board;
 import it.polimi.vovarini.model.moves.Movement;
 
 /**
@@ -21,5 +22,21 @@ public class WinDecider extends Decider {
         int currentLevel = movement.getBoard().getBox(movement.getStart()).getLevel();
 
         return currentLevel - endLevel >= 2;
+    }
+
+    /**
+     * This method adds a winning constraint, making the player unable to win by moving into a perimeter space
+     * @param movement is the Movement move the player wants to perform
+     * @return false if the Movement makes the player move into a perimeter space, true otherwise
+     * @author Marco Riva
+     */
+    public static boolean perimeterConstraint(Movement movement) {
+        int min = 0;
+        int max = Board.DEFAULT_SIZE - 1;
+
+        int endX = movement.getEnd().getX();
+        int endY = movement.getEnd().getY();
+
+        return endX != min && endX != max && endY != min && endY != max;
     }
 }

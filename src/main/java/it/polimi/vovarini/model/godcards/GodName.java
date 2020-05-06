@@ -7,6 +7,7 @@ public enum GodName {
   Atlas,
   Demeter,
   Hephaestus,
+  Hera,
   Minotaur,
   Pan,
   Prometheus,
