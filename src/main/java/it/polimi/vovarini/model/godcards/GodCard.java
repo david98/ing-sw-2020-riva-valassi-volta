@@ -267,7 +267,7 @@ public class GodCard implements Cloneable, Serializable {
    */
   public boolean isMovementWinning(Movement movement) {
     return !movement.isForced() && winningConditions.stream().anyMatch(cond -> cond.test(movement)) &&
-            winningConstraints.stream().noneMatch(cond -> cond.test(movement));
+            winningConstraints.stream().allMatch(cond -> cond.test(movement));
   }
 
   /**
