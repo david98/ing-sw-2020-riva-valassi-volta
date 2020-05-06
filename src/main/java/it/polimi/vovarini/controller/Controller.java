@@ -193,6 +193,36 @@ public class Controller implements EventListener {
       } catch (BoxEmptyException ex) {
         try {
           game.getBoard().place(currentPlayer.getCurrentWorker(), target);
+
+          /**
+           * controlliamo, se ha piazzato tutti i propri operai passiamo la mano al
+           * giocatore successivo
+           */
+          if (currentPlayer.getWorkers().values().stream().noneMatch(worker -> {
+            try {
+              game.getBoard().getItemPosition(worker);
+              return false;
+            } catch (ItemNotFoundException exception){
+              return true;
+            }
+          }
+          )) {
+            game.nextPlayer();
+            if (game.getCurrentPlayer().getWorkers().values().stream().noneMatch(worker -> {
+                      try {
+                        game.getBoard().getItemPosition(worker);
+                        return false;
+                      } catch (ItemNotFoundException exception){
+                        return true;
+                      }
+                    }
+            )) {
+              // tutti hanno piazzato
+              GameEventManager.raise(new GameStartEvent(game, game.getPlayers()));
+            } else {
+              GameEventManager.raise(new PlaceYourWorkersEvent(game, game.getCurrentPlayer()));
+            }
+          }
         } catch (BoxFullException ignored) {
           // Non dovrebbe mai succedere
         }
