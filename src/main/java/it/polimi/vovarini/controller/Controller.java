@@ -154,7 +154,9 @@ public class Controller implements EventListener {
       throw new InvalidPhaseException();
 
     game.getCurrentPlayer().setCurrentSex(evt.getSex());
-
+    if (game.isSetupComplete()) {
+      game.setCurrentPhase(game.getCurrentPlayer().getGodCard().computeNextPhase(game));
+    }
   }
 
   /**
@@ -218,7 +220,7 @@ public class Controller implements EventListener {
                     }
             )) {
               // tutti hanno piazzato
-              GameEventManager.raise(new GameStartEvent(game, game.getPlayers()));
+              game.start();
             } else {
               GameEventManager.raise(new PlaceYourWorkersEvent(game, game.getCurrentPlayer()));
             }
@@ -262,6 +264,7 @@ public class Controller implements EventListener {
         throw new InvalidMoveException();
 
     game.performMove(build);
+    game.setCurrentPhase(game.getCurrentPlayer().getGodCard().computeNextPhase(game));
   }
 
   /**
@@ -295,7 +298,7 @@ public class Controller implements EventListener {
 
 
       game.performMove(movement);
-
+      game.setCurrentPhase(game.getCurrentPlayer().getGodCard().computeNextPhase(game));
     } catch (ItemNotFoundException e) {
       throw new RuntimeException(e);
     }

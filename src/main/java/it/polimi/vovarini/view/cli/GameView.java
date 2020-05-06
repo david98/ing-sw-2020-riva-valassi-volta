@@ -96,6 +96,7 @@ public class GameView extends View {
           players[i] = p;
         }
       }
+      players[i].getGodCard().setGameData(data);
     }
     data.getPlayerSet().clear();
     for (Player p: players){
@@ -147,6 +148,8 @@ public class GameView extends View {
       // maybe we should show the board
       currentScreen = new WaitScreen(data, client,
               "Waiting for all players to place their workers...");
+      render();
+      waitForEvent();
     }
   }
 

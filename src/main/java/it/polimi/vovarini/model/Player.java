@@ -15,11 +15,11 @@ import java.util.Map;
 
 public class Player implements Cloneable, Serializable {
 
-  private EnumMap<Sex, Worker> workers;
+  private final EnumMap<Sex, Worker> workers;
   private Sex currentSex;
 
   private GodCard godCard;
-  private String nickname;
+  private final String nickname;
 
   private boolean isWorkerSelected;
   private List<Movement> movementList;
