@@ -40,6 +40,10 @@ public class FlowDecider extends Decider {
                   currentPlayerGodCard.getConstructionConstraints().add(BuildabilityDecider::buildOnSameTarget);
                   GameEventManager.raise(new GodCardUpdateEvent(currentPlayerGodCard, gameData.getCurrentPlayer()));
                   break;
+                case Hestia:
+                    currentPlayerGodCard.getConstructionConstraints().add(BuildabilityDecider::denyPerimeterSpace);
+                    GameEventManager.raise(new GodCardUpdateEvent(currentPlayerGodCard, gameData.getCurrentPlayer()));
+                    break;
                 default:
                     break;
             }

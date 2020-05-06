@@ -39,6 +39,9 @@ public class GodCardFactory {
         case Hera -> {
           return createHera();
         }
+        case Hestia -> {
+          return createHestia();
+        }
         case Minotaur -> {
           return createMinotaur();
         }
@@ -122,6 +125,16 @@ public class GodCardFactory {
       GodCard hera = new GodCard(GodName.Hera);
       hera.winningConstraints.add(WinDecider::perimeterConstraint);
       return hera;
+    }
+
+    /**
+     * This method injects a generic GodCard with all the Behaviors modified by the card Hestia
+     * @return an instance of a GodCard in the mold of Santorini's Hestia card
+     */
+    private static GodCard createHestia(){
+      GodCard hestia = new GodCard(GodName.Hestia);
+      hestia.nextPhase = FlowDecider::extendsConstruction;
+      return hestia;
     }
 
     /**
