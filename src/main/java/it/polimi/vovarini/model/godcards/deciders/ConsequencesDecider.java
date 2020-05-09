@@ -1,7 +1,7 @@
 package it.polimi.vovarini.model.godcards.deciders;
 
 import it.polimi.vovarini.common.exceptions.BoxEmptyException;
-import it.polimi.vovarini.model.Game;
+import it.polimi.vovarini.model.GameDataAccessor;
 import it.polimi.vovarini.model.Point;
 import it.polimi.vovarini.model.board.Box;
 import it.polimi.vovarini.model.board.items.Item;
@@ -20,19 +20,19 @@ public class ConsequencesDecider extends Decider {
 
     /**
      * This method computes the necessary forced moves to apply Minotaur's effect.
-     * @param game the game all players are currently playing
+     * @param gameData the gameData all players are currently playing
      * @param movement is the Movement move already validated that the player wants to perform
-     * @return a list of all movements, forced and not-forced, the game must execute to obtain the desired effect
+     * @return a list of all movements, forced and not-forced, the gameData must execute to obtain the desired effect
      * @author Marco Riva
      */
-    public static List<Movement> forceOpponentWorker(Game game, Movement movement) {
+    public static List<Movement> forceOpponentWorker(GameDataAccessor gameData, Movement movement) {
         List<Movement> movementList = new LinkedList<>();
 
         Point start = movement.getStart();
         Point end = movement.getEnd();
 
         try {
-            Box destinationBox = game.getBoard().getBox(end);
+            Box destinationBox = gameData.getBoard().getBox(end);
             Stack<Item> destinationItems = destinationBox.getItems();
 
             if(destinationItems.peek().canBeRemoved()) {
@@ -41,7 +41,7 @@ public class ConsequencesDecider extends Decider {
                 int y = 2*end.getY() - start.getY();
                 Point forcedDestination = new Point(x,y);
 
-                Movement forcedMovement = new Movement(game.getBoard(), end,forcedDestination, true);
+                Movement forcedMovement = new Movement(gameData.getBoard(), end,forcedDestination, true);
                 movementList.add(forcedMovement);
             }
         } catch (BoxEmptyException ignored) {

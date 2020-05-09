@@ -10,13 +10,16 @@ import it.polimi.vovarini.model.board.Board;
 import it.polimi.vovarini.model.board.items.Block;
 import it.polimi.vovarini.model.board.items.OverwrittenWorkerException;
 import it.polimi.vovarini.model.board.items.Worker;
+import it.polimi.vovarini.model.godcards.GodCard;
+import it.polimi.vovarini.model.godcards.GodCardFactory;
 import it.polimi.vovarini.model.godcards.GodName;
 import it.polimi.vovarini.model.moves.Construction;
 import it.polimi.vovarini.model.moves.Movement;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.EventListener;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Class that represents the Controller concept of the MVC pattern. Acts as a Listener to events triggered from the View, and updates the Model about it, notifying him
@@ -24,7 +27,6 @@ import java.util.EventListener;
  */
 public class Controller implements EventListener {
 
-  private ArrayList<GodName> selectedCards;
   private final Game game;
 
   public Game getGame() {
@@ -35,7 +37,6 @@ public class Controller implements EventListener {
   public Controller(Game game) {
     GameEventManager.bindListeners(this);
     this.game = game;
-    selectedCards = new ArrayList<>();
   }
 
   /**
@@ -59,34 +60,82 @@ public class Controller implements EventListener {
     try {
       game.addPlayer(evt.getNickname());
       if (game.isFull()){
-        GameEventManager.raise(new CurrentPlayerChangedEvent(game, game.getCurrentPlayer()));
+        game.drawElectedPlayer();
         Player[] clonedPlayers = Arrays.stream(game.getPlayers()).map(Player::clone).toArray(Player[]::new);
-        GameEventManager.raise(new GameStartEvent(game, clonedPlayers));
+        GodName[] godNames = Arrays.stream(GodName.values()).filter(name -> name != GodName.Nobody).toArray(GodName[]::new);
+        GameEventManager.raise(new GodSelectionStartEvent(game, clonedPlayers, game.getCurrentPlayer().clone(), godNames));
       }
     } catch (InvalidNumberOfPlayersException e) {
       throw new InvalidNumberOfPlayersException();
     }
   }
 
-  // to rewrite
   @GameEventListener
-  public void update(AvailableCardsEvent evt) {
-    this.selectedCards.addAll(evt.getSelectedCards());
+  public void update(AvailableCardsEvent evt) throws WrongPlayerException, InvalidCardException, InvalidNumberOfGodCardsException, AvailableCardsAlreadySetException {
+
+    // ho già ricevuto le carte scelte per questa partita
+    if(game.isAvailableCardsAlreadySet())
+      throw new AvailableCardsAlreadySetException();
+
+    Player currentPlayer = game.getCurrentPlayer();
+    if (!currentPlayer.equals(evt.getSource())) throw new WrongPlayerException();
+
+    // mi hai dato più carte (o meno) del dovuto
+    if(evt.getSelectedGods().length != game.getAvailableGodCards().length) throw new InvalidNumberOfGodCardsException();
+
+    List<GodName> values = Arrays.asList(GodName.values());
+
+    for (int i = 0; i < evt.getSelectedGods().length-1; i++) {
+
+      // la carta scelta è nulla
+      if(evt.getSelectedGods()[i] == null) throw new InvalidCardException();
+
+      // la carta scelta non esiste
+      if(!values.contains(evt.getSelectedGods()[i])) throw new InvalidCardException();
+
+      // ci sono due carte uguali
+      for(int k = i+1; k < evt.getSelectedGods().length; k++)
+        if(evt.getSelectedGods()[i].equals(evt.getSelectedGods()[k])) {
+          throw new InvalidCardException();
+        }
+    }
+
+    game.setAvailableGodCards(evt.getSelectedGods());
+    game.setupGodCards();
   }
 
-// to rewrite
+  @GameEventListener
   public void update(CardChoiceEvent evt)
-          throws CardsNotSelectedException, InvalidCardException {
-    if (this.selectedCards.isEmpty()) {
-      throw new CardsNotSelectedException();
-    } else {
-      if (!this.selectedCards.contains(evt.getAssignedCard())) {
-        throw new InvalidCardException();
-      }
+          throws CardsNotSelectedException, InvalidCardException, WrongPlayerException {
 
-      // GodCard playerCard = new GodCard(game, evt.getAssignedCard()); (new card instance)
-      // game.getCurrentPlayer().setGodCard(playerCard);
+    // carte non ancora scelte
+    if(!game.isAvailableCardsAlreadySet()) throw new CardsNotSelectedException();
+
+    // carte già assegnate ai players (se length = 1, devo assegnarla in automatico)
+    if(game.getAvailableGodCards().length <= 1) {
+      // throw new SalcazzoException();
     }
+
+    Player currentPlayer = game.getCurrentPlayer();
+    if (!currentPlayer.equals(evt.getSource())) throw new WrongPlayerException();
+
+    LinkedList<GodName> availableGods = new LinkedList<>(Arrays.asList(game.getAvailableGodCards()));
+
+    if (!availableGods.contains(evt.getSelectedGod())) {
+      throw new InvalidCardException();
+    }
+
+    GodCard playerCard = GodCardFactory.create(evt.getSelectedGod());
+    playerCard.setGameData(game);
+    currentPlayer.setGodCard(playerCard);
+
+    // io questo 'raise' lo metterei su Player#setGodCard()
+    GameEventManager.raise(new CardAssignmentEvent(game, currentPlayer, playerCard));
+
+    availableGods.remove(evt.getSelectedGod());
+
+    game.setAvailableGodCards(availableGods.toArray(GodName[]::new));
+    game.setupGodCards();
   }
 
   /**
@@ -256,9 +305,5 @@ public class Controller implements EventListener {
     game.setCurrentPhase(game.getCurrentPlayer().getGodCard().computeNextPhase(game));
   }
 
-
-
-
-
-public static void main(String[] args) {}
+  public static void main(String[] args) {}
 }

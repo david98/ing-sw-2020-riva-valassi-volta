@@ -11,6 +11,7 @@ import it.polimi.vovarini.model.board.items.Block;
 import it.polimi.vovarini.model.board.items.OverwrittenWorkerException;
 import it.polimi.vovarini.model.board.items.Sex;
 import it.polimi.vovarini.model.godcards.GodCard;
+import it.polimi.vovarini.model.godcards.GodCardFactory;
 import it.polimi.vovarini.model.godcards.GodName;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -67,8 +68,10 @@ public class ControllerTests {
         return;
       }
 
-      GodCard cardOne = new GodCard(GodName.Nobody, game);
-      GodCard cardTwo = new GodCard(GodName.Nobody, game);
+      GodCard cardOne = GodCardFactory.create(GodName.Nobody);
+      cardOne.setGameData(game);
+      GodCard cardTwo = GodCardFactory.create(GodName.Nobody);
+      cardTwo.setGameData(game);
 
       game.getPlayers()[0].setGodCard(cardOne);
       game.getPlayers()[1].setGodCard(cardTwo);

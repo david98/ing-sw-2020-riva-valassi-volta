@@ -1,25 +1,27 @@
 package it.polimi.vovarini.view;
 
+import it.polimi.vovarini.model.GameDataAccessor;
 import it.polimi.vovarini.model.Phase;
 import it.polimi.vovarini.model.Player;
 import it.polimi.vovarini.model.Point;
 import it.polimi.vovarini.model.board.Board;
 import it.polimi.vovarini.model.board.items.Worker;
+import it.polimi.vovarini.model.godcards.GodName;
+import it.polimi.vovarini.view.cli.styling.Color;
 
 import java.io.Serializable;
-import java.util.LinkedHashSet;
-import java.util.LinkedList;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Data that is needed by any kind of view.
  *
  * @author Davide Volta
  */
-public class ViewData implements Serializable {
+public class ViewData implements Serializable, GameDataAccessor {
   private Player owner;
   private Player currentPlayer;
   private final Set<Player> players;
+  private final Map<Player, Color> playersColors;
   private Phase currentPhase;
 
   private Board board;
@@ -31,6 +33,7 @@ public class ViewData implements Serializable {
     currentPhase = Phase.Start;
     board = new Board(Board.DEFAULT_SIZE);
     players = new LinkedHashSet<>();
+    playersColors = new HashMap<>();
   }
 
   public Phase getCurrentPhase() {
@@ -39,6 +42,16 @@ public class ViewData implements Serializable {
 
   public void setCurrentPhase(Phase currentPhase) {
     this.currentPhase = currentPhase;
+  }
+
+  @Override
+  public boolean isFull() {
+    return false;
+  }
+
+  @Override
+  public void nextPlayer() {
+
   }
 
   public Player getOwner() {
@@ -57,12 +70,23 @@ public class ViewData implements Serializable {
     this.currentPlayer = currentPlayer;
   }
 
-  public Set<Player> getPlayers() {
+  public Set<Player> getPlayerSet() {
     return players;
   }
 
-  public void addPlayer(Player player) {
+  @Override
+  public Player[] getPlayers() {
+    return players.toArray(Player[]::new);
+  }
+
+  public void addPlayer(Player player, Color color) {
     this.players.add(player);
+    playersColors.put(player, color);
+  }
+
+  public void addPlayer(Player player){
+    Random rand = new Random();
+    addPlayer(player, new Color(rand.nextInt(255), rand.nextInt(255), rand.nextInt(255)));
   }
 
   public Board getBoard() {
@@ -87,5 +111,9 @@ public class ViewData implements Serializable {
 
   public void setCurrentStart(Point currentStart) {
     this.currentStart = currentStart;
+  }
+
+  public Map<Player, Color> getPlayersColors() {
+    return playersColors;
   }
 }
