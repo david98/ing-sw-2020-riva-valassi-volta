@@ -12,6 +12,7 @@
     <properties>
         <maven.compiler.source>14</maven.compiler.source>
         <maven.compiler.target>14</maven.compiler.target>
+        <sonar.junit.reportPath>target/surefire-reports</sonar.junit.reportPath>
     </properties>
 
     <dependencies>
@@ -98,5 +99,4 @@
             </plugin>
         </plugins>
     </build>
-
 </project>
