@@ -30,6 +30,9 @@ public class GodCardFactory {
         case Atlas -> {
           return createAtlas();
         }
+        case Chronus -> {
+          return createChronus();
+        }
         case Demeter -> {
           return createDemeter();
         }
@@ -50,6 +53,9 @@ public class GodCardFactory {
         }
         case Prometheus -> {
           return createPrometheus();
+        }
+        case Zeus -> {
+          return createZeus();
         }
         default -> {
           return createNobody();
@@ -95,6 +101,16 @@ public class GodCardFactory {
       GodCard atlas = new GodCard(GodName.Atlas);
       atlas.validateConstruction = ValidationDecider::allowDome;
       return atlas;
+    }
+
+    /**
+     * This method injects a generic GodCard with all the Behaviors modified by the card Chronus
+     * @return an instance of a GodCard in the mold of Santorini's Chronus card
+     */
+    private static GodCard createChronus() {
+      GodCard chronus = new GodCard(GodName.Chronus);
+      chronus.winningConditions.add(WinDecider::fiveCompleteTowers);
+      return chronus;
     }
 
     /**
@@ -166,6 +182,17 @@ public class GodCardFactory {
       GodCard prometheus = new GodCard(GodName.Prometheus);
       prometheus.nextPhase = FlowDecider::buildBeforeAndAfter;
       return prometheus;
+    }
+
+    /**
+     * This method injects a generic GodCard with all the Behaviors modified by the card Zeus
+     * @return an instance of a GodCard in the mold of Santorini's Zeus card
+     */
+    private static GodCard createZeus(){
+      GodCard zeus = new GodCard(GodName.Zeus);
+      zeus.validateConstruction = ValidationDecider::allowUnderMyself;
+      zeus.constructionConditions.add(BuildabilityDecider::buildUnderMyself);
+      return zeus;
     }
 
     /**

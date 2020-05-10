@@ -284,6 +284,7 @@ public class GodCard implements Cloneable, Serializable {
       Point workerPosition = board.getItemPosition(selectedWorker);
 
       List<Point> candidatePositions = board.getAdjacentPositions(workerPosition);
+      candidatePositions.add(workerPosition);
 
       buildablePoints =
           candidatePositions.stream()

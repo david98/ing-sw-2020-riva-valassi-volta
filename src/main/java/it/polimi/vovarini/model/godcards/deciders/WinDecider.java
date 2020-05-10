@@ -1,5 +1,6 @@
 package it.polimi.vovarini.model.godcards.deciders;
 
+import it.polimi.vovarini.model.Point;
 import it.polimi.vovarini.model.board.Board;
 import it.polimi.vovarini.model.moves.Movement;
 
@@ -39,4 +40,28 @@ public class WinDecider extends Decider {
 
         return endX != min && endX != max && endY != min && endY != max;
     }
+
+    /**
+     * This method adds a winning condition, making the player able to win if there are at least five complete towers on the board
+     * @param movement is the Movement move the player wants to perform
+     * @return true if there are at least five complete towers on the board, false otherwise
+     * @author Marco Riva
+     */
+    public static boolean fiveCompleteTowers(Movement movement) {
+
+
+        // TODO: qui non va bene...
+
+
+        int completeTowers = 0;
+        Board b = movement.getBoard();
+
+        for(int x = 0; x < b.getSize(); x++)
+            for (int y = 0; y < b.getSize(); y++)
+                if (b.getBox(new Point(x, y)).getLevel() == 4)
+                    completeTowers++;
+
+        return completeTowers >= 5;
+    }
+
 }
