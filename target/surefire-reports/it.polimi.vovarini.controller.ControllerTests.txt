@@ -1,0 +1,22 @@
+-------------------------------------------------------------------------------
+Test set: it.polimi.vovarini.controller.ControllerTests
+-------------------------------------------------------------------------------
+Tests run: 13, Failures: 3, Errors: 0, Skipped: 0, Time elapsed: 0.166 s <<< FAILURE! - in it.polimi.vovarini.controller.ControllerTests
+it.polimi.vovarini.controller.ControllerTests.constructionTest  Time elapsed: 0.014 s  <<< FAILURE!
+org.opentest4j.AssertionFailedError: Unexpected exception type thrown ==> expected: <it.polimi.vovarini.common.exceptions.InvalidMoveException> but was: <it.polimi.vovarini.common.exceptions.InvalidPhaseException>
+	at it.polimi.vovarini.controller.ControllerTests.constructionTest(ControllerTests.java:281)
+Caused by: it.polimi.vovarini.common.exceptions.InvalidPhaseException
+	at it.polimi.vovarini.controller.ControllerTests.lambda$constructionTest$7(ControllerTests.java:282)
+	at it.polimi.vovarini.controller.ControllerTests.constructionTest(ControllerTests.java:281)
+
+it.polimi.vovarini.controller.ControllerTests.movementTest  Time elapsed: 0.003 s  <<< FAILURE!
+org.opentest4j.AssertionFailedError: Unexpected exception type thrown ==> expected: <it.polimi.vovarini.common.exceptions.InvalidMoveException> but was: <it.polimi.vovarini.common.exceptions.InvalidPhaseException>
+	at it.polimi.vovarini.controller.ControllerTests.movementTest(ControllerTests.java:170)
+Caused by: it.polimi.vovarini.common.exceptions.InvalidPhaseException
+	at it.polimi.vovarini.controller.ControllerTests.lambda$movementTest$2(ControllerTests.java:171)
+	at it.polimi.vovarini.controller.ControllerTests.movementTest(ControllerTests.java:170)
+
+it.polimi.vovarini.controller.ControllerTests.skipConstructionTest  Time elapsed: 0.004 s  <<< FAILURE!
+org.opentest4j.AssertionFailedError: expected: <true> but was: <false>
+	at it.polimi.vovarini.controller.ControllerTests.skipConstructionTest(ControllerTests.java:504)
+

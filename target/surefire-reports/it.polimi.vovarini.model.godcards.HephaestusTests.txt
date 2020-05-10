@@ -1,0 +1,4 @@
+-------------------------------------------------------------------------------
+Test set: it.polimi.vovarini.model.godcards.HephaestusTests
+-------------------------------------------------------------------------------
+Tests run: 2737, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 13.591 s - in it.polimi.vovarini.model.godcards.HephaestusTests
