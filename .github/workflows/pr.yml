@@ -35,7 +35,6 @@ jobs:
         run: echo Running on branch ${GITHUB_REF##*/} &&
           mvn -B clean verify sonar:sonar
             -Dmaven.test.failure.ignore=true
-            -Dsonar.branch.name=${GITHUB_REF##*/}
             -Dsonar.pullrequest.key=${{ github.event.number }}
             -Dsonar.pullrequest.branch=${{ github.event.pull_request.head.ref }}
             -Dsonar.pullrequest.base=${{ github.event.pull_request.base.ref }}
