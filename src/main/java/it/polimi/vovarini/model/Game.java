@@ -1,39 +1,36 @@
 package it.polimi.vovarini.model;
 
-import it.polimi.vovarini.common.events.CurrentPlayerChangedEvent;
-import it.polimi.vovarini.common.events.GameEventManager;
-import it.polimi.vovarini.common.events.PhaseUpdateEvent;
-import it.polimi.vovarini.common.exceptions.BoxEmptyException;
-import it.polimi.vovarini.common.exceptions.CurrentPlayerLosesException;
+import it.polimi.vovarini.common.events.*;
 import it.polimi.vovarini.common.exceptions.InvalidNumberOfPlayersException;
-import it.polimi.vovarini.common.exceptions.InvalidPositionException;
 import it.polimi.vovarini.model.board.Board;
-import it.polimi.vovarini.model.board.Box;
-import it.polimi.vovarini.model.board.items.Item;
+import it.polimi.vovarini.model.godcards.GodCard;
+import it.polimi.vovarini.model.godcards.GodCardFactory;
+import it.polimi.vovarini.model.godcards.GodName;
 import it.polimi.vovarini.model.moves.Construction;
 import it.polimi.vovarini.model.moves.Move;
 import it.polimi.vovarini.model.moves.Movement;
 
+import java.io.Serializable;
 import java.util.*;
 
-public class Game {
+public class Game implements Serializable, GameDataAccessor {
 
   public static final int MIN_PLAYERS = 2;
   public static final int MAX_PLAYERS = 3;
 
-  private Player[] players;
+  private final Player[] players;
   private int currentPlayerIndex;
 
   private Phase currentPhase;
 
-  public Board getBoard() {
-    return board;
-  }
+  private final Board board;
 
-  private Board board;
+  private final Stack<Move> moves;
+  private final Stack<Move> undoneMoves;
 
-  private Stack<Move> moves;
-  private Stack<Move> undoneMoves;
+  private GodName[] availableGodCards;
+
+  private boolean setupComplete;
 
   public Game(int numberOfPlayers) throws InvalidNumberOfPlayersException {
     if (numberOfPlayers < MIN_PLAYERS || numberOfPlayers > MAX_PLAYERS) {
@@ -41,6 +38,7 @@ public class Game {
     }
 
     players = new Player[numberOfPlayers];
+    availableGodCards = new GodName[numberOfPlayers];
 
     currentPlayerIndex = 0;
 
@@ -50,8 +48,21 @@ public class Game {
     board = new Board(Board.DEFAULT_SIZE);
 
     currentPhase = Phase.Start;
+
+    setupComplete = false;
   }
 
+  public Board getBoard() {
+    return board;
+  }
+
+  /**
+   * This method adds a new player into the game with the nickname already
+   * validated through {@link Player#validateNickname(String)}
+   *
+   * @param nickname the name of the player to be added
+   * @throws InvalidNumberOfPlayersException if there is already the maximum number of players
+   */
   public void addPlayer(String nickname)
       throws InvalidNumberOfPlayersException {
 
@@ -64,56 +75,66 @@ public class Game {
     for (int i = 0; i < players.length; i++) {
       if (players[i] == null) {
         players[i] = player;
+        player.setGodCard(GodCardFactory.create(GodName.Nobody)); // MERDA PER TEST!!!
+        player.getGodCard().setGameData(this);                        // RIPETO MERDA PER TEST!!!
+        GameEventManager.raise(new NewPlayerEvent(this, player));
         return;
       }
     }
   }
 
-  /**
-   * Returns true if movement is valid for the current player and their current worker.
-   *
-   * @param movement The move to be validated.
-   * @return If movement is valid.
-   */
-  public boolean validateMove(Movement movement) {
 
-    try {
-      Collection<Point> reachablePoints = getCurrentPlayer().getGodCard().computeReachablePoints();
+  public void drawElectedPlayer() {
+    Random r = new Random();
+    currentPlayerIndex = r.nextInt(players.length);
+    GameEventManager.raise(new CurrentPlayerChangedEvent(this, getCurrentPlayer()));
+  }
 
-      return reachablePoints.contains(movement.getEnd());
-    } catch (CurrentPlayerLosesException e){
-      return false;
+  // se è rimasta solo una carta, la assegna, altrimenti chiede al prossimo giocatore la carta che vuole (tra quelle rimaste)
+  public void setupGodCards() {
+
+    nextPlayer();
+
+    if(availableGodCards.length == 1) {
+      GodCard lastGodCard = GodCardFactory.create(availableGodCards[0]);
+      lastGodCard.setGameData(this);
+      getCurrentPlayer().setGodCard(lastGodCard);
+      GameEventManager.raise(new CardAssignmentEvent(this, getCurrentPlayer(), lastGodCard));
+
+      // settare currentPlayer a players[0], oppure potremmo proseguire il turno da qui, lasciando invariato il codice attuale
+      GameEventManager.raise(new PlaceYourWorkersEvent(this, getCurrentPlayer().clone()));
+    } else {
+      GameEventManager.raise(new SelectYourCardEvent(this, getCurrentPlayer(), availableGodCards));
     }
   }
 
-  public boolean validateMove(Construction construction) {
 
-    try {
-      Collection<Point> buildablePoints = getCurrentPlayer().getGodCard().computeBuildablePoints();
+  public void performMove(Movement move) {
 
-      if (!buildablePoints.contains(construction.getTarget())) {
-        return false;
-      }
-
-      return true;
-
-    } catch (CurrentPlayerLosesException e) {
-      return false;
-    }
-  }
-
-  public void performMove(Move move) {
     undoneMoves.clear();
     moves.push(move);
-    move.execute();
+    getCurrentPlayer().getMovementList().add(move);
+
+    for(Move executableMove : getCurrentPlayer().getGodCard().consequences(move)){
+      executableMove.execute();
+    }
+
+  }
+
+
+  public void performMove (Construction move){
+
+    undoneMoves.clear();
+    moves.push(move);
+    getCurrentPlayer().getConstructionList().add(move);
+
+    for(Move executableMove : getCurrentPlayer().getGodCard().consequences(move)){
+      executableMove.execute();
+    }
+
   }
 
   public Phase getCurrentPhase() {
-    return currentPhase;
-  }
-
-  public Phase nextPhase() {
-    setCurrentPhase(currentPhase.next());
     return currentPhase;
   }
 
@@ -125,11 +146,17 @@ public class Game {
     return players[currentPlayerIndex];
   }
 
-  public Player nextPlayer() {
-    setCurrentPhase(Phase.Start);
+  public GodName[] getAvailableGodCards() {
+    return availableGodCards;
+  }
+
+  public void setAvailableGodCards(GodName[] availableGodCards) {
+    this.availableGodCards = availableGodCards;
+  }
+
+  public void nextPlayer() {
     currentPlayerIndex = (currentPlayerIndex + 1) % players.length;
     GameEventManager.raise(new CurrentPlayerChangedEvent(this, players[currentPlayerIndex].clone()));
-    return players[currentPlayerIndex];
   }
 
   public void setCurrentPhase(Phase phase){
@@ -158,7 +185,18 @@ public class Game {
     }
   }
 
+  public void start(){
+    setupComplete = true;
+    GameEventManager.raise(new GameStartEvent(this, this.getPlayers()));
+  }
+
+  public boolean isSetupComplete() {
+    return setupComplete;
+  }
+
   public boolean isFull(){
     return Arrays.stream(players).noneMatch(Objects::isNull);
   }
+
+  public boolean isAvailableCardsAlreadySet() { return Arrays.stream(availableGodCards).noneMatch(Objects::isNull); }
 }

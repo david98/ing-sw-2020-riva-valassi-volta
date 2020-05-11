@@ -8,7 +8,7 @@ public class GameEventManager {
 
   private static GameEventManager instance;
 
-  private HashMap<String, Set<Map.Entry<Object, Method>>> listeners;
+  private final HashMap<String, Set<Map.Entry<Object, Method>>> listeners;
 
   public static GameEventManager getInstance(){
     if (instance == null){
@@ -28,7 +28,7 @@ public class GameEventManager {
    * @param obj The object containing the listeners.
    */
  @SuppressWarnings("unchecked")
-  public static void bindListeners(@org.jetbrains.annotations.NotNull Object obj){
+  public synchronized static void bindListeners(@org.jetbrains.annotations.NotNull Object obj){
     for (Method m: obj.getClass().getMethods()){
       GameEventListener a = m.getDeclaredAnnotation(GameEventListener.class);
       if (a != null){
@@ -60,7 +60,7 @@ public class GameEventManager {
     eventClassListeners.add(new AbstractMap.SimpleEntry<>(obj, method));
   }
 
-  public static void raise(GameEvent e) {
+  public synchronized static void raise(GameEvent e) {
     Set<Map.Entry<Object, Method>> eventListeners = getInstance().listeners.get(e.getClass().getSimpleName());
     if (eventListeners != null){
       for (Map.Entry<Object, Method> pair: eventListeners){

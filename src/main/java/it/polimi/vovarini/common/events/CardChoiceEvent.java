@@ -2,21 +2,25 @@ package it.polimi.vovarini.common.events;
 
 import it.polimi.vovarini.model.godcards.GodName;
 
-import java.util.ArrayList;
-
-// evento che viene scatenato dopo che l'utente eletto casualmente seleziona le carte che vuole
-// siano comprese nella partita
+/**
+ * Represents that a player has chosen his god.
+ *
+ * @author Davide Volta
+ * @author Mattia Valassi
+ *
+ * @version 0.2
+ * @version 0.1
+ */
 public class CardChoiceEvent extends GameEvent {
 
-  // contiene le carte "in gioco" scelte dall'utente "eletto" casualmente. In quanto l'evento viene
-  // lanciato 4 volte max, abbiamo deciso di "trasportare" l'informazione
-  private ArrayList<GodName> selectedCards;
+  private final GodName selectedGod;
 
-  public CardChoiceEvent(Object source) {
+  public CardChoiceEvent(Object source, GodName selectedGod) {
     super(source);
+    this.selectedGod = selectedGod;
   }
 
-  public ArrayList<GodName> getSelectedCards() {
-    return selectedCards;
+  public GodName getSelectedGod() {
+    return selectedGod;
   }
 }

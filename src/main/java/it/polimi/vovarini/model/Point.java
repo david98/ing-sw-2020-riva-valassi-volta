@@ -1,11 +1,12 @@
 package it.polimi.vovarini.model;
 
+import java.io.Serializable;
 import java.util.Random;
 
-public class Point {
-  private int x;
+public class Point implements Serializable {
+  private final int x;
 
-  private int y;
+  private final int y;
 
   public Point(int x, int y) {
     this.x = x;
@@ -47,10 +48,6 @@ public class Point {
   @Override
   public int hashCode() {
     return x * 10 + y;
-  }
-
-  public boolean isValidPoint() {
-    return x >= 0 && x < 5 && y >= 0 && y < 5;
   }
 
   public static Point random(int xBound, int yBound){

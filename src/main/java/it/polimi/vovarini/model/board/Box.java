@@ -4,10 +4,11 @@ import it.polimi.vovarini.common.exceptions.BoxEmptyException;
 import it.polimi.vovarini.common.exceptions.BoxFullException;
 import it.polimi.vovarini.model.board.items.Item;
 
+import java.io.Serializable;
 import java.util.EmptyStackException;
 import java.util.Stack;
 
-public class Box implements Cloneable{
+public class Box implements Cloneable, Serializable {
 
   public static final int MAX_ITEMS = 4;
 
@@ -65,7 +66,7 @@ public class Box implements Cloneable{
   public String toString(){
     StringBuilder rep = new StringBuilder();
     for (Item item: items){
-      rep.append(item.toString() + " - ");
+      rep.append(item.toString()).append(" - ");
     }
     return rep.toString();
   }

@@ -1,20 +1,20 @@
 package it.polimi.vovarini.model.godcards;
 
+import it.polimi.vovarini.common.events.GameEventManager;
+import it.polimi.vovarini.common.events.GodCardUpdateEvent;
 import it.polimi.vovarini.common.exceptions.BoxEmptyException;
-import it.polimi.vovarini.common.exceptions.CurrentPlayerLosesException;
 import it.polimi.vovarini.common.exceptions.InvalidPositionException;
 import it.polimi.vovarini.common.exceptions.ItemNotFoundException;
-import it.polimi.vovarini.model.Game;
-import it.polimi.vovarini.model.Phase;
-import it.polimi.vovarini.model.Player;
-import it.polimi.vovarini.model.Point;
+import it.polimi.vovarini.model.*;
 import it.polimi.vovarini.model.board.Board;
 import it.polimi.vovarini.model.board.Box;
 import it.polimi.vovarini.model.board.items.Block;
 import it.polimi.vovarini.model.board.items.Item;
 import it.polimi.vovarini.model.board.items.Worker;
+import it.polimi.vovarini.model.moves.Construction;
 import it.polimi.vovarini.model.moves.Movement;
 
+import java.io.Serializable;
 import java.util.*;
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -27,20 +27,19 @@ import java.util.stream.Collectors;
  * name references one of the cards available in the base set of Santorini
  *
  * @author Mattia Valassi
- * @author Marco Riva
  * @author Davide Volta
  * @version 0.2
  * @since 0.1
  */
-public class GodCard implements Cloneable{
-  protected Game game;
+public class GodCard implements Cloneable, Serializable {
+  protected GameDataAccessor gameData;
   protected GodName name;
 
   /**
    * Constructor method of GodCard class without game assignment (if the card is created before starting the game)
    * @param name Name of the Card I want to create, must be a value of the GodName enumeration
    */
-  public GodCard(GodName name) {
+  GodCard(GodName name) {
     this.name = name;
     initCollections();
   }
@@ -48,49 +47,52 @@ public class GodCard implements Cloneable{
   /**
    * Constructor method of GodCard
    * @param name Name of the Card I want to create, must be a value of the GodName enumeration
-   * @param game Instance of game currently played by all the players
+   * @param gameData Instance of game currently played by all the players
    */
-  public GodCard(GodName name, Game game) {
+  GodCard(GodName name, GameDataAccessor gameData) {
     this.name = name;
-    this.game = game;
+    this.gameData = gameData;
     initCollections();
   }
 
+  /**
+   * Initialization of tall the Collections containing the different Lambda functions to evaluate
+   */
   private void initCollections(){
     movementConditions = new HashSet<>();
     movementConstraints = new HashSet<>();
 
-    buildingConditions = new HashSet<>();
-    buildingConstraints = new HashSet<>();
+    constructionConditions = new HashSet<>();
+    constructionConstraints = new HashSet<>();
 
     winningConditions = new HashSet<>();
     winningConstraints = new HashSet<>();
 
     movementConditions.add(isPointReachable);
-    buildingConditions.add(isPointBuildable);
+    constructionConditions.add(isPointBuildable);
     winningConditions.add(isMovementWinning);
   }
 
   /**
    * Lambda function presenting the base Behavior for Reachability. Gets injected dynamically by code in the Reachability class
-   * @param game Instance of game currently played by all the players
+   * @param gameData Instance of gameData currently played by all the players
    * @param point Candidate to be a Movement destination
    * @return if the candidate point can be reached returns true, false otherwise
    */
-  BiFunction<Game, Point, Boolean> isPointReachable =
-      (Game game, Point point) -> {
+  SerializableBiFunction<GameDataAccessor, Point, Boolean> isPointReachable =
+      (GameDataAccessor gameData, Point point) -> {
         try {
-          Worker currentWorker = game.getCurrentPlayer().getCurrentWorker();
-          Point currentWorkerPosition = game.getBoard().getItemPosition(currentWorker);
+          Worker currentWorker = gameData.getCurrentPlayer().getCurrentWorker();
+          Point currentWorkerPosition = gameData.getBoard().getItemPosition(currentWorker);
           if (!point.isAdjacent(currentWorkerPosition)) {
             return false;
           }
 
           try {
-            Box destinationBox = game.getBoard().getBox(point);
+            Box destinationBox = gameData.getBoard().getBox(point);
             Stack<Item> destinationItems = destinationBox.getItems();
             int destinationLevel = destinationBox.getLevel();
-            int currentWorkerLevel = game.getBoard().getBox(currentWorkerPosition).getLevel();
+            int currentWorkerLevel = gameData.getBoard().getBox(currentWorkerPosition).getLevel();
             return (destinationLevel - currentWorkerLevel <= 1)
                 && currentWorker.canBePlacedOn(destinationItems.peek());
           } catch (BoxEmptyException ignored) {
@@ -105,27 +107,27 @@ public class GodCard implements Cloneable{
 
   /**
    * Lambda function presenting the base Behavior for Buildability. Gets injected dynamically by code in the Buildability class
-   * @param game Instance of game currently played by all the players
+   * @param gameData Instance of gameData currently played by all the players
    * @param point Candidate to be a Construction destination
    * @return if the candidate point can be built upon returns true, false otherwise
    */
-  BiFunction<Game, Point, Boolean> isPointBuildable =
-      (Game game, Point point) -> {
+  SerializableBiFunction<GameDataAccessor, Point, Boolean> isPointBuildable =
+      (GameDataAccessor gameData, Point point) -> {
         try {
-          Worker currentWorker = game.getCurrentPlayer().getCurrentWorker();
-          Point currentWorkerPosition = game.getBoard().getItemPosition(currentWorker);
+          Worker currentWorker = gameData.getCurrentPlayer().getCurrentWorker();
+          Point currentWorkerPosition = gameData.getBoard().getItemPosition(currentWorker);
           if (!point.isAdjacent(currentWorkerPosition)) {
             return false;
           }
 
           try {
-            Stack<Item> destinationItems = game.getBoard().getItems(point);
+            Stack<Item> destinationItems = gameData.getBoard().getItems(point);
             return Arrays.stream(Block.blocks)
                 .anyMatch(block -> block.canBePlacedOn(destinationItems.peek()));
           } catch (BoxEmptyException ignored) {
             return true;
           }
-        } catch (ItemNotFoundException | InvalidPositionException ignored) {
+        } catch (ItemNotFoundException | InvalidPositionException e) {
           System.err.println("This really should never happen...");
         }
         return false;
@@ -133,14 +135,66 @@ public class GodCard implements Cloneable{
 
   /**
    * Lambda function that returns the next phase of the turn following the standard flow
-   * @param game Instance of game currently played by all the players
-   * @return the next phase to play, according to the normal flow of the game
+   * @param gameData Instance of gameData currently played by all the players
+   * @return the next phase to play, according to the normal flow of the gameData
    */
-  Function<Game, Phase> nextPhase =
-          (Game game) -> game.getCurrentPhase().next();
+  SerializableFunction<GameDataAccessor, Phase> nextPhase =
+          (GameDataAccessor gameData) -> gameData.getCurrentPhase().next();
 
 
+  /**
+   * Lambda function presenting the base Behavior for consequences, regarding the Movements
+   * @param gameData Instance of gameData currently played by all the players
+   * @param movement is the movement move the player wants to perform, which is already been validated
+   * @return list of moves to execute
+   */
+  SerializableBiFunction<GameDataAccessor, Movement, List<Movement>> listMovementEffects =
+          (GameDataAccessor gameData, Movement movement) -> {
+            List<Movement> movementList = new LinkedList<>();
+            movementList.add(movement);
+            return movementList;
+          };
 
+  /**
+   * Lambda function presenting the base Behavior for consequences, regarding the Constructions
+   * @param gameData Instance of gameData currently played by all the players
+   * @param construction is the construction move the player wants to perform, which is already been validated
+   * @return list of moves to execute
+   */
+  SerializableBiFunction<GameDataAccessor, Construction, List<Construction>> listConstructionEffects =
+          (GameDataAccessor gameData, Construction construction) -> {
+            List<Construction> constructionList = new LinkedList<>();
+            constructionList.add(construction);
+            return constructionList;
+          };
+
+  /**
+   * Lambda function with base validation of movements
+   * @param list is the list of points computed by the pre-move method {@link #computeReachablePoints()} ()}
+   * @param movement is the movement move the player wants to perform
+   * @return if the move that the player wants to perform is valid returns true, false otherwise
+   */
+  SerializableBiFunction<List<Point>, Movement, Boolean> validateMovement =
+          (List<Point> list, Movement movement) -> list.contains(movement.getEnd());
+
+  /**
+   * Lambda function with base validation of constructions
+   * @param list is the list of points computed by the pre-move method {@link #computeBuildablePoints()}
+   * @param construction is the construction move the player wants to perform
+   * @return if the move that the player wants to perform is valid returns true, false otherwise
+   */
+  SerializableBiFunction<List<Point>, Construction, Boolean> validateConstruction =
+          (List<Point> list, Construction construction) -> {
+            try {
+              Block b = construction.getBlock();
+              Point t = construction.getTarget();
+              Stack<Item> s = gameData.getBoard().getBox(t).getItems();
+              return list.contains(construction.getTarget()) &&
+                          b.canBePlacedOn(s.peek());
+            } catch (BoxEmptyException ignored){
+              return list.contains(construction.getTarget()) && construction.getBlock().getLevel() == 1;
+            }
+          };
 
   /**
    * Predicate for checking if a player has won with the Movement he wants to perform (applied before the movement itself)
@@ -148,7 +202,7 @@ public class GodCard implements Cloneable{
    * @return A predicate always return true or false. It will return true if the movement leads to victory after execution, false otherwise
    * A Forced movement always return false (the system itself must not make a player win)
    */
-  Predicate<Movement> isMovementWinning =
+  SerializablePredicate<Movement> isMovementWinning =
       (Movement movement) -> {
         int endLevel = movement.getBoard().getBox(movement.getEnd()).getLevel();
         if (endLevel != Block.WIN_LEVEL) {
@@ -159,26 +213,34 @@ public class GodCard implements Cloneable{
         return currentLevel < Block.WIN_LEVEL;
       };
 
-  Collection<BiFunction<Game, Point, Boolean>> movementConditions;
-  Collection<BiFunction<Game, Point, Boolean>> movementConstraints;
+  /**
+   * Lambda function with base constraint of movements
+   * @param gameData Instance of gameData currently played by all the players
+   * @param point is the destination of movement selected by the current player
+   * @return if the move that the player wants to perform is valid returns true, false otherwise
+   */
+  SerializableBiFunction<GameDataAccessor, Point, Boolean> constraintMovement =
+          (GameDataAccessor gameData, Point p) -> true;
 
-  Collection<BiFunction<Game, Point, Boolean>> buildingConditions;
-  Collection<BiFunction<Game, Point, Boolean>> buildingConstraints;
+  Collection<BiFunction<GameDataAccessor, Point, Boolean>> movementConditions;
+  Collection<BiFunction<GameDataAccessor, Point, Boolean>> movementConstraints;
+
+  Collection<BiFunction<GameDataAccessor, Point, Boolean>> constructionConditions;
+  Collection<BiFunction<GameDataAccessor, Point, Boolean>> constructionConstraints;
 
   Collection<Predicate<Movement>> winningConditions;
   Collection<Predicate<Movement>> winningConstraints;
 
   /**
-   *
+   * Function that computes a list of all the points where moving is possible
    * @return a list of points that the player can reach from his currentWorker position
-   * @throws CurrentPlayerLosesException if the list of points is empty it means that the current player cannot move, thus losing the game
    */
-  public List<Point> computeReachablePoints() throws CurrentPlayerLosesException {
+  public List<Point> computeReachablePoints()   {
     List<Point> reachablePoints = new LinkedList<>();
 
     try {
-      Player player = game.getCurrentPlayer();
-      Board board = game.getBoard();
+      Player player = gameData.getCurrentPlayer();
+      Board board = gameData.getBoard();
       Worker selectedWorker = player.getCurrentWorker();
       Point workerPosition = board.getItemPosition(selectedWorker);
 
@@ -186,34 +248,38 @@ public class GodCard implements Cloneable{
 
       reachablePoints =
           candidatePositions.stream()
-              .filter(p -> movementConditions.stream().anyMatch(cond -> cond.apply(game, p)))
-                  .filter(p -> movementConstraints.stream().allMatch(cond -> cond.apply(game, p)))
+              .filter(p -> movementConditions.stream().anyMatch(cond -> cond.apply(gameData, p)))
+                  .filter(p -> movementConstraints.stream().allMatch(cond -> cond.apply(gameData, p)))
               .collect(Collectors.toList());
     } catch (ItemNotFoundException ignored) {
     }
 
     if (reachablePoints.isEmpty()) {
-      throw new CurrentPlayerLosesException();
+      gameData.getCurrentPlayer().setHasLost(true);
     }
     return reachablePoints;
   }
 
+  /**
+   * Function that computes if a player has won thanks to a valid movement he wants to perform
+   * @param movement is the movement move that the player wants to perform
+   * @return true if the movement allows the player to win, false otherwise
+   */
   public boolean isMovementWinning(Movement movement) {
     return !movement.isForced() && winningConditions.stream().anyMatch(cond -> cond.test(movement)) &&
             winningConstraints.stream().noneMatch(cond -> cond.test(movement));
   }
 
   /**
-   *
+   * Function that computes a list of all the points where building a block, independently by the level, is possible
    * @return a list of points that the player can build upon from his currentWorker position
-   * @throws CurrentPlayerLosesException if the list of points is empty it means that the current player cannot build, thus losing the game
    */
-  public List<Point> computeBuildablePoints() throws CurrentPlayerLosesException {
+  public List<Point> computeBuildablePoints()   {
     List<Point> buildablePoints = new LinkedList<>();
 
     try {
-      Player player = game.getCurrentPlayer();
-      Board board = game.getBoard();
+      Player player = gameData.getCurrentPlayer();
+      Board board = gameData.getBoard();
       Worker selectedWorker = player.getCurrentWorker();
       Point workerPosition = board.getItemPosition(selectedWorker);
 
@@ -221,40 +287,86 @@ public class GodCard implements Cloneable{
 
       buildablePoints =
           candidatePositions.stream()
-                .filter(p -> buildingConditions.stream().anyMatch(cond -> cond.apply(game, p)))
-                .filter(p -> buildingConstraints.stream().allMatch(cond -> cond.apply(game, p)))
+                .filter(p -> constructionConditions.stream().anyMatch(cond -> cond.apply(gameData, p)))
+                .filter(p -> constructionConstraints.stream().allMatch(cond -> cond.apply(gameData, p)))
                 .collect(Collectors.toList());
 
     } catch (ItemNotFoundException ignored) {
     }
 
     if (buildablePoints.isEmpty()) {
-      throw new CurrentPlayerLosesException();
+      gameData.getCurrentPlayer().setHasLost(true);
     }
     return buildablePoints;
   }
 
-  public Phase computeNextPhase(Game game){
-    return nextPhase.apply(game);
+  /**
+   * Function that computes the next phase of the current player's turn
+   * @param gameData is the gameData all players are currently playing
+   * @return the phase subsequent to the one currently in place
+   */
+  public Phase computeNextPhase(GameDataAccessor gameData){
+
+    Phase next = nextPhase.apply(gameData);
+
+    if(next.equals(Phase.Start)){
+
+      resetPlayerInfo(gameData);
+      gameData.getCurrentPlayer().getGodCard().movementConstraints.clear();
+      gameData.getCurrentPlayer().getGodCard().constructionConstraints.clear();
+      GameEventManager.raise(new GodCardUpdateEvent(this, gameData.getCurrentPlayer()));
+      gameData.nextPlayer();
+    }
+
+    return next;
+  }
+
+  /**
+   * This method resets the tracking info of the Player
+   * @param gameData is the gameData all players are currently playing
+   */
+  private void resetPlayerInfo(GameDataAccessor gameData){
+    gameData.getCurrentPlayer().setWorkerSelected(false);
+    gameData.getCurrentPlayer().getMovementList().clear();
+    gameData.getCurrentPlayer().getConstructionList().clear();
+    gameData.getCurrentPlayer().setBoardStatus(gameData.getBoard().clone());
+  }
+
+  public List<Movement> consequences(Movement movement) {
+    return listMovementEffects.apply(gameData, movement);
+  }
+
+  public List<Construction> consequences(Construction construction){
+    return listConstructionEffects.apply(gameData, construction);
+  }
+
+  public boolean validate(List<Point> list, Movement movement){
+    return validateMovement.apply(list, movement);
+  }
+
+  public boolean validate(List<Point> list, Construction construction){
+    return validateConstruction.apply(list, construction);
   }
 
   public GodName getName(){
     return name;
   }
 
-  public void consequences(Game game) {
-  }
-
-  public void setGame(Game game) {
-    this.game = game;
+  public void setGameData(GameDataAccessor gameData) {
+    this.gameData = gameData;
   }
 
   public GodCard clone(){
-    try{
-      return (GodCard) super.clone();
-    } catch (CloneNotSupportedException e){
-      throw new RuntimeException(e);
-    }
+    GodCard clone = GodCardFactory.create(name);
+    clone.movementConditions = new HashSet<>(movementConditions);
+    clone.movementConstraints = new HashSet<>(movementConstraints);
+
+    clone.constructionConditions = new HashSet<>(constructionConditions);
+    clone.constructionConstraints = new HashSet<>(constructionConstraints);
+
+    clone.winningConditions = new HashSet<>(winningConditions);
+    clone.winningConstraints = new HashSet<>(winningConstraints);
+    return clone;
   }
 
   @Override
@@ -269,5 +381,29 @@ public class GodCard implements Cloneable{
     } else {
       return super.equals(obj);
     }
+  }
+
+  public Collection<BiFunction<GameDataAccessor, Point, Boolean>> getMovementConditions() {
+    return movementConditions;
+  }
+
+  public Collection<BiFunction<GameDataAccessor, Point, Boolean>> getMovementConstraints() {
+    return movementConstraints;
+  }
+
+  public Collection<BiFunction<GameDataAccessor, Point, Boolean>> getConstructionConditions() {
+    return constructionConditions;
+  }
+
+  public Collection<BiFunction<GameDataAccessor, Point, Boolean>> getConstructionConstraints() {
+    return constructionConstraints;
+  }
+
+  public Collection<Predicate<Movement>> getWinningConditions() {
+    return winningConditions;
+  }
+
+  public Collection<Predicate<Movement>> getWinningConstraints() {
+    return winningConstraints;
   }
 }

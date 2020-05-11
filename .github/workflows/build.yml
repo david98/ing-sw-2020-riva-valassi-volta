@@ -1,0 +1,39 @@
+name: Analyse and build
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build:
+    runs-on: self-hosted
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: ''
+      - run: |
+          git fetch --unshallow
+      - name: Set up JDK 14
+        uses: actions/setup-java@v1
+        with:
+          java-version: 14
+      - name: Cache Maven packages
+        uses: actions/cache@v1
+        with:
+          path: ~/.m2
+          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-m2
+      - name: Analyse with Sonar and build
+        run: mvn -B clean package sonar:sonar
+          -Dsonar.branch.name=${GITHUB_REF##*/}
+          -Dsonar.login=${{ secrets.SONAR_TOKEN }}
+      - name: Prepare artifacts
+        run: mkdir staging && cp target/*.jar staging
+      - name: Upload
+        uses: actions/upload-artifact@v1
+        with:
+          name: App
+          path: staging

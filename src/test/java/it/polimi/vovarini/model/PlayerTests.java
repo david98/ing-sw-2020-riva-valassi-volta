@@ -17,7 +17,7 @@ public class PlayerTests {
     try {
       Game game = new Game(2);
       GodCard godCard = GodCardFactory.create(GodName.Nobody);
-      godCard.setGame(game);
+      godCard.setGameData(game);
       String nickname = "Guest";
 
       Player player = new Player(godCard, nickname);
