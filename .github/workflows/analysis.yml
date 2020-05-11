@@ -1,6 +1,10 @@
-name: Analysis on push
+name: Analysis on push (or PR merge)
 
-on: push
+on:
+  push:
+    branches:
+      - master
+      - dev
 
 jobs:
   analyse:
