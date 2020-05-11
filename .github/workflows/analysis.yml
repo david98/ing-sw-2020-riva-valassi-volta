@@ -12,6 +12,8 @@ jobs:
     steps:
       - name: Checkout branch
         uses: actions/checkout@v2
+        with:
+          fetch-depth: ''
       - run: |
           git fetch --unshallow
       - name: Set up JDK 14
@@ -26,4 +28,6 @@ jobs:
           restore-keys: ${{ runner.os }}-m2
       - name: Analyse with Sonar
         run: echo Running on branch ${GITHUB_REF##*/} &&
-          mvn -B clean verify sonar:sonar -Dsonar.branch.name=${GITHUB_REF##*/} -Dmaven.test.failure.ignore=true
+          mvn -B clean verify sonar:sonar
+          -Dsonar.branch.name=${GITHUB_REF##*/}
+          -Dmaven.test.failure.ignore=true
