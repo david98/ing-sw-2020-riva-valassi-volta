@@ -29,5 +29,6 @@ jobs:
       - name: Analyse with Sonar
         run: echo Running on branch ${GITHUB_REF##*/} &&
           mvn -B clean verify sonar:sonar
+          -Dsonar.login=${{ secrets.SONAR_TOKEN }}
           -Dsonar.branch.name=${GITHUB_REF##*/}
           -Dmaven.test.failure.ignore=true
