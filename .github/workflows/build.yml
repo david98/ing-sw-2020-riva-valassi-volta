@@ -12,6 +12,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
+        with:
+          fetch-depth: ''
       - run: |
           git fetch --unshallow
       - name: Set up JDK 14
@@ -25,11 +27,13 @@ jobs:
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2
       - name: Analyse with Sonar and build
-        run: mvn -B clean package sonar:sonar -Dsonar.branch.name=${GITHUB_REF##*/}
+        run: mvn -B clean package sonar:sonar
+          -Dsonar.branch.name=${GITHUB_REF##*/}
+          -Dsonar.login=${{ secrets.SONAR_TOKEN }}
       - name: Prepare artifacts
         run: mkdir staging && cp target/*.jar staging
       - name: Upload
         uses: actions/upload-artifact@v1
         with:
-          name: Package
+          name: App
           path: staging
