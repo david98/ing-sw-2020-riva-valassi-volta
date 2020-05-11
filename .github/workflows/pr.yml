@@ -32,5 +32,5 @@ jobs:
       - name: Analyse with Sonar
         run: echo Running on branch ${GITHUB_REF##*/} &&
           mvn -B clean verify sonar:sonar -Dsonar.branch.name=${GITHUB_REF##*/} -Dmaven.test.failure.ignore=true |
-          -Dsonar.pullrequest.base=github.base_ref -Dsonar.pullrequest.branch=github.head_ref |
+          -Dsonar.pullrequest.base=${{github.base_ref}} -Dsonar.pullrequest.branch=${{github.head_ref}} |
           -Dsonar.pullrequest.key=${PULL_NUMBER}
