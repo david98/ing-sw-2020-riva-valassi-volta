@@ -9,8 +9,8 @@ import it.polimi.vovarini.model.board.items.Item;
 
 public class Movement extends Move {
 
-  private Point start;
-  private Point end;
+  private final Point start;
+  private final Point end;
 
   /**
    * Constructor method of Movement

@@ -1,0 +1,41 @@
+name: Analyse PR
+
+on:
+  pull_request:
+    branches:
+      - master
+      - dev
+
+
+jobs:
+  analyse:
+    runs-on: self-hosted
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: ''
+      - run: |
+          git fetch --unshallow
+      - name: Set up JDK 14
+        uses: actions/setup-java@v1
+        with:
+          java-version: 14
+      - name: Cache Maven packages
+        uses: actions/cache@v1
+        with:
+          path: ~/.m2
+          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-m2
+      - name: Extract PR number
+        run: echo ::set-env name=PULL_NUMBER::$(echo "$GITHUB_REF" | awk -F / '{print $3}')
+        shell: bash
+      - name: Analyse with Sonar
+        run: echo Running on branch ${GITHUB_REF##*/} &&
+          mvn -B clean verify sonar:sonar
+            -Dmaven.test.failure.ignore=true
+            -Dsonar.pullrequest.key=${{ github.event.number }}
+            -Dsonar.pullrequest.branch=${{ github.event.pull_request.head.ref }}
+            -Dsonar.pullrequest.base=${{ github.event.pull_request.base.ref }}
+            -Dsonar.scm.revision=${{ github.event.pull_request.head.sha }}

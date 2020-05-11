@@ -1,11 +1,12 @@
 package it.polimi.vovarini.model;
 
+import java.io.Serializable;
 import java.util.Random;
 
-public class Point {
-  private int x;
+public class Point implements Serializable {
+  private final int x;
 
-  private int y;
+  private final int y;
 
   public Point(int x, int y) {
     this.x = x;

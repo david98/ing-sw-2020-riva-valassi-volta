@@ -18,17 +18,19 @@ public class Game implements Serializable, GameDataAccessor {
   public static final int MIN_PLAYERS = 2;
   public static final int MAX_PLAYERS = 3;
 
-  private Player[] players;
+  private final Player[] players;
   private int currentPlayerIndex;
 
   private Phase currentPhase;
 
-  private Board board;
+  private final Board board;
 
-  private Stack<Move> moves;
-  private Stack<Move> undoneMoves;
+  private final Stack<Move> moves;
+  private final Stack<Move> undoneMoves;
 
   private GodName[] availableGodCards;
+
+  private boolean setupComplete;
 
   public Game(int numberOfPlayers) throws InvalidNumberOfPlayersException {
     if (numberOfPlayers < MIN_PLAYERS || numberOfPlayers > MAX_PLAYERS) {
@@ -46,6 +48,8 @@ public class Game implements Serializable, GameDataAccessor {
     board = new Board(Board.DEFAULT_SIZE);
 
     currentPhase = Phase.Start;
+
+    setupComplete = false;
   }
 
   public Board getBoard() {
@@ -179,6 +183,15 @@ public class Game implements Serializable, GameDataAccessor {
     } catch (EmptyStackException ignored) {
 
     }
+  }
+
+  public void start(){
+    setupComplete = true;
+    GameEventManager.raise(new GameStartEvent(this, this.getPlayers()));
+  }
+
+  public boolean isSetupComplete() {
+    return setupComplete;
   }
 
   public boolean isFull(){
