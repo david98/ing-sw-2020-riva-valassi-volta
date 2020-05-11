@@ -27,7 +27,7 @@ jobs:
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2
       - name: Extract PR number
-      - run: echo ::set-env name=PULL_NUMBER::$(echo "$GITHUB_REF" | awk -F / '{print $3}')
+        run: echo ::set-env name=PULL_NUMBER::$(echo "$GITHUB_REF" | awk -F / '{print $3}')
         shell: bash
       - name: Analyse with Sonar
         run: echo Running on branch ${GITHUB_REF##*/} &&
