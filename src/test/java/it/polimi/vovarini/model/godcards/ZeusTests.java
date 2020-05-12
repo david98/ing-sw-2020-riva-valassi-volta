@@ -22,7 +22,6 @@ import java.util.LinkedList;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 
 public class ZeusTests {
 
@@ -64,7 +63,7 @@ public class ZeusTests {
         }
     }
 
-    private static Stream<Arguments> provideAllPossibleConstruction() {
+    private static Stream<Arguments> provideConstructionUnderMyself() {
         LinkedList<Arguments> args = new LinkedList<>();
 
         for (int level = 0; level < Block.MAX_LEVEL; level++) {
@@ -81,7 +80,7 @@ public class ZeusTests {
     }
 
     @ParameterizedTest
-    @MethodSource("provideAllPossibleConstruction")
+    @MethodSource("provideConstructionUnderMyself")
     @DisplayName("Test that Zeus' validation rules are correctly applied")
     public void testValidationCondition(int level) {
 
@@ -103,24 +102,5 @@ public class ZeusTests {
 
         Construction construction = new Construction(board, Block.blocks[level], target);
         assertEquals(Block.MAX_LEVEL - 1 != level, zeus.validate(zeus.computeBuildablePoints(), construction));
-    }
-
-    @Test
-    public void testInvalidZeus() {
-        Point start = new Point (0,0);
-        Point target = new Point (1,1);
-        Board board = game.getBoard();
-
-        try {
-            board.place(game.getCurrentPlayer().getCurrentWorker(),start);
-            board.place(game.getCurrentPlayer().getOtherWorker(), target);
-        } catch (InvalidPositionException e) {
-            e.printStackTrace();
-        } catch (BoxFullException e) {
-            e.printStackTrace();
-        }
-
-        Construction construction = new Construction(board, Block.blocks[0], target);
-        assertFalse(zeus.validate(zeus.computeBuildablePoints(), construction));
     }
 }
