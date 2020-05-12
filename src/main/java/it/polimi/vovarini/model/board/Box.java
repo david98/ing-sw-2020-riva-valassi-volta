@@ -5,17 +5,16 @@ import it.polimi.vovarini.common.exceptions.BoxFullException;
 import it.polimi.vovarini.model.board.items.Item;
 
 import java.io.Serializable;
-import java.util.EmptyStackException;
-import java.util.Stack;
+import java.util.*;
 
 public class Box implements Cloneable, Serializable {
 
   public static final int MAX_ITEMS = 4;
 
-  private Stack<Item> items;
+  private Deque<Item> items;
 
   public Box() {
-    items = new Stack<>();
+    items = new ArrayDeque<>();
   }
 
   // prima permetteva di sovrascrivere un worker di un altro giocatore. Magari le carte porteranno a
@@ -31,17 +30,17 @@ public class Box implements Cloneable, Serializable {
   }
 
   @SuppressWarnings(value = "unchecked")
-  public Stack<Item> getItems() throws BoxEmptyException {
+  public Deque<Item> getItems() throws BoxEmptyException {
     if (items.isEmpty()) {
       throw new BoxEmptyException();
     }
-    return (Stack<Item>) items.clone();
+    return new ArrayDeque<>(items);
   }
 
   public Item removeTopmost() throws BoxEmptyException {
     try {
       return items.pop();
-    } catch (EmptyStackException e) {
+    } catch (NoSuchElementException e) {
       throw new BoxEmptyException();
     }
   }
@@ -54,7 +53,7 @@ public class Box implements Cloneable, Serializable {
      * anywhere, but no Worker can stand on top of a level 4 Block
      * so this assumption is still valid.
      */
-    if (items.size() == 0) {
+    if (items.isEmpty()) {
       return 0;
     } else if (items.peek().canBeRemoved()) {
       return items.size() - 1;

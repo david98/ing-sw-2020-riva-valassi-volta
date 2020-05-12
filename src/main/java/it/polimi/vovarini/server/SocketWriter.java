@@ -14,21 +14,29 @@ public class SocketWriter<T> implements Runnable{
 
   private final Class<T> objClass;
 
+  private boolean running;
+
   public SocketWriter(Socket socket, BlockingQueue<T> objectsToBeWritten, Class<T> objClass) throws IOException {
     this.socket = socket;
     out = new ObjectOutputStream(socket.getOutputStream());
     this.objectsToBeWritten = objectsToBeWritten;
     this.objClass = objClass;
+
+    running = false;
   }
 
   public void run(){
-    while(true){
+    running = true;
+    while(running){
       try {
         T obj = objectsToBeWritten.take();
         out.writeObject(obj);
         out.flush();
-      } catch (InterruptedException | IOException e){
+      } catch (IOException e){
         e.printStackTrace();
+        break;
+      } catch (InterruptedException e){
+        Thread.currentThread().interrupt();
         break;
       }
     }

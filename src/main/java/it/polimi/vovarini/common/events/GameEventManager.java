@@ -3,8 +3,12 @@ package it.polimi.vovarini.common.events;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class GameEventManager {
+
+  private static final Logger LOGGER = Logger.getLogger( GameEventManager.class.getName() );
 
   private static GameEventManager instance;
 
@@ -39,14 +43,14 @@ public class GameEventManager {
             if (parameterTypes.length == 1) {
               getInstance().register(obj, m, eventClass);
             } else {
-              throw new Error("A listener can only have 1 parameter!"); // maybe improve?
+              LOGGER.log(Level.SEVERE, "{0}: a listener can only have 1 parameter!", m.getName());
             }
           } else {
-            throw new Error("Expected listener parameter to inherit from GameEvent but " +
-                    eventClass + " was found instead.");
+            LOGGER.log(Level.SEVERE, "Expected listener parameter to inherit from GameEvent but {0} was found instead.",
+                    eventClass);
           }
         } catch (ClassCastException e){
-          e.printStackTrace();
+          LOGGER.log(Level.SEVERE, e.toString(), e);
         }
       }
     }
@@ -67,9 +71,13 @@ public class GameEventManager {
         try {
           pair.getValue().invoke(pair.getKey(), e.getClass().cast(e));
         } catch (IllegalAccessException ex){
-          ex.printStackTrace();
+          LOGGER.log(Level.SEVERE, "{0} {1}", new Object[]{ex.toString(), ex});
         } catch (InvocationTargetException ex){
-          ex.getTargetException().printStackTrace();
+          LOGGER.log(Level.SEVERE, "{0} {1}",
+                  new Object[]{
+                          ex.getTargetException().toString(),
+                          ex.getTargetException()
+          });
         }
       }
     }

@@ -10,9 +10,7 @@ import it.polimi.vovarini.model.Point;
 import it.polimi.vovarini.model.board.items.Item;
 
 import java.io.Serializable;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Stack;
+import java.util.*;
 
 public class Board implements Cloneable, Serializable {
 
@@ -64,18 +62,18 @@ public class Board implements Cloneable, Serializable {
     GameEventManager.raise(new BoardUpdateEvent(this, this.clone()));
   }
 
-  public Stack<Item> getItems(Point p) throws InvalidPositionException, BoxEmptyException {
+  public Deque<Item> getItems(Point p) throws InvalidPositionException, BoxEmptyException {
     if (!isPositionValid(p)) {
       throw new InvalidPositionException();
     }
     return getBox(p).getItems();
   }
 
-  public Stack<Item> safeGetItems(Point p){
+  public Deque<Item> safeGetItems(Point p){
     try {
       return getItems(p);
     } catch (InvalidPositionException | BoxEmptyException e){
-      return new Stack<Item>();
+      return new ArrayDeque<>();
     }
   }
 

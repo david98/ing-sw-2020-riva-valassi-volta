@@ -4,9 +4,9 @@ import it.polimi.vovarini.common.events.*;
 import it.polimi.vovarini.server.GameClient;
 import it.polimi.vovarini.view.EventsForViewListener;
 import it.polimi.vovarini.view.ViewData;
+import it.polimi.vovarini.view.cli.elements.Renderable;
 import it.polimi.vovarini.view.cli.input.Key;
 import it.polimi.vovarini.view.cli.input.KeyPressListener;
-import it.polimi.vovarini.view.cli.elements.Renderable;
 
 public abstract class Screen implements Renderable, EventsForViewListener, KeyPressListener {
 

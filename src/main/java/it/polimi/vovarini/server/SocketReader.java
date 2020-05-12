@@ -14,15 +14,20 @@ public class SocketReader<T> implements Runnable{
 
   private final Class<T> objClass;
 
+  private boolean running;
+
   public SocketReader(Socket socket, BlockingQueue<T> retrievedObjects, Class<T> objClass) throws IOException {
     this.socket = socket;
     in = new ObjectInputStream(socket.getInputStream());
     this.retrievedObjects = retrievedObjects;
     this.objClass = objClass;
+
+    running = false;
   }
 
   public void run(){
-    while (true){
+    running = true;
+    while (running){
       try{
         Object receivedObj = in.readObject();
         if (objClass.isAssignableFrom(receivedObj.getClass())){
@@ -33,6 +38,10 @@ public class SocketReader<T> implements Runnable{
         break;
       }
     }
+  }
+
+  public void stop(){
+    running = false;
   }
 
 }

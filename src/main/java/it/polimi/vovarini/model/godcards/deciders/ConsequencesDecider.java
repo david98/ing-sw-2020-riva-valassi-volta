@@ -33,9 +33,9 @@ public class ConsequencesDecider extends Decider {
 
         try {
             Box destinationBox = gameData.getBoard().getBox(end);
-            Stack<Item> destinationItems = destinationBox.getItems();
+            var destinationItems = destinationBox.getItems();
 
-            if(destinationItems.peek().canBeRemoved()) {
+            if(destinationItems.peek() != null && destinationItems.peek().canBeRemoved()) {
 
                 int x = 2*end.getX() - start.getX();
                 int y = 2*end.getY() - start.getY();

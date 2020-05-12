@@ -37,7 +37,7 @@ public class ReachabilityDecider extends Decider {
 
             try {
                 Box destinationBox = gameData.getBoard().getBox(point);
-                Stack<Item> destinationItems = destinationBox.getItems();
+                var destinationItems = destinationBox.getItems();
                 Worker otherWorker = gameData.getCurrentPlayer().getOtherWorker();
 
                 return ((destinationItems.peek().canBeRemoved() && !destinationItems.peek().equals(otherWorker)));
@@ -75,7 +75,7 @@ public class ReachabilityDecider extends Decider {
 
             // Minotaur's rules
             if (destinationLevel - currentWorkerLevel <= 1) {
-                Stack<Item> destinationItems = destinationBox.getItems();
+                var destinationItems = destinationBox.getItems();
                 Worker otherWorker = gameData.getCurrentPlayer().getOtherWorker();
 
                 // se nella casella di destinazione c'è un worker nemico

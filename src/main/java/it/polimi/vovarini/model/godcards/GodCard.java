@@ -5,11 +5,13 @@ import it.polimi.vovarini.common.events.GodCardUpdateEvent;
 import it.polimi.vovarini.common.exceptions.BoxEmptyException;
 import it.polimi.vovarini.common.exceptions.InvalidPositionException;
 import it.polimi.vovarini.common.exceptions.ItemNotFoundException;
-import it.polimi.vovarini.model.*;
+import it.polimi.vovarini.model.GameDataAccessor;
+import it.polimi.vovarini.model.Phase;
+import it.polimi.vovarini.model.Player;
+import it.polimi.vovarini.model.Point;
 import it.polimi.vovarini.model.board.Board;
 import it.polimi.vovarini.model.board.Box;
 import it.polimi.vovarini.model.board.items.Block;
-import it.polimi.vovarini.model.board.items.Item;
 import it.polimi.vovarini.model.board.items.Worker;
 import it.polimi.vovarini.model.moves.Construction;
 import it.polimi.vovarini.model.moves.Movement;
@@ -17,7 +19,6 @@ import it.polimi.vovarini.model.moves.Movement;
 import java.io.Serializable;
 import java.util.*;
 import java.util.function.BiFunction;
-import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -90,7 +91,7 @@ public class GodCard implements Cloneable, Serializable {
 
           try {
             Box destinationBox = gameData.getBoard().getBox(point);
-            Stack<Item> destinationItems = destinationBox.getItems();
+            var destinationItems = destinationBox.getItems();
             int destinationLevel = destinationBox.getLevel();
             int currentWorkerLevel = gameData.getBoard().getBox(currentWorkerPosition).getLevel();
             return (destinationLevel - currentWorkerLevel <= 1)
@@ -121,7 +122,7 @@ public class GodCard implements Cloneable, Serializable {
           }
 
           try {
-            Stack<Item> destinationItems = gameData.getBoard().getItems(point);
+            var destinationItems = gameData.getBoard().getItems(point);
             return Arrays.stream(Block.blocks)
                 .anyMatch(block -> block.canBePlacedOn(destinationItems.peek()));
           } catch (BoxEmptyException ignored) {
@@ -188,7 +189,7 @@ public class GodCard implements Cloneable, Serializable {
             try {
               Block b = construction.getBlock();
               Point t = construction.getTarget();
-              Stack<Item> s = gameData.getBoard().getBox(t).getItems();
+              var s = gameData.getBoard().getBox(t).getItems();
               return list.contains(construction.getTarget()) &&
                           b.canBePlacedOn(s.peek());
             } catch (BoxEmptyException ignored){

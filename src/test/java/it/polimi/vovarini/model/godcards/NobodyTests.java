@@ -27,6 +27,6 @@ public class NobodyTests {
   @DisplayName("Test that a GodCard of type Nobody can be instantiated correctly")
   void nobodyCreation() {
     GodCard nobody = GodCardFactory.create(GodName.Nobody);
-    assertEquals(nobody.name, GodName.Nobody);
+    assertEquals(GodName.Nobody, nobody.name);
   }
 }
