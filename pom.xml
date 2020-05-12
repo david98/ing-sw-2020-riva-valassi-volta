@@ -10,6 +10,9 @@
     <name>GC14</name>
 
     <properties>
+        <sonar.projectKey>david98_ing-sw-2020-riva-valassi-volta</sonar.projectKey>
+        <sonar.organization>david98</sonar.organization>
+        <sonar.host.url>https://sonarcloud.io</sonar.host.url>
         <maven.compiler.release>14</maven.compiler.release>
         <sonar.junit.reportPaths>target/surefire-reports</sonar.junit.reportPaths>
         <sonar.coverage.jacoco.xmlReportPaths>target/jacoco-ut/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
