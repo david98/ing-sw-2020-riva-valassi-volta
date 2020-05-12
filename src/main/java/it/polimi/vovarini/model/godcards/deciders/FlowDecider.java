@@ -67,32 +67,26 @@ public class FlowDecider extends Decider {
         GodCard currentPlayerGodCard = gameData.getCurrentPlayer().getGodCard();
         int size = gameData.getCurrentPlayer().getMovementList().size();
 
-        if(gameData.getCurrentPhase().equals(Phase.Movement)) {
-            switch (currentPlayerGodCard.getName()) {
-                case Triton:
-                    if (gameData.getCurrentPlayer().getMovementList().get(size - 1).getEnd().isPerimeterSpace())
-                        return Phase.Movement;
+        switch (currentPlayerGodCard.getName()) {
+            case Triton:
+                if (gameData.getCurrentPhase().equals(Phase.Movement) &&
+                        gameData.getCurrentPlayer().getMovementList().get(size - 1).getEnd().isPerimeterSpace()) {
+                    return Phase.Movement;
+                }
 
-                    return Phase.Construction;
-                default:
-                    break;
-            }
-        }
+                break;
+            case Artemis:
+                if (gameData.getCurrentPhase().equals(Phase.Movement) && size == 1) {
+                    currentPlayerGodCard.getMovementConstraints().add(ReachabilityDecider::previousBoxDenied);
+                    GameEventManager.raise(new GodCardUpdateEvent(currentPlayerGodCard, gameData.getCurrentPlayer()));
+                    return Phase.Movement;
+                }
 
-        if (gameData.getCurrentPhase().equals(Phase.Movement) && gameData.getCurrentPlayer().getMovementList().size() == 1){
-            switch (currentPlayerGodCard.getName()){
-                case Artemis:
-                  currentPlayerGodCard.getMovementConstraints().add(ReachabilityDecider::previousBoxDenied);
-                  GameEventManager.raise(new GodCardUpdateEvent(currentPlayerGodCard, gameData.getCurrentPlayer()));
-                  break;
-                default:
-                  break;
-            }
-            return Phase.Movement;
+                break;
+            default:
+                break;
         }
-        else {
-            return gameData.getCurrentPhase().next();
-        }
+        return gameData.getCurrentPhase().next();
     }
 
     /**
