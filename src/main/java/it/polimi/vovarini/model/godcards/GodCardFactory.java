@@ -51,6 +51,9 @@ public class GodCardFactory {
         case Prometheus -> {
           return createPrometheus();
         }
+        case Triton -> {
+          return createTriton();
+        }
         case Zeus -> {
           return createZeus();
         }
@@ -169,6 +172,16 @@ public class GodCardFactory {
       GodCard prometheus = new GodCard(GodName.Prometheus);
       prometheus.nextPhase = FlowDecider::buildBeforeAndAfter;
       return prometheus;
+    }
+
+    /**
+     * This method injects a generic GodCard with all the Behaviors modified by the card Triton
+     * @return an instance of a GodCard in the mold of Santorini's Triton card
+     */
+    private static GodCard createTriton(){
+      GodCard triton = new GodCard(GodName.Triton);
+      triton.nextPhase = FlowDecider::extendsMovement;
+      return triton;
     }
 
     /**

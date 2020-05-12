@@ -65,8 +65,21 @@ public class FlowDecider extends Decider {
     public static Phase extendsMovement(GameDataAccessor gameData){
 
         GodCard currentPlayerGodCard = gameData.getCurrentPlayer().getGodCard();
+        int size = gameData.getCurrentPlayer().getMovementList().size();
 
-        if (gameData.getCurrentPhase().equals((Phase.Movement)) && gameData.getCurrentPlayer().getMovementList().size() == 1){
+        if(gameData.getCurrentPhase().equals(Phase.Movement)) {
+            switch (currentPlayerGodCard.getName()) {
+                case Triton:
+                    if (gameData.getCurrentPlayer().getMovementList().get(size - 1).getEnd().isPerimeterSpace())
+                        return Phase.Movement;
+
+                    return Phase.Construction;
+                default:
+                    break;
+            }
+        }
+
+        if (gameData.getCurrentPhase().equals(Phase.Movement) && gameData.getCurrentPlayer().getMovementList().size() == 1){
             switch (currentPlayerGodCard.getName()){
                 case Artemis:
                   currentPlayerGodCard.getMovementConstraints().add(ReachabilityDecider::previousBoxDenied);

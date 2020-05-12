@@ -12,6 +12,7 @@ public enum GodName {
   Minotaur,
   Pan,
   Prometheus,
+  Triton,
   Zeus,
   Nobody
 }

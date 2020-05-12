@@ -32,13 +32,7 @@ public class WinDecider extends Decider {
      * @author Marco Riva
      */
     public static boolean perimeterConstraint(Movement movement) {
-        int min = 0;
-        int max = Board.DEFAULT_SIZE - 1;
-
-        int endX = movement.getEnd().getX();
-        int endY = movement.getEnd().getY();
-
-        return endX != min && endX != max && endY != min && endY != max;
+        return !movement.getEnd().isPerimeterSpace();
     }
 
 }
