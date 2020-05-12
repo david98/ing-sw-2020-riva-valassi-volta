@@ -5,7 +5,6 @@ public enum GodName {
   Artemis,
   Athena,
   Atlas,
-  Chronus,
   Demeter,
   Hephaestus,
   Hera,

@@ -30,9 +30,6 @@ public class GodCardFactory {
         case Atlas -> {
           return createAtlas();
         }
-        case Chronus -> {
-          return createChronus();
-        }
         case Demeter -> {
           return createDemeter();
         }
@@ -101,16 +98,6 @@ public class GodCardFactory {
       GodCard atlas = new GodCard(GodName.Atlas);
       atlas.validateConstruction = ValidationDecider::allowDome;
       return atlas;
-    }
-
-    /**
-     * This method injects a generic GodCard with all the Behaviors modified by the card Chronus
-     * @return an instance of a GodCard in the mold of Santorini's Chronus card
-     */
-    private static GodCard createChronus() {
-      GodCard chronus = new GodCard(GodName.Chronus);
-      chronus.winningConditions.add(WinDecider::fiveCompleteTowers);
-      return chronus;
     }
 
     /**
