@@ -11,6 +11,7 @@ public enum GodName {
   Hestia,
   Minotaur,
   Pan,
+  Poseidon,
   Prometheus,
   Triton,
   Zeus,

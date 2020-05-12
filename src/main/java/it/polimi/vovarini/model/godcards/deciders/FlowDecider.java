@@ -2,12 +2,15 @@ package it.polimi.vovarini.model.godcards.deciders;
 
 import it.polimi.vovarini.common.events.GameEventManager;
 import it.polimi.vovarini.common.events.GodCardUpdateEvent;
+import it.polimi.vovarini.common.events.WorkerSelectionEvent;
+import it.polimi.vovarini.common.exceptions.ItemNotFoundException;
 import it.polimi.vovarini.model.GameDataAccessor;
 import it.polimi.vovarini.model.Phase;
 import it.polimi.vovarini.model.Player;
 import it.polimi.vovarini.model.Point;
 import it.polimi.vovarini.model.board.items.Block;
 import it.polimi.vovarini.model.board.items.InvalidLevelException;
+import it.polimi.vovarini.model.board.items.Sex;
 import it.polimi.vovarini.model.godcards.GodCard;
 import it.polimi.vovarini.model.moves.Construction;
 import it.polimi.vovarini.model.moves.Move;
@@ -30,30 +33,62 @@ public class FlowDecider extends Decider {
     public static Phase extendsConstruction(GameDataAccessor gameData){
         GodCard currentPlayerGodCard = gameData.getCurrentPlayer().getGodCard();
 
-        if (gameData.getCurrentPhase().equals(Phase.Construction) && gameData.getCurrentPlayer().getConstructionList().size() == 1){
-            switch (currentPlayerGodCard.getName()){
-                case Demeter:
-                  currentPlayerGodCard.getConstructionConstraints().add(BuildabilityDecider::denyPreviousTarget);
-                  GameEventManager.raise(new GodCardUpdateEvent(currentPlayerGodCard, gameData.getCurrentPlayer()));
-                  break;
-                case Hephaestus:
-                  currentPlayerGodCard.getConstructionConstraints().add(BuildabilityDecider::buildOnSameTarget);
-                  GameEventManager.raise(new GodCardUpdateEvent(currentPlayerGodCard, gameData.getCurrentPlayer()));
-                  break;
-                case Hestia:
-                    currentPlayerGodCard.getConstructionConstraints().add(BuildabilityDecider::denyPerimeterSpace);
-                    GameEventManager.raise(new GodCardUpdateEvent(currentPlayerGodCard, gameData.getCurrentPlayer()));
-                    break;
-                default:
-                    break;
+        if (gameData.getCurrentPhase().equals(Phase.Construction)) {
+
+            if(gameData.getCurrentPlayer().getConstructionList().size() == 1){
+                switch (currentPlayerGodCard.getName()){
+                    case Demeter:
+                      currentPlayerGodCard.getConstructionConstraints().add(BuildabilityDecider::denyPreviousTarget);
+                      GameEventManager.raise(new GodCardUpdateEvent(currentPlayerGodCard, gameData.getCurrentPlayer()));
+                      break;
+                    case Hephaestus:
+                      currentPlayerGodCard.getConstructionConstraints().add(BuildabilityDecider::buildOnSameTarget);
+                      GameEventManager.raise(new GodCardUpdateEvent(currentPlayerGodCard, gameData.getCurrentPlayer()));
+                      break;
+                    case Hestia:
+                        currentPlayerGodCard.getConstructionConstraints().add(BuildabilityDecider::denyPerimeterSpace);
+                        GameEventManager.raise(new GodCardUpdateEvent(currentPlayerGodCard, gameData.getCurrentPlayer()));
+                        break;
+                    case Poseidon:
+                        try {
+                            Point otherWorkerPosition = gameData.getBoard().getItemPosition(gameData.getCurrentPlayer().getOtherWorker());
+                            int otherWorkerLevel = gameData.getBoard().getBox(otherWorkerPosition).getLevel();
+
+                            if(otherWorkerLevel == 0) {
+                                if(gameData.getCurrentPlayer().getCurrentWorker().getSex().equals(Sex.Male)) {
+                                    gameData.getCurrentPlayer().setCurrentSex(Sex.Female);
+                                    GameEventManager.raise(new WorkerSelectionEvent(gameData.getCurrentPlayer(), Sex.Female));
+                                }
+                                else {
+                                    gameData.getCurrentPlayer().setCurrentSex(Sex.Male);
+                                    GameEventManager.raise(new WorkerSelectionEvent(gameData.getCurrentPlayer(), Sex.Male));
+                                }
+
+                                return Phase.Construction;
+                            }
+                            return Phase.End;
+
+                        } catch (ItemNotFoundException ignored) {
+                            System.err.println("This really should never happen...");
+                        }
+                        break;
+                    default:
+                        break;
+                }
+                return Phase.Construction;
+
+            } else if(gameData.getCurrentPlayer().getConstructionList().size() > 1 &&
+                    gameData.getCurrentPlayer().getConstructionList().size() < 4) {
+                switch (currentPlayerGodCard.getName()) {
+                    case Poseidon:
+                        return Phase.Construction;
+                    default:
+                        return gameData.getCurrentPhase().next();
+                }
             }
-            return Phase.Construction;
-        }
-        else {
-            return gameData.getCurrentPhase().next();
         }
 
-
+        return gameData.getCurrentPhase().next();
     }
 
     /**

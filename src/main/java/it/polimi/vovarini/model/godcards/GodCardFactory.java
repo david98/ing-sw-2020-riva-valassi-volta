@@ -48,6 +48,9 @@ public class GodCardFactory {
         case Pan -> {
           return createPan();
         }
+        case Poseidon -> {
+          return createPoseidon();
+        }
         case Prometheus -> {
           return createPrometheus();
         }
@@ -162,6 +165,16 @@ public class GodCardFactory {
       GodCard pan = new GodCard(GodName.Pan);
       pan.winningConditions.add(WinDecider::downTwoLevels);
       return pan;
+    }
+
+    /**
+     * This method injects a generic GodCard with all the Behaviors modified by the card Poseidon
+     * @return an instance of a GodCard in the mold of Santorini's Poseidon card
+     */
+    private static GodCard createPoseidon(){
+      GodCard poseidon = new GodCard(GodName.Poseidon);
+      poseidon.nextPhase = FlowDecider::extendsConstruction;
+      return poseidon;
     }
 
     /**
