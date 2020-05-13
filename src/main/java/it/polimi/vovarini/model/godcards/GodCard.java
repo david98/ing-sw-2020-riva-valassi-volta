@@ -336,31 +336,6 @@ public class GodCard implements Serializable {
   }
 
   @Override
-  public boolean equals(Object o) {
-    if (this == o) return true;
-    if (o == null || getClass() != o.getClass()) return false;
-
-    GodCard godCard = (GodCard) o;
-
-    if (name != godCard.name) return false;
-    if (!isPointReachable.equals(godCard.isPointReachable)) return false;
-    if (!isPointBuildable.equals(godCard.isPointBuildable)) return false;
-    if (!nextPhase.equals(godCard.nextPhase)) return false;
-    if (!listMovementEffects.equals(godCard.listMovementEffects)) return false;
-    if (!listConstructionEffects.equals(godCard.listConstructionEffects)) return false;
-    if (!validateMovement.equals(godCard.validateMovement)) return false;
-    if (!validateConstruction.equals(godCard.validateConstruction)) return false;
-    if (!isMovementWinning.equals(godCard.isMovementWinning)) return false;
-    if (!constraintMovement.equals(godCard.constraintMovement)) return false;
-    if (!movementConditions.equals(godCard.movementConditions)) return false;
-    if (!movementConstraints.equals(godCard.movementConstraints)) return false;
-    if (!constructionConditions.equals(godCard.constructionConditions)) return false;
-    if (!constructionConstraints.equals(godCard.constructionConstraints)) return false;
-    if (!winningConditions.equals(godCard.winningConditions)) return false;
-    return winningConstraints.equals(godCard.winningConstraints);
-  }
-
-  @Override
   public int hashCode() {
     int result = name.hashCode();
     result = 31 * result + isPointReachable.hashCode();
@@ -379,6 +354,35 @@ public class GodCard implements Serializable {
     result = 31 * result + winningConditions.hashCode();
     result = 31 * result + winningConstraints.hashCode();
     return result;
+  }
+
+  /**
+   * Two GodCard objects are equal if they have the same name
+   * and their methods collections contain the same methods.
+   *
+   * @param obj The object that this should be compared to.
+   * @return If this object is equal to obj.
+   */
+  @Override
+  public boolean equals(Object obj) {
+    if (obj instanceof GodCard) {
+      GodCard other = (GodCard) obj;
+      return name == other.name &&
+              movementConditions.size() == other.movementConditions.size() &&
+              movementConditions.containsAll(other.movementConditions) &&
+              movementConstraints.size() == other.movementConstraints.size() &&
+              movementConstraints.containsAll(other.movementConstraints) &&
+              constructionConditions.size() == other.constructionConditions.size() &&
+              constructionConditions.containsAll(other.constructionConditions) &&
+              constructionConstraints.size() == other.constructionConstraints.size() &&
+              constructionConstraints.containsAll(other.constructionConstraints) &&
+              winningConditions.size() == other.winningConditions.size() &&
+              winningConditions.containsAll(other.winningConditions) &&
+              winningConstraints.size() == other.winningConstraints.size() &&
+              winningConstraints.containsAll(other.winningConstraints);
+    } else {
+      return super.equals(obj);
+    }
   }
 
   public Collection<BiFunction<GameDataAccessor, Point, Boolean>> getMovementConditions() {
