@@ -22,7 +22,7 @@ public class SocketReader<T> implements Runnable{
   }
 
   public void run(){
-    while (true){
+    while (!Thread.currentThread().isInterrupted()){
       try{
         Object receivedObj = in.readObject();
         if (objClass.isAssignableFrom(receivedObj.getClass())){
@@ -30,9 +30,7 @@ public class SocketReader<T> implements Runnable{
         }
       } catch (IOException | ClassNotFoundException e){
         e.printStackTrace();
-        break;
       }
     }
   }
-
 }

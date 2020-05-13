@@ -32,6 +32,8 @@ public class Game implements Serializable, GameDataAccessor {
 
   private boolean setupComplete;
 
+  private final Random random;
+
   public Game(int numberOfPlayers) throws InvalidNumberOfPlayersException {
     if (numberOfPlayers < MIN_PLAYERS || numberOfPlayers > MAX_PLAYERS) {
       throw new InvalidNumberOfPlayersException();
@@ -50,6 +52,8 @@ public class Game implements Serializable, GameDataAccessor {
     currentPhase = Phase.Start;
 
     setupComplete = false;
+
+    random = new Random();
   }
 
   public Board getBoard() {
@@ -85,8 +89,7 @@ public class Game implements Serializable, GameDataAccessor {
 
 
   public void drawElectedPlayer() {
-    Random r = new Random();
-    currentPlayerIndex = r.nextInt(players.length);
+    currentPlayerIndex = random.nextInt(players.length);
     GameEventManager.raise(new CurrentPlayerChangedEvent(this, getCurrentPlayer()));
   }
 

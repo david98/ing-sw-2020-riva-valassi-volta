@@ -79,7 +79,7 @@ public class BoxTests {
       }
     }
     try {
-      Stack<Item> items = box.getItems();
+      var items = box.getItems();
       items.clear();
       items = box.getItems();
       assertFalse(items.isEmpty());

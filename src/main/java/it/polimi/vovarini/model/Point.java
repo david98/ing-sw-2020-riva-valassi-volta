@@ -8,6 +8,8 @@ public class Point implements Serializable {
 
   private final int y;
 
+  private final static Random random = new Random();
+
   public Point(int x, int y) {
     this.x = x;
     this.y = y;
@@ -51,7 +53,6 @@ public class Point implements Serializable {
   }
 
   public static Point random(int xBound, int yBound){
-    Random r = new Random();
-    return new Point(r.nextInt(xBound), r.nextInt(yBound));
+    return new Point(random.nextInt(xBound), random.nextInt(yBound));
   }
 }

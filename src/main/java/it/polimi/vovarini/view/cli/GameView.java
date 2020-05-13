@@ -13,7 +13,8 @@ import it.polimi.vovarini.view.cli.input.KeycodeToKey;
 import it.polimi.vovarini.view.cli.screens.*;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Scanner;
 
 public class GameView extends View {
 
@@ -25,6 +26,8 @@ public class GameView extends View {
 
   private final Console console;
 
+  private boolean running;
+
   public GameView() throws IOException {
     super();
 
@@ -35,6 +38,8 @@ public class GameView extends View {
     console = new FullScreenConsole();
 
     client = new GameClient("127.0.0.1", Server.DEFAULT_PORT);
+
+    running = true;
   }
 
   private void waitForEvent(){
@@ -42,7 +47,7 @@ public class GameView extends View {
       GameEvent evtFromServer = client.getServerEvents().take();
       GameEventManager.raise(evtFromServer);
     } catch (InterruptedException e){
-      waitForEvent();
+      Thread.currentThread().interrupt();
     }
   }
 
@@ -186,19 +191,19 @@ public class GameView extends View {
     data.setOwner(new Player(nickname));
     System.out.println("Now waiting for other players...");
     console.enterRawMode();
-    while (true) {
+    while (running) {
       try {
         GameEvent evtFromServer = client.getServerEvents().take();
         GameEventManager.raise(evtFromServer);
       } catch (InterruptedException e){
-        e.printStackTrace();
+        Thread.currentThread().interrupt();
       }
     }
   }
 
   public void gameLoop(){
     render();
-    while (true) {
+    while (running) {
       GameEvent evt;
       // consume events from the server
       while ( client.getServerEvents().peek() != null) {
@@ -213,10 +218,16 @@ public class GameView extends View {
           // wait for event
           GameEventManager.raise(client.getServerEvents().take());
         }
-      } catch (IOException | InterruptedException e){
+      } catch (IOException e){
         e.printStackTrace();
+      } catch (InterruptedException e){
+        Thread.currentThread().interrupt();
       }
     }
+  }
+
+  public void stop(){
+    running = false;
   }
 
   public static void main(String[] args){

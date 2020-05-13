@@ -9,8 +9,12 @@ import java.net.ServerSocket;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class Server implements Runnable{
+
+  private static final Logger LOGGER = Logger.getLogger( Server.class.getName() );
 
   public static final int DEFAULT_PORT = 6666;
   public static final int DEFAULT_MAX_THREADS = 4;
@@ -35,17 +39,19 @@ public class Server implements Runnable{
     try {
       Game game = new Game(2);
       Controller controller = new Controller(game);
-
+      LOGGER.log(Level.INFO, "Server initialized.");
     } catch (InvalidNumberOfPlayersException e){
       e.printStackTrace();
     }
   }
 
   public void run(){
+    LOGGER.log(Level.INFO, "Server is now listening on port {0}.", serverSocket.getLocalPort());
     try {
-      while (true) {
+      while (!Thread.currentThread().isInterrupted()) {
+        LOGGER.log(Level.FINE, "Waiting for new connection...");
         pool.execute(new RemoteView(serverSocket.accept()));
-        System.out.println("nuova connessione!");
+        LOGGER.log(Level.INFO, "A new client connected.");
       }
     } catch (IOException ex) {
       pool.shutdown();
@@ -70,7 +76,7 @@ public class Server implements Runnable{
     }
   }
 
-  public static void main(String[] args) throws IOException, InvalidNumberOfPlayersException {
+  public static void main(String[] args) throws IOException {
     Server server = new Server(DEFAULT_PORT);
     Thread thread = new Thread(server);
     thread.start();

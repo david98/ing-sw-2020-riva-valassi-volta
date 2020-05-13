@@ -12,9 +12,9 @@ public class Block extends Item implements Cloneable {
   public static final Block[] blocks =
       IntStream.range(MIN_LEVEL, MAX_LEVEL + 1)
           .mapToObj(
-              level -> {
+              l -> {
                 try {
-                  return new Block(level);
+                  return new Block(l);
                 } catch (InvalidLevelException ignored) {
                   return null;
                 }
@@ -34,6 +34,7 @@ public class Block extends Item implements Cloneable {
     return level;
   }
 
+  @Override
   public boolean canBePlacedOn(Item item) {
     if (item instanceof Block) {
       Block block = (Block) item;

@@ -1,6 +1,6 @@
 package it.polimi.vovarini.view.cli.screens;
 
-import it.polimi.vovarini.common.events.*;
+import it.polimi.vovarini.common.events.CardChoiceEvent;
 import it.polimi.vovarini.model.godcards.GodName;
 import it.polimi.vovarini.server.GameClient;
 import it.polimi.vovarini.view.ViewData;

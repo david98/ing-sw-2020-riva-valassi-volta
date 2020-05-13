@@ -9,18 +9,15 @@ import it.polimi.vovarini.server.GameClient;
 import it.polimi.vovarini.view.ViewData;
 import it.polimi.vovarini.view.cli.Direction;
 import it.polimi.vovarini.view.cli.elements.BoardElement;
-import it.polimi.vovarini.view.cli.elements.MultiChoiceList;
 import it.polimi.vovarini.view.cli.elements.Text;
 import it.polimi.vovarini.view.cli.input.Key;
 import it.polimi.vovarini.view.cli.styling.Color;
 
-import java.lang.annotation.Inherited;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-import java.util.stream.Stream;
 
 public class SpawnWorkersScreen extends Screen {
 

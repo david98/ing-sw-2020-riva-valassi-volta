@@ -22,14 +22,15 @@ public class SocketWriter<T> implements Runnable{
   }
 
   public void run(){
-    while(true){
+    while(!Thread.currentThread().isInterrupted()){
       try {
         T obj = objectsToBeWritten.take();
         out.writeObject(obj);
         out.flush();
-      } catch (InterruptedException | IOException e){
+      } catch (IOException e){
         e.printStackTrace();
-        break;
+      } catch (InterruptedException e){
+        Thread.currentThread().interrupt();
       }
     }
   }

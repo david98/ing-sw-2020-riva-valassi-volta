@@ -3,19 +3,18 @@ package it.polimi.vovarini.view.cli.screens;
 import it.polimi.vovarini.common.events.*;
 import it.polimi.vovarini.common.exceptions.BoxEmptyException;
 import it.polimi.vovarini.common.exceptions.InvalidPositionException;
-import it.polimi.vovarini.model.Phase;
 import it.polimi.vovarini.model.Point;
 import it.polimi.vovarini.model.board.items.Item;
 import it.polimi.vovarini.model.board.items.Worker;
 import it.polimi.vovarini.server.GameClient;
 import it.polimi.vovarini.view.ViewData;
-import it.polimi.vovarini.view.cli.elements.Text;
-import it.polimi.vovarini.view.cli.input.Key;
-import it.polimi.vovarini.view.cli.styling.Color;
 import it.polimi.vovarini.view.cli.Direction;
 import it.polimi.vovarini.view.cli.elements.BoardElement;
 import it.polimi.vovarini.view.cli.elements.PhasePrompt;
 import it.polimi.vovarini.view.cli.elements.PlayerList;
+import it.polimi.vovarini.view.cli.elements.Text;
+import it.polimi.vovarini.view.cli.input.Key;
+import it.polimi.vovarini.view.cli.styling.Color;
 
 import java.util.Collection;
 
