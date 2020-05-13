@@ -32,8 +32,8 @@ import java.util.stream.Collectors;
  * @version 0.2
  * @since 0.1
  */
-public class GodCard implements Cloneable, Serializable {
-  protected GameDataAccessor gameData;
+public class GodCard implements Serializable {
+  protected transient GameDataAccessor gameData;
   protected GodName name;
 
   /**
@@ -42,17 +42,6 @@ public class GodCard implements Cloneable, Serializable {
    */
   GodCard(GodName name) {
     this.name = name;
-    initCollections();
-  }
-
-  /**
-   * Constructor method of GodCard
-   * @param name Name of the Card I want to create, must be a value of the GodName enumeration
-   * @param gameData Instance of game currently played by all the players
-   */
-  GodCard(GodName name, GameDataAccessor gameData) {
-    this.name = name;
-    this.gameData = gameData;
     initCollections();
   }
 
@@ -330,7 +319,7 @@ public class GodCard implements Cloneable, Serializable {
     gameData.getCurrentPlayer().setWorkerSelected(false);
     gameData.getCurrentPlayer().getMovementList().clear();
     gameData.getCurrentPlayer().getConstructionList().clear();
-    gameData.getCurrentPlayer().setBoardStatus(gameData.getBoard().clone());
+    gameData.getCurrentPlayer().setBoardStatus(gameData.getBoard());
   }
 
   public List<Movement> consequences(Movement movement) {
@@ -357,28 +346,35 @@ public class GodCard implements Cloneable, Serializable {
     this.gameData = gameData;
   }
 
-  public GodCard clone(){
-    GodCard clone = GodCardFactory.create(name);
-    clone.movementConditions = new HashSet<>(movementConditions);
-    clone.movementConstraints = new HashSet<>(movementConstraints);
-
-    clone.constructionConditions = new HashSet<>(constructionConditions);
-    clone.constructionConstraints = new HashSet<>(constructionConstraints);
-
-    clone.winningConditions = new HashSet<>(winningConditions);
-    clone.winningConstraints = new HashSet<>(winningConstraints);
-    return clone;
-  }
-
   @Override
   public int hashCode() {
     return name.hashCode();
   }
 
+  /**
+   * Two GodCard objects are equal if they have the same name
+   * and their methods collections contain the same methods.
+   *
+   * @param obj The object that this should be compared to.
+   * @return If this object is equal to obj.
+   */
   @Override
   public boolean equals(Object obj) {
     if (obj instanceof GodCard) {
-      return name.equals(((GodCard) obj).name);
+      GodCard other = (GodCard) obj;
+      return name == other.name &&
+              movementConditions.size() == other.movementConditions.size() &&
+              movementConditions.containsAll(other.movementConditions) &&
+              movementConstraints.size() == other.movementConstraints.size() &&
+              movementConstraints.containsAll(other.movementConstraints) &&
+              constructionConditions.size() == other.constructionConditions.size() &&
+              constructionConditions.containsAll(other.constructionConditions) &&
+              constructionConstraints.size() == other.constructionConstraints.size() &&
+              constructionConstraints.containsAll(other.constructionConstraints) &&
+              winningConditions.size() == other.winningConditions.size() &&
+              winningConditions.containsAll(other.winningConditions) &&
+              winningConstraints.size() == other.winningConstraints.size() &&
+              winningConstraints.containsAll(other.winningConstraints);
     } else {
       return super.equals(obj);
     }

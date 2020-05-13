@@ -116,20 +116,4 @@ public class BoardTests {
     assertDoesNotThrow(() -> board.place(minLevelBlock, p));
     assertDoesNotThrow(() -> assertEquals(p, board.getItemPosition(minLevelBlock)));
   }
-
-  @Test
-  @DisplayName("Tests that the clone() method actually returns a deep copy")
-  void cloneWorks(){
-    Board b = new Board(Board.DEFAULT_SIZE);
-    try {
-      b.place(Block.blocks[0], new Point(0, 0));
-      Board b2 = b.clone();
-      b2.remove(new Point(0,0));
-      assertDoesNotThrow(() -> b.getItems(new Point(0, 0)));
-    } catch (InvalidPositionException ignored){
-    } catch (BoxFullException ignored){
-    } catch (BoxEmptyException ignored){
-    }
-
-  }
 }

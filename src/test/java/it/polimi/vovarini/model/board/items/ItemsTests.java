@@ -90,4 +90,16 @@ public class ItemsTests {
       }
     }
   }
+
+  @Test
+  @DisplayName("Test copy constructor on Block")
+  void testBlockCopy(){
+    try {
+      Block original = new Block(Block.MIN_LEVEL);
+      Block clone = new Block(original);
+      assertNotSame(original, clone);
+      assertEquals(original, clone);
+    } catch (InvalidLevelException ignored){
+    }
+  }
 }

@@ -12,7 +12,7 @@ import it.polimi.vovarini.model.board.items.Item;
 import java.io.Serializable;
 import java.util.*;
 
-public class Board implements Cloneable, Serializable {
+public class Board implements Serializable {
 
   public static final int DEFAULT_SIZE = 5;
 
@@ -59,7 +59,7 @@ public class Board implements Cloneable, Serializable {
     }
     Box box = getBox(p);
     box.place(item);
-    GameEventManager.raise(new BoardUpdateEvent(this, this.clone()));
+    GameEventManager.raise(new BoardUpdateEvent(this, this));
   }
 
   public Deque<Item> getItems(Point p) throws InvalidPositionException, BoxEmptyException {
@@ -101,21 +101,6 @@ public class Board implements Cloneable, Serializable {
 
   public int getSize() {
     return size;
-  }
-
-  public Board clone() {
-    try {
-      Board b = (Board) super.clone();
-      b.boxes = new Box[size][size];
-      for (int i = 0; i < size; i++) {
-        for (int j = 0; j < size; j++) {
-          b.boxes[i][j] = boxes[i][j].clone();
-        }
-      }
-      return b;
-    } catch (CloneNotSupportedException e) {
-      throw new RuntimeException(e);
-    }
   }
 
 }

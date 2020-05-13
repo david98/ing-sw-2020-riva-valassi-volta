@@ -7,25 +7,20 @@ import it.polimi.vovarini.model.board.items.Item;
 import java.io.Serializable;
 import java.util.*;
 
-public class Box implements Cloneable, Serializable {
+public class Box implements Serializable {
 
   public static final int MAX_ITEMS = 4;
 
-  private Deque<Item> items;
+  private final Deque<Item> items;
 
   public Box() {
     items = new ArrayDeque<>();
   }
 
-  // prima permetteva di sovrascrivere un worker di un altro giocatore. Magari le carte porteranno a
-  // nuove modifiche
   public void place(Item item) throws BoxFullException {
     if (items.size() >= MAX_ITEMS) {
       throw new BoxFullException();
     }
-
-    // if ( !(items.empty()) && )
-
     items.push(item);
   }
 
@@ -68,20 +63,5 @@ public class Box implements Cloneable, Serializable {
       rep.append(item.toString()).append(" - ");
     }
     return rep.toString();
-  }
-
-
-  public Box clone(){
-    Box box;
-    try{
-      box = (Box) super.clone();
-      box.items = getItems();
-      return box;
-    } catch (CloneNotSupportedException e){
-      throw new RuntimeException(e);
-    } catch (BoxEmptyException e){
-      box = new Box();
-      return box;
-    }
   }
 }

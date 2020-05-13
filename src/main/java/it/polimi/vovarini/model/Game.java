@@ -105,7 +105,7 @@ public class Game implements Serializable, GameDataAccessor {
       GameEventManager.raise(new CardAssignmentEvent(this, getCurrentPlayer(), lastGodCard));
 
       // settare currentPlayer a players[0], oppure potremmo proseguire il turno da qui, lasciando invariato il codice attuale
-      GameEventManager.raise(new PlaceYourWorkersEvent(this, getCurrentPlayer().clone()));
+      GameEventManager.raise(new PlaceYourWorkersEvent(this, getCurrentPlayer()));
     } else {
       GameEventManager.raise(new SelectYourCardEvent(this, getCurrentPlayer(), availableGodCards));
     }
@@ -159,7 +159,7 @@ public class Game implements Serializable, GameDataAccessor {
 
   public void nextPlayer() {
     currentPlayerIndex = (currentPlayerIndex + 1) % players.length;
-    GameEventManager.raise(new CurrentPlayerChangedEvent(this, players[currentPlayerIndex].clone()));
+    GameEventManager.raise(new CurrentPlayerChangedEvent(this, players[currentPlayerIndex]));
   }
 
   public void setCurrentPhase(Phase phase){
