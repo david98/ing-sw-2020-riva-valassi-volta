@@ -167,7 +167,7 @@ public class Controller implements EventListener {
    * @throws OverwrittenWorkerException If the player tries to put his Worker on top of another Worker (of any player)
    */
   @GameEventListener
-  public void update(SpawnWorkerEvent evt) throws WrongPlayerException, InvalidPositionException, OverwrittenWorkerException {
+  public void update(SpawnWorkerEvent evt) throws WrongPlayerException, OverwrittenWorkerException {
 
     Player currentPlayer = game.getCurrentPlayer();
     if (!currentPlayer.equals(evt.getSource())) throw new WrongPlayerException();
@@ -233,8 +233,7 @@ public class Controller implements EventListener {
    */
   @GameEventListener
   public void update(BuildEvent evt)
-      throws InvalidPositionException, InvalidPhaseException,
-          WrongPlayerException, InvalidMoveException {
+      throws InvalidPhaseException, WrongPlayerException, InvalidMoveException {
 
     Player currentPlayer = game.getCurrentPlayer();
     if (!currentPlayer.equals(evt.getSource())) throw new WrongPlayerException();
@@ -268,7 +267,7 @@ public class Controller implements EventListener {
    */
   @GameEventListener
   public void update(MovementEvent evt)
-          throws InvalidPhaseException, WrongPlayerException, InvalidPositionException,
+          throws InvalidPhaseException, WrongPlayerException,
           InvalidMoveException {
     try {
       Player currentPlayer = game.getCurrentPlayer();

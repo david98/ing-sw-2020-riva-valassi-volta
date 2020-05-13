@@ -72,7 +72,7 @@ public class Board implements Serializable {
     return getBox(p).getItems();
   }
 
-  public Item remove(Point p) throws InvalidPositionException {
+  public Item remove(Point p) {
     if (!isPositionValid(p)) {
       throw new InvalidPositionException();
     }
@@ -92,7 +92,7 @@ public class Board implements Serializable {
     throw new ItemNotFoundException();
   }
 
-  public Point getItemPosition(Worker worker) throws ItemNotFoundException {
+  public Point getItemPosition(Worker worker) {
     for (int i = 0; i < boxes.length; i++) {
       for (int j = 0; j < boxes.length; j++) {
         if (boxes[j][i].getItems().peek() != null && boxes[j][i].getItems().peek().canBeRemoved()) {

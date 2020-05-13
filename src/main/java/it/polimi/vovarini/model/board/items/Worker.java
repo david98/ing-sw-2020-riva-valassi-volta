@@ -2,9 +2,11 @@ package it.polimi.vovarini.model.board.items;
 
 import it.polimi.vovarini.model.Player;
 
+import java.util.Arrays;
+
 public class Worker extends Item {
   private final Sex sex;
-  private Player owner;
+  private final Player owner;
 
   public Worker(Sex sex, Player owner) {
     this.sex = sex;
@@ -40,6 +42,14 @@ public class Worker extends Item {
   @Override
   public String toString() {
     return sex == Sex.Male ? "M" : "F";
+  }
+
+  @Override
+  public int hashCode() {
+    return Arrays.hashCode(new Object[] {
+            owner,
+            sex
+    });
   }
 
   @Override

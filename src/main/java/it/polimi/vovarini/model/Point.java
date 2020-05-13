@@ -51,7 +51,7 @@ public class Point implements Serializable {
 
   @Override
   public int hashCode() {
-    return x * 10 + y;
+    return x * 17 + y;
   }
 
   public static Point random(int xBound, int yBound){
