@@ -4,6 +4,7 @@ import it.polimi.vovarini.model.board.Board;
 import it.polimi.vovarini.model.board.items.Sex;
 import it.polimi.vovarini.model.board.items.Worker;
 import it.polimi.vovarini.model.godcards.GodCard;
+import it.polimi.vovarini.model.godcards.GodCardFactory;
 import it.polimi.vovarini.model.moves.Construction;
 import it.polimi.vovarini.model.moves.Movement;
 
@@ -141,7 +142,7 @@ public class Player implements Cloneable, Serializable {
     try {
       Player p = (Player) super.clone();
       if (p.godCard != null) {
-        p.godCard = godCard.clone();
+        p.godCard = GodCardFactory.clone(godCard);
       }
       return p;
     } catch (CloneNotSupportedException e) {

@@ -1,16 +1,20 @@
 package it.polimi.vovarini.model.godcards;
 
 import it.polimi.vovarini.server.Server;
-import it.polimi.vovarini.server.SocketReader;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.*;
 import java.net.ConnectException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -72,6 +76,29 @@ public class CommonTests {
         if (++count == maxTries) throw e;
       }
     }
+  }
+
+  public static List<GodName> provideAllGodNames(){
+    return Arrays.asList(GodName.values());
+  }
+
+  @ParameterizedTest
+  @MethodSource("provideAllGodNames")
+  @DisplayName("Test that equals works")
+  void testEquals(GodName name){
+    GodCard card = GodCardFactory.create(name);
+    assertEquals(card, card);
+  }
+
+  @ParameterizedTest
+  @MethodSource("provideAllGodNames")
+  @DisplayName("Test that clone works and produces two GodCard that are equal but not the same object")
+  void testClone(GodName name){
+    GodCard original = GodCardFactory.create(name);
+    GodCard clone = GodCardFactory.clone(original);
+
+    assertNotSame(original, clone);
+    assertEquals(original, clone);
   }
 
 }
