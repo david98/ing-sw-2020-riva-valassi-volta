@@ -96,6 +96,7 @@ public class GameView extends View {
           players[i] = p;
         }
       }
+      players[i].getGodCard().setGameData(data);
     }
     data.getPlayerSet().clear();
     for (Player p: players){
@@ -105,7 +106,8 @@ public class GameView extends View {
       currentScreen = new ElectedPlayerScreen(data, client, Arrays.asList(e.getAllGods()));
       gameLoop();
     } else {
-      currentScreen = new WaitGodCardsListScreen(data, client);
+      currentScreen = new WaitScreen(data, client,
+              "Waiting for elected player to choose which God Cards will be available...");
       render();
       waitForEvent();
     }
@@ -118,7 +120,8 @@ public class GameView extends View {
       currentScreen = new GodCardSelectionScreen(data, client, Arrays.asList(e.getGodsLeft()));
       gameLoop();
     } else {
-      currentScreen = new WaitPlayersGodSelectionScreen(data, client);
+      currentScreen = new WaitScreen(data, client,
+              "Waiting for all players to choose their card...");
       render();
       waitForEvent();
     }
@@ -138,6 +141,16 @@ public class GameView extends View {
   @Override
   @GameEventListener
   public void handlePlaceYourWorkers(PlaceYourWorkersEvent e) {
+    if (e.getTargetPlayer().equals(data.getOwner())){
+      currentScreen = new SpawnWorkersScreen(data, client);
+      gameLoop();
+    } else {
+      // maybe we should show the board
+      currentScreen = new WaitScreen(data, client,
+              "Waiting for all players to place their workers...");
+      render();
+      waitForEvent();
+    }
   }
 
   public void render(){

@@ -1,5 +1,7 @@
 package it.polimi.vovarini.view.cli.styling;
 
+import java.io.Serializable;
+
 /**
  * Represents an RGB coded color.
  *
@@ -7,7 +9,7 @@ package it.polimi.vovarini.view.cli.styling;
  * @version 0.1
  * @since 0.1
  */
-public class Color {
+public class Color implements Serializable {
 
   public final static Color Red = new Color(255, 0, 0);
   public final static Color Green = new Color(0, 255,  0);

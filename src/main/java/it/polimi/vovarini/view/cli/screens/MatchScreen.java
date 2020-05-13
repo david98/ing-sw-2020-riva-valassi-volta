@@ -9,6 +9,7 @@ import it.polimi.vovarini.model.board.items.Item;
 import it.polimi.vovarini.model.board.items.Worker;
 import it.polimi.vovarini.server.GameClient;
 import it.polimi.vovarini.view.ViewData;
+import it.polimi.vovarini.view.cli.elements.Text;
 import it.polimi.vovarini.view.cli.input.Key;
 import it.polimi.vovarini.view.cli.styling.Color;
 import it.polimi.vovarini.view.cli.Direction;
@@ -23,6 +24,7 @@ public class MatchScreen extends Screen {
   private final PlayerList playerList;
   private final BoardElement boardElement;
   private final PhasePrompt phasePrompt;
+  private final Text message;
 
   private boolean reRenderNeeded;
 
@@ -35,6 +37,7 @@ public class MatchScreen extends Screen {
     playerList.setCurrentPlayer(data.getCurrentPlayer());
     boardElement = new BoardElement(data.getBoard(), data.getPlayerSet(), data.getPlayersColors(), Color.Green);
     phasePrompt = new PhasePrompt(data.getCurrentPhase());
+    message = new Text("");
 
     reRenderNeeded = true;
   }
@@ -89,7 +92,8 @@ public class MatchScreen extends Screen {
               .append("\n")
               .append(data.getCurrentPlayer().equals(data.getOwner()) ? phasePrompt.render() :
                       "It's " + data.getCurrentPlayer().getNickname() + "'s turn.")
-              .append("\n");
+              .append("\n")
+              .append(message.render());
       /*
       if (data.getOwner().equals(data.getCurrentPlayer())) {
         console.println(getPhasePrompt(data.getCurrentPhase()));
@@ -109,6 +113,7 @@ public class MatchScreen extends Screen {
     data.setSelectedWorker(null);
     data.setCurrentStart(null);
     boardElement.resetMarkedPoints();
+    message.setContent("");
 
     reRenderNeeded = true;
   }
@@ -150,11 +155,12 @@ public class MatchScreen extends Screen {
           if (data.getOwner().getWorkers().values().stream().anyMatch(w -> w.equals(item))) {
             data.setCurrentStart(boardElement.getCursorLocation());
             data.setSelectedWorker((Worker) item);
+            data.getOwner().setCurrentSex(((Worker) item).getSex());
             // mark points reachable by the selected worker
             boardElement.markPoints(
                     data.getOwner().getGodCard().computeReachablePoints()
             );
-
+            message.setContent("Press O to confirm your choice.");
             reRenderNeeded = true;
           }
         } catch (BoxEmptyException ignored) {
@@ -232,11 +238,10 @@ public class MatchScreen extends Screen {
    */
   private void confirm(){
     switch (data.getCurrentPhase()){
-      case Start:
-      case Movement:
-      case Construction:
-      case End:
-      default:
+      case Start ->
+        GameEventManager.raise(
+                new WorkerSelectionEvent(data.getOwner(), data.getOwner().getCurrentWorker().getSex())
+        );
     }
   }
 
@@ -252,11 +257,13 @@ public class MatchScreen extends Screen {
 
   @Override
   public void handlePhaseUpdate(PhaseUpdateEvent e) {
-    if (data.getCurrentPhase() == Phase.Construction){
-      boardElement.markPoints(data.getOwner().getGodCard().computeBuildablePoints());
-      phasePrompt.setCurrentPhase(e.getNewPhase());
-      if (data.getOwner().isHasLost()){
-        System.exit(1);
+    switch (data.getCurrentPhase()) {
+      case Construction -> {
+        boardElement.markPoints(data.getOwner().getGodCard().computeBuildablePoints());
+        phasePrompt.setCurrentPhase(e.getNewPhase());
+        if (data.getOwner().isHasLost()) {
+          System.exit(1);
+        }
       }
     }
   }

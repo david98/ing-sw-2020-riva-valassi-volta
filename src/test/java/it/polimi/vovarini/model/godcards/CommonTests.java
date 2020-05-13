@@ -2,6 +2,7 @@ package it.polimi.vovarini.model.godcards;
 
 import it.polimi.vovarini.server.Server;
 import it.polimi.vovarini.server.SocketReader;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -37,6 +38,7 @@ public class CommonTests {
     System.out.println("Read from " + f);
   }
 
+  @Disabled
   @Test
   @DisplayName("Tests that a GodCard clone can be serialized and deserialized over a socket")
   void serializationAndDeserializationSocket() throws IOException, ClassNotFoundException {
