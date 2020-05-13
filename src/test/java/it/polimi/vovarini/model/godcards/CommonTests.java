@@ -93,6 +93,18 @@ public class CommonTests {
 
   @ParameterizedTest
   @MethodSource("provideAllGodNames")
+  @DisplayName("Test that hashCode works")
+  void testHashCode(GodName name){
+    GodCard original = GodCardFactory.create(name);
+    GodCard clone = GodCardFactory.clone(original);
+
+    assertNotSame(original, clone);
+    assertEquals(original, clone);
+    assertEquals(original.hashCode(), clone.hashCode());
+  }
+
+  @ParameterizedTest
+  @MethodSource("provideAllGodNames")
   @DisplayName("Test that clone works and produces two GodCard that are equal but not the same object")
   void testClone(GodName name){
     GodCard original = GodCardFactory.create(name);
