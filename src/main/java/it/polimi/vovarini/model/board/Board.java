@@ -2,7 +2,6 @@ package it.polimi.vovarini.model.board;
 
 import it.polimi.vovarini.common.events.BoardUpdateEvent;
 import it.polimi.vovarini.common.events.GameEventManager;
-import it.polimi.vovarini.common.exceptions.BoxFullException;
 import it.polimi.vovarini.common.exceptions.InvalidPositionException;
 import it.polimi.vovarini.common.exceptions.ItemNotFoundException;
 import it.polimi.vovarini.model.Point;

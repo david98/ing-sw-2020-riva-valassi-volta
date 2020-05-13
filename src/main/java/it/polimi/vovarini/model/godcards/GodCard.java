@@ -245,7 +245,7 @@ public class GodCard implements Serializable {
    */
   public boolean isMovementWinning(Movement movement) {
     return !movement.isForced() && winningConditions.stream().anyMatch(cond -> cond.test(movement)) &&
-            winningConstraints.stream().noneMatch(cond -> cond.test(movement));
+            winningConstraints.stream().allMatch(cond -> cond.test(movement));
   }
 
   /**
@@ -262,6 +262,7 @@ public class GodCard implements Serializable {
       Point workerPosition = board.getItemPosition(selectedWorker);
 
       List<Point> candidatePositions = board.getAdjacentPositions(workerPosition);
+      candidatePositions.add(workerPosition);
 
       buildablePoints =
           candidatePositions.stream()

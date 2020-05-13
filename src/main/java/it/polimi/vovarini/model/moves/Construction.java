@@ -1,10 +1,9 @@
 package it.polimi.vovarini.model.moves;
 
-import it.polimi.vovarini.common.exceptions.BoxFullException;
-import it.polimi.vovarini.common.exceptions.InvalidPositionException;
 import it.polimi.vovarini.model.Point;
 import it.polimi.vovarini.model.board.Board;
 import it.polimi.vovarini.model.board.items.Block;
+import it.polimi.vovarini.model.board.items.Item;
 
 public class Construction extends Move {
 
@@ -30,12 +29,14 @@ public class Construction extends Move {
 
   @Override
   public void execute() {
-    try {
+    Item targetItem = board.getItems(target).peek();
+
+    if (targetItem != null && targetItem.canBeRemoved()) {
+      board.remove(target);
+      board.place(block, target);
+      board.place(targetItem, target);
+    } else {
       board.place(block,target);
-    } catch (InvalidPositionException e) {
-      System.err.println("Invalid target");
-    } catch (BoxFullException e) {
-      System.err.println("Target box is full.");
     }
   }
 

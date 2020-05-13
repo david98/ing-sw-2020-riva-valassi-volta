@@ -88,10 +88,10 @@ public class Controller implements EventListener {
     for (int i = 0; i < evt.getSelectedGods().length-1; i++) {
 
       // la carta scelta è nulla
-      if(evt.getSelectedGods()[i] == null) throw new InvalidCardException();
+      if(evt.getSelectedGods()[i] == null || evt.getSelectedGods()[i+1] == null) throw new InvalidCardException();
 
       // la carta scelta non esiste
-      if(!values.contains(evt.getSelectedGods()[i])) throw new InvalidCardException();
+      if(!values.contains(evt.getSelectedGods()[i]) || !values.contains(evt.getSelectedGods()[i+1])) throw new InvalidCardException();
 
       // ci sono due carte uguali
       for(int k = i+1; k < evt.getSelectedGods().length; k++)
@@ -329,5 +329,4 @@ public class Controller implements EventListener {
     game.setCurrentPhase(game.getCurrentPlayer().getGodCard().computeNextPhase(game));
   }
 
-  public static void main(String[] args) {}
 }

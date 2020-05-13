@@ -22,4 +22,15 @@ public class WinDecider extends Decider {
 
         return currentLevel - endLevel >= 2;
     }
+
+    /**
+     * This method adds a winning constraint, making the player unable to win by moving into a perimeter space
+     * @param movement is the Movement move the player wants to perform
+     * @return false if the Movement makes the player move into a perimeter space, true otherwise
+     * @author Marco Riva
+     */
+    public static boolean perimeterConstraint(Movement movement) {
+        return !movement.getEnd().isPerimeterSpace();
+    }
+
 }

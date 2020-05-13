@@ -102,6 +102,9 @@ public class Game implements Serializable, GameDataAccessor {
       lastGodCard.setGameData(this);
       getCurrentPlayer().setGodCard(lastGodCard);
       GameEventManager.raise(new CardAssignmentEvent(this, getCurrentPlayer(), lastGodCard));
+      LinkedList<GodName> availableGods = new LinkedList<>(Arrays.asList(availableGodCards));
+      availableGods.remove(lastGodCard.getName());
+      availableGodCards = availableGods.toArray(GodName[]::new);
 
       // settare currentPlayer a players[0], oppure potremmo proseguire il turno da qui, lasciando invariato il codice attuale
       GameEventManager.raise(new PlaceYourWorkersEvent(this, getCurrentPlayer()));
