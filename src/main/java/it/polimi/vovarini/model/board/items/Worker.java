@@ -42,8 +42,13 @@ public class Worker extends Item {
     return sex == Sex.Male ? "M" : "F";
   }
 
-
-  public boolean equals(Worker other){
-    return sex.equals(other.sex) && owner.equals(other.owner); }
-
+  @Override
+  public boolean equals(Object obj) {
+    if (obj instanceof Worker) {
+      Worker other = (Worker) obj;
+      return sex.equals(other.sex) && owner.equals(other.owner);
+    } else {
+      return super.equals(obj);
+    }
+  }
 }
