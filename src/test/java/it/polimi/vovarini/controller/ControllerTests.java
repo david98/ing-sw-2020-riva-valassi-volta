@@ -25,7 +25,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@Disabled
+
 @DisplayName("Controller Tests")
 public class ControllerTests {
 
@@ -165,6 +165,7 @@ public class ControllerTests {
     }
     assertFalse(game.getCurrentPlayer().getMovementList().isEmpty());
     game.getCurrentPlayer().getMovementList().clear();
+    game.setCurrentPhase(Phase.Movement);
 
     Point invalidMovePoint = new Point(3, 3);
     MovementEvent evtInvalidMove = new MovementEvent(game.getCurrentPlayer(), invalidMovePoint);
@@ -275,6 +276,7 @@ public class ControllerTests {
 
     assertFalse(game.getCurrentPlayer().getConstructionList().isEmpty());
     game.getCurrentPlayer().getConstructionList().clear();
+    game.setCurrentPhase(Phase.Construction);
 
     target = new Point(1, 0);
 
@@ -496,6 +498,8 @@ public class ControllerTests {
     } catch (WrongPlayerException ignored) {
     } catch (InvalidMoveException ignored) {
     }
+
+    game.setCurrentPhase(Phase.Construction);
 
     SkipEvent evt = new SkipEvent(game.getCurrentPlayer());
     try{
