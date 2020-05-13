@@ -1,15 +1,26 @@
 package it.polimi.vovarini.model.board.items;
 
+import it.polimi.vovarini.model.Player;
+
 public class Worker extends Item {
   private final Sex sex;
+  private Player owner;
 
-  public Worker(Sex sex) {
+  public Worker(Sex sex, Player owner) {
     this.sex = sex;
+    this.owner = owner;
+  }
+
+  public Worker(Worker worker){
+    sex = worker.sex;
+    owner = worker.owner;
   }
 
   public Sex getSex() {
     return sex;
   }
+
+  public Player getOwner() { return owner; }
 
   @Override
   public boolean canBePlacedOn(Item item) {
@@ -31,6 +42,8 @@ public class Worker extends Item {
     return sex == Sex.Male ? "M" : "F";
   }
 
-  public boolean equals(Worker other){ return sex.equals(other.sex); }
+
+  public boolean equals(Worker other){
+    return sex.equals(other.sex) && owner.equals(other.owner); }
 
 }

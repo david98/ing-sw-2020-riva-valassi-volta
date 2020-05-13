@@ -1,5 +1,6 @@
 package it.polimi.vovarini.model.board.items;
 
+import it.polimi.vovarini.model.Player;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -16,6 +17,7 @@ public class ItemsTests {
 
   @BeforeAll
   private static void init() {
+    Player testPlayer = new Player("test_player");
     blocks = new ArrayList<>();
     workers = new EnumMap<>(Sex.class);
     try {
@@ -23,7 +25,7 @@ public class ItemsTests {
         blocks.add(new Block(i));
       }
       for (Sex sex : Sex.values()) {
-        workers.put(sex, new Worker(sex));
+        workers.put(sex, new Worker(sex, testPlayer));
       }
     } catch (InvalidLevelException ignored) {
 
@@ -33,7 +35,8 @@ public class ItemsTests {
   @Test
   @DisplayName("Test that a Worker can be instantiated correctly")
   void workerCreation() {
-    Worker worker = new Worker(Sex.Male);
+    Player testPlayer = new Player("test_player");
+    Worker worker = new Worker(Sex.Male, testPlayer);
 
     assertEquals(Sex.Male, worker.getSex());
   }

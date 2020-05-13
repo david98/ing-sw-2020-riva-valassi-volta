@@ -2,6 +2,7 @@ package it.polimi.vovarini.model.board;
 
 import it.polimi.vovarini.common.exceptions.BoxEmptyException;
 import it.polimi.vovarini.common.exceptions.BoxFullException;
+import it.polimi.vovarini.model.Player;
 import it.polimi.vovarini.model.board.items.*;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
@@ -64,7 +65,8 @@ public class BoxTests {
 
       }
     }
-    assertThrows(BoxFullException.class, () -> box.place(new Worker(Sex.Male)));
+    Player testPlayer = new Player("test_player");
+    assertThrows(BoxFullException.class, () -> box.place(new Worker(Sex.Male, testPlayer)));
   }
 
   @Test

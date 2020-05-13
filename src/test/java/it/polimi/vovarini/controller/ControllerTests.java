@@ -373,6 +373,7 @@ public class ControllerTests {
     }
 
     try {
+      game.nextPlayer();
       game.getCurrentPlayer().setCurrentSex(Sex.Male);
       assertEquals(game.getBoard().getItemPosition(game.getCurrentPlayer().getCurrentWorker()), evt.getTarget());
       game.getCurrentPlayer().setCurrentSex(Sex.Female);
@@ -380,6 +381,7 @@ public class ControllerTests {
     } catch (ItemNotFoundException e) {
       e.printStackTrace();
     }
+
     game.getCurrentPlayer().setCurrentSex(Sex.Male);
 
     Point badTarget = new Point(-1, -1);
@@ -407,7 +409,6 @@ public class ControllerTests {
     });
 
     game.nextPlayer();
-
     assertEquals(game.getCurrentPlayer(), game.getPlayers()[1]);
 
     game.getCurrentPlayer().setCurrentSex(Sex.Male);
@@ -417,9 +418,12 @@ public class ControllerTests {
     SpawnWorkerEvent p2_evt = new SpawnWorkerEvent(game.getCurrentPlayer(), player_two_target);
     try {
       controller.update(p2_evt);
-    } catch (WrongPlayerException ignored) {
-    } catch (InvalidPositionException ignored) {
-    } catch (OverwrittenWorkerException ignored) {
+    } catch (WrongPlayerException e) {
+      e.printStackTrace();
+    } catch (InvalidPositionException e) {
+      e.printStackTrace();
+    } catch (OverwrittenWorkerException e) {
+      e.printStackTrace();
     }
 
     game.getCurrentPlayer().setCurrentSex(Sex.Female);
@@ -429,12 +433,16 @@ public class ControllerTests {
     try{
       controller.update(p2_evt_second);
     }
-    catch (WrongPlayerException ignored) {
-    } catch (InvalidPositionException ignored) {
-    } catch (OverwrittenWorkerException ignored) {
+    catch (WrongPlayerException e) {
+      e.printStackTrace();
+    } catch (InvalidPositionException e) {
+      e.printStackTrace();
+    } catch (OverwrittenWorkerException e) {
+      e.printStackTrace();
     }
 
     try {
+      game.nextPlayer();
       game.getCurrentPlayer().setCurrentSex(Sex.Male);
       assertEquals(game.getBoard().getItemPosition(game.getCurrentPlayer().getCurrentWorker()), p2_evt.getTarget());
       game.getCurrentPlayer().setCurrentSex(Sex.Female);
