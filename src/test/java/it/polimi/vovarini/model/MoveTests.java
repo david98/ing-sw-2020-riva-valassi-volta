@@ -29,10 +29,11 @@ public class MoveTests {
 
   @BeforeAll
   private static void init() {
+    Player testPlayer = new Player("test_player");
     board = new Board(Board.DEFAULT_SIZE);
     workers = new EnumMap<>(Sex.class);
-    workers.put(Sex.Male, new Worker(Sex.Male));
-    workers.put(Sex.Female, new Worker(Sex.Female));
+    workers.put(Sex.Male, new Worker(Sex.Male, testPlayer));
+    workers.put(Sex.Female, new Worker(Sex.Female, testPlayer));
   }
 
   @BeforeEach

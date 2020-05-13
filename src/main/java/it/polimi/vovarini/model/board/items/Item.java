@@ -11,4 +11,5 @@ public abstract class Item implements Serializable {
   public boolean canBeRemoved() {
     return false;
   }
+
 }

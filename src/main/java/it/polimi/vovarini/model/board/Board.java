@@ -7,7 +7,9 @@ import it.polimi.vovarini.common.exceptions.BoxFullException;
 import it.polimi.vovarini.common.exceptions.InvalidPositionException;
 import it.polimi.vovarini.common.exceptions.ItemNotFoundException;
 import it.polimi.vovarini.model.Point;
+import it.polimi.vovarini.model.board.items.Block;
 import it.polimi.vovarini.model.board.items.Item;
+import it.polimi.vovarini.model.board.items.Worker;
 
 import java.io.Serializable;
 import java.util.*;
@@ -77,14 +79,33 @@ public class Board implements Serializable {
     return box.removeTopmost();
   }
 
-  public Point getItemPosition(Item item) throws ItemNotFoundException {
+  public Point getItemPosition(Block block) throws ItemNotFoundException {
     for (int i = 0; i < boxes.length; i++) {
       for (int j = 0; j < boxes.length; j++) {
-          if (Objects.equals(boxes[j][i].getItems().peek(), item)) {
+        if (!Objects.requireNonNull(boxes[j][i].getItems().peek()).canBeRemoved())
+        {
+          Block peekedBlock = (Block) boxes[j][i].getItems().peek();
+          if (Objects.equals(peekedBlock, block))
+          {
             return new Point(i, j);
           }
         }
       }
+    }
+    throw new ItemNotFoundException();
+  }
+
+  public Point getItemPosition(Worker worker) throws ItemNotFoundException {
+    for (int i = 0; i < boxes.length; i++) {
+      for (int j = 0; j < boxes.length; j++) {
+        if (Objects.requireNonNull(boxes[j][i].getItems().peek()).canBeRemoved()) {
+          Worker peekedWorker = (Worker) boxes[j][i].getItems().peek();
+          if (Objects.equals(peekedWorker, worker)) {
+            return new Point(i, j);
+          }
+        }
+      }
+    }
     throw new ItemNotFoundException();
   }
 
