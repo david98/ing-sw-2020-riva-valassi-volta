@@ -40,13 +40,13 @@ public class SpawnWorkersScreen extends Screen {
             .boxed()
             .flatMap(x -> IntStream.range(0, data.getBoard().getSize())
                     .mapToObj(y -> new Point(x, y)))
-            .filter(p -> data.getBoard().safeGetItems(p).isEmpty())
+            .filter(p -> data.getBoard().getItems(p).isEmpty())
             .collect(Collectors.toList());
     boardElement.markPoints(freePoints);
   }
 
   private void spawnCurrent(){
-    if (sexes.size() > 0) {
+    if (!sexes.isEmpty()) {
       Point cursor = boardElement.getCursorLocation();
       if (boardElement.getMarkedPoints().contains(cursor)) {
         client.raise(new SpawnWorkerEvent(data.getOwner(), cursor));
@@ -58,7 +58,7 @@ public class SpawnWorkersScreen extends Screen {
   @Override
   public void handleBoardUpdate(BoardUpdateEvent e) {
     boardElement.setBoard(e.getNewBoard());
-    if (sexes.size() > 0){
+    if (!sexes.isEmpty()){
       client.raise(new WorkerSelectionEvent(data.getOwner(), sexes.get(0)));
       message.setContent("Place your " + sexes.get(0) + " worker.");
       markFreePoints();
@@ -73,6 +73,8 @@ public class SpawnWorkersScreen extends Screen {
       case S -> boardElement.moveCursor(Direction.Down);
       case D -> boardElement.moveCursor(Direction.Right);
       case Spacebar -> spawnCurrent();
+      default -> {
+      }
     }
   }
 

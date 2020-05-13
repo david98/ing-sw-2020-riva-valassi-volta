@@ -25,18 +25,15 @@ public class Box implements Serializable {
   }
 
   @SuppressWarnings(value = "unchecked")
-  public Deque<Item> getItems() throws BoxEmptyException {
-    if (items.isEmpty()) {
-      throw new BoxEmptyException();
-    }
+  public Deque<Item> getItems() {
     return new ArrayDeque<>(items);
   }
 
-  public Item removeTopmost() throws BoxEmptyException {
+  public Item removeTopmost() {
     try {
       return items.pop();
     } catch (NoSuchElementException e) {
-      throw new BoxEmptyException();
+      return null;
     }
   }
 

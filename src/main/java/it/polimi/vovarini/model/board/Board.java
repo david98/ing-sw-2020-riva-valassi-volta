@@ -16,8 +16,8 @@ public class Board implements Serializable {
 
   public static final int DEFAULT_SIZE = 5;
 
-  private Box[][] boxes;
-  private int size;
+  private final Box[][] boxes;
+  private final int size;
 
   /*
    * Si presuppone che la plancia sia quadrata
@@ -62,22 +62,14 @@ public class Board implements Serializable {
     GameEventManager.raise(new BoardUpdateEvent(this, this));
   }
 
-  public Deque<Item> getItems(Point p) throws InvalidPositionException, BoxEmptyException {
+  public Deque<Item> getItems(Point p) throws InvalidPositionException {
     if (!isPositionValid(p)) {
       throw new InvalidPositionException();
     }
     return getBox(p).getItems();
   }
 
-  public Deque<Item> safeGetItems(Point p){
-    try {
-      return getItems(p);
-    } catch (InvalidPositionException | BoxEmptyException e){
-      return new ArrayDeque<>();
-    }
-  }
-
-  public Item remove(Point p) throws InvalidPositionException, BoxEmptyException {
+  public Item remove(Point p) throws InvalidPositionException {
     if (!isPositionValid(p)) {
       throw new InvalidPositionException();
     }
@@ -88,14 +80,11 @@ public class Board implements Serializable {
   public Point getItemPosition(Item item) throws ItemNotFoundException {
     for (int i = 0; i < boxes.length; i++) {
       for (int j = 0; j < boxes.length; j++) {
-        try {
-          if (boxes[j][i].getItems().peek().equals(item)) {
+          if (Objects.equals(boxes[j][i].getItems().peek(), item)) {
             return new Point(i, j);
           }
-        } catch (BoxEmptyException ignored) {
         }
       }
-    }
     throw new ItemNotFoundException();
   }
 
