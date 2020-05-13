@@ -30,4 +30,7 @@ public class Worker extends Item {
   public String toString() {
     return sex == Sex.Male ? "M" : "F";
   }
+
+  public boolean equals(Worker other){ return sex.equals(other.sex); }
+
 }

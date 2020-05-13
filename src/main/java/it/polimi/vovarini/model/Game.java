@@ -83,7 +83,6 @@ public class Game implements Serializable, GameDataAccessor {
     }
   }
 
-
   public void drawElectedPlayer() {
     Random r = new Random();
     currentPlayerIndex = r.nextInt(players.length);
@@ -108,7 +107,6 @@ public class Game implements Serializable, GameDataAccessor {
     }
   }
 
-
   public void performMove(Movement move) {
 
     undoneMoves.clear();
@@ -120,7 +118,6 @@ public class Game implements Serializable, GameDataAccessor {
     }
 
   }
-
 
   public void performMove (Construction move){
 
