@@ -20,9 +20,6 @@ public class RemoteView extends View implements ClientConnectionHandler {
 
   private final ExecutorService pool;
 
-  private boolean running;
-
-
   public RemoteView(Socket clientSocket) throws IOException {
     super();
     this.clientSocket = clientSocket;
@@ -34,26 +31,18 @@ public class RemoteView extends View implements ClientConnectionHandler {
 
     pool.execute(new SocketWriter<>(clientSocket, serverEvents, GameEvent.class));
     pool.execute(new SocketReader<>(clientSocket, clientEvents, GameEvent.class));
-
-    running = false;
   }
 
   @Override
   public void run() {
-    running = true;
-    while (running){
+    while (!Thread.currentThread().isInterrupted()){
       try {
         GameEvent evt = clientEvents.take();
         GameEventManager.raise(evt);
       } catch (InterruptedException e){
         Thread.currentThread().interrupt();
-        break;
       }
     }
-  }
-
-  public void stop() {
-    running = false;
   }
 
   @Override

@@ -23,8 +23,6 @@ public class Server implements Runnable{
 
   private final ExecutorService pool;
 
-  private boolean running;
-
   public Server(int port) throws IOException{
     serverSocket = new ServerSocket(port);
     pool = Executors.newFixedThreadPool(DEFAULT_MAX_THREADS);
@@ -42,17 +40,15 @@ public class Server implements Runnable{
       Game game = new Game(2);
       Controller controller = new Controller(game);
       LOGGER.log(Level.INFO, "Server initialized.");
-      running = false;
     } catch (InvalidNumberOfPlayersException e){
       e.printStackTrace();
     }
   }
 
   public void run(){
-    running = true;
     LOGGER.log(Level.INFO, "Server is now listening on port {0}.", serverSocket.getLocalPort());
     try {
-      while (running) {
+      while (!Thread.currentThread().isInterrupted()) {
         LOGGER.log(Level.FINE, "Waiting for new connection...");
         pool.execute(new RemoteView(serverSocket.accept()));
         LOGGER.log(Level.INFO, "A new client connected.");
@@ -60,10 +56,6 @@ public class Server implements Runnable{
     } catch (IOException ex) {
       pool.shutdown();
     }
-  }
-
-  public void stop(){
-    running = false;
   }
 
   public void shutdownAndAwaitTermination(ExecutorService pool) {
