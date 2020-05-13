@@ -44,6 +44,7 @@ public class CommonTests {
 
 
   @Test
+  @Disabled
   @DisplayName("Tests that a GodCard clone can be serialized and deserialized over a socket")
   void serializationAndDeserializationSocket() throws IOException, ClassNotFoundException {
     pool.execute(() -> {
