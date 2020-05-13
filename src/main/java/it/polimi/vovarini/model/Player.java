@@ -14,7 +14,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-public class Player implements Cloneable, Serializable {
+public class Player implements Serializable {
 
   private final EnumMap<Sex, Worker> workers;
   private Sex currentSex;
@@ -136,18 +136,6 @@ public class Player implements Cloneable, Serializable {
     }
 
     return false;
-  }
-
-  public Player clone() {
-    try {
-      Player p = (Player) super.clone();
-      if (p.godCard != null) {
-        p.godCard = GodCardFactory.clone(godCard);
-      }
-      return p;
-    } catch (CloneNotSupportedException e) {
-      throw new RuntimeException(e);
-    }
   }
 
   @Override

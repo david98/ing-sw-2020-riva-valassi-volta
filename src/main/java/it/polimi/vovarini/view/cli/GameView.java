@@ -84,7 +84,7 @@ public class GameView extends View {
   @Override
   @GameEventListener
   public void handleNewPlayer(NewPlayerEvent e) {
-    Player p = e.getNewPlayer().clone();
+    Player p = e.getNewPlayer();
     if (p.equals(data.getOwner())) {
       data.setOwner(p);
     }

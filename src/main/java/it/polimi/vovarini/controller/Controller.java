@@ -61,9 +61,8 @@ public class Controller implements EventListener {
       game.addPlayer(evt.getNickname());
       if (game.isFull()){
         game.drawElectedPlayer();
-        Player[] clonedPlayers = Arrays.stream(game.getPlayers()).map(Player::clone).toArray(Player[]::new);
         GodName[] godNames = Arrays.stream(GodName.values()).filter(name -> name != GodName.Nobody).toArray(GodName[]::new);
-        GameEventManager.raise(new GodSelectionStartEvent(game, clonedPlayers, game.getCurrentPlayer().clone(), godNames));
+        GameEventManager.raise(new GodSelectionStartEvent(game, game.getPlayers(), game.getCurrentPlayer(), godNames));
       }
     } catch (InvalidNumberOfPlayersException e) {
       throw new InvalidNumberOfPlayersException();

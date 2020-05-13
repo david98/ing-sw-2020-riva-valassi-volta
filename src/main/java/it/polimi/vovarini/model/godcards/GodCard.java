@@ -319,7 +319,7 @@ public class GodCard implements Serializable {
     gameData.getCurrentPlayer().setWorkerSelected(false);
     gameData.getCurrentPlayer().getMovementList().clear();
     gameData.getCurrentPlayer().getConstructionList().clear();
-    gameData.getCurrentPlayer().setBoardStatus(gameData.getBoard().clone());
+    gameData.getCurrentPlayer().setBoardStatus(gameData.getBoard());
   }
 
   public List<Movement> consequences(Movement movement) {
@@ -344,19 +344,6 @@ public class GodCard implements Serializable {
 
   public void setGameData(GameDataAccessor gameData) {
     this.gameData = gameData;
-  }
-
-  public GodCard clone(){
-    GodCard clone = GodCardFactory.create(name);
-    clone.movementConditions = new HashSet<>(movementConditions);
-    clone.movementConstraints = new HashSet<>(movementConstraints);
-
-    clone.constructionConditions = new HashSet<>(constructionConditions);
-    clone.constructionConstraints = new HashSet<>(constructionConstraints);
-
-    clone.winningConditions = new HashSet<>(winningConditions);
-    clone.winningConstraints = new HashSet<>(winningConstraints);
-    return clone;
   }
 
   @Override

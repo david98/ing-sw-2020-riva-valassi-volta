@@ -52,7 +52,7 @@ public class CommonTests {
         ServerSocket serverSocket = new ServerSocket(Server.DEFAULT_PORT);
         Socket clientSocket = serverSocket.accept();
         try (ObjectOutputStream oos = new ObjectOutputStream(clientSocket.getOutputStream())) {
-          oos.writeObject(nb.clone());
+          oos.writeObject(nb);
         }
       } catch (UnknownHostException e) {
         e.printStackTrace();

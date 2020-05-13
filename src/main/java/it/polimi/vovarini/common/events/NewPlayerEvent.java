@@ -20,7 +20,7 @@ public class NewPlayerEvent extends GameEvent {
    */
   public NewPlayerEvent(Object source, Player newPlayer){
     super(source);
-    this.newPlayer = newPlayer.clone();
+    this.newPlayer = newPlayer;
   }
 
   public Player getNewPlayer() {

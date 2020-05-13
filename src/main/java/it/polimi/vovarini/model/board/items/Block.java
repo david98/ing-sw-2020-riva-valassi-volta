@@ -2,7 +2,7 @@ package it.polimi.vovarini.model.board.items;
 
 import java.util.stream.IntStream;
 
-public class Block extends Item implements Cloneable {
+public class Block extends Item {
 
   public static final int MIN_LEVEL = 1;
   public static final int MAX_LEVEL = 4;
@@ -28,6 +28,10 @@ public class Block extends Item implements Cloneable {
       throw new InvalidLevelException();
     }
     this.level = level;
+  }
+
+  public Block(Block b){
+    level = b.level;
   }
 
   public int getLevel() {
