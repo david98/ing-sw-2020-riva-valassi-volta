@@ -40,7 +40,9 @@ public class Block extends Item {
 
   @Override
   public boolean canBePlacedOn(Item item) {
-    if (item instanceof Block) {
+    if (item == null){
+      return level == 1;
+    } else if (item instanceof Block) {
       Block block = (Block) item;
       return level == (block.getLevel() + 1);
     } else {

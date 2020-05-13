@@ -1,8 +1,6 @@
 package it.polimi.vovarini.view.cli.screens;
 
 import it.polimi.vovarini.common.events.*;
-import it.polimi.vovarini.common.exceptions.BoxEmptyException;
-import it.polimi.vovarini.common.exceptions.InvalidPositionException;
 import it.polimi.vovarini.model.Point;
 import it.polimi.vovarini.model.board.items.Item;
 import it.polimi.vovarini.model.board.items.Worker;
@@ -93,12 +91,6 @@ public class MatchScreen extends Screen {
                       "It's " + data.getCurrentPlayer().getNickname() + "'s turn.")
               .append("\n")
               .append(message.render());
-      /*
-      if (data.getOwner().equals(data.getCurrentPlayer())) {
-        console.println(getPhasePrompt(data.getCurrentPhase()));
-      } else {
-        console.println("It's " + data.getCurrentPlayer().getNickname() + "'s turn.");
-      }*/
 
       reRenderNeeded = false;
       lastContent = content.toString();
@@ -145,27 +137,22 @@ public class MatchScreen extends Screen {
       if (boardElement.getCursorLocation().equals(data.getCurrentStart())) {
         deSelect();
       } else {
-        try {
-          Item item = data.getBoard().getItems(boardElement.getCursorLocation()).peek();
-          if (data.getOwner().isHasLost()){
-            System.exit(1);
-          }
-
-          if (data.getOwner().getWorkers().values().stream().anyMatch(w -> w.equals(item))) {
-            data.setCurrentStart(boardElement.getCursorLocation());
-            data.setSelectedWorker((Worker) item);
-            data.getOwner().setCurrentSex(((Worker) item).getSex());
-            // mark points reachable by the selected worker
-            boardElement.markPoints(
-                    data.getOwner().getGodCard().computeReachablePoints()
-            );
-            message.setContent("Press O to confirm your choice.");
-            reRenderNeeded = true;
-          }
-        } catch (BoxEmptyException ignored) {
-        } catch (InvalidPositionException ignored) {
+        Item item = data.getBoard().getItems(boardElement.getCursorLocation()).peek();
+        if (data.getOwner().isHasLost()){
+          System.exit(1);
         }
 
+        if (data.getOwner().getWorkers().values().stream().anyMatch(w -> w.equals(item))) {
+          data.setCurrentStart(boardElement.getCursorLocation());
+          data.setSelectedWorker((Worker) item);
+          data.getOwner().setCurrentSex(((Worker) item).getSex());
+          // mark points reachable by the selected worker
+          boardElement.markPoints(
+                  data.getOwner().getGodCard().computeReachablePoints()
+          );
+          message.setContent("Press O to confirm your choice.");
+          reRenderNeeded = true;
+        }
       }
     } else {
       deSelect();
@@ -189,31 +176,26 @@ public class MatchScreen extends Screen {
       }
     } else {
       // check if one of the player's workers is under the cursor
-      try {
-        Item item = data.getBoard().getItems(boardElement.getCursorLocation()).peek();
-        if (data.getOwner().isHasLost()){
-          System.exit(1);
-        }
-
-        if (data.getOwner().getWorkers().values().stream().anyMatch(w -> w.equals(item))) {
-          data.setCurrentStart(boardElement.getCursorLocation());
-          data.setSelectedWorker((Worker) item);
-          client.raise(
-                  new WorkerSelectionEvent(
-                          data.getOwner().getNickname(),
-                          data.getSelectedWorker().getSex())
-          );
-          // mark points reachable by the selected worker
-          boardElement.markPoints(
-                  data.getOwner().getGodCard().computeReachablePoints()
-          );
-
-          reRenderNeeded = true;
-        }
-      } catch (BoxEmptyException ignored) {
-      } catch (InvalidPositionException ignored) {
+      Item item = data.getBoard().getItems(boardElement.getCursorLocation()).peek();
+      if (data.getOwner().isHasLost()){
+        System.exit(1);
       }
 
+      if (data.getOwner().getWorkers().values().stream().anyMatch(w -> w.equals(item))) {
+        data.setCurrentStart(boardElement.getCursorLocation());
+        data.setSelectedWorker((Worker) item);
+        client.raise(
+                new WorkerSelectionEvent(
+                        data.getOwner().getNickname(),
+                        data.getSelectedWorker().getSex())
+        );
+        // mark points reachable by the selected worker
+        boardElement.markPoints(
+                data.getOwner().getGodCard().computeReachablePoints()
+        );
+
+        reRenderNeeded = true;
+      }
     }
   }
 

@@ -82,8 +82,6 @@ public class MinotaurTests {
       assertEquals(otherWorker, board.getBox(end).getItems().peek());
 
     } catch (BoxFullException ignored) {
-    } catch (BoxEmptyException ignored) {
-    } catch (InvalidPositionException ignored) {
     }
   }
 
@@ -106,7 +104,7 @@ public class MinotaurTests {
       Board board = game.getBoard();
       Point start = new Point(0, 0);
       Point end = new Point(1, 1);
-      Point forcedDestination = new Point(2,2);
+      Point forcedDestination = new Point(2, 2);
       Movement movement = new Movement(board, start, end);
 
       board.place(Block.blocks[0], start);
@@ -130,8 +128,6 @@ public class MinotaurTests {
       assertEquals(otherWorker, board.getBox(forcedDestination).getItems().peek());
 
     } catch (BoxFullException ignored) {
-    } catch (BoxEmptyException ignored) {
-    } catch (InvalidPositionException ignored) {
     }
   }
 
@@ -180,8 +176,6 @@ public class MinotaurTests {
       assertEquals(enemyWorker, board.getBox(end).getItems().peek());
 
     } catch (BoxFullException ignored) {
-    } catch (BoxEmptyException ignored) {
-    } catch (InvalidPositionException ignored) {
     }
   }
 
@@ -231,8 +225,6 @@ public class MinotaurTests {
       assertEquals(enemyWorker, board.getBox(forcedDestination).getItems().peek());
 
     } catch (BoxFullException ignored) {
-    } catch (BoxEmptyException ignored) {
-    } catch (InvalidPositionException ignored) {
     }
   }
 
@@ -285,8 +277,6 @@ public class MinotaurTests {
       assertEquals(enemyWorker, board.getBox(forcedDestination).getItems().peek());
 
     } catch (BoxFullException ignored) {
-    } catch (BoxEmptyException ignored) {
-    } catch (InvalidPositionException ignored) {
     }
   }
 
@@ -325,8 +315,6 @@ public class MinotaurTests {
       assertEquals(enemyWorker, board.getBox(end).getItems().peek());
 
     } catch (BoxFullException ignored) {
-    } catch (BoxEmptyException ignored) {
-    } catch (InvalidPositionException ignored) {
     }
   }
 }

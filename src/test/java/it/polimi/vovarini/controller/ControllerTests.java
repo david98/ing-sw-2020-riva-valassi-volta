@@ -3,7 +3,6 @@ package it.polimi.vovarini.controller;
 import it.polimi.vovarini.common.events.*;
 import it.polimi.vovarini.common.exceptions.*;
 import it.polimi.vovarini.model.*;
-import it.polimi.vovarini.common.exceptions.BoxEmptyException;
 import it.polimi.vovarini.common.exceptions.BoxFullException;
 import it.polimi.vovarini.common.exceptions.InvalidPositionException;
 import it.polimi.vovarini.common.exceptions.ItemNotFoundException;
@@ -20,6 +19,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -35,9 +35,7 @@ public class ControllerTests {
   private static List<Phase> provideAllPhases(){
     LinkedList<Phase> phases = new LinkedList<>();
 
-    for(Phase phase : Phase.values()){
-      phases.add(phase);
-    }
+    phases.addAll(Arrays.asList(Phase.values()));
     return phases;
   }
 
@@ -237,7 +235,6 @@ public class ControllerTests {
     Point femalePos = new Point(0, 1);
     try {
       game.getBoard().place(game.getCurrentPlayer().getCurrentWorker(), femalePos);
-    } catch (InvalidPositionException ignored) {
     } catch (BoxFullException ignored) {
     }
 
@@ -246,14 +243,13 @@ public class ControllerTests {
     Point malePos = new Point(0, 0);
     try {
       game.getBoard().place(game.getCurrentPlayer().getCurrentWorker(), malePos);
-    } catch (InvalidPositionException ignored) {
     } catch (BoxFullException ignored) {
     }
 
     game.setCurrentPhase(game.getCurrentPlayer().getGodCard().computeNextPhase(game));
     game.setCurrentPhase(game.getCurrentPlayer().getGodCard().computeNextPhase(game));
 
-    assertEquals(game.getCurrentPhase(), Phase.Construction);
+    assertEquals(Phase.Construction, game.getCurrentPhase());
 
     Point target = new Point(1, 1);
     int level = 1;
@@ -262,18 +258,14 @@ public class ControllerTests {
 
     try {
       controller.update(evt);
-    } catch (InvalidPositionException ignored) {
     } catch (InvalidPhaseException ignored) {
     } catch (WrongPlayerException ignored) {
     } catch (InvalidMoveException ignored) {
     }
 
-    try {
-      assertEquals(game.getBoard().getItems(target).peek(), Block.blocks[level - 1]);
-    } catch (BoxEmptyException e) {
-      System.out.println("Construction has not been performed");
-    } catch (InvalidPositionException ignored) {
-    }
+
+    assertEquals(game.getBoard().getItems(target).peek(), Block.blocks[level - 1]);
+
 
     assertFalse(game.getCurrentPlayer().getConstructionList().isEmpty());
     game.getCurrentPlayer().getConstructionList().clear();

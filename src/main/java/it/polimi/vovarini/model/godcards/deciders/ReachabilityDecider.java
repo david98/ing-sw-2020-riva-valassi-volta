@@ -1,6 +1,5 @@
 package it.polimi.vovarini.model.godcards.deciders;
 
-import it.polimi.vovarini.common.exceptions.BoxEmptyException;
 import it.polimi.vovarini.common.exceptions.ItemNotFoundException;
 import it.polimi.vovarini.model.GameDataAccessor;
 import it.polimi.vovarini.model.Player;
@@ -9,7 +8,7 @@ import it.polimi.vovarini.model.board.Box;
 import it.polimi.vovarini.model.board.items.Item;
 import it.polimi.vovarini.model.board.items.Worker;
 
-import java.util.Stack;
+import java.util.Objects;
 
 /**
  * ReachabilityDecider is an extension of Decider. It decides what boxes a player can move to
@@ -35,15 +34,13 @@ public class ReachabilityDecider extends Decider {
                 return false;
             }
 
-            try {
-                Box destinationBox = gameData.getBoard().getBox(point);
-                var destinationItems = destinationBox.getItems();
-                Worker otherWorker = gameData.getCurrentPlayer().getOtherWorker();
+            Box destinationBox = gameData.getBoard().getBox(point);
+            var destinationItems = destinationBox.getItems();
+            Worker otherWorker = gameData.getCurrentPlayer().getOtherWorker();
 
-                return ((destinationItems.peek().canBeRemoved() && !destinationItems.peek().equals(otherWorker)));
-            } catch (BoxEmptyException ignored) {
-                return false;
-            }
+            return (destinationItems.peek() != null && destinationItems.peek().canBeRemoved() &&
+                    !Objects.equals(destinationItems.peek(), otherWorker));
+
 
         } catch (ItemNotFoundException ignored) {
             System.err.println("This really should never happen...");
@@ -79,8 +76,10 @@ public class ReachabilityDecider extends Decider {
                 Worker otherWorker = gameData.getCurrentPlayer().getOtherWorker();
 
                 // se nella casella di destinazione c'è un worker nemico
-                if (destinationItems.peek().canBeRemoved() && !destinationItems.peek().equals(otherWorker)) {
+                if (destinationItems.peek() != null && destinationItems.peek().canBeRemoved() &&
+                        !Objects.equals(destinationItems.peek(), otherWorker)) {
                     Worker enemysWorker = (Worker) destinationItems.peek();
+                    assert enemysWorker != null;
 
                     // direzione = end - start
                     // destinazioneForzata = end + direzione = (2 * end) - start
@@ -93,28 +92,19 @@ public class ReachabilityDecider extends Decider {
                         return false;
                     }
 
-                    try {
-                        Box forcedDestinationBox = gameData.getBoard().getBox(forcedDestination);
-                        Item forcedDestinationItem = forcedDestinationBox.getItems().peek();
+                    Box forcedDestinationBox = gameData.getBoard().getBox(forcedDestination);
+                    Item forcedDestinationItem = forcedDestinationBox.getItems().peek();
 
-                        // se la casella successiva nella stessa direzione del movimento è libera
-                        if (enemysWorker.canBePlacedOn(forcedDestinationItem)) {
-                            return true;
-                        }
-                        // se la casella successiva nella stessa direzione del movimento è vuota
-                    } catch (BoxEmptyException ignored) {
-                        return true;
-                    }
+                    return forcedDestinationItem == null ||
+                            enemysWorker.canBePlacedOn(forcedDestinationItem);
 
+                } else {
+                    return false;
                 }
             }
 
         } catch (ItemNotFoundException ignored) {
             System.err.println("This really should never happen...");
-        } catch (BoxEmptyException ignored) {
-            // se la cella dove voglio spostarmi è vuota, la mossa è permessa
-            // grazie alle regole generali, non grazie al potere del Minotauro
-            return false;
         }
         return false;
     }

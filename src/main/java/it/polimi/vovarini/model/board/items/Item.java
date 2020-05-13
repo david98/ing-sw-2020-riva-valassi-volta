@@ -5,7 +5,7 @@ import java.io.Serializable;
 public abstract class Item implements Serializable {
 
   public boolean canBePlacedOn(Item item) {
-    return false;
+    return item == null;
   }
 
   public boolean canBeRemoved() {

@@ -2,7 +2,6 @@ package it.polimi.vovarini.model.godcards;
 
 import it.polimi.vovarini.common.events.GameEventManager;
 import it.polimi.vovarini.common.events.GodCardUpdateEvent;
-import it.polimi.vovarini.common.exceptions.BoxEmptyException;
 import it.polimi.vovarini.common.exceptions.InvalidPositionException;
 import it.polimi.vovarini.common.exceptions.ItemNotFoundException;
 import it.polimi.vovarini.model.GameDataAccessor;
@@ -78,16 +77,12 @@ public class GodCard implements Serializable {
             return false;
           }
 
-          try {
-            Box destinationBox = gameData.getBoard().getBox(point);
-            var destinationItems = destinationBox.getItems();
-            int destinationLevel = destinationBox.getLevel();
-            int currentWorkerLevel = gameData.getBoard().getBox(currentWorkerPosition).getLevel();
-            return (destinationLevel - currentWorkerLevel <= 1)
-                && currentWorker.canBePlacedOn(destinationItems.peek());
-          } catch (BoxEmptyException ignored) {
-            return true;
-          }
+          Box destinationBox = gameData.getBoard().getBox(point);
+          var destinationItems = destinationBox.getItems();
+          int destinationLevel = destinationBox.getLevel();
+          int currentWorkerLevel = gameData.getBoard().getBox(currentWorkerPosition).getLevel();
+          return (destinationLevel - currentWorkerLevel <= 1)
+              && currentWorker.canBePlacedOn(destinationItems.peek());
 
         } catch (ItemNotFoundException ignored) {
           System.err.println("This really should never happen...");
@@ -110,13 +105,10 @@ public class GodCard implements Serializable {
             return false;
           }
 
-          try {
-            var destinationItems = gameData.getBoard().getItems(point);
-            return Arrays.stream(Block.blocks)
-                .anyMatch(block -> block.canBePlacedOn(destinationItems.peek()));
-          } catch (BoxEmptyException ignored) {
-            return true;
-          }
+          var destinationItems = gameData.getBoard().getItems(point);
+          return Arrays.stream(Block.blocks)
+              .anyMatch(block -> block.canBePlacedOn(destinationItems.peek()));
+
         } catch (ItemNotFoundException | InvalidPositionException e) {
           System.err.println("This really should never happen...");
         }
@@ -175,15 +167,11 @@ public class GodCard implements Serializable {
    */
   SerializableBiFunction<List<Point>, Construction, Boolean> validateConstruction =
           (List<Point> list, Construction construction) -> {
-            try {
               Block b = construction.getBlock();
               Point t = construction.getTarget();
               var s = gameData.getBoard().getBox(t).getItems();
               return list.contains(construction.getTarget()) &&
                           b.canBePlacedOn(s.peek());
-            } catch (BoxEmptyException ignored){
-              return list.contains(construction.getTarget()) && construction.getBlock().getLevel() == 1;
-            }
           };
 
   /**

@@ -1,11 +1,12 @@
 package it.polimi.vovarini.model.moves;
 
-import it.polimi.vovarini.common.exceptions.BoxEmptyException;
 import it.polimi.vovarini.common.exceptions.BoxFullException;
 import it.polimi.vovarini.common.exceptions.InvalidPositionException;
 import it.polimi.vovarini.model.Point;
 import it.polimi.vovarini.model.board.Board;
 import it.polimi.vovarini.model.board.items.Item;
+
+import java.util.Objects;
 
 public class Movement extends Move {
 
@@ -46,20 +47,19 @@ public class Movement extends Move {
   public void execute() {
     try {
       Item startItem = board.remove(start);
-      Item endItem = null;
-      try {
-        endItem = board.getItems(end).peek();
-        if (endItem.canBeRemoved()) {
-          board.remove(end);
-          board.place(endItem, start);
-        }
-      } catch (BoxEmptyException ignored) {
 
+      if (startItem == null){
+        System.err.println("Invalid start.");
+        return;
+      }
+
+      Item endItem = board.getItems(end).peek();
+      if (endItem != null && endItem.canBeRemoved()) {
+        board.remove(end);
+        board.place(endItem, start);
       }
       board.place(startItem, end);
-    } catch (BoxEmptyException e) {
-      System.err.println("Start was empty.");
-    } catch (InvalidPositionException e) {
+    }  catch (InvalidPositionException e) {
       System.err.println("Invalid start/end");
     } catch (BoxFullException e) {
       System.err.println("End box is full.");

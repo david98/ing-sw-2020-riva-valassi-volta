@@ -1,11 +1,12 @@
 package it.polimi.vovarini.model.board;
 
-import it.polimi.vovarini.common.exceptions.BoxEmptyException;
 import it.polimi.vovarini.common.exceptions.BoxFullException;
 import it.polimi.vovarini.model.board.items.Item;
 
 import java.io.Serializable;
-import java.util.*;
+import java.util.ArrayDeque;
+import java.util.Deque;
+import java.util.NoSuchElementException;
 
 public class Box implements Serializable {
 
@@ -24,7 +25,6 @@ public class Box implements Serializable {
     items.push(item);
   }
 
-  @SuppressWarnings(value = "unchecked")
   public Deque<Item> getItems() {
     return new ArrayDeque<>(items);
   }
