@@ -87,6 +87,9 @@ public class ControllerTests {
   @DisplayName("Test card selection part")
   void cardChoiceTest() {
 
+    CardChoiceEvent evtCardsNotSelected = new CardChoiceEvent(game.getCurrentPlayer(), GodName.Artemis);
+    assertThrows(CardsNotSelectedException.class, () -> { controller.update(evtCardsNotSelected); });
+
     game.drawElectedPlayer();
 
     Player electedPlayer = game.getCurrentPlayer();
@@ -134,8 +137,35 @@ public class ControllerTests {
     assertEquals(selectedGods, game.getAvailableGodCards());
     assertEquals(otherPlayer, game.getCurrentPlayer());
 
+    assertThrows(AvailableCardsAlreadySetException.class, () -> { controller.update(evt); });
 
 
+    // scelta della propria carta
+    GodName choice = GodName.Artemis;
+    CardChoiceEvent evtInvalidPlayer = new CardChoiceEvent(electedPlayer, choice);
+    assertThrows(WrongPlayerException.class, () -> { controller.update(evtInvalidPlayer); });
+
+    choice = GodName.Minotaur;
+    CardChoiceEvent evtInvalidCard = new CardChoiceEvent(otherPlayer, choice);
+    assertThrows(InvalidCardException.class, () -> { controller.update(evtInvalidCard); });
+
+    choice = GodName.Artemis;
+    CardChoiceEvent evtValid = new CardChoiceEvent(otherPlayer, choice);
+
+    try {
+      controller.update(evtValid);
+    } catch (CardsNotSelectedException e) {
+      e.printStackTrace();
+    } catch (InvalidCardException e) {
+      e.printStackTrace();
+    } catch (WrongPlayerException e) {
+      e.printStackTrace();
+    }
+
+    assertTrue(game.isAvailableCardsAlreadySet());
+    assertEquals(0, game.getAvailableGodCards().length);
+    assertEquals(choice, otherPlayer.getGodCard().getName());
+    assertEquals(GodName.Hephaestus, electedPlayer.getGodCard().getName());
   }
 
   @Test
