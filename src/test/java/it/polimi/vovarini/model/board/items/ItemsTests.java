@@ -37,9 +37,26 @@ public class ItemsTests {
   void workerCreation() {
     Player testPlayer = new Player("test_player");
     Worker worker = new Worker(Sex.Male, testPlayer);
+    Worker workerTwo = new Worker(worker);
 
     assertEquals(Sex.Male, worker.getSex());
+    assertEquals(testPlayer, worker.getOwner());
+    assertEquals(worker.getSex(), workerTwo.getSex());
+    assertEquals(worker.getOwner(), workerTwo.getOwner());
+
+    assertEquals(worker.toString(), "M");
+    assertTrue(worker.canBeRemoved());
   }
+
+  @Test
+  @DisplayName("Tests that two equal Workers are acknowledged as that")
+  void workerEquals(){
+    Player testPlayer = new Player("test_player");
+    Worker workerOne = new Worker(Sex.Male, testPlayer);
+    Worker workerTwo = new Worker(Sex.Male, testPlayer);
+    assertTrue(workerOne.equals(workerTwo));
+  }
+
 
   @Test
   @DisplayName("Test that a Block can be instantiated correctly")
