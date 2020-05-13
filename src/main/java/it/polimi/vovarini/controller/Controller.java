@@ -338,5 +338,4 @@ public class Controller implements EventListener {
     game.setCurrentPhase(game.getCurrentPlayer().getGodCard().computeNextPhase(game));
   }
 
-  public static void main(String[] args) {}
 }
