@@ -95,7 +95,7 @@ public class GodCardFactory {
    */
   private static GodCard createApollo() {
     GodCard apollo = new GodCard(GodName.Apollo);
-    apollo.movementConditions.add(ReachabilityDecider::canExchangeWithWorker);
+    apollo.getMovementConditions().add(ReachabilityDecider::canExchangeWithWorker);
     return apollo;
   }
 
@@ -125,7 +125,7 @@ public class GodCardFactory {
      */
     private static GodCard createHera(){
       GodCard hera = new GodCard(GodName.Hera);
-      hera.winningConstraints.add(WinDecider::perimeterConstraint);
+      hera.getWinningConstraints().add(WinDecider::perimeterConstraint);
       return hera;
     }
 
@@ -145,7 +145,7 @@ public class GodCardFactory {
      */
     private static GodCard createMinotaur() {
         GodCard minotaur = new GodCard(GodName.Minotaur);
-        minotaur.movementConditions.add(ReachabilityDecider::conditionedExchange);
+        minotaur.getMovementConditions().add(ReachabilityDecider::conditionedExchange);
         minotaur.listMovementEffects = ConsequencesDecider::forceOpponentWorker;
         return minotaur;
     }
@@ -207,7 +207,7 @@ public class GodCardFactory {
     private static GodCard createZeus(){
       GodCard zeus = new GodCard(GodName.Zeus);
       zeus.validateConstruction = ValidationDecider::allowUnderMyself;
-      zeus.constructionConditions.add(BuildabilityDecider::buildUnderMyself);
+      zeus.getConstructionConditions().add(BuildabilityDecider::buildUnderMyself);
       return zeus;
     }
 
@@ -217,7 +217,7 @@ public class GodCardFactory {
    */
   private static GodCard createPan() {
     GodCard pan = new GodCard(GodName.Pan);
-    pan.winningConditions.add(WinDecider::downTwoLevels);
+    pan.getWinningConditions().add(WinDecider::downTwoLevels);
     return pan;
   }
 

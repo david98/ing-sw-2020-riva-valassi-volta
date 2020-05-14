@@ -25,7 +25,7 @@ public class Block extends Item {
 
   protected int level;
 
-  public Block(int level) throws InvalidLevelException {
+  public Block(int level) {
     if (level < MIN_LEVEL || level > MAX_LEVEL) {
       throw new InvalidLevelException();
     }

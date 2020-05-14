@@ -17,8 +17,6 @@ import it.polimi.vovarini.model.moves.Movement;
 
 import java.io.Serializable;
 import java.util.*;
-import java.util.function.BiFunction;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 /**
@@ -200,14 +198,14 @@ public class GodCard implements Serializable {
   SerializableBiFunction<GameDataAccessor, Point, Boolean> constraintMovement =
           (GameDataAccessor gameData, Point p) -> true;
 
-  Collection<BiFunction<GameDataAccessor, Point, Boolean>> movementConditions;
-  Collection<BiFunction<GameDataAccessor, Point, Boolean>> movementConstraints;
+  private HashSet<SerializableBiFunction<GameDataAccessor, Point, Boolean>> movementConditions;
+  private HashSet<SerializableBiFunction<GameDataAccessor, Point, Boolean>> movementConstraints;
 
-  Collection<BiFunction<GameDataAccessor, Point, Boolean>> constructionConditions;
-  Collection<BiFunction<GameDataAccessor, Point, Boolean>> constructionConstraints;
+  private HashSet<SerializableBiFunction<GameDataAccessor, Point, Boolean>> constructionConditions;
+  private HashSet<SerializableBiFunction<GameDataAccessor, Point, Boolean>> constructionConstraints;
 
-  Collection<Predicate<Movement>> winningConditions;
-  Collection<Predicate<Movement>> winningConstraints;
+  private HashSet<SerializablePredicate<Movement>> winningConditions;
+  private HashSet<SerializablePredicate<Movement>> winningConstraints;
 
   /**
    * Function that computes a list of all the points where moving is possible
@@ -356,27 +354,27 @@ public class GodCard implements Serializable {
     }
   }
 
-  public Collection<BiFunction<GameDataAccessor, Point, Boolean>> getMovementConditions() {
+  public Set<SerializableBiFunction<GameDataAccessor, Point, Boolean>> getMovementConditions() {
     return movementConditions;
   }
 
-  public Collection<BiFunction<GameDataAccessor, Point, Boolean>> getMovementConstraints() {
+  public Set<SerializableBiFunction<GameDataAccessor, Point, Boolean>> getMovementConstraints() {
     return movementConstraints;
   }
 
-  public Collection<BiFunction<GameDataAccessor, Point, Boolean>> getConstructionConditions() {
+  public Set<SerializableBiFunction<GameDataAccessor, Point, Boolean>> getConstructionConditions() {
     return constructionConditions;
   }
 
-  public Collection<BiFunction<GameDataAccessor, Point, Boolean>> getConstructionConstraints() {
+  public Set<SerializableBiFunction<GameDataAccessor, Point, Boolean>> getConstructionConstraints() {
     return constructionConstraints;
   }
 
-  public Collection<Predicate<Movement>> getWinningConditions() {
+  public Set<SerializablePredicate<Movement>> getWinningConditions() {
     return winningConditions;
   }
 
-  public Collection<Predicate<Movement>> getWinningConstraints() {
+  public Set<SerializablePredicate<Movement>> getWinningConstraints() {
     return winningConstraints;
   }
 }

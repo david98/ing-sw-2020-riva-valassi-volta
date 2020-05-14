@@ -58,7 +58,7 @@ public class HephaestusTests {
         }
         game.setCurrentPhase(Phase.Start);
         game.getCurrentPlayer().getConstructionList().clear();
-        hephaestus.constructionConstraints.clear();
+        hephaestus.getConstructionConstraints().clear();
     }
 
     private static Stream<Arguments> provideAllPossibleTargetAndLevel() {

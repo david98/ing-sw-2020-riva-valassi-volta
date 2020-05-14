@@ -24,20 +24,22 @@ public class CommonTests {
   private final ExecutorService pool = Executors.newFixedThreadPool(2);
 
 
-  @Test
+  @ParameterizedTest
+  @MethodSource("provideAllGodNames")
   @DisplayName("Tests that a GodCard can be serialized and deserialized")
-  void serializationAndDeserialization() throws IOException, ClassNotFoundException {
-    GodCard nb = GodCardFactory.create(GodName.Nobody);
+  void serializationAndDeserialization(GodName name) throws IOException, ClassNotFoundException {
+    GodCard godCard = GodCardFactory.create(name);
 
     try(FileOutputStream os=new FileOutputStream(f);
         ObjectOutputStream oos = new ObjectOutputStream(os)) {
-      oos.writeObject(nb);
+      oos.writeObject(godCard);
     }
     System.out.println("Written to " + f);
 
     try(FileInputStream is=new FileInputStream(f);
         ObjectInputStream ois=new ObjectInputStream(is)) {
-      GodCard nbRead = (GodCard) ois.readObject();
+      GodCard cardRead = (GodCard) ois.readObject();
+      assertEquals(godCard, cardRead);
     }
     System.out.println("Read from " + f);
   }

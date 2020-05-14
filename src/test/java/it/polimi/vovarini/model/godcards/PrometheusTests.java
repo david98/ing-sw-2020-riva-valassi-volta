@@ -61,7 +61,7 @@ public class PrometheusTests {
         game.setCurrentPhase(Phase.Start);
         game.getCurrentPlayer().getConstructionList().clear();
         game.getCurrentPlayer().getMovementList().clear();
-        prometheus.movementConstraints.clear();
+        prometheus.getMovementConstraints().clear();
     }
 
     private static Stream<Arguments> provideAllPossibleMovementMoves() {

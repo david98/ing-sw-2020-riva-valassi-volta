@@ -57,7 +57,7 @@ public class ApolloTests {
         }
         game.setCurrentPhase(Phase.Start);
         game.getCurrentPlayer().getMovementList().clear();
-        apollo.movementConstraints.clear();
+        apollo.getMovementConstraints().clear();
     }
 
     private static Stream<Arguments> provideAllPossibleMovementMoves() {

@@ -52,7 +52,7 @@ public class PoseidonTests {
         }
         game.setCurrentPhase(Phase.Start);
         game.getCurrentPlayer().getConstructionList().clear();
-        poseidon.constructionConstraints.clear();
+        poseidon.getConstructionConstraints().clear();
     }
 
     @Test

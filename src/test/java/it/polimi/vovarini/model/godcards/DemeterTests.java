@@ -56,7 +56,7 @@ public class DemeterTests {
         }
         game.setCurrentPhase(Phase.Start);
         game.getCurrentPlayer().getConstructionList().clear();
-        demeter.constructionConstraints.clear();
+        demeter.getWinningConstraints().clear();
     }
 
     private static Stream<Arguments> provideAllPossibleTarget() {
@@ -86,7 +86,7 @@ public class DemeterTests {
     @Test
     @DisplayName("Test that a GodCard of type Demeter can be instantiated correctly")
     public void demeterCreation() {
-        assertEquals(game.getCurrentPlayer().getGodCard().name, GodName.Demeter);
+        assertEquals(GodName.Demeter, game.getCurrentPlayer().getGodCard().name);
     }
 
     @ParameterizedTest
@@ -95,25 +95,21 @@ public class DemeterTests {
     public void testConstructionConstraint(Point start, Point firstTarget, Point secondTarget) {
         Board board = game.getBoard();
 
-        try {
-            board.place(game.getCurrentPlayer().getCurrentWorker(), start);
-            if(!firstTarget.equals(secondTarget)) {
-                board.place(Block.blocks[0], secondTarget);
-            }
-        } catch (InvalidPositionException | BoxFullException e) {
-            e.printStackTrace();
+        board.place(game.getCurrentPlayer().getCurrentWorker(), start);
+        if(!firstTarget.equals(secondTarget)) {
+            board.place(Block.blocks[0], secondTarget);
         }
 
         game.setCurrentPhase(demeter.computeNextPhase(game));
         game.setCurrentPhase(demeter.computeNextPhase(game));
-        assertEquals(game.getCurrentPhase(), Phase.Construction);
+        assertEquals(Phase.Construction, game.getCurrentPhase());
 
         Construction firstConstruction = new Construction(board, Block.blocks[0], firstTarget);
         assertTrue(demeter.validate(demeter.computeBuildablePoints(), firstConstruction));
         game.performMove(firstConstruction);
 
         game.setCurrentPhase(demeter.computeNextPhase(game));
-        assertEquals(game.getCurrentPhase(), Phase.Construction);
+        assertEquals(Phase.Construction, game.getCurrentPhase());
 
         Construction secondConstruction = new Construction(board, Block.blocks[1], secondTarget);
         assertEquals(!secondTarget.equals(firstTarget), demeter.validate(demeter.computeBuildablePoints(), secondConstruction));
