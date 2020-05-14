@@ -105,7 +105,6 @@ public class Player implements Serializable {
   }
 
   public void setGodCard(GodCard godCard) {
-    GameEventManager.raise(new CardAssignmentEvent(this, this, godCard));
     this.godCard = godCard;
   }
 

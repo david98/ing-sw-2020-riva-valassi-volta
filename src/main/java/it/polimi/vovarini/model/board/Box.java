@@ -18,6 +18,10 @@ public class Box implements Serializable {
     items = new ArrayDeque<>();
   }
 
+  public Box(Box b) {
+    items = new ArrayDeque<>(b.items);
+  }
+
   public void place(Item item) throws BoxFullException {
     if (items.size() >= MAX_ITEMS) {
       throw new BoxFullException();

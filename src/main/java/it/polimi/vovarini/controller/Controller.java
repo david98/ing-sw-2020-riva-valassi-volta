@@ -130,6 +130,7 @@ public class Controller implements EventListener {
     availableGods.remove(evt.getSelectedGod());
 
     game.setAvailableGodCards(availableGods.toArray(GodName[]::new));
+    GameEventManager.raise(new CardAssignmentEvent(game, currentPlayer, playerCard));
     game.setupGodCards();
   }
 

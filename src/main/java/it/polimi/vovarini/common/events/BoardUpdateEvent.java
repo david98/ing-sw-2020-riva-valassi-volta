@@ -21,7 +21,7 @@ public class BoardUpdateEvent extends GameEvent{
    */
   public BoardUpdateEvent(Object source, Board newBoard){
     super(source);
-    this.newBoard = newBoard;
+    this.newBoard = new Board(newBoard);
   }
 
   public Board getNewBoard() {
