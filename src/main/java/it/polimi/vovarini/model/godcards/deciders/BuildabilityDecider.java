@@ -31,8 +31,8 @@ public class BuildabilityDecider extends Decider {
 
         try {
             return !currentPlayer.getConstructionList().get(size - 1).getTarget().equals(target);
-        } catch (ArrayIndexOutOfBoundsException e){
-            throw new RuntimeException(e);
+        } catch (IndexOutOfBoundsException e){
+            return true;
         }
     }
 

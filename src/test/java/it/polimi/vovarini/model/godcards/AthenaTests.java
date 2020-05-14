@@ -59,7 +59,7 @@ public class AthenaTests {
             }
         }
         game.setCurrentPhase(Phase.Start);
-        nobody.movementConstraints.clear();
+        nobody.getMovementConstraints().clear();
 
         for(Player p : game.getPlayers()) {
             p.getMovementList().clear();

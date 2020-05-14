@@ -56,7 +56,7 @@ public class HestiaTests {
         }
         game.setCurrentPhase(Phase.Start);
         game.getCurrentPlayer().getConstructionList().clear();
-        hestia.constructionConstraints.clear();
+        hestia.getConstructionConstraints().clear();
     }
 
     private static Stream<Arguments> provideAllPossibleTarget() {

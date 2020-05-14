@@ -17,8 +17,6 @@ import it.polimi.vovarini.model.moves.Movement;
 
 import java.io.Serializable;
 import java.util.*;
-import java.util.function.BiFunction;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 /**
@@ -200,14 +198,14 @@ public class GodCard implements Serializable {
   SerializableBiFunction<GameDataAccessor, Point, Boolean> constraintMovement =
           (GameDataAccessor gameData, Point p) -> true;
 
-  Set<SerializableBiFunction<GameDataAccessor, Point, Boolean>> movementConditions;
-  Set<SerializableBiFunction<GameDataAccessor, Point, Boolean>> movementConstraints;
+  private HashSet<SerializableBiFunction<GameDataAccessor, Point, Boolean>> movementConditions;
+  private HashSet<SerializableBiFunction<GameDataAccessor, Point, Boolean>> movementConstraints;
 
-  Set<SerializableBiFunction<GameDataAccessor, Point, Boolean>> constructionConditions;
-  Set<SerializableBiFunction<GameDataAccessor, Point, Boolean>> constructionConstraints;
+  private HashSet<SerializableBiFunction<GameDataAccessor, Point, Boolean>> constructionConditions;
+  private HashSet<SerializableBiFunction<GameDataAccessor, Point, Boolean>> constructionConstraints;
 
-  Set<SerializablePredicate<Movement>> winningConditions;
-  Set<SerializablePredicate<Movement>> winningConstraints;
+  private HashSet<SerializablePredicate<Movement>> winningConditions;
+  private HashSet<SerializablePredicate<Movement>> winningConstraints;
 
   /**
    * Function that computes a list of all the points where moving is possible

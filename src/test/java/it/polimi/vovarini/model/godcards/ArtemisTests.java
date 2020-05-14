@@ -55,7 +55,7 @@ public class ArtemisTests {
         }
         game.setCurrentPhase(Phase.Start);
         game.getCurrentPlayer().getMovementList().clear();
-        artemis.movementConstraints.clear();
+        artemis.getMovementConstraints().clear();
     }
 
     private static Stream<Arguments> provideAllPossibleMovementMoves() {

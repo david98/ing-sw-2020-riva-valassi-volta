@@ -57,7 +57,7 @@ public class TritonTests {
         }
         game.setCurrentPhase(Phase.Start);
         game.getCurrentPlayer().getMovementList().clear();
-        triton.movementConstraints.clear();
+        triton.getMovementConstraints().clear();
     }
 
     private static Stream<Arguments> provideAllPossibleMovementMoves() {
