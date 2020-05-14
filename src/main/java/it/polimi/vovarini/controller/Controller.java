@@ -9,7 +9,7 @@ import it.polimi.vovarini.model.Point;
 import it.polimi.vovarini.model.board.Board;
 import it.polimi.vovarini.model.board.items.Block;
 import it.polimi.vovarini.model.board.items.Item;
-import it.polimi.vovarini.model.board.items.OverwrittenWorkerException;
+import it.polimi.vovarini.common.exceptions.OverwrittenWorkerException;
 import it.polimi.vovarini.model.board.items.Worker;
 import it.polimi.vovarini.model.godcards.GodCard;
 import it.polimi.vovarini.model.godcards.GodCardFactory;
@@ -47,7 +47,7 @@ public class Controller implements EventListener {
    * @throws InvalidNumberOfPlayersException if another player wants to log into the game, but the game already has all its players
    */
   @GameEventListener
-  public void update(RegistrationEvent evt) throws InvalidNicknameException, InvalidNumberOfPlayersException {
+  public void update(RegistrationEvent evt) throws InvalidNicknameException {
     for (Player player : game.getPlayers()) {
       if(player == null) break ;
       if (player.getNickname().equalsIgnoreCase(evt.getNickname())) {
@@ -71,7 +71,7 @@ public class Controller implements EventListener {
   }
 
   @GameEventListener
-  public void update(AvailableCardsEvent evt) throws WrongPlayerException, InvalidCardException, InvalidNumberOfGodCardsException, AvailableCardsAlreadySetException {
+  public void update(AvailableCardsEvent evt) {
 
     // ho già ricevuto le carte scelte per questa partita
     if(game.isAvailableCardsAlreadySet())
@@ -105,9 +105,7 @@ public class Controller implements EventListener {
   }
 
   @GameEventListener
-  public void update(CardChoiceEvent evt)
-          throws CardsNotSelectedException, InvalidCardException, WrongPlayerException {
-
+  public void update(CardChoiceEvent evt) {
     // carte non ancora scelte
     if(!game.isAvailableCardsAlreadySet()) throw new CardsNotSelectedException();
 
@@ -145,7 +143,7 @@ public class Controller implements EventListener {
    * @throws WrongPlayerException Another player must not be able to select a Worker when he's not playing
    */
   @GameEventListener
-  public void update(WorkerSelectionEvent evt) throws InvalidPhaseException, WrongPlayerException {
+  public void update(WorkerSelectionEvent evt) {
     Player currentPlayer = game.getCurrentPlayer();
     if (!currentPlayer.equals(evt.getSource())) throw new WrongPlayerException();
 
@@ -167,7 +165,7 @@ public class Controller implements EventListener {
    * @throws OverwrittenWorkerException If the player tries to put his Worker on top of another Worker (of any player)
    */
   @GameEventListener
-  public void update(SpawnWorkerEvent evt) throws WrongPlayerException, OverwrittenWorkerException {
+  public void update(SpawnWorkerEvent evt) {
 
     Player currentPlayer = game.getCurrentPlayer();
     if (!currentPlayer.equals(evt.getSource())) throw new WrongPlayerException();
@@ -180,7 +178,7 @@ public class Controller implements EventListener {
     try {
       game.getBoard().getItemPosition(currentWorker);  // se scatena ItemNotFoundExc, può essere piazzato
       // worker già piazzato
-      throw new OverwrittenWorkerException();
+      throw new WorkerAlreadySpawnedException();
 
     } catch (ItemNotFoundException e) {
       Item targetItem = game.getBoard().getItems(target).peek();
@@ -232,9 +230,7 @@ public class Controller implements EventListener {
    * @throws InvalidMoveException If a player selects a valid Box, but tries to build an invalid block in terms of level
    */
   @GameEventListener
-  public void update(BuildEvent evt)
-      throws InvalidPhaseException, WrongPlayerException, InvalidMoveException {
-
+  public void update(BuildEvent evt) {
     Player currentPlayer = game.getCurrentPlayer();
     if (!currentPlayer.equals(evt.getSource())) throw new WrongPlayerException();
 
@@ -266,9 +262,7 @@ public class Controller implements EventListener {
    * @throws InvalidMoveException This should never happen, as there are not other controls to perform other than reach.
    */
   @GameEventListener
-  public void update(MovementEvent evt)
-          throws InvalidPhaseException, WrongPlayerException,
-          InvalidMoveException {
+  public void update(MovementEvent evt) {
     try {
       Player currentPlayer = game.getCurrentPlayer();
       if (!currentPlayer.equals(evt.getSource())) throw new WrongPlayerException();
@@ -301,7 +295,7 @@ public class Controller implements EventListener {
    * @throws WrongPlayerException if another player tries to undo the last move performed, a move that he did not perform
    */
   @GameEventListener
-  public void update(UndoEvent evt) throws WrongPlayerException {
+  public void update(UndoEvent evt) {
 
     Player currentPlayer = game.getCurrentPlayer();
     if (!currentPlayer.equals(evt.getSource())) throw new WrongPlayerException();
@@ -316,7 +310,7 @@ public class Controller implements EventListener {
    * @throws UnskippablePhaseException if the current player tries to skip a phase while he did not perform the required actions of that phase
    */
   @GameEventListener
-  public void update(SkipEvent evt) throws WrongPlayerException, UnskippablePhaseException {
+  public void update(SkipEvent evt) {
 
     Player currentPlayer = game.getCurrentPlayer();
     if (!currentPlayer.equals(evt.getSource())) throw new WrongPlayerException();

@@ -7,7 +7,7 @@ import it.polimi.vovarini.common.exceptions.BoxFullException;
 import it.polimi.vovarini.common.exceptions.InvalidPositionException;
 import it.polimi.vovarini.common.exceptions.ItemNotFoundException;
 import it.polimi.vovarini.model.board.items.Block;
-import it.polimi.vovarini.model.board.items.OverwrittenWorkerException;
+import it.polimi.vovarini.common.exceptions.OverwrittenWorkerException;
 import it.polimi.vovarini.model.board.items.Sex;
 import it.polimi.vovarini.model.godcards.GodCard;
 import it.polimi.vovarini.model.godcards.GodCardFactory;
@@ -20,7 +20,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import java.util.Arrays;
-import java.util.LinkedList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -32,10 +31,7 @@ public class ControllerTests {
   private static Game game;
 
   private static List<Phase> provideAllPhases(){
-    LinkedList<Phase> phases = new LinkedList<>();
-
-    phases.addAll(Arrays.asList(Phase.values()));
-    return phases;
+    return Arrays.asList(Phase.values());
   }
 
   @Test
@@ -415,6 +411,7 @@ public class ControllerTests {
   }
 
   @Test
+  @Disabled
   @DisplayName("Tests that a correct SpwanWorkerEvent places the currentWorker in the right place, which is the target parameter")
   void spawnWorkerTest() {
 
@@ -473,7 +470,7 @@ public class ControllerTests {
 
     target = new Point(1, 0);
     SpawnWorkerEvent evtWorkerAlreadySpawned = new SpawnWorkerEvent(game.getCurrentPlayer(), target);
-    assertThrows(OverwrittenWorkerException.class, () -> {
+    assertThrows(WorkerAlreadySpawnedException.class, () -> {
       controller.update(evtWorkerAlreadySpawned);
     });
 

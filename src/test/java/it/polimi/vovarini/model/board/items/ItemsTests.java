@@ -1,5 +1,6 @@
 package it.polimi.vovarini.model.board.items;
 
+import it.polimi.vovarini.common.exceptions.InvalidLevelException;
 import it.polimi.vovarini.model.Player;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
