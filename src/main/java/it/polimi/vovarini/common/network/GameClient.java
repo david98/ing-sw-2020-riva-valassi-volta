@@ -1,8 +1,6 @@
 package it.polimi.vovarini.common.network;
 
 import it.polimi.vovarini.common.events.GameEvent;
-import it.polimi.vovarini.common.events.WorkerSelectionEvent;
-import it.polimi.vovarini.model.board.items.Sex;
 
 import java.io.IOException;
 import java.net.Socket;

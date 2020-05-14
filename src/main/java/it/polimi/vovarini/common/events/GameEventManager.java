@@ -75,7 +75,7 @@ public class GameEventManager {
         try {
           pair.getValue().invoke(pair.getKey(), e.getClass().cast(e));
         } catch (IllegalAccessException ex){
-          LOGGER.log(Level.SEVERE, "{0} {1}", new Object[]{ex.toString(), ex});
+          LOGGER.log(Level.SEVERE, "{0}", new Object[]{ex});
         } catch (InvocationTargetException ex){
           LOGGER.log(Level.SEVERE, "Exception occurred while calling listener {0}. " +
                           "Stack trace: {1}",
