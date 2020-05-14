@@ -35,6 +35,16 @@ public class Board implements Serializable {
     }
   }
 
+  public Board(Board b){
+    size = b.size;
+    boxes = new Box[size][size];
+    for (int i = 0; i < size; i++) {
+      for (int j = 0; j < size; j++) {
+        boxes[i][j] = new Box(b.boxes[i][j]);
+      }
+    }
+  }
+
   public boolean isPositionValid(Point p) {
     return (p.getX() >= 0 && p.getY() >= 0 && p.getX() < size && p.getY() < size);
   }

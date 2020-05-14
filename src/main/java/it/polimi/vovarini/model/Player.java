@@ -4,6 +4,7 @@ import it.polimi.vovarini.model.board.Board;
 import it.polimi.vovarini.model.board.items.Sex;
 import it.polimi.vovarini.model.board.items.Worker;
 import it.polimi.vovarini.model.godcards.GodCard;
+import it.polimi.vovarini.model.godcards.GodCardFactory;
 import it.polimi.vovarini.model.moves.Construction;
 import it.polimi.vovarini.model.moves.Movement;
 
@@ -57,6 +58,25 @@ public class Player implements Serializable {
     constructionList = new LinkedList<>();
     boardStatus = new Board(Board.DEFAULT_SIZE);
     hasLost = false;
+  }
+
+  public Player(Player p){
+    workers = new EnumMap<>(Sex.class);
+    workers.put(Sex.Male, p.workers.get(Sex.Male));
+    workers.put(Sex.Female, p.workers.get(Sex.Female));
+    currentSex = p.currentSex;
+
+    if (p.godCard != null) {
+      godCard = GodCardFactory.clone(p.godCard);
+    }
+
+    nickname = p.nickname;
+
+    isWorkerSelected = p.isWorkerSelected;
+    movementList = new LinkedList<>(p.movementList);
+    constructionList = new LinkedList<>(p.constructionList);
+    boardStatus = p.boardStatus;
+    hasLost = p.hasLost;
   }
 
   public Map<Sex, Worker> getWorkers() {

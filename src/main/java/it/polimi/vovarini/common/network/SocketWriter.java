@@ -1,4 +1,4 @@
-package it.polimi.vovarini.server;
+package it.polimi.vovarini.common.network;
 
 import java.io.IOException;
 import java.io.ObjectOutputStream;
@@ -22,14 +22,14 @@ public class SocketWriter<T> implements Runnable{
   }
 
   public void run(){
-    while(!Thread.currentThread().isInterrupted()){
+    while (!Thread.currentThread().isInterrupted()){
       try {
         T obj = objectsToBeWritten.take();
         out.writeObject(obj);
         out.flush();
       } catch (IOException e){
         e.printStackTrace();
-      } catch (InterruptedException e){
+      } catch (InterruptedException ignored){
         Thread.currentThread().interrupt();
       }
     }

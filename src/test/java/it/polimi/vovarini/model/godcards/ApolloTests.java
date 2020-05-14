@@ -42,7 +42,7 @@ public class ApolloTests {
                 player.setGodCard(apollo);
             }
         } catch (InvalidNumberOfPlayersException e){
-            e.printStackTrace();;
+            e.printStackTrace();
         }
     }
 

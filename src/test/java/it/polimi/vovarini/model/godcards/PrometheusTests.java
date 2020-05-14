@@ -45,7 +45,7 @@ public class PrometheusTests {
                 player.setGodCard(prometheus);
             }
         } catch (InvalidNumberOfPlayersException e){
-            e.printStackTrace();;
+            e.printStackTrace();
         }
     }
 

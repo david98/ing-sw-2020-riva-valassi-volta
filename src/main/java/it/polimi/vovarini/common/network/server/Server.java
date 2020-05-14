@@ -1,4 +1,4 @@
-package it.polimi.vovarini.server;
+package it.polimi.vovarini.common.network.server;
 
 import it.polimi.vovarini.common.exceptions.InvalidNumberOfPlayersException;
 import it.polimi.vovarini.controller.Controller;

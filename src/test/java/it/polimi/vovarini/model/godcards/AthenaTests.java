@@ -45,7 +45,7 @@ public class AthenaTests {
             game.getPlayers()[0].setGodCard(athena);
             game.getPlayers()[1].setGodCard(nobody);
         } catch (InvalidNumberOfPlayersException e){
-            e.printStackTrace();;
+            e.printStackTrace();
         }
     }
 

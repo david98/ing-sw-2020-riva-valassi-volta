@@ -127,12 +127,10 @@ public class Controller implements EventListener {
     playerCard.setGameData(game);
     currentPlayer.setGodCard(playerCard);
 
-    // io questo 'raise' lo metterei su Player#setGodCard()
-    GameEventManager.raise(new CardAssignmentEvent(game, currentPlayer, playerCard));
-
     availableGods.remove(evt.getSelectedGod());
 
     game.setAvailableGodCards(availableGods.toArray(GodName[]::new));
+    GameEventManager.raise(new CardAssignmentEvent(game, currentPlayer, playerCard));
     game.setupGodCards();
   }
 

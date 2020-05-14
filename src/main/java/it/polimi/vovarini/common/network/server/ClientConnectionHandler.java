@@ -1,4 +1,4 @@
-package it.polimi.vovarini.server;
+package it.polimi.vovarini.common.network.server;
 
 public interface ClientConnectionHandler extends Runnable{
 

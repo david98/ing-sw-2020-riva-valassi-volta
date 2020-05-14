@@ -2,8 +2,8 @@ package it.polimi.vovarini.view.cli;
 
 import it.polimi.vovarini.common.events.*;
 import it.polimi.vovarini.model.Player;
-import it.polimi.vovarini.server.GameClient;
-import it.polimi.vovarini.server.Server;
+import it.polimi.vovarini.common.network.GameClient;
+import it.polimi.vovarini.common.network.server.Server;
 import it.polimi.vovarini.view.View;
 import it.polimi.vovarini.view.ViewData;
 import it.polimi.vovarini.view.cli.console.Console;
@@ -101,12 +101,12 @@ public class GameView extends View {
           players[i] = p;
         }
       }
-      players[i].getGodCard().setGameData(data);
     }
     data.getPlayerSet().clear();
     for (Player p: players){
       data.addPlayer(p);
     }
+    data.setCurrentPlayer(e.getElectedPlayer());
     if (e.getElectedPlayer().equals(data.getOwner())) {
       currentScreen = new ElectedPlayerScreen(data, client, Arrays.asList(e.getAllGods()));
       gameLoop();

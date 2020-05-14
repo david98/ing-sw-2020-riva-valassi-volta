@@ -11,7 +11,7 @@ import it.polimi.vovarini.model.Player;
  */
 public class NewPlayerEvent extends GameEvent {
 
-  private Player newPlayer;
+  private final Player newPlayer;
 
   /**
    *

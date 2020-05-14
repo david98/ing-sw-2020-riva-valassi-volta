@@ -42,7 +42,7 @@ public class TritonTests {
                 player.setGodCard(triton);
             }
         } catch (InvalidNumberOfPlayersException e){
-            e.printStackTrace();;
+            e.printStackTrace();
         }
     }
 

@@ -67,8 +67,7 @@ public class Game implements Serializable, GameDataAccessor {
    * @param nickname the name of the player to be added
    * @throws InvalidNumberOfPlayersException if there is already the maximum number of players
    */
-  public void addPlayer(String nickname)
-      throws InvalidNumberOfPlayersException {
+  public void addPlayer(String nickname) {
 
     if (players[players.length - 1] != null) {
       throw new InvalidNumberOfPlayersException();
@@ -79,8 +78,6 @@ public class Game implements Serializable, GameDataAccessor {
     for (int i = 0; i < players.length; i++) {
       if (players[i] == null) {
         players[i] = player;
-        player.setGodCard(GodCardFactory.create(GodName.Nobody)); // MERDA PER TEST!!!
-        player.getGodCard().setGameData(this);                        // RIPETO MERDA PER TEST!!!
         GameEventManager.raise(new NewPlayerEvent(this, player));
         return;
       }
@@ -89,7 +86,6 @@ public class Game implements Serializable, GameDataAccessor {
 
   public void drawElectedPlayer() {
     currentPlayerIndex = random.nextInt(players.length);
-    GameEventManager.raise(new CurrentPlayerChangedEvent(this, getCurrentPlayer()));
   }
 
   // se è rimasta solo una carta, la assegna, altrimenti chiede al prossimo giocatore la carta che vuole (tra quelle rimaste)

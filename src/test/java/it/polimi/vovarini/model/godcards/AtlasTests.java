@@ -42,7 +42,7 @@ public class AtlasTests {
                 player.setGodCard(atlas);
             }
         } catch (InvalidNumberOfPlayersException e){
-            e.printStackTrace();;
+            e.printStackTrace();
         }
     }
 

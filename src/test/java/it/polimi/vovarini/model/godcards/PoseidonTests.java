@@ -37,7 +37,7 @@ public class PoseidonTests {
                 player.setGodCard(poseidon);
             }
         } catch (InvalidNumberOfPlayersException e){
-            e.printStackTrace();;
+            e.printStackTrace();
         }
     }
 
