@@ -1,6 +1,5 @@
 package it.polimi.vovarini.view.cli.elements;
 
-import it.polimi.vovarini.common.exceptions.BoxEmptyException;
 import it.polimi.vovarini.model.Player;
 import it.polimi.vovarini.model.Point;
 import it.polimi.vovarini.model.board.Board;
@@ -81,22 +80,20 @@ public class BoardElement extends CLIElement {
   }
 
   private String renderBox(Box box, boolean hasCursor){
-    try {
-      var items = box.getItems();
+    var items = box.getItems();
 
-      if (items.peek() != null && items.peek().canBeRemoved()) {
-        Item topMostItem = items.pop();
-        if (items.isEmpty()) {
-          return " " + (hasCursor ? "▮" : renderItem(topMostItem));
-        } else {
-          return renderItem(items.pop())
-                  + (hasCursor ? "▮" : renderItem(topMostItem));
-        }
-      } else if (!items.isEmpty()){
-        return renderItem(items.pop()) + (hasCursor ? "▮" : " ");
+    if (items.peek() != null && items.peek().canBeRemoved()) {
+      Item topMostItem = items.pop();
+      if (items.isEmpty()) {
+        return " " + (hasCursor ? "▮" : renderItem(topMostItem));
+      } else {
+        return renderItem(items.pop())
+                + (hasCursor ? "▮" : renderItem(topMostItem));
       }
-    } catch (BoxEmptyException ignored) {
+    } else if (!items.isEmpty()){
+      return renderItem(items.pop()) + (hasCursor ? "▮" : " ");
     }
+
     return " " + (hasCursor ? "▮" : " ");
   }
 

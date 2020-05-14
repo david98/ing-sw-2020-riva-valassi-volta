@@ -29,8 +29,8 @@ public class Player implements Serializable {
 
   public Player(String nickname) {
     workers = new EnumMap<>(Sex.class);
-    workers.put(Sex.Female, new Worker(Sex.Female));
-    workers.put(Sex.Male, new Worker(Sex.Male));
+    workers.put(Sex.Female, new Worker(Sex.Female, this));
+    workers.put(Sex.Male, new Worker(Sex.Male, this));
     currentSex = Sex.Male;
 
     this.nickname = nickname;
@@ -45,8 +45,8 @@ public class Player implements Serializable {
 
   public Player(GodCard assignedCard, String nickname) {
     workers = new EnumMap<>(Sex.class);
-    workers.put(Sex.Female, new Worker(Sex.Female));
-    workers.put(Sex.Male, new Worker(Sex.Male));
+    workers.put(Sex.Female, new Worker(Sex.Female, this));
+    workers.put(Sex.Male, new Worker(Sex.Male, this));
     currentSex = Sex.Male;
     godCard = assignedCard;
 
@@ -116,6 +116,7 @@ public class Player implements Serializable {
   public List<Construction> getConstructionList() {
     return constructionList;
   }
+
 
   public void setHasLost(boolean hasLost) {
     this.hasLost = hasLost;

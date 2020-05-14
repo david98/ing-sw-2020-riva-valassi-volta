@@ -1,5 +1,6 @@
 package it.polimi.vovarini.model.board.items;
 
+import it.polimi.vovarini.model.Player;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -16,6 +17,7 @@ public class ItemsTests {
 
   @BeforeAll
   private static void init() {
+    Player testPlayer = new Player("test_player");
     blocks = new ArrayList<>();
     workers = new EnumMap<>(Sex.class);
     try {
@@ -23,7 +25,7 @@ public class ItemsTests {
         blocks.add(new Block(i));
       }
       for (Sex sex : Sex.values()) {
-        workers.put(sex, new Worker(sex));
+        workers.put(sex, new Worker(sex, testPlayer));
       }
     } catch (InvalidLevelException ignored) {
 
@@ -33,10 +35,28 @@ public class ItemsTests {
   @Test
   @DisplayName("Test that a Worker can be instantiated correctly")
   void workerCreation() {
-    Worker worker = new Worker(Sex.Male);
+    Player testPlayer = new Player("test_player");
+    Worker worker = new Worker(Sex.Male, testPlayer);
+    Worker workerTwo = new Worker(worker);
 
     assertEquals(Sex.Male, worker.getSex());
+    assertEquals(testPlayer, worker.getOwner());
+    assertEquals(worker.getSex(), workerTwo.getSex());
+    assertEquals(worker.getOwner(), workerTwo.getOwner());
+
+    assertEquals(worker.toString(), "M");
+    assertTrue(worker.canBeRemoved());
   }
+
+  @Test
+  @DisplayName("Tests that two equal Workers are acknowledged as that")
+  void workerEquals(){
+    Player testPlayer = new Player("test_player");
+    Worker workerOne = new Worker(Sex.Male, testPlayer);
+    Worker workerTwo = new Worker(Sex.Male, testPlayer);
+    assertTrue(workerOne.equals(workerTwo));
+  }
+
 
   @Test
   @DisplayName("Test that a Block can be instantiated correctly")

@@ -1,8 +1,6 @@
 package it.polimi.vovarini.model.godcards;
 
-import it.polimi.vovarini.common.exceptions.BoxFullException;
-import it.polimi.vovarini.common.exceptions.InvalidNumberOfPlayersException;
-import it.polimi.vovarini.common.exceptions.InvalidPositionException;
+import it.polimi.vovarini.common.exceptions.*;
 import it.polimi.vovarini.model.Game;
 import it.polimi.vovarini.model.Phase;
 import it.polimi.vovarini.model.Player;
@@ -24,10 +22,10 @@ import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class HephaestusTests {
+public class HestiaTests {
 
     private static Game game;
-    private static GodCard hephaestus;
+    private static GodCard hestia;
 
     @BeforeAll
     public static void init(){
@@ -37,10 +35,10 @@ public class HephaestusTests {
             game.addPlayer("Guest01");
             game.addPlayer("Guest02");
 
-            hephaestus = GodCardFactory.create(GodName.Hephaestus);
-            hephaestus.setGameData(game);
+            hestia = GodCardFactory.create(GodName.Hestia);
+            hestia.setGameData(game);
             for (Player player: game.getPlayers()){
-                player.setGodCard(hephaestus);
+                player.setGodCard(hestia);
             }
         } catch (InvalidNumberOfPlayersException e){
             e.printStackTrace();;
@@ -53,15 +51,15 @@ public class HephaestusTests {
         for (int x = 0; x < b.getSize(); x++){
             for (int y = 0; y < b.getSize(); y++){
                 Point cur = new Point(x, y);
-                while (b.remove(cur) != null);
+                while(b.remove(cur) != null);
             }
         }
         game.setCurrentPhase(Phase.Start);
         game.getCurrentPlayer().getConstructionList().clear();
-        hephaestus.constructionConstraints.clear();
+        hestia.constructionConstraints.clear();
     }
 
-    private static Stream<Arguments> provideAllPossibleTargetAndLevel() {
+    private static Stream<Arguments> provideAllPossibleTarget() {
         LinkedList<Arguments> args = new LinkedList<>();
 
         Board board = new Board(Board.DEFAULT_SIZE);
@@ -77,9 +75,7 @@ public class HephaestusTests {
             List<Point> adjacentPositions = board.getAdjacentPositions(start);
             for(Point firstTarget : adjacentPositions) {
                 for(Point secondTarget : adjacentPositions) {
-                    for (int lTarget = 0; lTarget < Block.MAX_LEVEL-1; lTarget++) {
-                        args.add(Arguments.of(start, firstTarget, secondTarget, lTarget));
-                    }
+                    args.add(Arguments.of(start, firstTarget, secondTarget));
                 }
             }
         }
@@ -88,39 +84,44 @@ public class HephaestusTests {
     }
 
     @Test
-    @DisplayName("Test that a GodCard of type Hephaestus can be instantiated correctly")
-    public void hephaestusCreation() {
-        assertEquals(game.getCurrentPlayer().getGodCard().name, GodName.Hephaestus);
+    @DisplayName("Test that a GodCard of type Hestia can be instantiated correctly")
+    public void hestiaCreation() {
+        assertEquals(GodName.Hestia, game.getCurrentPlayer().getGodCard().name);
     }
 
     @ParameterizedTest
-    @MethodSource("provideAllPossibleTargetAndLevel")
-    @DisplayName("Test that Hephaestus' construction constraints are correctly applied")
-    public void validSecondConstruction(Point start, Point firstTarget, Point secondTarget, int lTarget) {
+    @MethodSource("provideAllPossibleTarget")
+    @DisplayName("Test that Hestia's construction constraints are correctly applied")
+    public void testConstructionConstraint(Point start, Point firstTarget, Point secondTarget) {
         Board board = game.getBoard();
 
         try {
-            for(int i = 0; i < lTarget; i++) {
-                board.place(Block.blocks[i], firstTarget);
-            }
             board.place(game.getCurrentPlayer().getCurrentWorker(), start);
-        } catch (InvalidPositionException ignored) {
-        } catch (BoxFullException ignored) {
+            if(!firstTarget.equals(secondTarget)) {
+                board.place(Block.blocks[0], secondTarget);
+            }
+        } catch (InvalidPositionException | BoxFullException e) {
+            e.printStackTrace();
         }
 
-        game.setCurrentPhase(hephaestus.computeNextPhase(game));
-        game.setCurrentPhase(hephaestus.computeNextPhase(game));
+        game.setCurrentPhase(hestia.computeNextPhase(game));
+        game.setCurrentPhase(hestia.computeNextPhase(game));
         assertEquals(game.getCurrentPhase(), Phase.Construction);
 
-        Construction firstConstruction = new Construction(board, Block.blocks[lTarget], firstTarget);
-        assertTrue(hephaestus.validate(hephaestus.computeBuildablePoints(), firstConstruction));
+        Construction firstConstruction = new Construction(board, Block.blocks[0], firstTarget);
+        assertTrue(hestia.validate(hestia.computeBuildablePoints(), firstConstruction));
         game.performMove(firstConstruction);
 
-        game.setCurrentPhase(hephaestus.computeNextPhase(game));
+        game.setCurrentPhase(hestia.computeNextPhase(game));
         assertEquals(game.getCurrentPhase(), Phase.Construction);
 
-        Construction secondConstruction = new Construction(board, Block.blocks[lTarget+1], secondTarget);
-        assertEquals(firstTarget.equals(secondTarget) && lTarget + 2 != Block.MAX_LEVEL, hephaestus.validate(hephaestus.computeBuildablePoints(), secondConstruction));
+        Construction secondConstruction = new Construction(board, Block.blocks[1], secondTarget);
+
+        int targetX = secondTarget.getX();
+        int targetY = secondTarget.getY();
+        boolean expected = targetX != 0 && targetX != Board.DEFAULT_SIZE - 1 && targetY != 0 && targetY != Board.DEFAULT_SIZE - 1;
+
+        assertEquals(expected, hestia.validate(hestia.computeBuildablePoints(), secondConstruction));
     }
 
 }

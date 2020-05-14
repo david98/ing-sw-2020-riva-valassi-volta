@@ -1,14 +1,13 @@
 package it.polimi.vovarini.model.board;
 
-import it.polimi.vovarini.common.exceptions.BoxEmptyException;
 import it.polimi.vovarini.common.exceptions.BoxFullException;
+import it.polimi.vovarini.model.Player;
 import it.polimi.vovarini.model.board.items.*;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.util.LinkedList;
-import java.util.Stack;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -32,17 +31,9 @@ public class BoxTests {
   @DisplayName("Test that a Box can be instantiated correctly")
   void boxCreation() {
     Box box = new Box();
-    BoxEmptyException thrown =
-        assertThrows(
-            BoxEmptyException.class,
-            box::getItems,
-            "Expected getItems() to throw BoxEmptyException, but it didn't");
+    assertTrue(box.getItems().isEmpty());
 
-    thrown =
-        assertThrows(
-            BoxEmptyException.class,
-            box::removeTopmost,
-            "Expected removeTopmost() to throw BoxEmptyException, but it didn't");
+    assertNull(box.removeTopmost());
   }
 
   @Test
@@ -64,7 +55,8 @@ public class BoxTests {
 
       }
     }
-    assertThrows(BoxFullException.class, () -> box.place(new Worker(Sex.Male)));
+    Player testPlayer = new Player("test_player");
+    assertThrows(BoxFullException.class, () -> box.place(new Worker(Sex.Male, testPlayer)));
   }
 
   @Test
@@ -78,13 +70,9 @@ public class BoxTests {
 
       }
     }
-    try {
-      var items = box.getItems();
-      items.clear();
-      items = box.getItems();
-      assertFalse(items.isEmpty());
-    } catch (BoxEmptyException ignored) {
-
-    }
+    var items = box.getItems();
+    items.clear();
+    items = box.getItems();
+    assertFalse(items.isEmpty());
   }
 }

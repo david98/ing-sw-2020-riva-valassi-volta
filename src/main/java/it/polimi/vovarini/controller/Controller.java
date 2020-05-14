@@ -8,6 +8,7 @@ import it.polimi.vovarini.model.Player;
 import it.polimi.vovarini.model.Point;
 import it.polimi.vovarini.model.board.Board;
 import it.polimi.vovarini.model.board.items.Block;
+import it.polimi.vovarini.model.board.items.Item;
 import it.polimi.vovarini.model.board.items.OverwrittenWorkerException;
 import it.polimi.vovarini.model.board.items.Worker;
 import it.polimi.vovarini.model.godcards.GodCard;
@@ -87,10 +88,10 @@ public class Controller implements EventListener {
     for (int i = 0; i < evt.getSelectedGods().length-1; i++) {
 
       // la carta scelta è nulla
-      if(evt.getSelectedGods()[i] == null) throw new InvalidCardException();
+      if(evt.getSelectedGods()[i] == null || evt.getSelectedGods()[i+1] == null) throw new InvalidCardException();
 
       // la carta scelta non esiste
-      if(!values.contains(evt.getSelectedGods()[i])) throw new InvalidCardException();
+      if(!values.contains(evt.getSelectedGods()[i]) || !values.contains(evt.getSelectedGods()[i+1])) throw new InvalidCardException();
 
       // ci sono due carte uguali
       for(int k = i+1; k < evt.getSelectedGods().length; k++)
@@ -166,7 +167,7 @@ public class Controller implements EventListener {
    * @throws OverwrittenWorkerException If the player tries to put his Worker on top of another Worker (of any player)
    */
   @GameEventListener
-  public void update(SpawnWorkerEvent evt) throws WrongPlayerException, InvalidPositionException, OverwrittenWorkerException {
+  public void update(SpawnWorkerEvent evt) throws WrongPlayerException, OverwrittenWorkerException {
 
     Player currentPlayer = game.getCurrentPlayer();
     if (!currentPlayer.equals(evt.getSource())) throw new WrongPlayerException();
@@ -182,50 +183,41 @@ public class Controller implements EventListener {
       throw new OverwrittenWorkerException();
 
     } catch (ItemNotFoundException e) {
-      try {
-        if (!currentWorker.canBePlacedOn(game.getBoard().getItems(target).peek())) {
-          // Worker sopra altro worker
-          throw new OverwrittenWorkerException();
+      Item targetItem = game.getBoard().getItems(target).peek();
+      if (targetItem != null && !currentWorker.canBePlacedOn(game.getBoard().getItems(target).peek())){
+        // Worker sopra altro worker
+        throw new OverwrittenWorkerException();
+      } else {
+        game.getBoard().place(currentPlayer.getCurrentWorker(), target);
+
+        /**
+         * controlliamo, se ha piazzato tutti i propri operai passiamo la mano al
+         * giocatore successivo
+         */
+        if (currentPlayer.getWorkers().values().stream().noneMatch(worker -> {
+          try {
+            game.getBoard().getItemPosition(worker);
+            return false;
+          } catch (ItemNotFoundException exception){
+            return true;
+          }
         }
-
-        // non dovrebbe mai arrivare qui, viene sempre scatenata BoxEmptyException
-        // se arrivo qui, la cella è libera da worker e cupola, ma non è al livello 0 (impossibile per regole)
-
-      } catch (BoxEmptyException ex) {
-        try {
-          game.getBoard().place(currentPlayer.getCurrentWorker(), target);
-
-          /**
-           * controlliamo, se ha piazzato tutti i propri operai passiamo la mano al
-           * giocatore successivo
-           */
-          if (currentPlayer.getWorkers().values().stream().noneMatch(worker -> {
-            try {
-              game.getBoard().getItemPosition(worker);
-              return false;
-            } catch (ItemNotFoundException exception){
-              return true;
-            }
-          }
-          )) {
-            game.nextPlayer();
-            if (game.getCurrentPlayer().getWorkers().values().stream().noneMatch(worker -> {
-                      try {
-                        game.getBoard().getItemPosition(worker);
-                        return false;
-                      } catch (ItemNotFoundException exception){
-                        return true;
-                      }
+        )) {
+          game.nextPlayer();
+          if (game.getCurrentPlayer().getWorkers().values().stream().noneMatch(worker -> {
+                    try {
+                      game.getBoard().getItemPosition(worker);
+                      return false;
+                    } catch (ItemNotFoundException exception){
+                      return true;
                     }
-            )) {
-              // tutti hanno piazzato
-              game.start();
-            } else {
-              GameEventManager.raise(new PlaceYourWorkersEvent(game, game.getCurrentPlayer()));
-            }
+                  }
+          )) {
+            // tutti hanno piazzato
+            game.start();
+          } else {
+            GameEventManager.raise(new PlaceYourWorkersEvent(game, game.getCurrentPlayer()));
           }
-        } catch (BoxFullException ignored) {
-          // Non dovrebbe mai succedere
         }
       }
     }
@@ -241,8 +233,7 @@ public class Controller implements EventListener {
    */
   @GameEventListener
   public void update(BuildEvent evt)
-      throws InvalidPositionException, InvalidPhaseException,
-          WrongPlayerException, InvalidMoveException {
+      throws InvalidPhaseException, WrongPlayerException, InvalidMoveException {
 
     Player currentPlayer = game.getCurrentPlayer();
     if (!currentPlayer.equals(evt.getSource())) throw new WrongPlayerException();
@@ -276,7 +267,7 @@ public class Controller implements EventListener {
    */
   @GameEventListener
   public void update(MovementEvent evt)
-          throws InvalidPhaseException, WrongPlayerException, InvalidPositionException,
+          throws InvalidPhaseException, WrongPlayerException,
           InvalidMoveException {
     try {
       Player currentPlayer = game.getCurrentPlayer();
@@ -337,5 +328,4 @@ public class Controller implements EventListener {
     game.setCurrentPhase(game.getCurrentPlayer().getGodCard().computeNextPhase(game));
   }
 
-  public static void main(String[] args) {}
 }

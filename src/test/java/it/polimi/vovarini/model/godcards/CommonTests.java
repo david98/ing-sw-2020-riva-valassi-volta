@@ -42,8 +42,9 @@ public class CommonTests {
     System.out.println("Read from " + f);
   }
 
-  @Disabled
+
   @Test
+  @Disabled
   @DisplayName("Tests that a GodCard clone can be serialized and deserialized over a socket")
   void serializationAndDeserializationSocket() throws IOException, ClassNotFoundException {
     pool.execute(() -> {
@@ -88,6 +89,18 @@ public class CommonTests {
   void testEquals(GodName name){
     GodCard card = GodCardFactory.create(name);
     assertEquals(card, card);
+  }
+
+  @ParameterizedTest
+  @MethodSource("provideAllGodNames")
+  @DisplayName("Test that hashCode works")
+  void testHashCode(GodName name){
+    GodCard original = GodCardFactory.create(name);
+    GodCard clone = GodCardFactory.clone(original);
+
+    assertNotSame(original, clone);
+    assertEquals(original, clone);
+    assertEquals(original.hashCode(), clone.hashCode());
   }
 
   @ParameterizedTest

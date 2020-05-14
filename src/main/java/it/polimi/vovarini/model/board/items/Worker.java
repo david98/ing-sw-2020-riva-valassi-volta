@@ -1,15 +1,28 @@
 package it.polimi.vovarini.model.board.items;
 
+import it.polimi.vovarini.model.Player;
+
+import java.util.Arrays;
+
 public class Worker extends Item {
   private final Sex sex;
+  private final Player owner;
 
-  public Worker(Sex sex) {
+  public Worker(Sex sex, Player owner) {
     this.sex = sex;
+    this.owner = owner;
+  }
+
+  public Worker(Worker worker){
+    sex = worker.sex;
+    owner = worker.owner;
   }
 
   public Sex getSex() {
     return sex;
   }
+
+  public Player getOwner() { return owner; }
 
   @Override
   public boolean canBePlacedOn(Item item) {
@@ -29,5 +42,23 @@ public class Worker extends Item {
   @Override
   public String toString() {
     return sex == Sex.Male ? "M" : "F";
+  }
+
+  @Override
+  public int hashCode() {
+    return Arrays.hashCode(new Object[] {
+            owner,
+            sex
+    });
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (obj instanceof Worker) {
+      Worker other = (Worker) obj;
+      return sex.equals(other.sex) && owner.equals(other.owner);
+    } else {
+      return super.equals(obj);
+    }
   }
 }

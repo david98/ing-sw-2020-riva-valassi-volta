@@ -1,6 +1,8 @@
 package it.polimi.vovarini.model.godcards;
 
-import it.polimi.vovarini.common.exceptions.*;
+import it.polimi.vovarini.common.exceptions.BoxFullException;
+import it.polimi.vovarini.common.exceptions.InvalidNumberOfPlayersException;
+import it.polimi.vovarini.common.exceptions.InvalidPositionException;
 import it.polimi.vovarini.model.Game;
 import it.polimi.vovarini.model.Phase;
 import it.polimi.vovarini.model.Player;
@@ -19,12 +21,12 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Stream;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class ArtemisTests {
-
+public class TritonTests {
     private static Game game;
-    private static GodCard artemis;
+    private static GodCard triton;
 
     @BeforeAll
     public static void init(){
@@ -34,10 +36,10 @@ public class ArtemisTests {
             game.addPlayer("Guest01");
             game.addPlayer("Guest02");
 
-            artemis = GodCardFactory.create(GodName.Artemis);
-            artemis.setGameData(game);
+            triton = GodCardFactory.create(GodName.Triton);
+            triton.setGameData(game);
             for (Player player: game.getPlayers()){
-                player.setGodCard(artemis);
+                player.setGodCard(triton);
             }
         } catch (InvalidNumberOfPlayersException e){
             e.printStackTrace();;
@@ -50,12 +52,12 @@ public class ArtemisTests {
         for (int x = 0; x < b.getSize(); x++){
             for (int y = 0; y < b.getSize(); y++){
                 Point cur = new Point(x, y);
-                while (b.remove(cur) != null);
+                while(b.remove(cur) != null);
             }
         }
         game.setCurrentPhase(Phase.Start);
         game.getCurrentPlayer().getMovementList().clear();
-        artemis.movementConstraints.clear();
+        triton.movementConstraints.clear();
     }
 
     private static Stream<Arguments> provideAllPossibleMovementMoves() {
@@ -85,14 +87,14 @@ public class ArtemisTests {
     }
 
     @Test
-    @DisplayName("Test that a GodCard of type Artemis can be instantiated correctly")
-    public void artemisCreation() {
-        assertEquals(GodName.Artemis, game.getCurrentPlayer().getGodCard().name);
+    @DisplayName("Test that a GodCard of type Triton can be instantiated correctly")
+    public void tritonCreation() {
+        assertEquals(GodName.Triton, game.getCurrentPlayer().getGodCard().name);
     }
 
     @ParameterizedTest
     @MethodSource("provideAllPossibleMovementMoves")
-    @DisplayName("Test that Artemis' movement constraints are correctly applied")
+    @DisplayName("Test that Triton's movement conditions are correctly applied")
     public void testMovementConstraint(Point start, Point endStart, Point secondEnd) {
 
         Board board = game.getBoard();
@@ -102,17 +104,30 @@ public class ArtemisTests {
         } catch (InvalidPositionException | BoxFullException ignored) {
         }
 
-        game.setCurrentPhase(artemis.computeNextPhase(game));
+        game.setCurrentPhase(triton.computeNextPhase(game));
         assertEquals(Phase.Movement, game.getCurrentPhase());
 
         Movement firstMovement = new Movement(board, start, endStart);
-        assertTrue(artemis.validate(artemis.computeReachablePoints(), firstMovement));
+        assertTrue(triton.validate(triton.computeReachablePoints(), firstMovement));
         game.performMove(firstMovement);
+        game.setCurrentPhase(triton.computeNextPhase(game));
 
-        game.setCurrentPhase(artemis.computeNextPhase(game));
-        assertEquals(Phase.Movement, game.getCurrentPhase());
+        if(endStart.isPerimeterSpace()) {
+            assertEquals(Phase.Movement, game.getCurrentPhase());
 
-        Movement secondMovement = new Movement(board, endStart, secondEnd);
-        assertEquals(!start.equals(secondEnd), artemis.validate(artemis.computeReachablePoints(), secondMovement));
+            Movement secondMovement = new Movement(board, endStart, secondEnd);
+            assertTrue(triton.validate(triton.computeReachablePoints(), secondMovement));
+            game.performMove(secondMovement);
+
+            game.setCurrentPhase(triton.computeNextPhase(game));
+
+            if(secondEnd.isPerimeterSpace()) {
+                assertEquals(Phase.Movement, game.getCurrentPhase());
+            } else {
+                assertEquals(Phase.Construction, game.getCurrentPhase());
+            }
+        } else {
+            assertEquals(Phase.Construction, game.getCurrentPhase());
+        }
     }
 }

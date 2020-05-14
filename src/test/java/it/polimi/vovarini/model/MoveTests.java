@@ -1,8 +1,6 @@
 package it.polimi.vovarini.model;
 
-import it.polimi.vovarini.common.exceptions.BoxEmptyException;
 import it.polimi.vovarini.common.exceptions.BoxFullException;
-import it.polimi.vovarini.common.exceptions.InvalidPositionException;
 import it.polimi.vovarini.common.exceptions.ItemNotFoundException;
 import it.polimi.vovarini.model.board.*;
 import it.polimi.vovarini.model.board.items.Sex;
@@ -29,10 +27,11 @@ public class MoveTests {
 
   @BeforeAll
   private static void init() {
+    Player testPlayer = new Player("test_player");
     board = new Board(Board.DEFAULT_SIZE);
     workers = new EnumMap<>(Sex.class);
-    workers.put(Sex.Male, new Worker(Sex.Male));
-    workers.put(Sex.Female, new Worker(Sex.Female));
+    workers.put(Sex.Male, new Worker(Sex.Male, testPlayer));
+    workers.put(Sex.Female, new Worker(Sex.Female, testPlayer));
   }
 
   @BeforeEach
@@ -74,8 +73,8 @@ public class MoveTests {
       Movement movement = new Movement(board, start, end);
       movement.execute();
       assertEquals(board.getItemPosition(workers.get(Sex.Male)), end);
-      BoxEmptyException thrown = assertThrows(BoxEmptyException.class, () -> board.getItems(start));
-    } catch (InvalidPositionException | BoxFullException | ItemNotFoundException ignored) {
+      assertTrue(board.getItems(start).isEmpty());
+    } catch (BoxFullException | ItemNotFoundException ignored) {
 
     }
   }

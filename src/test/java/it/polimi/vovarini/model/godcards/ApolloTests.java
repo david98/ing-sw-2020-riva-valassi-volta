@@ -1,6 +1,8 @@
 package it.polimi.vovarini.model.godcards;
 
-import it.polimi.vovarini.common.exceptions.*;
+import it.polimi.vovarini.common.exceptions.BoxFullException;
+import it.polimi.vovarini.common.exceptions.InvalidNumberOfPlayersException;
+import it.polimi.vovarini.common.exceptions.InvalidPositionException;
 import it.polimi.vovarini.model.Game;
 import it.polimi.vovarini.model.Phase;
 import it.polimi.vovarini.model.Player;
@@ -19,12 +21,12 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Stream;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class ArtemisTests {
-
+public class ApolloTests {
     private static Game game;
-    private static GodCard artemis;
+    private static GodCard apollo;
 
     @BeforeAll
     public static void init(){
@@ -34,10 +36,10 @@ public class ArtemisTests {
             game.addPlayer("Guest01");
             game.addPlayer("Guest02");
 
-            artemis = GodCardFactory.create(GodName.Artemis);
-            artemis.setGameData(game);
+            apollo = GodCardFactory.create(GodName.Apollo);
+            apollo.setGameData(game);
             for (Player player: game.getPlayers()){
-                player.setGodCard(artemis);
+                player.setGodCard(apollo);
             }
         } catch (InvalidNumberOfPlayersException e){
             e.printStackTrace();;
@@ -50,12 +52,12 @@ public class ArtemisTests {
         for (int x = 0; x < b.getSize(); x++){
             for (int y = 0; y < b.getSize(); y++){
                 Point cur = new Point(x, y);
-                while (b.remove(cur) != null);
+                while(b.remove(cur) != null);
             }
         }
         game.setCurrentPhase(Phase.Start);
         game.getCurrentPlayer().getMovementList().clear();
-        artemis.movementConstraints.clear();
+        apollo.movementConstraints.clear();
     }
 
     private static Stream<Arguments> provideAllPossibleMovementMoves() {
@@ -73,11 +75,8 @@ public class ArtemisTests {
 
         for(Point start : allPoints) {
             List<Point> startAdjacentPositions = board.getAdjacentPositions(start);
-            for(Point endStart : startAdjacentPositions) {
-                List<Point> endStartAdjacentPositions = board.getAdjacentPositions(endStart);
-                for(Point secondEnd : endStartAdjacentPositions) {
-                    args.add(Arguments.of(start, endStart, secondEnd));
-                }
+            for(Point end : startAdjacentPositions) {
+                    args.add(Arguments.of(start, end));
             }
         }
 
@@ -85,34 +84,33 @@ public class ArtemisTests {
     }
 
     @Test
-    @DisplayName("Test that a GodCard of type Artemis can be instantiated correctly")
-    public void artemisCreation() {
-        assertEquals(GodName.Artemis, game.getCurrentPlayer().getGodCard().name);
+    @DisplayName("Test that a GodCard of type Apollo can be instantiated correctly")
+    public void apolloCreation() {
+        assertEquals(GodName.Apollo, game.getCurrentPlayer().getGodCard().name);
     }
 
     @ParameterizedTest
     @MethodSource("provideAllPossibleMovementMoves")
-    @DisplayName("Test that Artemis' movement constraints are correctly applied")
-    public void testMovementConstraint(Point start, Point endStart, Point secondEnd) {
+    @DisplayName("Test that Apollo's movement conditions are correctly applied")
+    public void testMovementConstraint(Point start, Point end) {
 
         Board board = game.getBoard();
 
         try {
             board.place(game.getCurrentPlayer().getCurrentWorker(), start);
+            board.place(game.getPlayers()[1].getCurrentWorker(), end);
         } catch (InvalidPositionException | BoxFullException ignored) {
         }
 
-        game.setCurrentPhase(artemis.computeNextPhase(game));
+        game.setCurrentPhase(apollo.computeNextPhase(game));
         assertEquals(Phase.Movement, game.getCurrentPhase());
 
-        Movement firstMovement = new Movement(board, start, endStart);
-        assertTrue(artemis.validate(artemis.computeReachablePoints(), firstMovement));
-        game.performMove(firstMovement);
+        Movement movement = new Movement(board, start, end);
+        assertTrue(apollo.validate(apollo.computeReachablePoints(), movement));
+        game.performMove(movement);
 
-        game.setCurrentPhase(artemis.computeNextPhase(game));
-        assertEquals(Phase.Movement, game.getCurrentPhase());
+        assertEquals(game.getCurrentPlayer().getCurrentWorker(), board.getBox(end).getItems().peek());
+        assertEquals(game.getPlayers()[1].getCurrentWorker(), board.getBox(start).getItems().peek());
 
-        Movement secondMovement = new Movement(board, endStart, secondEnd);
-        assertEquals(!start.equals(secondEnd), artemis.validate(artemis.computeReachablePoints(), secondMovement));
     }
 }

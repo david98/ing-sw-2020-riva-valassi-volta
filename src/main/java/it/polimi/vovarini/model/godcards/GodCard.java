@@ -2,7 +2,6 @@ package it.polimi.vovarini.model.godcards;
 
 import it.polimi.vovarini.common.events.GameEventManager;
 import it.polimi.vovarini.common.events.GodCardUpdateEvent;
-import it.polimi.vovarini.common.exceptions.BoxEmptyException;
 import it.polimi.vovarini.common.exceptions.InvalidPositionException;
 import it.polimi.vovarini.common.exceptions.ItemNotFoundException;
 import it.polimi.vovarini.model.GameDataAccessor;
@@ -78,16 +77,12 @@ public class GodCard implements Serializable {
             return false;
           }
 
-          try {
-            Box destinationBox = gameData.getBoard().getBox(point);
-            var destinationItems = destinationBox.getItems();
-            int destinationLevel = destinationBox.getLevel();
-            int currentWorkerLevel = gameData.getBoard().getBox(currentWorkerPosition).getLevel();
-            return (destinationLevel - currentWorkerLevel <= 1)
-                && currentWorker.canBePlacedOn(destinationItems.peek());
-          } catch (BoxEmptyException ignored) {
-            return true;
-          }
+          Box destinationBox = gameData.getBoard().getBox(point);
+          var destinationItems = destinationBox.getItems();
+          int destinationLevel = destinationBox.getLevel();
+          int currentWorkerLevel = gameData.getBoard().getBox(currentWorkerPosition).getLevel();
+          return (destinationLevel - currentWorkerLevel <= 1)
+              && currentWorker.canBePlacedOn(destinationItems.peek());
 
         } catch (ItemNotFoundException ignored) {
           System.err.println("This really should never happen...");
@@ -110,13 +105,10 @@ public class GodCard implements Serializable {
             return false;
           }
 
-          try {
-            var destinationItems = gameData.getBoard().getItems(point);
-            return Arrays.stream(Block.blocks)
-                .anyMatch(block -> block.canBePlacedOn(destinationItems.peek()));
-          } catch (BoxEmptyException ignored) {
-            return true;
-          }
+          var destinationItems = gameData.getBoard().getItems(point);
+          return Arrays.stream(Block.blocks)
+              .anyMatch(block -> block.canBePlacedOn(destinationItems.peek()));
+
         } catch (ItemNotFoundException | InvalidPositionException e) {
           System.err.println("This really should never happen...");
         }
@@ -175,15 +167,11 @@ public class GodCard implements Serializable {
    */
   SerializableBiFunction<List<Point>, Construction, Boolean> validateConstruction =
           (List<Point> list, Construction construction) -> {
-            try {
               Block b = construction.getBlock();
               Point t = construction.getTarget();
               var s = gameData.getBoard().getBox(t).getItems();
               return list.contains(construction.getTarget()) &&
                           b.canBePlacedOn(s.peek());
-            } catch (BoxEmptyException ignored){
-              return list.contains(construction.getTarget()) && construction.getBlock().getLevel() == 1;
-            }
           };
 
   /**
@@ -257,7 +245,7 @@ public class GodCard implements Serializable {
    */
   public boolean isMovementWinning(Movement movement) {
     return !movement.isForced() && winningConditions.stream().anyMatch(cond -> cond.test(movement)) &&
-            winningConstraints.stream().noneMatch(cond -> cond.test(movement));
+            winningConstraints.stream().allMatch(cond -> cond.test(movement));
   }
 
   /**
@@ -274,6 +262,7 @@ public class GodCard implements Serializable {
       Point workerPosition = board.getItemPosition(selectedWorker);
 
       List<Point> candidatePositions = board.getAdjacentPositions(workerPosition);
+      candidatePositions.add(workerPosition);
 
       buildablePoints =
           candidatePositions.stream()
@@ -353,7 +342,6 @@ public class GodCard implements Serializable {
 
   /**
    * Two GodCard objects are equal if they have the same name
-   * and their methods collections contain the same methods.
    *
    * @param obj The object that this should be compared to.
    * @return If this object is equal to obj.
@@ -362,19 +350,7 @@ public class GodCard implements Serializable {
   public boolean equals(Object obj) {
     if (obj instanceof GodCard) {
       GodCard other = (GodCard) obj;
-      return name == other.name &&
-              movementConditions.size() == other.movementConditions.size() &&
-              movementConditions.containsAll(other.movementConditions) &&
-              movementConstraints.size() == other.movementConstraints.size() &&
-              movementConstraints.containsAll(other.movementConstraints) &&
-              constructionConditions.size() == other.constructionConditions.size() &&
-              constructionConditions.containsAll(other.constructionConditions) &&
-              constructionConstraints.size() == other.constructionConstraints.size() &&
-              constructionConstraints.containsAll(other.constructionConstraints) &&
-              winningConditions.size() == other.winningConditions.size() &&
-              winningConditions.containsAll(other.winningConditions) &&
-              winningConstraints.size() == other.winningConstraints.size() &&
-              winningConstraints.containsAll(other.winningConstraints);
+      return name.equals(other.name);
     } else {
       return super.equals(obj);
     }

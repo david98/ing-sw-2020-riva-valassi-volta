@@ -3,7 +3,6 @@ package it.polimi.vovarini.controller;
 import it.polimi.vovarini.common.events.*;
 import it.polimi.vovarini.common.exceptions.*;
 import it.polimi.vovarini.model.*;
-import it.polimi.vovarini.common.exceptions.BoxEmptyException;
 import it.polimi.vovarini.common.exceptions.BoxFullException;
 import it.polimi.vovarini.common.exceptions.InvalidPositionException;
 import it.polimi.vovarini.common.exceptions.ItemNotFoundException;
@@ -20,12 +19,12 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@Disabled
 @DisplayName("Controller Tests")
 public class ControllerTests {
 
@@ -35,9 +34,7 @@ public class ControllerTests {
   private static List<Phase> provideAllPhases(){
     LinkedList<Phase> phases = new LinkedList<>();
 
-    for(Phase phase : Phase.values()){
-      phases.add(phase);
-    }
+    phases.addAll(Arrays.asList(Phase.values()));
     return phases;
   }
 
@@ -85,6 +82,91 @@ public class ControllerTests {
   }
 
   @Test
+  @DisplayName("Test card selection part")
+  void cardChoiceTest() {
+
+    CardChoiceEvent evtCardsNotSelected = new CardChoiceEvent(game.getCurrentPlayer(), GodName.Artemis);
+    assertThrows(CardsNotSelectedException.class, () -> { controller.update(evtCardsNotSelected); });
+
+    game.drawElectedPlayer();
+
+    Player electedPlayer = game.getCurrentPlayer();
+    Player otherPlayer;
+
+    if(game.getPlayers()[0].equals(electedPlayer))
+      otherPlayer = game.getPlayers()[1];
+    else
+      otherPlayer = game.getPlayers()[0];
+
+    assertEquals(electedPlayer, game.getCurrentPlayer());
+
+    GodName[] selectedGods = new GodName[]{GodName.Artemis, GodName.Hephaestus};
+    AvailableCardsEvent evtWrongPlayer = new AvailableCardsEvent(otherPlayer, selectedGods);
+    assertThrows(WrongPlayerException.class, () -> { controller.update(evtWrongPlayer); });
+
+    selectedGods = new GodName[]{GodName.Artemis};
+    AvailableCardsEvent evtInvalidNumberOfGodCards = new AvailableCardsEvent(electedPlayer, selectedGods);
+    assertThrows(InvalidNumberOfGodCardsException.class, () -> { controller.update(evtInvalidNumberOfGodCards); });
+
+    selectedGods = new GodName[]{GodName.Artemis, null};
+    AvailableCardsEvent evtInvalidGodCard = new AvailableCardsEvent(electedPlayer, selectedGods);
+    assertThrows(InvalidCardException.class, () -> { controller.update(evtInvalidGodCard); });
+
+    selectedGods = new GodName[]{GodName.Artemis, GodName.Artemis};
+    AvailableCardsEvent evtDuplicateGodCard = new AvailableCardsEvent(electedPlayer, selectedGods);
+    assertThrows(InvalidCardException.class, () -> { controller.update(evtDuplicateGodCard); });
+
+    selectedGods = new GodName[]{GodName.Artemis, GodName.Hephaestus};
+    AvailableCardsEvent evt = new AvailableCardsEvent(electedPlayer, selectedGods);
+
+    try {
+      controller.update(evt);
+    } catch (WrongPlayerException e) {
+      e.printStackTrace();
+    } catch (InvalidCardException e) {
+      e.printStackTrace();
+    } catch (InvalidNumberOfGodCardsException e) {
+      e.printStackTrace();
+    } catch (AvailableCardsAlreadySetException e) {
+      e.printStackTrace();
+    }
+
+    assertTrue(game.isAvailableCardsAlreadySet());
+    assertEquals(selectedGods, game.getAvailableGodCards());
+    assertEquals(otherPlayer, game.getCurrentPlayer());
+
+    assertThrows(AvailableCardsAlreadySetException.class, () -> { controller.update(evt); });
+
+
+    // scelta della propria carta
+    GodName choice = GodName.Artemis;
+    CardChoiceEvent evtInvalidPlayer = new CardChoiceEvent(electedPlayer, choice);
+    assertThrows(WrongPlayerException.class, () -> { controller.update(evtInvalidPlayer); });
+
+    choice = GodName.Minotaur;
+    CardChoiceEvent evtInvalidCard = new CardChoiceEvent(otherPlayer, choice);
+    assertThrows(InvalidCardException.class, () -> { controller.update(evtInvalidCard); });
+
+    choice = GodName.Artemis;
+    CardChoiceEvent evtValid = new CardChoiceEvent(otherPlayer, choice);
+
+    try {
+      controller.update(evtValid);
+    } catch (CardsNotSelectedException e) {
+      e.printStackTrace();
+    } catch (InvalidCardException e) {
+      e.printStackTrace();
+    } catch (WrongPlayerException e) {
+      e.printStackTrace();
+    }
+
+    assertTrue(game.isAvailableCardsAlreadySet());
+    assertEquals(0, game.getAvailableGodCards().length);
+    assertEquals(choice, otherPlayer.getGodCard().getName());
+    assertEquals(GodName.Hephaestus, electedPlayer.getGodCard().getName());
+  }
+
+  @Test
   @DisplayName("Worker Selection due to a WorkerSelectionEvent. Tests associated sequence of calls")
   void workerSelectionTest() {
 
@@ -110,6 +192,7 @@ public class ControllerTests {
     }
     assertEquals(game.getCurrentPlayer().getCurrentWorker().getSex(), Sex.Male);
     assertTrue(game.getCurrentPlayer().isWorkerSelected());
+
 
     game.getCurrentPlayer().setWorkerSelected(false);
     WorkerSelectionEvent evtWrongPlayer =
@@ -165,6 +248,7 @@ public class ControllerTests {
     }
     assertFalse(game.getCurrentPlayer().getMovementList().isEmpty());
     game.getCurrentPlayer().getMovementList().clear();
+    game.setCurrentPhase(Phase.Movement);
 
     Point invalidMovePoint = new Point(3, 3);
     MovementEvent evtInvalidMove = new MovementEvent(game.getCurrentPlayer(), invalidMovePoint);
@@ -235,7 +319,6 @@ public class ControllerTests {
     Point femalePos = new Point(0, 1);
     try {
       game.getBoard().place(game.getCurrentPlayer().getCurrentWorker(), femalePos);
-    } catch (InvalidPositionException ignored) {
     } catch (BoxFullException ignored) {
     }
 
@@ -244,14 +327,13 @@ public class ControllerTests {
     Point malePos = new Point(0, 0);
     try {
       game.getBoard().place(game.getCurrentPlayer().getCurrentWorker(), malePos);
-    } catch (InvalidPositionException ignored) {
     } catch (BoxFullException ignored) {
     }
 
     game.setCurrentPhase(game.getCurrentPlayer().getGodCard().computeNextPhase(game));
     game.setCurrentPhase(game.getCurrentPlayer().getGodCard().computeNextPhase(game));
 
-    assertEquals(game.getCurrentPhase(), Phase.Construction);
+    assertEquals(Phase.Construction, game.getCurrentPhase());
 
     Point target = new Point(1, 1);
     int level = 1;
@@ -260,21 +342,18 @@ public class ControllerTests {
 
     try {
       controller.update(evt);
-    } catch (InvalidPositionException ignored) {
     } catch (InvalidPhaseException ignored) {
     } catch (WrongPlayerException ignored) {
     } catch (InvalidMoveException ignored) {
     }
 
-    try {
-      assertEquals(game.getBoard().getItems(target).peek(), Block.blocks[level - 1]);
-    } catch (BoxEmptyException e) {
-      System.out.println("Construction has not been performed");
-    } catch (InvalidPositionException ignored) {
-    }
+
+    assertEquals(game.getBoard().getItems(target).peek(), Block.blocks[level - 1]);
+
 
     assertFalse(game.getCurrentPlayer().getConstructionList().isEmpty());
     game.getCurrentPlayer().getConstructionList().clear();
+    game.setCurrentPhase(Phase.Construction);
 
     target = new Point(1, 0);
 
@@ -338,6 +417,7 @@ public class ControllerTests {
   @Test
   @DisplayName("Tests that a correct SpwanWorkerEvent places the currentWorker in the right place, which is the target parameter")
   void spawnWorkerTest() {
+
     game.getCurrentPlayer().setCurrentSex(Sex.Male);
 
     Point target = new Point(0, 0);
@@ -345,16 +425,40 @@ public class ControllerTests {
     SpawnWorkerEvent evt = new SpawnWorkerEvent(game.getCurrentPlayer(), target);
     try {
       controller.update(evt);
-    } catch (WrongPlayerException ignored) {
-    } catch (InvalidPositionException ignored) {
-    } catch (OverwrittenWorkerException ignored) {
+    } catch (WrongPlayerException e) {
+      e.printStackTrace();
+    } catch (InvalidPositionException e) {
+      e.printStackTrace();
+    } catch (OverwrittenWorkerException e) {
+      e.printStackTrace();
+    }
+
+    game.getCurrentPlayer().setCurrentSex(Sex.Female);
+
+    Point target_two = new Point(3,3);
+    SpawnWorkerEvent evt_second = new SpawnWorkerEvent(game.getCurrentPlayer(), target_two);
+    try{
+      controller.update(evt_second);
+    }
+    catch (WrongPlayerException e) {
+      e.printStackTrace();
+    } catch (InvalidPositionException e) {
+      e.printStackTrace();
+    } catch (OverwrittenWorkerException e) {
+      e.printStackTrace();
     }
 
     try {
+      game.nextPlayer();
+      game.getCurrentPlayer().setCurrentSex(Sex.Male);
       assertEquals(game.getBoard().getItemPosition(game.getCurrentPlayer().getCurrentWorker()), evt.getTarget());
+      game.getCurrentPlayer().setCurrentSex(Sex.Female);
+      assertEquals(game.getBoard().getItemPosition(game.getCurrentPlayer().getCurrentWorker()), evt_second.getTarget());
     } catch (ItemNotFoundException e) {
       e.printStackTrace();
     }
+
+    game.getCurrentPlayer().setCurrentSex(Sex.Male);
 
     Point badTarget = new Point(-1, -1);
     SpawnWorkerEvent evtInvalidPos = new SpawnWorkerEvent(game.getCurrentPlayer(), badTarget);
@@ -379,6 +483,53 @@ public class ControllerTests {
     assertThrows(OverwrittenWorkerException.class, () -> {
       controller.update(evtOverwrittenWorker);
     });
+
+    game.nextPlayer();
+    assertEquals(game.getCurrentPlayer(), game.getPlayers()[1]);
+
+    game.getCurrentPlayer().setCurrentSex(Sex.Male);
+
+    Point player_two_target = new Point(1, 1);
+
+    SpawnWorkerEvent p2_evt = new SpawnWorkerEvent(game.getCurrentPlayer(), player_two_target);
+    try {
+      controller.update(p2_evt);
+    } catch (WrongPlayerException e) {
+      e.printStackTrace();
+    } catch (InvalidPositionException e) {
+      e.printStackTrace();
+    } catch (OverwrittenWorkerException e) {
+      e.printStackTrace();
+    }
+
+    game.getCurrentPlayer().setCurrentSex(Sex.Female);
+
+    Point player_two_target_two = new Point(4,4);
+    SpawnWorkerEvent p2_evt_second = new SpawnWorkerEvent(game.getCurrentPlayer(), player_two_target_two);
+    try{
+      controller.update(p2_evt_second);
+    }
+    catch (WrongPlayerException e) {
+      e.printStackTrace();
+    } catch (InvalidPositionException e) {
+      e.printStackTrace();
+    } catch (OverwrittenWorkerException e) {
+      e.printStackTrace();
+    }
+
+    try {
+      game.nextPlayer();
+      game.getCurrentPlayer().setCurrentSex(Sex.Male);
+      assertEquals(game.getBoard().getItemPosition(game.getCurrentPlayer().getCurrentWorker()), p2_evt.getTarget());
+      game.getCurrentPlayer().setCurrentSex(Sex.Female);
+      assertEquals(game.getBoard().getItemPosition(game.getCurrentPlayer().getCurrentWorker()), p2_evt_second.getTarget());
+    } catch (ItemNotFoundException e) {
+      e.printStackTrace();
+    }
+
+    assertTrue(game.isSetupComplete());
+
+
 
   }
 
@@ -496,6 +647,8 @@ public class ControllerTests {
     } catch (WrongPlayerException ignored) {
     } catch (InvalidMoveException ignored) {
     }
+
+    game.setCurrentPhase(Phase.Construction);
 
     SkipEvent evt = new SkipEvent(game.getCurrentPlayer());
     try{

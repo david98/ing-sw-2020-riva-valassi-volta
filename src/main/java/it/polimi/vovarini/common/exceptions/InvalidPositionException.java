@@ -1,3 +1,3 @@
 package it.polimi.vovarini.common.exceptions;
 
-public class InvalidPositionException extends Exception {}
+public class InvalidPositionException extends RuntimeException {}

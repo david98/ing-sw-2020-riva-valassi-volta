@@ -1,3 +1,3 @@
 package it.polimi.vovarini.common.exceptions;
 
-public class BoxFullException extends Exception {}
+public class BoxFullException extends RuntimeException {}

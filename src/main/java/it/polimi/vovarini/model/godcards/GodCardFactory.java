@@ -40,14 +40,29 @@ public class GodCardFactory {
         case Hephaestus -> {
           return createHephaestus();
         }
+        case Hera -> {
+          return createHera();
+        }
+        case Hestia -> {
+          return createHestia();
+        }
         case Minotaur -> {
           return createMinotaur();
         }
         case Pan -> {
           return createPan();
         }
+        case Poseidon -> {
+          return createPoseidon();
+        }
         case Prometheus -> {
           return createPrometheus();
+        }
+        case Triton -> {
+          return createTriton();
+        }
+        case Zeus -> {
+          return createZeus();
         }
         default -> {
           return createNobody();
@@ -104,6 +119,37 @@ public class GodCardFactory {
     return athena;
   }
 
+    /**
+     * This method injects a generic GodCard with all the Behaviors modified by the card Hera
+     * @return an instance of a GodCard in the mold of Santorini's Hera card
+     */
+    private static GodCard createHera(){
+      GodCard hera = new GodCard(GodName.Hera);
+      hera.winningConstraints.add(WinDecider::perimeterConstraint);
+      return hera;
+    }
+
+    /**
+     * This method injects a generic GodCard with all the Behaviors modified by the card Hestia
+     * @return an instance of a GodCard in the mold of Santorini's Hestia card
+     */
+    private static GodCard createHestia(){
+      GodCard hestia = new GodCard(GodName.Hestia);
+      hestia.nextPhase = FlowDecider::extendsConstruction;
+      return hestia;
+    }
+
+    /**
+     * This method injects a generic GodCard with all the Behaviors modified by the card Minotaur
+     * @return an instance of a GodCard in the mold of Santorini's Minotaur card
+     */
+    private static GodCard createMinotaur() {
+        GodCard minotaur = new GodCard(GodName.Minotaur);
+        minotaur.movementConditions.add(ReachabilityDecider::conditionedExchange);
+        minotaur.listMovementEffects = ConsequencesDecider::forceOpponentWorker;
+        return minotaur;
+    }
+
   /**
    * This method injects a generic GodCard with all the Behaviors modified by the card Atlas
    * @return an instance of a GodCard in the mold of Santorini's Atlas card
@@ -128,22 +174,42 @@ public class GodCardFactory {
    * This method injects a generic GodCard with all the Behaviors modified by the card Hephaestus
    * @return an instance of a GodCard in the mold of Santorini's Hephaestus card
    */
-  private static GodCard createHephaestus(){
+  private static GodCard createHephaestus() {
     GodCard hephy = new GodCard(GodName.Hephaestus);
     hephy.nextPhase = FlowDecider::extendsConstruction;
     return hephy;
   }
 
-  /**
-   * This method injects a generic GodCard with all the Behaviors modified by the card Minotaur
-   * @return an instance of a GodCard in the mold of Santorini's Minotaur card
-   */
-  private static GodCard createMinotaur() {
-      GodCard minotaur = new GodCard(GodName.Minotaur);
-      minotaur.movementConditions.add(ReachabilityDecider::conditionedExchange);
-      minotaur.listMovementEffects = ConsequencesDecider::forceOpponentWorker;
-      return minotaur;
-  }
+    /**
+     * This method injects a generic GodCard with all the Behaviors modified by the card Poseidon
+     * @return an instance of a GodCard in the mold of Santorini's Poseidon card
+     */
+    private static GodCard createPoseidon(){
+      GodCard poseidon = new GodCard(GodName.Poseidon);
+      poseidon.nextPhase = FlowDecider::extendsConstruction;
+      return poseidon;
+    }
+
+    /**
+     * This method injects a generic GodCard with all the Behaviors modified by the card Triton
+     * @return an instance of a GodCard in the mold of Santorini's Triton card
+     */
+    private static GodCard createTriton(){
+      GodCard triton = new GodCard(GodName.Triton);
+      triton.nextPhase = FlowDecider::extendsMovement;
+      return triton;
+    }
+
+    /**
+     * This method injects a generic GodCard with all the Behaviors modified by the card Zeus
+     * @return an instance of a GodCard in the mold of Santorini's Zeus card
+     */
+    private static GodCard createZeus(){
+      GodCard zeus = new GodCard(GodName.Zeus);
+      zeus.validateConstruction = ValidationDecider::allowUnderMyself;
+      zeus.constructionConditions.add(BuildabilityDecider::buildUnderMyself);
+      return zeus;
+    }
 
   /**
    * This method injects a generic GodCard with all the Behaviors modified by the card Pan
@@ -172,5 +238,5 @@ public class GodCardFactory {
    */
   private static GodCard createNobody() {
     return new GodCard(GodName.Nobody);
-}
+  }
 }

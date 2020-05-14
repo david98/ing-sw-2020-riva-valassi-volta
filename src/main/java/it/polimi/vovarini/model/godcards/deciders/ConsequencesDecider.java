@@ -1,15 +1,12 @@
 package it.polimi.vovarini.model.godcards.deciders;
 
-import it.polimi.vovarini.common.exceptions.BoxEmptyException;
 import it.polimi.vovarini.model.GameDataAccessor;
 import it.polimi.vovarini.model.Point;
 import it.polimi.vovarini.model.board.Box;
-import it.polimi.vovarini.model.board.items.Item;
 import it.polimi.vovarini.model.moves.Movement;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Stack;
 
 /**
  * ConsequencesDecider is an extension of Decider. It decides how many and what type of forced and not-forced moves you must execute after the application of an effect.
@@ -31,20 +28,17 @@ public class ConsequencesDecider extends Decider {
         Point start = movement.getStart();
         Point end = movement.getEnd();
 
-        try {
-            Box destinationBox = gameData.getBoard().getBox(end);
-            var destinationItems = destinationBox.getItems();
+        Box destinationBox = gameData.getBoard().getBox(end);
+        var destinationItems = destinationBox.getItems();
 
-            if(destinationItems.peek() != null && destinationItems.peek().canBeRemoved()) {
+        if(destinationItems.peek() != null && destinationItems.peek().canBeRemoved()) {
 
-                int x = 2*end.getX() - start.getX();
-                int y = 2*end.getY() - start.getY();
-                Point forcedDestination = new Point(x,y);
+            int x = 2*end.getX() - start.getX();
+            int y = 2*end.getY() - start.getY();
+            Point forcedDestination = new Point(x,y);
 
-                Movement forcedMovement = new Movement(gameData.getBoard(), end,forcedDestination, true);
-                movementList.add(forcedMovement);
-            }
-        } catch (BoxEmptyException ignored) {
+            Movement forcedMovement = new Movement(gameData.getBoard(), end,forcedDestination, true);
+            movementList.add(forcedMovement);
         }
 
         movementList.add(movement);

@@ -51,13 +51,7 @@ public class DemeterTests {
         for (int x = 0; x < b.getSize(); x++){
             for (int y = 0; y < b.getSize(); y++){
                 Point cur = new Point(x, y);
-                while (true){
-                    try {
-                        b.remove(cur);
-                    } catch (BoxEmptyException | InvalidPositionException e){
-                        break;
-                    }
-                }
+                while (b.remove(cur) != null);
             }
         }
         game.setCurrentPhase(Phase.Start);

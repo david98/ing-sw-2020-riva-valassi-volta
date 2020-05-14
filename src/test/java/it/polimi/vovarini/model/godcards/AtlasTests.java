@@ -1,6 +1,5 @@
 package it.polimi.vovarini.model.godcards;
 
-import it.polimi.vovarini.common.exceptions.BoxEmptyException;
 import it.polimi.vovarini.common.exceptions.BoxFullException;
 import it.polimi.vovarini.common.exceptions.InvalidNumberOfPlayersException;
 import it.polimi.vovarini.common.exceptions.InvalidPositionException;
@@ -53,13 +52,7 @@ public class AtlasTests {
         for (int x = 0; x < b.getSize(); x++){
             for (int y = 0; y < b.getSize(); y++){
                 Point cur = new Point(x, y);
-                while (true){
-                    try {
-                        b.remove(cur);
-                    } catch (BoxEmptyException | InvalidPositionException e){
-                        break;
-                    }
-                }
+                while (b.remove(cur) != null);
             }
         }
     }
