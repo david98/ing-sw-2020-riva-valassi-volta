@@ -1,10 +1,10 @@
 package it.polimi.vovarini.common.exceptions;
 
-public class InvalidNicknameException extends Throwable {
+public class InvalidNicknameException extends Exception {
 
-  private int errorCode;
-  public static int ERROR_DUPLICATE = 0;
-  public static int ERROR_INVALID = 1;
+  private final int errorCode;
+  public static final int ERROR_DUPLICATE = 0;
+  public static final int ERROR_INVALID = 1;
 
   public InvalidNicknameException(int errorCode) {
     this.errorCode = errorCode;

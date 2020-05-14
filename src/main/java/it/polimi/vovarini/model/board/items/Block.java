@@ -1,5 +1,7 @@
 package it.polimi.vovarini.model.board.items;
 
+import it.polimi.vovarini.common.exceptions.InvalidLevelException;
+
 import java.util.stream.IntStream;
 
 public class Block extends Item {

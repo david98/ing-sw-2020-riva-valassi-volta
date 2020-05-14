@@ -9,7 +9,7 @@ import it.polimi.vovarini.model.Phase;
 import it.polimi.vovarini.model.Player;
 import it.polimi.vovarini.model.Point;
 import it.polimi.vovarini.model.board.items.Block;
-import it.polimi.vovarini.model.board.items.InvalidLevelException;
+import it.polimi.vovarini.common.exceptions.InvalidLevelException;
 import it.polimi.vovarini.model.board.items.Sex;
 import it.polimi.vovarini.model.godcards.GodCard;
 import it.polimi.vovarini.model.moves.Construction;
