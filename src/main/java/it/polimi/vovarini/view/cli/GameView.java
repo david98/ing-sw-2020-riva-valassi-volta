@@ -106,6 +106,7 @@ public class GameView extends View {
     for (Player p: players){
       data.addPlayer(p);
     }
+    data.setCurrentPlayer(e.getElectedPlayer());
     if (e.getElectedPlayer().equals(data.getOwner())) {
       currentScreen = new ElectedPlayerScreen(data, client, Arrays.asList(e.getAllGods()));
       gameLoop();

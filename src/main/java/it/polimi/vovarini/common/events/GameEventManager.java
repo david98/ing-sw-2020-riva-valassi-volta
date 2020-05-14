@@ -67,6 +67,8 @@ public class GameEventManager {
   }
 
   public static synchronized void raise(GameEvent e) {
+    LOGGER.setLevel(Level.FINE);
+    LOGGER.log(Level.FINE, "GameEvent of class {0} was raised.", new Object[]{e.getClass().getName()});
     Set<Map.Entry<Object, Method>> eventListeners = getInstance().listeners.get(e.getClass().getSimpleName());
     if (eventListeners != null){
       for (Map.Entry<Object, Method> pair: eventListeners){

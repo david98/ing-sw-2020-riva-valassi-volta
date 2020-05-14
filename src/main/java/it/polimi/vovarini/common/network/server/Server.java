@@ -48,7 +48,7 @@ public class Server implements Runnable{
   public void run(){
     LOGGER.log(Level.INFO, "Server is now listening on port {0}.", serverSocket.getLocalPort());
     try {
-      while (true) {
+      while (!Thread.currentThread().isInterrupted()) {
         LOGGER.log(Level.FINE, "Waiting for new connection...");
         pool.execute(new RemoteView(serverSocket.accept()));
         LOGGER.log(Level.INFO, "A new client connected.");

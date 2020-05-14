@@ -37,11 +37,12 @@ public class RemoteView extends View implements ClientConnectionHandler {
 
   @Override
   public void run() {
-    while (true){
+    while (!Thread.currentThread().isInterrupted()){
       try {
         GameEvent evt = clientEvents.take();
         GameEventManager.raise(evt);
       } catch (InterruptedException ignored){
+        Thread.currentThread().interrupt();
       }
     }
   }

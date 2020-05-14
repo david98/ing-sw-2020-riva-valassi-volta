@@ -86,7 +86,6 @@ public class Game implements Serializable, GameDataAccessor {
 
   public void drawElectedPlayer() {
     currentPlayerIndex = random.nextInt(players.length);
-    GameEventManager.raise(new CurrentPlayerChangedEvent(this, getCurrentPlayer()));
   }
 
   // se è rimasta solo una carta, la assegna, altrimenti chiede al prossimo giocatore la carta che vuole (tra quelle rimaste)
