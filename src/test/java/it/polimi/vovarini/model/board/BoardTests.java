@@ -1,9 +1,9 @@
 package it.polimi.vovarini.model.board;
 
+import it.polimi.vovarini.common.exceptions.InvalidLevelException;
 import it.polimi.vovarini.common.exceptions.InvalidPositionException;
 import it.polimi.vovarini.model.Point;
 import it.polimi.vovarini.model.board.items.Block;
-import it.polimi.vovarini.common.exceptions.InvalidLevelException;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

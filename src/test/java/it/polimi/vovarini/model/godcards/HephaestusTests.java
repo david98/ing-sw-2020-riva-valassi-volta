@@ -43,7 +43,7 @@ public class HephaestusTests {
                 player.setGodCard(hephaestus);
             }
         } catch (InvalidNumberOfPlayersException e){
-            e.printStackTrace();;
+            e.printStackTrace();
         }
     }
 

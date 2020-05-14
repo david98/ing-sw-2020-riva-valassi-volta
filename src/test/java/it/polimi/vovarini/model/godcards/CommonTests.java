@@ -1,11 +1,11 @@
 package it.polimi.vovarini.model.godcards;
 
-import it.polimi.vovarini.server.Server;
+import it.polimi.vovarini.common.network.server.Server;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.params.provider.EnumSource;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.*;
@@ -13,8 +13,6 @@ import java.net.ConnectException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
-import java.util.Arrays;
-import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -25,7 +23,7 @@ public class CommonTests {
 
 
   @ParameterizedTest
-  @MethodSource("provideAllGodNames")
+  @EnumSource(GodName.class)
   @DisplayName("Tests that a GodCard can be serialized and deserialized")
   void serializationAndDeserialization(GodName name) throws IOException, ClassNotFoundException {
     GodCard godCard = GodCardFactory.create(name);
@@ -81,12 +79,8 @@ public class CommonTests {
     }
   }
 
-  public static List<GodName> provideAllGodNames(){
-    return Arrays.asList(GodName.values());
-  }
-
   @ParameterizedTest
-  @MethodSource("provideAllGodNames")
+  @EnumSource(GodName.class)
   @DisplayName("Test that equals works")
   void testEquals(GodName name){
     GodCard card = GodCardFactory.create(name);
@@ -94,7 +88,7 @@ public class CommonTests {
   }
 
   @ParameterizedTest
-  @MethodSource("provideAllGodNames")
+  @EnumSource(GodName.class)
   @DisplayName("Test that hashCode works")
   void testHashCode(GodName name){
     GodCard original = GodCardFactory.create(name);
@@ -106,7 +100,7 @@ public class CommonTests {
   }
 
   @ParameterizedTest
-  @MethodSource("provideAllGodNames")
+  @EnumSource(GodName.class)
   @DisplayName("Test that clone works and produces two GodCard that are equal but not the same object")
   void testClone(GodName name){
     GodCard original = GodCardFactory.create(name);

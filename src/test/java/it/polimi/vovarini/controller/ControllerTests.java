@@ -3,11 +3,7 @@ package it.polimi.vovarini.controller;
 import it.polimi.vovarini.common.events.*;
 import it.polimi.vovarini.common.exceptions.*;
 import it.polimi.vovarini.model.*;
-import it.polimi.vovarini.common.exceptions.BoxFullException;
-import it.polimi.vovarini.common.exceptions.InvalidPositionException;
-import it.polimi.vovarini.common.exceptions.ItemNotFoundException;
 import it.polimi.vovarini.model.board.items.Block;
-import it.polimi.vovarini.common.exceptions.OverwrittenWorkerException;
 import it.polimi.vovarini.model.board.items.Sex;
 import it.polimi.vovarini.model.godcards.GodCard;
 import it.polimi.vovarini.model.godcards.GodCardFactory;
@@ -81,7 +77,7 @@ public class ControllerTests {
   @DisplayName("Test card selection part")
   void cardChoiceTest() {
 
-    CardChoiceEvent evtCardsNotSelected = new CardChoiceEvent(game.getCurrentPlayer(), GodName.Artemis);
+    var evtCardsNotSelected = new CardChoiceEvent(game.getCurrentPlayer(), GodName.Artemis);
     assertThrows(CardsNotSelectedException.class, () -> { controller.update(evtCardsNotSelected); });
 
     game.drawElectedPlayer();
@@ -97,7 +93,7 @@ public class ControllerTests {
     assertEquals(electedPlayer, game.getCurrentPlayer());
 
     GodName[] selectedGods = new GodName[]{GodName.Artemis, GodName.Hephaestus};
-    AvailableCardsEvent evtWrongPlayer = new AvailableCardsEvent(otherPlayer, selectedGods);
+    var evtWrongPlayer = new AvailableCardsEvent(otherPlayer, selectedGods);
     assertThrows(WrongPlayerException.class, () -> { controller.update(evtWrongPlayer); });
 
     selectedGods = new GodName[]{GodName.Artemis};

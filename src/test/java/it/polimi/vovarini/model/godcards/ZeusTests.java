@@ -41,7 +41,7 @@ public class ZeusTests {
                 player.setGodCard(zeus);
             }
         } catch (InvalidNumberOfPlayersException e){
-            e.printStackTrace();;
+            e.printStackTrace();
         }
     }
 

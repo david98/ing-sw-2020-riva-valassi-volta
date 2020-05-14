@@ -1,6 +1,6 @@
 package it.polimi.vovarini.view.cli.screens;
 
-import it.polimi.vovarini.server.GameClient;
+import it.polimi.vovarini.common.network.GameClient;
 import it.polimi.vovarini.view.ViewData;
 import it.polimi.vovarini.view.cli.elements.Text;
 

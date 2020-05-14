@@ -1,5 +1,7 @@
 package it.polimi.vovarini.model;
 
+import it.polimi.vovarini.common.events.CardAssignmentEvent;
+import it.polimi.vovarini.common.events.GameEventManager;
 import it.polimi.vovarini.model.board.Board;
 import it.polimi.vovarini.model.board.items.Sex;
 import it.polimi.vovarini.model.board.items.Worker;
@@ -82,6 +84,7 @@ public class Player implements Serializable {
   }
 
   public void setGodCard(GodCard godCard) {
+    GameEventManager.raise(new CardAssignmentEvent(this, this, godCard));
     this.godCard = godCard;
   }
 

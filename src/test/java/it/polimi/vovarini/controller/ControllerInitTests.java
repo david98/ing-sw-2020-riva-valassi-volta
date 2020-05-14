@@ -4,8 +4,6 @@ import it.polimi.vovarini.common.events.RegistrationEvent;
 import it.polimi.vovarini.common.exceptions.InvalidNicknameException;
 import it.polimi.vovarini.common.exceptions.InvalidNumberOfPlayersException;
 import it.polimi.vovarini.model.Game;
-import it.polimi.vovarini.model.godcards.GodCard;
-import it.polimi.vovarini.model.godcards.GodName;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

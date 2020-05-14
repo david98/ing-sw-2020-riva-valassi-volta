@@ -1,6 +1,8 @@
-package it.polimi.vovarini.server;
+package it.polimi.vovarini.common.network.server;
 
 import it.polimi.vovarini.common.events.*;
+import it.polimi.vovarini.common.network.SocketReader;
+import it.polimi.vovarini.common.network.SocketWriter;
 import it.polimi.vovarini.model.Player;
 import it.polimi.vovarini.view.View;
 
@@ -35,12 +37,11 @@ public class RemoteView extends View implements ClientConnectionHandler {
 
   @Override
   public void run() {
-    while (!Thread.currentThread().isInterrupted()){
+    while (true){
       try {
         GameEvent evt = clientEvents.take();
         GameEventManager.raise(evt);
-      } catch (InterruptedException e){
-        Thread.currentThread().interrupt();
+      } catch (InterruptedException ignored){
       }
     }
   }

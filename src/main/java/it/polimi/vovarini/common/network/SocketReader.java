@@ -1,5 +1,6 @@
-package it.polimi.vovarini.server;
+package it.polimi.vovarini.common.network;
 
+import java.io.EOFException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.net.Socket;
@@ -26,10 +27,13 @@ public class SocketReader<T> implements Runnable{
       try{
         Object receivedObj = in.readObject();
         if (objClass.isAssignableFrom(receivedObj.getClass())){
-          retrievedObjects.add(objClass.cast(receivedObj));
+          retrievedObjects.put(objClass.cast(receivedObj));
         }
-      } catch (IOException | ClassNotFoundException e){
+      } catch (ClassNotFoundException e){
         e.printStackTrace();
+      } catch (EOFException | InterruptedException e){
+        Thread.currentThread().interrupt();
+      } catch (IOException ignored){
       }
     }
   }

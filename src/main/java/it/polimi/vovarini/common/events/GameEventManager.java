@@ -1,5 +1,7 @@
 package it.polimi.vovarini.common.events;
 
+import org.codehaus.plexus.util.ExceptionUtils;
+
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.*;
@@ -14,7 +16,7 @@ public class GameEventManager {
 
   private final HashMap<String, Set<Map.Entry<Object, Method>>> listeners;
 
-  public static GameEventManager getInstance(){
+  public static synchronized GameEventManager getInstance(){
     if (instance == null){
       instance = new GameEventManager();
     }
@@ -32,7 +34,7 @@ public class GameEventManager {
    * @param obj The object containing the listeners.
    */
  @SuppressWarnings("unchecked")
-  public synchronized static void bindListeners(@org.jetbrains.annotations.NotNull Object obj){
+  public static synchronized void bindListeners(@org.jetbrains.annotations.NotNull Object obj){
     for (Method m: obj.getClass().getMethods()){
       GameEventListener a = m.getDeclaredAnnotation(GameEventListener.class);
       if (a != null){
@@ -50,7 +52,7 @@ public class GameEventManager {
                     eventClass);
           }
         } catch (ClassCastException e){
-          LOGGER.log(Level.SEVERE, e.toString(), e);
+          LOGGER.log(Level.SEVERE, "{0} {1}", new Object[]{e.toString(), e});
         }
       }
     }
@@ -58,13 +60,13 @@ public class GameEventManager {
 
   // maybe add bind method for static methods?
 
-  private void register(Object obj, Method method, Class<? extends GameEvent> eventClass){
+  private synchronized void register(Object obj, Method method, Class<? extends GameEvent> eventClass){
     Set<Map.Entry<Object, Method>> eventClassListeners = listeners.computeIfAbsent(eventClass.getSimpleName(),
             k -> new HashSet<>());
     eventClassListeners.add(new AbstractMap.SimpleEntry<>(obj, method));
   }
 
-  public synchronized static void raise(GameEvent e) {
+  public static synchronized void raise(GameEvent e) {
     Set<Map.Entry<Object, Method>> eventListeners = getInstance().listeners.get(e.getClass().getSimpleName());
     if (eventListeners != null){
       for (Map.Entry<Object, Method> pair: eventListeners){
@@ -73,10 +75,11 @@ public class GameEventManager {
         } catch (IllegalAccessException ex){
           LOGGER.log(Level.SEVERE, "{0} {1}", new Object[]{ex.toString(), ex});
         } catch (InvocationTargetException ex){
-          LOGGER.log(Level.SEVERE, "{0} {1}",
+          LOGGER.log(Level.SEVERE, "Exception occurred while calling listener {0}. " +
+                          "Stack trace: {1}",
                   new Object[]{
-                          ex.getTargetException().toString(),
-                          ex.getTargetException()
+                          pair.getValue(),
+                          ExceptionUtils.getFullStackTrace(ex.getTargetException())
           });
         }
       }

@@ -1,4 +1,4 @@
-package it.polimi.vovarini.server;
+package it.polimi.vovarini.common.network;
 
 import it.polimi.vovarini.common.events.GameEvent;
 import it.polimi.vovarini.common.events.WorkerSelectionEvent;
@@ -34,12 +34,6 @@ public class GameClient {
 
   public void raise(GameEvent evt) {
     clientEvents.add(evt);
-  }
-
-  public static void main(String[] args) throws IOException {
-    GameClient client = new GameClient("127.0.0.1", 6666);
-    WorkerSelectionEvent evt = new WorkerSelectionEvent(client, Sex.Male);
-    client.raise(evt);
   }
 
   public BlockingQueue<GameEvent> getServerEvents() {
