@@ -126,9 +126,6 @@ public class MatchScreen extends Screen {
       deSelect();
       client.raise(new BuildEvent(data.getOwner(), dest, nextLevel));
     }
-
-
-
   }
 
   private void selectWorker(){
