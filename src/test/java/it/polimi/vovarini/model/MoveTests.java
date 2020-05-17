@@ -1,14 +1,17 @@
 package it.polimi.vovarini.model;
 
 import it.polimi.vovarini.common.exceptions.BoxFullException;
+import it.polimi.vovarini.common.exceptions.InvalidPositionException;
 import it.polimi.vovarini.common.exceptions.ItemNotFoundException;
 import it.polimi.vovarini.model.board.*;
 import it.polimi.vovarini.model.board.items.Sex;
 import it.polimi.vovarini.model.board.items.Worker;
+import it.polimi.vovarini.model.moves.Move;
 import it.polimi.vovarini.model.moves.Movement;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -77,5 +80,18 @@ public class MoveTests {
     } catch (BoxFullException | ItemNotFoundException ignored) {
 
     }
+  }
+
+  @Test
+  @DisplayName("Test that the reverse method generates a reverse movement")
+  void testReverse(){
+    Movement okMove = new Movement(board, new Point(0,0), new Point(1,1), true);
+    Move okRev = okMove.reverse();
+    Movement rev = (Movement) okRev;
+
+    assertEquals(okMove.getEnd(), rev.getStart());
+    assertEquals(okMove.getStart(), rev.getEnd());
+    assertEquals(okMove.getBoard(), rev.getBoard());
+    assertEquals(okMove.isForced(), rev.isForced());
   }
 }

@@ -42,13 +42,12 @@ public class Movement extends Move {
   }
 
   @Override
-  public void execute() {
+  public void execute() throws RuntimeException{
     try {
       Item startItem = board.remove(start);
 
       if (startItem == null){
-        System.err.println("Invalid start.");
-        return;
+        throw new RuntimeException(); //invalid start
       }
 
       Item endItem = board.getItems(end).peek();
@@ -58,9 +57,9 @@ public class Movement extends Move {
       }
       board.place(startItem, end);
     }  catch (InvalidPositionException e) {
-      System.err.println("Invalid start/end");
+      throw new RuntimeException(); //invalid start or end
     } catch (BoxFullException e) {
-      System.err.println("End box is full.");
+      throw new RuntimeException(); //end box is full
     }
   }
 

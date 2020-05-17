@@ -76,4 +76,18 @@ public class BoxTests {
     items = box.getItems();
     assertFalse(items.isEmpty());
   }
+
+  @Test
+  @DisplayName("Test that toString works as expected")
+  void toStringTest(){
+    Box aBox = new Box();
+
+    Block block = new Block(Block.MIN_LEVEL);
+    aBox.place(block);
+    Player testPlayer = new Player("test_player");
+    Worker worker = new Worker(Sex.Female, testPlayer);
+    aBox.place(worker);
+
+    assertEquals("F - 1 - ", aBox.toString());
+  }
 }
