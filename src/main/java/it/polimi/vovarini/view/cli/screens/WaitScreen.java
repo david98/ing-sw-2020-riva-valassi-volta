@@ -9,6 +9,7 @@ public class WaitScreen extends Screen{
 
   public WaitScreen(ViewData data, GameClient client, String message){
     super(data, client);
+    handlesInput = false;
     this.message = new Text(message + "\n");
   }
 

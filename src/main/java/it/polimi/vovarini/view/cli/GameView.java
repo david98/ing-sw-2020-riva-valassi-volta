@@ -20,24 +20,20 @@ public class GameView extends View {
 
   private final GameClient client;
 
-  private boolean reRenderNeeded;
-
   private Screen currentScreen;
 
   private final Console console;
 
   private boolean running;
 
-  public GameView() throws IOException {
+  public GameView(String serverIP, int serverPort) throws IOException {
     super();
 
     data = new ViewData();
 
-    this.reRenderNeeded = true;
-
     console = new FullScreenConsole();
 
-    client = new GameClient("127.0.0.1", Server.DEFAULT_PORT);
+    client = new GameClient(serverIP, serverPort);
 
     running = true;
   }
@@ -153,6 +149,7 @@ public class GameView extends View {
       // maybe we should show the board
       currentScreen = new WaitScreen(data, client,
               "Waiting for all players to place their workers...");
+
       render();
       waitForEvent();
     }
@@ -211,9 +208,9 @@ public class GameView extends View {
         GameEventManager.raise(evt);
       }
       try {
-        if (data.getOwner().equals(data.getCurrentPlayer())) {
+        render();
+        if (data.getOwner().equals(data.getCurrentPlayer()) && currentScreen.isHandlesInput()) {
           handleInput();
-          render();
         } else {
           // wait for event
           GameEventManager.raise(client.getServerEvents().take());
@@ -228,14 +225,5 @@ public class GameView extends View {
 
   public void stop(){
     running = false;
-  }
-
-  public static void main(String[] args){
-    try {
-      GameView view = new GameView();
-      view.gameSetup();
-    } catch (IOException e){
-      e.printStackTrace();
-    }
   }
 }

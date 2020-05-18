@@ -14,9 +14,16 @@ public abstract class Screen implements Renderable, EventsForViewListener, KeyPr
 
   protected final ViewData data;
 
+  protected boolean handlesInput;
+
   protected Screen(ViewData data, GameClient client) {
     this.client = client;
     this.data = data;
+    this.handlesInput = true;
+  }
+
+  public boolean isHandlesInput() {
+    return handlesInput;
   }
 
   @Override

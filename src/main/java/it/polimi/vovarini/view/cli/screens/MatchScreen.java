@@ -1,6 +1,7 @@
 package it.polimi.vovarini.view.cli.screens;
 
 import it.polimi.vovarini.common.events.*;
+import it.polimi.vovarini.model.Phase;
 import it.polimi.vovarini.model.Point;
 import it.polimi.vovarini.model.board.items.Item;
 import it.polimi.vovarini.model.board.items.Worker;
@@ -68,6 +69,7 @@ public class MatchScreen extends Screen {
       }
       case N: {
         client.raise(new SkipEvent(data.getOwner()));
+        handlesInput = false;
         break;
       }
       case O: {
@@ -125,6 +127,7 @@ public class MatchScreen extends Screen {
       int nextLevel = data.getBoard().getBox(dest).getLevel() + 1;
       deSelect();
       client.raise(new BuildEvent(data.getOwner(), dest, nextLevel));
+      handlesInput = false;
     }
   }
 
@@ -167,6 +170,7 @@ public class MatchScreen extends Screen {
                 data.getOwner(),
                 boardElement.getCursorLocation())
         );
+        handlesInput = false;
     }
   }
 
@@ -194,6 +198,7 @@ public class MatchScreen extends Screen {
         if (data.getSelectedWorker() != null){
           client.raise(
                   new WorkerSelectionEvent(data.getOwner(), data.getSelectedWorker().getSex()));
+          handlesInput = false;
         }
       }
     }
@@ -202,24 +207,43 @@ public class MatchScreen extends Screen {
   @Override
   public void handleBoardUpdate(BoardUpdateEvent e) {
     boardElement.setBoard(e.getNewBoard());
+    reRenderNeeded = true;
   }
 
   @Override
   public void handleCurrentPlayerUpdate(CurrentPlayerChangedEvent e) {
     playerList.setCurrentPlayer(e.getNewPlayer());
+    message.setContent("");
+    phasePrompt.setCurrentPhase(Phase.Start);
+
+    if (e.getNewPlayer().equals(data.getCurrentPlayer())){
+      handlesInput = true;
+    }
+
+    reRenderNeeded = true;
   }
 
   @Override
   public void handlePhaseUpdate(PhaseUpdateEvent e) {
+    handlesInput = true;
     phasePrompt.setCurrentPhase(e.getNewPhase());
+    message.setContent("");
     switch (data.getCurrentPhase()) {
       case Construction -> {
-        boardElement.markPoints(data.getOwner().getGodCard().computeBuildablePoints());
-        if (data.getOwner().isHasLost()) {
-          System.exit(1);
+        if (data.getCurrentPlayer().equals(data.getOwner())) {
+          boardElement.markPoints(data.getOwner().getGodCard().computeBuildablePoints());
+          if (data.getOwner().isHasLost()) {
+            System.exit(1);
+          }
+        }
+      }
+      case End -> {
+        if (data.getCurrentPlayer().equals(data.getOwner())) {
+          message.setContent("Press N to end your turn.");
         }
       }
     }
+    reRenderNeeded = true;
   }
 
   @Override

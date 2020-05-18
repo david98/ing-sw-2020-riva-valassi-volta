@@ -51,6 +51,10 @@ public class SpawnWorkersScreen extends Screen {
       if (boardElement.getMarkedPoints().contains(cursor)) {
         client.raise(new SpawnWorkerEvent(data.getOwner(), cursor));
         sexes.remove(0);
+
+        if (sexes.isEmpty()){
+          handlesInput = false;
+        }
       }
     }
   }

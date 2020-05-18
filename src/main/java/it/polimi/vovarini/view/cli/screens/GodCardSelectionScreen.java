@@ -24,6 +24,7 @@ public class GodCardSelectionScreen extends Screen{
     if (godNameMultiChoiceList.maxSelected()) {
       client.raise(new CardChoiceEvent(data.getOwner(),
               godNameMultiChoiceList.getSelectedOptions().iterator().next()));
+      handlesInput = false;
     }
   }
 
