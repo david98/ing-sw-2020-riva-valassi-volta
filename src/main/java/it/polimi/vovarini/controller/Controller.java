@@ -244,7 +244,7 @@ public class Controller implements EventListener {
 
     Construction build = new Construction(board, toBuild, target, false);
 
-    if (!game.getCurrentPlayer().getGodCard().validate(game.getCurrentPlayer().getGodCard().computeReachablePoints(), build))
+    if (!game.getCurrentPlayer().getGodCard().validate(game.getCurrentPlayer().getGodCard().computeBuildablePoints(), build))
         throw new InvalidMoveException();
 
     game.performMove(build);
@@ -313,10 +313,17 @@ public class Controller implements EventListener {
     Player currentPlayer = game.getCurrentPlayer();
     if (!currentPlayer.equals(evt.getSource())) throw new WrongPlayerException();
 
-    if (game.getCurrentPhase().equals(Phase.Start) && !currentPlayer.isWorkerSelected()) throw new UnskippablePhaseException();
-    if (game.getCurrentPhase().equals(Phase.Movement) && currentPlayer.getMovementList().isEmpty()) throw new UnskippablePhaseException();
-    if (game.getCurrentPhase().equals(Phase.Construction) && currentPlayer.getConstructionList().isEmpty()) throw new UnskippablePhaseException();
+    if ((game.getCurrentPhase().equals(Phase.Start) && !currentPlayer.isWorkerSelected()) ||
+            (game.getCurrentPhase().equals(Phase.Movement) && currentPlayer.getMovementList().isEmpty()) ||
+            (game.getCurrentPhase().equals(Phase.Construction) && currentPlayer.getConstructionList().isEmpty())){
+      // otherwise clients get stuck waiting for an event
+      GameEventManager.raise(new PhaseUpdateEvent(game, game.getCurrentPhase()));
+      throw new UnskippablePhaseException();
+    }
 
+    if (game.getCurrentPhase().equals(Phase.End)){
+      game.getCurrentPlayer().setWorkerSelected(false);
+    }
     game.setCurrentPhase(game.getCurrentPlayer().getGodCard().computeNextPhase(game));
   }
 

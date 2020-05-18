@@ -1,6 +1,7 @@
 package it.polimi.vovarini.view.cli.screens;
 
 import it.polimi.vovarini.common.events.*;
+import it.polimi.vovarini.model.Phase;
 import it.polimi.vovarini.model.Point;
 import it.polimi.vovarini.model.board.items.Item;
 import it.polimi.vovarini.model.board.items.Worker;
@@ -68,6 +69,7 @@ public class MatchScreen extends Screen {
       }
       case N: {
         client.raise(new SkipEvent(data.getOwner()));
+        handlesInput = false;
         break;
       }
       case O: {
@@ -104,7 +106,6 @@ public class MatchScreen extends Screen {
     data.setSelectedWorker(null);
     data.setCurrentStart(null);
     boardElement.resetMarkedPoints();
-    message.setContent("");
 
     reRenderNeeded = true;
   }
@@ -125,11 +126,9 @@ public class MatchScreen extends Screen {
     if (buildablePoints.contains(dest)){
       int nextLevel = data.getBoard().getBox(dest).getLevel() + 1;
       deSelect();
-      client.raise(new BuildEvent(data.getOwner().getNickname(), dest, nextLevel));
+      client.raise(new BuildEvent(data.getOwner(), dest, nextLevel));
+      handlesInput = false;
     }
-
-
-
   }
 
   private void selectWorker(){
@@ -164,38 +163,14 @@ public class MatchScreen extends Screen {
    * the current phase is Movement.
    */
   private void selectWhenMovementPhase(){
-    if (data.getSelectedWorker() != null){
-      if (boardElement.getCursorLocation().equals(data.getCurrentStart())){
-        deSelect();
-      } else if (boardElement.getMarkedPoints().contains(boardElement.getCursorLocation())){
+    if (data.getSelectedWorker() != null &&
+      boardElement.getMarkedPoints().contains(boardElement.getCursorLocation())){
         boardElement.resetMarkedPoints();
         client.raise(new MovementEvent(
-                data.getOwner().getNickname(),
+                data.getOwner(),
                 boardElement.getCursorLocation())
         );
-      }
-    } else {
-      // check if one of the player's workers is under the cursor
-      Item item = data.getBoard().getItems(boardElement.getCursorLocation()).peek();
-      if (data.getOwner().isHasLost()){
-        System.exit(1);
-      }
-
-      if (data.getOwner().getWorkers().values().stream().anyMatch(w -> w.equals(item))) {
-        data.setCurrentStart(boardElement.getCursorLocation());
-        data.setSelectedWorker((Worker) item);
-        client.raise(
-                new WorkerSelectionEvent(
-                        data.getOwner().getNickname(),
-                        data.getSelectedWorker().getSex())
-        );
-        // mark points reachable by the selected worker
-        boardElement.markPoints(
-                data.getOwner().getGodCard().computeReachablePoints()
-        );
-
-        reRenderNeeded = true;
-      }
+        handlesInput = false;
     }
   }
 
@@ -219,34 +194,56 @@ public class MatchScreen extends Screen {
    */
   private void confirm(){
     switch (data.getCurrentPhase()){
-      case Start ->
-        GameEventManager.raise(
-                new WorkerSelectionEvent(data.getOwner(), data.getOwner().getCurrentWorker().getSex())
-        );
+      case Start -> {
+        if (data.getSelectedWorker() != null){
+          client.raise(
+                  new WorkerSelectionEvent(data.getOwner(), data.getSelectedWorker().getSex()));
+          handlesInput = false;
+        }
+      }
     }
   }
 
   @Override
   public void handleBoardUpdate(BoardUpdateEvent e) {
     boardElement.setBoard(e.getNewBoard());
+    reRenderNeeded = true;
   }
 
   @Override
   public void handleCurrentPlayerUpdate(CurrentPlayerChangedEvent e) {
     playerList.setCurrentPlayer(e.getNewPlayer());
+    message.setContent("");
+    phasePrompt.setCurrentPhase(Phase.Start);
+
+    if (e.getNewPlayer().equals(data.getCurrentPlayer())){
+      handlesInput = true;
+    }
+
+    reRenderNeeded = true;
   }
 
   @Override
   public void handlePhaseUpdate(PhaseUpdateEvent e) {
+    handlesInput = true;
+    phasePrompt.setCurrentPhase(e.getNewPhase());
+    message.setContent("");
     switch (data.getCurrentPhase()) {
       case Construction -> {
-        boardElement.markPoints(data.getOwner().getGodCard().computeBuildablePoints());
-        phasePrompt.setCurrentPhase(e.getNewPhase());
-        if (data.getOwner().isHasLost()) {
-          System.exit(1);
+        if (data.getCurrentPlayer().equals(data.getOwner())) {
+          boardElement.markPoints(data.getOwner().getGodCard().computeBuildablePoints());
+          if (data.getOwner().isHasLost()) {
+            System.exit(1);
+          }
+        }
+      }
+      case End -> {
+        if (data.getCurrentPlayer().equals(data.getOwner())) {
+          message.setContent("Press N to end your turn.");
         }
       }
     }
+    reRenderNeeded = true;
   }
 
   @Override

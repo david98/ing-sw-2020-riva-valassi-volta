@@ -152,7 +152,9 @@ public class Player implements Serializable {
   public boolean hasPlayerRisen(GameDataAccessor gameData){
 
     for (Movement movement : movementList){
-      if (gameData.getBoard().getBox(movement.getEnd()).getLevel() - gameData.getBoard().getBox(movement.getStart()).getLevel() == 1) return true;
+      if (gameData.getBoard().getBox(movement.getEnd()).getLevel() -
+              gameData.getBoard().getBox(movement.getStart()).getLevel() == 1)
+        return true;
     }
 
     return false;
