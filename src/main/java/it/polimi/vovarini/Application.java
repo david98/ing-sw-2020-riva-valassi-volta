@@ -6,7 +6,6 @@ import it.polimi.vovarini.view.cli.GameView;
 import picocli.CommandLine;
 
 import java.io.IOException;
-import java.io.Serializable;
 import java.util.concurrent.Callable;
 
 @CommandLine.Command(name = "santorini", mixinStandardHelpOptions = true, version = "santorini 1.0",
@@ -47,6 +46,8 @@ public class Application implements Callable<Integer> {
         GameView view = new GameView(serverIP, serverPort);
         view.gameSetup();
       }
+      case GUI ->
+        System.out.println("GUI isn't supported yet :D");
     }
   }
 
