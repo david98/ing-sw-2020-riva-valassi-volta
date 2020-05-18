@@ -23,21 +23,21 @@ public class Server implements Runnable{
 
   private final ExecutorService pool;
 
-  public Server(int port) throws IOException{
+  public Server(int port, int numberOfPlayers) throws IOException{
     serverSocket = new ServerSocket(port);
     pool = Executors.newFixedThreadPool(DEFAULT_MAX_THREADS);
-    init();
+    init(numberOfPlayers);
   }
 
-  public Server(int port, int nThreads) throws IOException{
+  public Server(int port, int numberOfPlayers, int nThreads) throws IOException{
     serverSocket = new ServerSocket(port);
     pool = Executors.newFixedThreadPool(nThreads);
-    init();
+    init(numberOfPlayers);
   }
 
-  private void init(){
+  private void init(int numberOfPlayers){
     try {
-      Game game = new Game(2);
+      Game game = new Game(numberOfPlayers);
       Controller controller = new Controller(game);
       LOGGER.log(Level.INFO, "Server initialized.");
     } catch (InvalidNumberOfPlayersException e){
@@ -74,11 +74,5 @@ public class Server implements Runnable{
       // Preserve interrupt status
       Thread.currentThread().interrupt();
     }
-  }
-
-  public static void main(String[] args) throws IOException {
-    Server server = new Server(DEFAULT_PORT);
-    Thread thread = new Thread(server);
-    thread.start();
   }
 }

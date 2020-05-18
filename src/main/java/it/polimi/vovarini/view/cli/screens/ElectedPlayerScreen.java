@@ -30,6 +30,7 @@ public class ElectedPlayerScreen extends Screen {
     if (godNameMultiChoiceList.maxSelected()) {
       client.raise(new AvailableCardsEvent(data.getOwner(),
               godNameMultiChoiceList.getSelectedOptions().toArray(GodName[]::new)));
+      handlesInput = false;
     }
   }
 

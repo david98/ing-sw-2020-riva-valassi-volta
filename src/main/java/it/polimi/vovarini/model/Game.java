@@ -186,6 +186,9 @@ public class Game implements Serializable, GameDataAccessor {
 
   public void start(){
     setupComplete = true;
+    for (Player p: players){
+      p.setWorkerSelected(false);
+    }
     GameEventManager.raise(new GameStartEvent(this, this.getPlayers()));
   }
 
