@@ -40,15 +40,15 @@ public class FlowDecider extends Decider {
                 switch (currentPlayerGodCard.getName()){
                     case Demeter:
                       currentPlayerGodCard.getConstructionConstraints().add(BuildabilityDecider::denyPreviousTarget);
-                      GameEventManager.raise(new GodCardUpdateEvent(currentPlayerGodCard, gameData.getCurrentPlayer()));
+                      GameEventManager.raise(new GodCardUpdateEvent(gameData, currentPlayerGodCard, gameData.getCurrentPlayer()));
                       break;
                     case Hephaestus:
                       currentPlayerGodCard.getConstructionConstraints().add(BuildabilityDecider::buildOnSameTarget);
-                      GameEventManager.raise(new GodCardUpdateEvent(currentPlayerGodCard, gameData.getCurrentPlayer()));
+                      GameEventManager.raise(new GodCardUpdateEvent(gameData, currentPlayerGodCard, gameData.getCurrentPlayer()));
                       break;
                     case Hestia:
                         currentPlayerGodCard.getConstructionConstraints().add(BuildabilityDecider::denyPerimeterSpace);
-                        GameEventManager.raise(new GodCardUpdateEvent(currentPlayerGodCard, gameData.getCurrentPlayer()));
+                        GameEventManager.raise(new GodCardUpdateEvent(gameData, currentPlayerGodCard, gameData.getCurrentPlayer()));
                         break;
                     case Poseidon:
                         try {
@@ -114,7 +114,7 @@ public class FlowDecider extends Decider {
             case Artemis:
                 if (gameData.getCurrentPhase().equals(Phase.Movement) && size == 1) {
                     currentPlayerGodCard.getMovementConstraints().add(ReachabilityDecider::previousBoxDenied);
-                    GameEventManager.raise(new GodCardUpdateEvent(currentPlayerGodCard, gameData.getCurrentPlayer()));
+                    GameEventManager.raise(new GodCardUpdateEvent(gameData, currentPlayerGodCard, gameData.getCurrentPlayer()));
                     return Phase.Movement;
                 }
 
@@ -154,7 +154,7 @@ public class FlowDecider extends Decider {
           gameData.getCurrentPlayer().getConstructionList().removeIf(Move::isForced);
           GameEventManager.raise(new PlayerInfoUpdateEvent(gameData, gameData.getCurrentPlayer()));
           gameData.getCurrentPlayer().getGodCard().getMovementConstraints().add(ReachabilityDecider::cannotMoveUp);
-          GameEventManager.raise(new GodCardUpdateEvent(gameData.getCurrentPlayer().getGodCard(), gameData.getCurrentPlayer()));
+          GameEventManager.raise(new GodCardUpdateEvent(gameData, gameData.getCurrentPlayer().getGodCard(), gameData.getCurrentPlayer()));
           return Phase.Movement;
         }
         else {
@@ -177,7 +177,7 @@ public class FlowDecider extends Decider {
                         switch (gameData.getCurrentPlayer().getGodCard().getName()){
                             case Athena -> {
                                 otherPlayer.getGodCard().getMovementConstraints().add(ReachabilityDecider::cannotMoveUp);
-                                GameEventManager.raise(new GodCardUpdateEvent(otherPlayer.getGodCard(), otherPlayer));
+                                GameEventManager.raise(new GodCardUpdateEvent(gameData, otherPlayer.getGodCard(), otherPlayer));
                                 return Phase.Start;
                             }
                         }

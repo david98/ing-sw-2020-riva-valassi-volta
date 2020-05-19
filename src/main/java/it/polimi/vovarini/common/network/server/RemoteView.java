@@ -7,6 +7,7 @@ import it.polimi.vovarini.model.Player;
 import it.polimi.vovarini.view.View;
 
 import java.io.IOException;
+import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;
@@ -40,6 +41,9 @@ public class RemoteView extends View implements ClientConnectionHandler {
     while (!Thread.currentThread().isInterrupted()){
       try {
         GameEvent evt = clientEvents.take();
+        if (evt instanceof RegistrationEvent) { // oh yeah instanceof
+          handleRegistrationEvent((RegistrationEvent) evt);
+        }
         GameEventManager.raise(evt);
       } catch (InterruptedException ignored){
         Thread.currentThread().interrupt();
@@ -80,7 +84,7 @@ public class RemoteView extends View implements ClientConnectionHandler {
   @Override
   @GameEventListener
   public void handleNewPlayer(NewPlayerEvent e) {
-    data.addPlayer(e.getNewPlayer());
+    super.handleNewPlayer(e);
     serverEvents.add(e);
   }
 
@@ -106,5 +110,26 @@ public class RemoteView extends View implements ClientConnectionHandler {
   @GameEventListener
   public void handlePlaceYourWorkers(PlaceYourWorkersEvent e) {
     serverEvents.add(e);
+  }
+
+  @Override
+  @GameEventListener
+  public void handlePlayerInfoUpdate(PlayerInfoUpdateEvent e) {
+    super.handlePlayerInfoUpdate(e);
+    serverEvents.add(e);
+  }
+
+  @Override
+  @GameEventListener
+  public void handleGodCardUpdate(GodCardUpdateEvent e) {
+    super.handleGodCardUpdate(e);
+    serverEvents.add(e);
+  }
+
+  public void handleRegistrationEvent(RegistrationEvent e) {
+    if (e.getSource().equals(((
+            (InetSocketAddress) clientSocket.getRemoteSocketAddress()).getAddress()).toString().replace("/",""))) {
+      data.setOwner(new Player(e.getNickname()));
+    }
   }
 }

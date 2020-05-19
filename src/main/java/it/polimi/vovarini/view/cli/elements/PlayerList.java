@@ -9,7 +9,7 @@ import java.util.Set;
 public class PlayerList extends CLIElement {
 
   private final Set<Player> players;
-  private final Player owner;
+  private Player owner;
   private Player currentPlayer;
 
   private final Map<Player, Color> playersColors;
@@ -38,5 +38,13 @@ public class PlayerList extends CLIElement {
 
   public void setCurrentPlayer(Player currentPlayer) {
     this.currentPlayer = currentPlayer;
+  }
+
+  public Set<Player> getPlayers() {
+    return players;
+  }
+
+  public void setOwner(Player owner) {
+    this.owner = owner;
   }
 }

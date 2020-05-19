@@ -125,7 +125,7 @@ public class MatchScreen extends Screen {
     }
     if (buildablePoints.contains(dest)){
       int nextLevel = data.getBoard().getBox(dest).getLevel() + 1;
-      deSelect();
+      boardElement.resetMarkedPoints();
       client.raise(new BuildEvent(data.getOwner(), dest, nextLevel));
       handlesInput = false;
     }
@@ -229,6 +229,11 @@ public class MatchScreen extends Screen {
     phasePrompt.setCurrentPhase(e.getNewPhase());
     message.setContent("");
     switch (data.getCurrentPhase()) {
+      case Movement -> {
+        if (data.getCurrentPlayer().equals(data.getOwner())) {
+          boardElement.markPoints(data.getOwner().getGodCard().computeReachablePoints());
+        }
+      }
       case Construction -> {
         if (data.getCurrentPlayer().equals(data.getOwner())) {
           boardElement.markPoints(data.getOwner().getGodCard().computeBuildablePoints());
@@ -244,35 +249,5 @@ public class MatchScreen extends Screen {
       }
     }
     reRenderNeeded = true;
-  }
-
-  @Override
-  public void handleGameStart(GameStartEvent e) {
-
-  }
-
-  @Override
-  public void handleNewPlayer(NewPlayerEvent e) {
-
-  }
-
-  @Override
-  public void handleGodSelectionStart(GodSelectionStartEvent e) {
-
-  }
-
-  @Override
-  public void handleSelectYourCard(SelectYourCardEvent e) {
-
-  }
-
-  @Override
-  public void handleCardAssignment(CardAssignmentEvent e) {
-
-  }
-
-  @Override
-  public void handlePlaceYourWorkers(PlaceYourWorkersEvent e) {
-
   }
 }

@@ -79,11 +79,7 @@ public class GameView extends View {
   @Override
   @GameEventListener
   public void handleNewPlayer(NewPlayerEvent e) {
-    Player p = e.getNewPlayer();
-    if (p.equals(data.getOwner())) {
-      data.setOwner(p);
-    }
-    data.addPlayer(p);
+    super.handleNewPlayer(e);
   }
 
   @Override
@@ -152,6 +148,20 @@ public class GameView extends View {
       render();
       waitForEvent();
     }
+  }
+
+  @Override
+  @GameEventListener
+  public void handlePlayerInfoUpdate(PlayerInfoUpdateEvent e) {
+    super.handlePlayerInfoUpdate(e);
+    currentScreen.handlePlayerInfoUpdate(e);
+  }
+
+  @Override
+  @GameEventListener
+  public void handleGodCardUpdate(GodCardUpdateEvent e) {
+    super.handleGodCardUpdate(e);
+    currentScreen.handleGodCardUpdate(e);
   }
 
   public void render(){

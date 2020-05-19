@@ -11,7 +11,7 @@ public class PlayerInfoUpdateEvent extends GameEvent {
 
     public PlayerInfoUpdateEvent(Object source, Player targetPlayer){
         super(source);
-        this.targetPlayer = targetPlayer;
+        this.targetPlayer = new Player(targetPlayer);
     }
 
     public Player getTargetPlayer() {

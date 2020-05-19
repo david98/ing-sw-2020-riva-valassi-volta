@@ -292,7 +292,7 @@ public class GodCard implements Serializable {
       resetPlayerInfo(gameData);
       gameData.getCurrentPlayer().getGodCard().movementConstraints.clear();
       gameData.getCurrentPlayer().getGodCard().constructionConstraints.clear();
-      GameEventManager.raise(new GodCardUpdateEvent(this, gameData.getCurrentPlayer()));
+      GameEventManager.raise(new GodCardUpdateEvent(gameData, this, gameData.getCurrentPlayer()));
       gameData.nextPlayer();
     }
 

@@ -54,7 +54,7 @@ public class Application implements Callable<Integer> {
   @Override
   public Integer call() throws IOException { // your business logic goes here...
     if (exclusive.serverMode){
-      launchServer(port, 2);
+      launchServer(port, 3);
     } else {
       launchClient(useCLI ? ClientMode.CLI : ClientMode.GUI, exclusive.serverIP, port);
     }
