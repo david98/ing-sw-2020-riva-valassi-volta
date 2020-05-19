@@ -127,9 +127,6 @@ public class RemoteView extends View implements ClientConnectionHandler {
   }
 
   public void handleRegistrationEvent(RegistrationEvent e) {
-    if (e.getSource().equals(((
-            (InetSocketAddress) clientSocket.getRemoteSocketAddress()).getAddress()).toString().replace("/",""))) {
-      data.setOwner(new Player(e.getNickname()));
-    }
+    data.setOwner(new Player(e.getNickname()));
   }
 }
