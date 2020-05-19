@@ -2,6 +2,7 @@ package it.polimi.vovarini.model.godcards;
 
 import it.polimi.vovarini.common.events.GameEventManager;
 import it.polimi.vovarini.common.events.GodCardUpdateEvent;
+import it.polimi.vovarini.common.events.PlayerInfoUpdateEvent;
 import it.polimi.vovarini.common.exceptions.InvalidPositionException;
 import it.polimi.vovarini.common.exceptions.ItemNotFoundException;
 import it.polimi.vovarini.model.GameDataAccessor;
@@ -132,6 +133,7 @@ public class GodCard implements Serializable {
           (GameDataAccessor gameData, Movement movement) -> {
             List<Movement> movementList = new LinkedList<>();
             movementList.add(movement);
+            GameEventManager.raise(new PlayerInfoUpdateEvent(gameData.getCurrentPlayer()));
             return movementList;
           };
 
@@ -145,6 +147,7 @@ public class GodCard implements Serializable {
           (GameDataAccessor gameData, Construction construction) -> {
             List<Construction> constructionList = new LinkedList<>();
             constructionList.add(construction);
+            GameEventManager.raise(new PlayerInfoUpdateEvent(gameData.getCurrentPlayer()));
             return constructionList;
           };
 

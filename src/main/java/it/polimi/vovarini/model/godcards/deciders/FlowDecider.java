@@ -2,6 +2,7 @@ package it.polimi.vovarini.model.godcards.deciders;
 
 import it.polimi.vovarini.common.events.GameEventManager;
 import it.polimi.vovarini.common.events.GodCardUpdateEvent;
+import it.polimi.vovarini.common.events.PlayerInfoUpdateEvent;
 import it.polimi.vovarini.common.events.WorkerSelectionEvent;
 import it.polimi.vovarini.common.exceptions.ItemNotFoundException;
 import it.polimi.vovarini.model.GameDataAccessor;
@@ -134,6 +135,7 @@ public class FlowDecider extends Decider {
         if (gameData.getCurrentPhase().equals(Phase.Start)){
             try {
                 gameData.getCurrentPlayer().getConstructionList().add(new Construction(gameData.getBoard(), new Block(Block.MAX_LEVEL), new Point(0, 0), true));
+                GameEventManager.raise(new PlayerInfoUpdateEvent(gameData.getCurrentPlayer()));
             } catch (InvalidLevelException ignored) {}
             return Phase.Construction;
         }
@@ -144,11 +146,13 @@ public class FlowDecider extends Decider {
             gameData.getCurrentPlayer().getConstructionList().get(0).isForced()
         ){
             gameData.getCurrentPlayer().getConstructionList().clear();
+            GameEventManager.raise(new PlayerInfoUpdateEvent(gameData.getCurrentPlayer()));
             return Phase.Movement;
         }
         else if (gameData.getCurrentPlayer().getConstructionList().size() == 2
                 && gameData.getCurrentPhase().equals(Phase.Construction)){
           gameData.getCurrentPlayer().getConstructionList().removeIf(Move::isForced);
+          GameEventManager.raise(new PlayerInfoUpdateEvent(gameData.getCurrentPlayer()));
           gameData.getCurrentPlayer().getGodCard().getMovementConstraints().add(ReachabilityDecider::cannotMoveUp);
           GameEventManager.raise(new GodCardUpdateEvent(gameData.getCurrentPlayer().getGodCard(), gameData.getCurrentPlayer()));
           return Phase.Movement;
