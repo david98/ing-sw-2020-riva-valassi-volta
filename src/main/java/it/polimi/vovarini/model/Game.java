@@ -115,9 +115,14 @@ public class Game implements Serializable, GameDataAccessor {
     moves.push(move);
     getCurrentPlayer().getMovementList().add(move);
 
+    boolean isMovementWinning = getCurrentPlayer().getGodCard().isMovementWinning(move);
+
     for(Move executableMove : getCurrentPlayer().getGodCard().consequences(move)){
       executableMove.execute();
     }
+
+    if(isMovementWinning)
+      GameEventManager.raise(new VictoryEvent(this, getCurrentPlayer()));
 
   }
 
