@@ -477,7 +477,7 @@ public class ControllerTests {
     assertThrows(OverwrittenWorkerException.class, () -> {
       controller.update(evtOverwrittenWorker);
     });
-    
+
     assertEquals(game.getCurrentPlayer(), game.getPlayers()[1]);
 
     game.getCurrentPlayer().setCurrentSex(Sex.Male);

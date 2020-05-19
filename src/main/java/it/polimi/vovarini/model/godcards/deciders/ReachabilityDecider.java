@@ -26,7 +26,7 @@ public class ReachabilityDecider extends Decider {
      * @author Davide Volta
      * @author Marco Riva
      */
-    public static boolean canExchangeWithWorker(GameDataAccessor gameData, Point point) {
+    public static boolean canExchangeWithWorker(GameDataAccessor gameData, Point point) throws RuntimeException {
         try {
             Worker currentWorker = gameData.getCurrentPlayer().getCurrentWorker();
             Point currentWorkerPosition = gameData.getBoard().getItemPosition(currentWorker);
@@ -43,9 +43,9 @@ public class ReachabilityDecider extends Decider {
 
 
         } catch (ItemNotFoundException ignored) {
-            System.err.println("This really should never happen...");
+            throw new RuntimeException();
         }
-        return false;
+
     }
 
     /**
@@ -57,7 +57,7 @@ public class ReachabilityDecider extends Decider {
      * worker can be forced one space straight backwards to an unoccupied space at any level, false otherwise
      * @author Marco Riva
      */
-    public static boolean conditionedExchange(GameDataAccessor gameData, Point point) {
+    public static boolean conditionedExchange(GameDataAccessor gameData, Point point) throws RuntimeException{
         try {
             Worker currentWorker = gameData.getCurrentPlayer().getCurrentWorker();
             Point currentWorkerPosition = gameData.getBoard().getItemPosition(currentWorker);
@@ -104,7 +104,7 @@ public class ReachabilityDecider extends Decider {
             }
 
         } catch (ItemNotFoundException ignored) {
-            System.err.println("This really should never happen...");
+            throw new RuntimeException();
         }
         return false;
     }
@@ -137,7 +137,7 @@ public class ReachabilityDecider extends Decider {
      * @author Mattia Valassi
      * @author Marco Riva
      */
-    public static boolean cannotMoveUp(GameDataAccessor gameData, Point point) {
+    public static boolean cannotMoveUp(GameDataAccessor gameData, Point point) throws RuntimeException{
         try {
             Worker currentWorker = gameData.getCurrentPlayer().getCurrentWorker();
             Point currentWorkerPosition = gameData.getBoard().getItemPosition(currentWorker);
@@ -149,8 +149,8 @@ public class ReachabilityDecider extends Decider {
             return destinationLevel - currentWorkerLevel < 1;
 
         } catch (ItemNotFoundException ignored) {
-            System.err.println("This really should never happen...");
+            throw new RuntimeException();
         }
-        return false;
+
     }
 }
