@@ -72,6 +72,11 @@ public abstract class Screen implements Renderable, EventsForViewListener, KeyPr
   }
 
   @Override
+  public void handleVictory(VictoryEvent e) {
+
+  }
+
+  @Override
   public void handleKeyPress(Key key) {
 
   }

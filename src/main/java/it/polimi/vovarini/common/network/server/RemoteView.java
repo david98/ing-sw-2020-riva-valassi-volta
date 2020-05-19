@@ -107,4 +107,8 @@ public class RemoteView extends View implements ClientConnectionHandler {
   public void handlePlaceYourWorkers(PlaceYourWorkersEvent e) {
     serverEvents.add(e);
   }
+
+  @Override
+  @GameEventListener
+  public void handleVictory(VictoryEvent e) { serverEvents.add(e); }
 }

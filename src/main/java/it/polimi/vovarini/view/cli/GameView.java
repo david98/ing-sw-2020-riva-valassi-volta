@@ -154,6 +154,12 @@ public class GameView extends View {
     }
   }
 
+  @Override
+  @GameEventListener
+  public void handleVictory(VictoryEvent e) {
+    //TODO
+  }
+
   public void render(){
     console.clear();
     console.println(currentScreen.render());

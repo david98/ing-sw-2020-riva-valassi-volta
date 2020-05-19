@@ -126,7 +126,7 @@ public class Game implements Serializable, GameDataAccessor {
 
   }
 
-  public void performMove (Construction move){
+  public void performMove(Construction move){
 
     undoneMoves.clear();
     moves.push(move);
