@@ -133,7 +133,6 @@ public class GodCard implements Serializable {
           (GameDataAccessor gameData, Movement movement) -> {
             List<Movement> movementList = new LinkedList<>();
             movementList.add(movement);
-            GameEventManager.raise(new PlayerInfoUpdateEvent(gameData.getCurrentPlayer()));
             return movementList;
           };
 
@@ -147,7 +146,6 @@ public class GodCard implements Serializable {
           (GameDataAccessor gameData, Construction construction) -> {
             List<Construction> constructionList = new LinkedList<>();
             constructionList.add(construction);
-            GameEventManager.raise(new PlayerInfoUpdateEvent(gameData.getCurrentPlayer()));
             return constructionList;
           };
 
