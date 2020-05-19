@@ -2,7 +2,9 @@ package it.polimi.vovarini.model.moves;
 
 import it.polimi.vovarini.model.board.Board;
 
-public abstract class Move {
+import java.io.Serializable;
+
+public abstract class Move implements Serializable {
   protected Board board;
   protected boolean forced;
 

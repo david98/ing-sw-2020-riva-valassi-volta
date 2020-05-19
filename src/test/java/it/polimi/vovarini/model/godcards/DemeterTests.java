@@ -92,7 +92,7 @@ public class DemeterTests {
     @ParameterizedTest
     @MethodSource("provideAllPossibleTarget")
     @DisplayName("Test that Demeter's construction constraints are correctly applied")
-    public void testConstructionConstraint(Point start, Point firstTarget, Point secondTarget) {
+    void testConstructionConstraint(Point start, Point firstTarget, Point secondTarget) {
         Board board = game.getBoard();
 
         board.place(game.getCurrentPlayer().getCurrentWorker(), start);

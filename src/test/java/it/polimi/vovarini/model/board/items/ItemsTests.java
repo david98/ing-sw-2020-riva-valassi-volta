@@ -63,22 +63,29 @@ public class ItemsTests {
   @DisplayName("Test that a Block can be instantiated correctly")
   void blockCreation() {
     assertDoesNotThrow(
-        () -> {
-          Block block = new Block(1);
-          assertEquals(1, block.getLevel());
-        },
-        "");
+            () -> {
+              Block block = new Block(1);
+              assertEquals(1, block.getLevel());
+            },
+            "");
     InvalidLevelException thrown =
-        assertThrows(
-            InvalidLevelException.class,
-            () -> new Block(Block.MAX_LEVEL + 1),
-            "Block constructor should have thrown InvalidLevelException, but it didn't");
+            assertThrows(
+                    InvalidLevelException.class,
+                    () -> new Block(Block.MAX_LEVEL + 1),
+                    "Block constructor should have thrown InvalidLevelException, but it didn't");
+  }
+
+  @Test
+  @DisplayName("Test that InvalidLevelException is thrown when trying to give a level bigger than 4")
+  void invalidLevelCreation(){
+    assertThrows(InvalidLevelException.class, ()-> new Block(5));
   }
 
   @Test
   @DisplayName("Check that placement rules work")
   void itemsPlacement() {
     for (Block cur : blocks) {
+      assertFalse(cur.canBeRemoved());
       for (Block other : blocks) {
         assertTrue(!cur.canBePlacedOn(other) || cur.getLevel() == other.getLevel() + 1);
       }
@@ -90,6 +97,7 @@ public class ItemsTests {
         assertTrue(cur.canBePlacedOn(block) || block.getLevel() == Block.MAX_LEVEL);
       }
     }
+
   }
 
   @Test
@@ -122,5 +130,40 @@ public class ItemsTests {
       assertEquals(original, clone);
     } catch (InvalidLevelException ignored){
     }
+  }
+
+  @Test
+  @DisplayName("Test correct behavior of canBePlacedOn method")
+  void canBePlacedOnTest(){
+    Block levelOneBlock = new Block(Block.MIN_LEVEL);
+    assertTrue(levelOneBlock.canBePlacedOn(null));
+
+    Block levelTwoBlock = new Block(Block.MIN_LEVEL + 1);
+    assertTrue(levelTwoBlock.canBePlacedOn(levelOneBlock));
+    assertFalse(levelOneBlock.canBePlacedOn(levelTwoBlock));
+
+    Player testPlayer = new Player("test_player");
+    Worker stdWorker = new Worker(Sex.Female, testPlayer);
+
+    assertFalse(levelOneBlock.canBePlacedOn(stdWorker));
+
+    Worker anotherWorker = new Worker(Sex.Male, testPlayer);
+    assertFalse(stdWorker.canBePlacedOn(anotherWorker));
+
+  }
+
+  @Test
+  @DisplayName("Test of toString")
+  void toStringTest(){
+    Block levelOneBlock = new Block(Block.MIN_LEVEL);
+    Block levelTwoBlock = new Block(Block.MIN_LEVEL + 1);
+    Block levelThreeBlock = new Block(Block.WIN_LEVEL);
+    Block levelFourBlock = new Block(Block.MAX_LEVEL);
+
+    assertEquals("1", levelOneBlock.toString());
+    assertEquals("2", levelTwoBlock.toString());
+    assertEquals("3", levelThreeBlock.toString());
+    assertEquals("4", levelFourBlock.toString());
+
   }
 }

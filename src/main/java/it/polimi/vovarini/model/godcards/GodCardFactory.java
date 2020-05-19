@@ -81,7 +81,7 @@ public class GodCardFactory {
     clone.getMovementConstraints().addAll(c.getMovementConstraints());
 
     clone.getConstructionConditions().addAll(c.getConstructionConditions());
-    clone.getConstructionConstraints().addAll(c.getMovementConstraints());
+    clone.getConstructionConstraints().addAll(c.getConstructionConstraints());
 
     clone.getWinningConditions().addAll(c.getWinningConditions());
     clone.getWinningConstraints().addAll(c.getWinningConstraints());

@@ -407,7 +407,6 @@ public class ControllerTests {
   }
 
   @Test
-  @Disabled
   @DisplayName("Tests that a correct SpwanWorkerEvent places the currentWorker in the right place, which is the target parameter")
   void spawnWorkerTest() {
 
@@ -470,6 +469,8 @@ public class ControllerTests {
       controller.update(evtWorkerAlreadySpawned);
     });
 
+    game.nextPlayer();
+
     target = new Point(0, 0);
     game.getCurrentPlayer().setCurrentSex(Sex.Female);
     SpawnWorkerEvent evtOverwrittenWorker = new SpawnWorkerEvent(game.getCurrentPlayer(), target);
@@ -477,7 +478,6 @@ public class ControllerTests {
       controller.update(evtOverwrittenWorker);
     });
 
-    game.nextPlayer();
     assertEquals(game.getCurrentPlayer(), game.getPlayers()[1]);
 
     game.getCurrentPlayer().setCurrentSex(Sex.Male);
