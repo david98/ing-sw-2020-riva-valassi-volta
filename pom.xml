@@ -21,6 +21,7 @@
         <sonar.language>java</sonar.language>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <javafx.mainClass>it.polimi.vovarini.view.gui.MainElectedPlayer</javafx.mainClass>
     </properties>
 
     <dependencies>
@@ -107,7 +108,7 @@
                         <manifest>
                             <addClasspath>true</addClasspath>
                             <classpathPrefix>lib/</classpathPrefix>
-                            <mainClass>it.polimi.vovarini.Application</mainClass>
+                            <mainClass>${javafx.mainClass}</mainClass>
                         </manifest>
                     </archive>
                 </configuration>
@@ -162,6 +163,9 @@
                 <groupId>org.openjfx</groupId>
                 <artifactId>javafx-maven-plugin</artifactId>
                 <version>0.0.4</version>
+                <configuration>
+                    <mainClass>${javafx.mainClass}</mainClass>
+                </configuration>
             </plugin>
         </plugins>
     </build>
