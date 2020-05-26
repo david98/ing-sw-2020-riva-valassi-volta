@@ -145,6 +145,7 @@ public class MatchScreen extends Screen {
           data.setCurrentStart(boardElement.getCursorLocation());
           data.setSelectedWorker((Worker) item);
           data.getOwner().setCurrentSex(((Worker) item).getSex());
+          data.getCurrentPlayer().setCurrentSex(((Worker) item).getSex());
           // mark points reachable by the selected worker
           boardElement.markPoints(
                   data.getOwner().getGodCard().computeReachablePoints()
@@ -244,6 +245,7 @@ public class MatchScreen extends Screen {
       }
       case End -> {
         if (data.getCurrentPlayer().equals(data.getOwner())) {
+          deSelect();
           message.setContent("Press N to end your turn.");
         }
       }
