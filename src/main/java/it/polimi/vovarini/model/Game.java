@@ -116,8 +116,11 @@ public class Game implements Serializable, GameDataAccessor {
     getCurrentPlayer().getMovementList().add(move);
     GameEventManager.raise(new PlayerInfoUpdateEvent(this, getCurrentPlayer()));
 
-    for(Move executableMove : getCurrentPlayer().getGodCard().consequences(move, this)){
-      executableMove.execute();
+    for(Movement executableMove : getCurrentPlayer().getGodCard().consequences(move, this)){
+      Movement temp = new Movement(board, executableMove.getStart(), executableMove.getEnd());
+      temp.execute();
+      //executableMove.execute();
+      //JDK ti odio più di sistemi informativi
     }
 
   }
