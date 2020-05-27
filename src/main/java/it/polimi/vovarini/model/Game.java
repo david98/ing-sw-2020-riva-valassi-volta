@@ -116,7 +116,7 @@ public class Game implements Serializable, GameDataAccessor {
     getCurrentPlayer().getMovementList().add(move);
     GameEventManager.raise(new PlayerInfoUpdateEvent(this, getCurrentPlayer()));
 
-    for(Move executableMove : getCurrentPlayer().getGodCard().consequences(move)){
+    for(Move executableMove : getCurrentPlayer().getGodCard().consequences(move, this)){
       executableMove.execute();
     }
 
@@ -129,7 +129,7 @@ public class Game implements Serializable, GameDataAccessor {
     getCurrentPlayer().getConstructionList().add(move);
     GameEventManager.raise(new PlayerInfoUpdateEvent(this, getCurrentPlayer()));
 
-    for(Move executableMove : getCurrentPlayer().getGodCard().consequences(move)){
+    for(Move executableMove : getCurrentPlayer().getGodCard().consequences(move, this)){
       executableMove.execute();
     }
 

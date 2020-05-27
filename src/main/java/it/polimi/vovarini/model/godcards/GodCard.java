@@ -310,11 +310,11 @@ public class GodCard implements Serializable {
     gameData.getCurrentPlayer().setBoardStatus(gameData.getBoard());
   }
 
-  public List<Movement> consequences(Movement movement) {
-    return listMovementEffects.apply(gameData, movement);
+  public List<Movement> consequences(Movement movement, GameDataAccessor gameData) {
+    return listMovementEffects.apply(this.gameData, movement);
   }
 
-  public List<Construction> consequences(Construction construction){
+  public List<Construction> consequences(Construction construction, GameDataAccessor gameData){
     return listConstructionEffects.apply(gameData, construction);
   }
 

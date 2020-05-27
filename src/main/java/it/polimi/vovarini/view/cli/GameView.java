@@ -17,8 +17,6 @@ import java.util.Scanner;
 
 public class GameView extends View {
 
-  private final GameClient client;
-
   private Screen currentScreen;
 
   private final Console console;
