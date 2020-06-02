@@ -85,16 +85,16 @@ public class BoardElement extends CLIElement {
     if (items.peek() != null && items.peek().canBeRemoved()) {
       Item topMostItem = items.pop();
       if (items.isEmpty()) {
-        return " " + (hasCursor ? "▮" : renderItem(topMostItem));
+        return " " + (hasCursor ? Color.White.bgWrap(renderItem(topMostItem)) : renderItem(topMostItem));
       } else {
         return renderItem(items.pop())
-                + (hasCursor ? "▮" : renderItem(topMostItem));
+                + (hasCursor ? Color.White.bgWrap(renderItem(topMostItem)) : renderItem(topMostItem));
       }
     } else if (!items.isEmpty()){
-      return renderItem(items.pop()) + (hasCursor ? "▮" : " ");
+      return renderItem(items.pop()) + (hasCursor ? Color.White.bgWrap(" ") : " ");
     }
 
-    return " " + (hasCursor ? "▮" : " ");
+    return " " + (hasCursor ? Color.White.bgWrap(" ") : " ");
   }
 
   private String renderItem(Item item) {

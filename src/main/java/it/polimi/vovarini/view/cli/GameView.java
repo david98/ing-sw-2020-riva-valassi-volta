@@ -163,8 +163,10 @@ public class GameView extends View {
   }
 
   public void render(){
-    console.clear();
-    console.println(currentScreen.render());
+    if (currentScreen.isNeedsRender()) {
+      console.clear();
+      console.println(currentScreen.render());
+    }
   }
 
   public void handleInput() throws IOException{

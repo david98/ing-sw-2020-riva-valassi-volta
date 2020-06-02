@@ -42,10 +42,12 @@ public class ElectedPlayerScreen extends Screen {
       case Spacebar -> godNameMultiChoiceList.select();
       case O -> confirm();
     }
+    needsRender = true;
   }
 
   @Override
   public String render(){
+    needsRender = false;
     return explanation.render() +
             godNameMultiChoiceList.render() +
             (godNameMultiChoiceList.maxSelected() ? ("\n" + confirmationPrompt.render()) : "");
