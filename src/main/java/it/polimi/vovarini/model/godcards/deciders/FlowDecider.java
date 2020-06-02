@@ -170,6 +170,18 @@ public class FlowDecider extends Decider {
      * @author Mattia Valassi
      */
     public static Phase applyMalus(GameDataAccessor gameData){
+        if(gameData.getCurrentPhase().equals(Phase.Start) && gameData.getCurrentPlayer().isHasLost()){
+            for (Player otherPlayer : gameData.getPlayers()){
+                if (!otherPlayer.equals(gameData.getCurrentPlayer())){
+                    switch (gameData.getCurrentPlayer().getGodCard().getName()){
+                        case Athena -> {
+                            otherPlayer.getGodCard().getMovementConstraints().clear();
+                            GameEventManager.raise(new GodCardUpdateEvent(gameData, otherPlayer.getGodCard(), otherPlayer));
+                        }
+                    }
+                }
+            }
+        }
         if (gameData.getCurrentPhase().equals(Phase.End)){
             if (gameData.getCurrentPlayer().hasPlayerRisen(gameData)){
                 for (Player otherPlayer : gameData.getPlayers()){

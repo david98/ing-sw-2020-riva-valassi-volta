@@ -1,10 +1,13 @@
 package it.polimi.vovarini.model;
 
+import it.polimi.vovarini.common.events.GameEventManager;
+import it.polimi.vovarini.common.events.LossEvent;
 import it.polimi.vovarini.model.board.Board;
 import it.polimi.vovarini.model.board.items.Sex;
 import it.polimi.vovarini.model.board.items.Worker;
 import it.polimi.vovarini.model.godcards.GodCard;
 import it.polimi.vovarini.model.godcards.GodCardFactory;
+import it.polimi.vovarini.model.godcards.GodName;
 import it.polimi.vovarini.model.moves.Construction;
 import it.polimi.vovarini.model.moves.Movement;
 
@@ -141,7 +144,7 @@ public class Player implements Serializable {
   public void setHasLost(boolean hasLost) {
     this.hasLost = hasLost;
     if(hasLost){
-      //throw event to inform everyone of the loss
+      GameEventManager.raise(new LossEvent(this, this));
     }
   }
 
