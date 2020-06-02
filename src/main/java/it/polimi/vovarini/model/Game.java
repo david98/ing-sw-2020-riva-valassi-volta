@@ -115,17 +115,22 @@ public class Game implements Serializable, GameDataAccessor {
     moves.push(move);
     getCurrentPlayer().getMovementList().add(move);
     GameEventManager.raise(new PlayerInfoUpdateEvent(this, getCurrentPlayer()));
+    boolean isMovementWinning = getCurrentPlayer().getGodCard().isMovementWinning(move);
 
-    for(Movement executableMove : getCurrentPlayer().getGodCard().consequences(move, this)){
+    for(Movement executableMove : getCurrentPlayer().getGodCard().consequences(move, this)) {
       Movement temp = new Movement(board, executableMove.getStart(), executableMove.getEnd());
       temp.execute();
       //executableMove.execute();
       //JDK ti odio più di sistemi informativi
     }
 
+    if(isMovementWinning) {
+      GameEventManager.raise(new VictoryEvent(this, getCurrentPlayer()));
+    }
+
   }
 
-  public void performMove (Construction move){
+  public void performMove(Construction move){
 
     undoneMoves.clear();
     moves.push(move);

@@ -162,6 +162,13 @@ public class GameView extends View {
     currentScreen.handleGodCardUpdate(e);
   }
 
+  @Override
+  @GameEventListener
+  public void handleVictory(VictoryEvent e) {
+    //TODO
+
+  }
+
   public void render(){
     if (currentScreen.isNeedsRender()) {
       console.clear();
