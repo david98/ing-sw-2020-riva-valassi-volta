@@ -14,6 +14,9 @@ import java.util.logging.Logger;
 
 public class Server implements Runnable{
 
+  private Game game;
+  private Controller controller;
+
   private static final Logger LOGGER = Logger.getLogger( Server.class.getName() );
 
   public static final int DEFAULT_PORT = 6666;
@@ -37,8 +40,8 @@ public class Server implements Runnable{
 
   private void init(int numberOfPlayers){
     try {
-      Game game = new Game(numberOfPlayers);
-      Controller controller = new Controller(game);
+      game = new Game(numberOfPlayers);
+      controller = new Controller(game);
       LOGGER.log(Level.INFO, "Server initialized.");
     } catch (InvalidNumberOfPlayersException e){
       e.printStackTrace();
@@ -58,7 +61,11 @@ public class Server implements Runnable{
     }
   }
 
-  public void shutdownAndAwaitTermination(ExecutorService pool) {
+  public void kill() {
+    pool.shutdownNow();
+  }
+
+  public void shutdownAndAwaitTermination() {
     pool.shutdown(); // Disable new tasks from being submitted
     try {
       // Wait a while for existing tasks to terminate
@@ -74,5 +81,13 @@ public class Server implements Runnable{
       // Preserve interrupt status
       Thread.currentThread().interrupt();
     }
+  }
+
+  public Game getGame() {
+    return game;
+  }
+
+  public Controller getController() {
+    return controller;
   }
 }

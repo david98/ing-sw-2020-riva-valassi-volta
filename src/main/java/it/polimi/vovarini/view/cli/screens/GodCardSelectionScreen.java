@@ -36,10 +36,12 @@ public class GodCardSelectionScreen extends Screen{
       case Spacebar -> godNameMultiChoiceList.select();
       case O -> confirm();
     }
+    needsRender = true;
   }
 
   @Override
   public String render(){
+    needsRender = false;
     return godNameMultiChoiceList.render() +
             (godNameMultiChoiceList.maxSelected() ? ("\n" + confirmationPrompt.render()) : "");
   }

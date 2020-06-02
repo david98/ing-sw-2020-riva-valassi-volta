@@ -178,12 +178,12 @@ public class FlowDecider extends Decider {
                             case Athena -> {
                                 otherPlayer.getGodCard().getMovementConstraints().add(ReachabilityDecider::cannotMoveUp);
                                 GameEventManager.raise(new GodCardUpdateEvent(gameData, otherPlayer.getGodCard(), otherPlayer));
-                                return Phase.Start;
                             }
                         }
                     }
                 }
             }
+            return Phase.Start;
         }
 
         return gameData.getCurrentPhase().next();

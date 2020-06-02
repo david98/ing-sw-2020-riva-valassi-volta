@@ -71,7 +71,7 @@ public class MinotaurTests {
 
 
       if (game.getCurrentPlayer().getGodCard().validate(game.getCurrentPlayer().getGodCard().computeReachablePoints(), movement)) {
-        List<Movement> movementList = minotaur.consequences(movement);
+        List<Movement> movementList = minotaur.consequences(movement, game);
         for (Movement m : movementList) {
           game.performMove(m);
         }
@@ -116,7 +116,7 @@ public class MinotaurTests {
 
 
       if (game.getCurrentPlayer().getGodCard().validate(game.getCurrentPlayer().getGodCard().computeReachablePoints(), movement)) {
-        List<Movement> movementList = minotaur.consequences(movement);
+        List<Movement> movementList = minotaur.consequences(movement, game);
         for (Movement m : movementList) {
           game.performMove(m);
         }
@@ -165,7 +165,7 @@ public class MinotaurTests {
 
 
       if (game.getCurrentPlayer().getGodCard().validate(game.getCurrentPlayer().getGodCard().computeReachablePoints(), movement)) {
-        List<Movement> movementList = minotaur.consequences(movement);
+        List<Movement> movementList = minotaur.consequences(movement, game);
         for (Movement m : movementList) {
           game.performMove(m);
         }
@@ -215,7 +215,7 @@ public class MinotaurTests {
 
 
       if (game.getCurrentPlayer().getGodCard().validate(game.getCurrentPlayer().getGodCard().computeReachablePoints(), movement)) {
-        List<Movement> movementList = minotaur.consequences(movement);
+        List<Movement> movementList = minotaur.consequences(movement, game);
         for (Movement m : movementList) {
           game.performMove(m);
         }
@@ -267,7 +267,7 @@ public class MinotaurTests {
 
 
       if (game.getCurrentPlayer().getGodCard().validate(game.getCurrentPlayer().getGodCard().computeReachablePoints(), movement)) {
-        List<Movement> movementList = minotaur.consequences(movement);
+        List<Movement> movementList = minotaur.consequences(movement, game);
         for (Movement m : movementList) {
           game.performMove(m);
         }
@@ -305,7 +305,7 @@ public class MinotaurTests {
       board.place(enemyWorker, end);
 
       if(minotaur.validate(minotaur.computeReachablePoints(), movement)) {
-        List<Movement> movementList = minotaur.consequences(movement);
+        List<Movement> movementList = minotaur.consequences(movement, game);
         for(Movement m : movementList) {
           game.performMove(m);
         }

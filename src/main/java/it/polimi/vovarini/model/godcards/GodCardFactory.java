@@ -76,7 +76,8 @@ public class GodCardFactory {
    * @return A clone of c.
    */
   public static GodCard clone(GodCard c){
-    GodCard clone = new GodCard(c.name);
+    GodCard clone = create(c.name);
+
     clone.getMovementConditions().addAll(c.getMovementConditions());
     clone.getMovementConstraints().addAll(c.getMovementConstraints());
 
