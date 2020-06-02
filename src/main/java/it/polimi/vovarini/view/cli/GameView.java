@@ -165,8 +165,7 @@ public class GameView extends View {
   @Override
   @GameEventListener
   public void handleVictory(VictoryEvent e) {
-    //TODO
-
+    currentScreen = new WaitScreen(data, client, e.getWinningPlayer().getNickname() + " wins!");
   }
 
   public void render(){
