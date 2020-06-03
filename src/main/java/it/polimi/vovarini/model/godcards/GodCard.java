@@ -1,5 +1,6 @@
 package it.polimi.vovarini.model.godcards;
 
+import it.polimi.vovarini.common.events.ChangeWorkerEvent;
 import it.polimi.vovarini.common.events.GameEventManager;
 import it.polimi.vovarini.common.events.GodCardUpdateEvent;
 import it.polimi.vovarini.common.events.PlayerInfoUpdateEvent;
@@ -232,7 +233,27 @@ public class GodCard implements Serializable {
     }
 
     if (reachablePoints.isEmpty()) {
-      gameData.getCurrentPlayer().setHasLost(true);
+      try{
+        List<Point> otherWorkerPoints = new LinkedList<>();
+
+        Player player = gameData.getCurrentPlayer();
+        Board board = gameData.getBoard();
+        Worker unselectedWorker = player.getOtherWorker();
+        Point unselectedWorkerPosition = board.getItemPosition(unselectedWorker);
+
+        List<Point> otherCandidatePositions = board.getAdjacentPositions(unselectedWorkerPosition);
+        otherWorkerPoints =
+              otherCandidatePositions.stream()
+                      .filter(p -> movementConditions.stream().anyMatch(cond -> cond.apply(gameData, p)))
+                      .filter(p -> movementConstraints.stream().allMatch(cond -> cond.apply(gameData, p)))
+                      .collect(Collectors.toList());
+
+      if (otherWorkerPoints.isEmpty()) gameData.getCurrentPlayer().setHasLost(true);
+      else GameEventManager.raise(new ChangeWorkerEvent(this, unselectedWorker));
+
+      } catch (ItemNotFoundException ignored) {
+      }
+
     }
     return reachablePoints;
   }
