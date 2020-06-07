@@ -186,6 +186,7 @@ public class Game implements Serializable, GameDataAccessor {
             getCurrentPlayer().setHasLost(true);
           }
         }
+        getCurrentPlayer().setWorkerSelected(false);
       }
       case Construction -> {
         if (getCurrentPlayer().getGodCard().computeBuildablePoints().isEmpty()) {

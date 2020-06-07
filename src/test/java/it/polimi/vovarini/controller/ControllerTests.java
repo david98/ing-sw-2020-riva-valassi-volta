@@ -521,9 +521,6 @@ public class ControllerTests {
     }
 
     assertTrue(game.isSetupComplete());
-
-
-
   }
 
   @Test
@@ -548,9 +545,8 @@ public class ControllerTests {
 
     game.setCurrentPhase(Phase.Start);
     SkipEvent invalidStartEvt = new SkipEvent(game.getCurrentPlayer());
-    assertThrows(UnskippablePhaseException.class, () -> {
-      controller.update(invalidStartEvt);
-    });
+    assertThrows(UnskippablePhaseException.class, () ->
+      controller.update(invalidStartEvt));
 
 
 
