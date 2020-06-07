@@ -11,7 +11,11 @@ import it.polimi.vovarini.view.cli.input.Key;
 import it.polimi.vovarini.view.cli.input.KeycodeToKey;
 import it.polimi.vovarini.view.cli.screens.*;
 
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
 import java.io.IOException;
+import java.net.URL;
 import java.util.Arrays;
 import java.util.Scanner;
 
@@ -96,6 +100,7 @@ public class GameView extends View {
       data.addPlayer(p);
     }
     data.setCurrentPlayer(e.getElectedPlayer());
+
     if (e.getElectedPlayer().equals(data.getOwner())) {
       currentScreen = new ElectedPlayerScreen(data, client, Arrays.asList(e.getAllGods()));
       gameLoop();
@@ -166,6 +171,11 @@ public class GameView extends View {
   @GameEventListener
   public void handleVictory(VictoryEvent e) {
     currentScreen = new WaitScreen(data, client, e.getWinningPlayer().getNickname() + " wins!");
+    if (e.getWinningPlayer().equals(data.getOwner())) {
+      playAudio("/audio/bgm/victory.wav", true);
+    } else {
+      playAudio("/audio/bgm/loss.wav", true);
+    }
   }
 
   public void render(){
@@ -240,5 +250,22 @@ public class GameView extends View {
 
   public void stop(){
     running = false;
+  }
+
+  public static synchronized void playAudio(String path, boolean looping) {
+    try {
+      Clip clip = AudioSystem.getClip();
+      System.out.println(clip.toString());
+      AudioInputStream inputStream = AudioSystem.getAudioInputStream(
+              GameView.class.getResourceAsStream(path));
+      clip.open(inputStream);
+      if (!looping) {
+        clip.start();
+      } else {
+        clip.loop(Clip.LOOP_CONTINUOUSLY);
+      }
+    } catch (Exception e) {
+      System.err.println(e.getMessage());
+    }
   }
 }
