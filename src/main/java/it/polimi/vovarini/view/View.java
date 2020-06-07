@@ -7,7 +7,6 @@ public abstract class View implements EventsForViewListener {
 
   public View(){
     GameEventManager.bindListeners(this);
-    System.out.println("bind");
     data = new ViewData();
   }
 

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.BorderPane?>
+<?import java.net.URL?>
+<?import javafx.scene.layout.HBox?>
+
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.Button?>
+<BorderPane xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
+            fx:controller="it.polimi.vovarini.view.gui.RegistrationController" fx:id="mainPane" styleClass="mainPane">
+    <stylesheets>
+        <URL value="@../css/registrationScene.css"/>
+    </stylesheets>
+
+    <top>
+        <VBox styleClass="topBox">
+            <Label text="Welcome to Santorini" styleClass="menuTitle"/>
+        </VBox>
+    </top>
+
+    <center>
+        <HBox styleClass="voteHBox">
+            <VBox styleClass="voteBox">
+                <Label fx:id="label" styleClass="menuLabel"/>
+                <TextField fx:id="addressField"/>
+                <TextField fx:id="portField"/>
+                <TextField fx:id="nicknameField"/>
+                <Button fx:id="submit" onAction="#onButtonClick">Submit</Button>
+            </VBox>
+        </HBox>
+    </center>
+
+</BorderPane>

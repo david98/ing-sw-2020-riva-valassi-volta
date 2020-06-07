@@ -1,8 +1,12 @@
 package it.polimi.vovarini.view.gui;
 
+import it.polimi.vovarini.common.events.AvailableCardsEvent;
+import it.polimi.vovarini.common.events.GameEvent;
 import it.polimi.vovarini.model.godcards.GodName;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
+import javafx.scene.control.Button;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
@@ -24,6 +28,9 @@ public class ElectedPlayerController {
 
     @FXML
     private ImageView selectedGodCard3;
+
+    @FXML
+    private Button submit;
 
     @FXML
     private ImageView godCard0;
@@ -68,25 +75,27 @@ public class ElectedPlayerController {
     private ImageView godCard13;
 
     private List<GodName> selectedCards = new LinkedList<>();
+    private GuiManager guiManager;
 
     @FXML
     public void initialize() {
 
         /* altre eventuali inizializzazioni */
-        addImages();
+        guiManager = GuiManager.getInstance();
+        guiManager.setElectedPlayerController(this);
         bindEvents();
     }
 
-    private void addImages() {
+    void addImages(GodName[] allGods) {
         // aggiungo le carte alla grafica
-        GodName[] godNames = Arrays.stream(GodName.values()).filter(name -> name != GodName.Nobody).toArray(GodName[]::new);
+        //GodName[] godNames = Arrays.stream(GodName.values()).filter(name -> name != GodName.Nobody).toArray(GodName[]::new);
         String selector;
-        for(int i = 0; i < godNames.length; i++) {
+        for(int i = 0; i < allGods.length; i++) {
 
             selector = "#godCard" + i;
             Node temp = mainPane.lookup(selector);
 
-            String url = "url('/img/godcards/" + godNames[i].name() + ".png');";
+            String url = "url('/img/godcards/" + allGods[i].name() + ".png');";
             temp.setStyle("-fx-image: " + url);
         }
     }
@@ -118,11 +127,11 @@ public class ElectedPlayerController {
         String style = godCard.getStyle();
 
         // se già scelta precedentemente, deseleziona carta
-        if(selectedCards.contains(godNames[i])) {
+        if (selectedCards.contains(godNames[i])) {
             int index = selectedCards.indexOf(godNames[i]);
             selectedCards.remove(godNames[i]);
 
-            switch (index){
+            switch (index) {
                 case 0:
                     selectedGodCard1.setStyle(selectedGodCard2.getStyle());
                     selectedGodCard2.setStyle(selectedGodCard3.getStyle());
@@ -140,7 +149,7 @@ public class ElectedPlayerController {
         }
 
         // seleziono carta
-        switch (selectedCards.size()){
+        switch (selectedCards.size()) {
             case 0:
                 selectedCards.add(godNames[i]);
                 selectedGodCard1.setStyle(style);
@@ -150,14 +159,25 @@ public class ElectedPlayerController {
                 selectedGodCard2.setStyle(style);
                 break;
             case 2:
-                selectedCards.add(godNames[i]);
-                selectedGodCard3.setStyle(style);
-                //pannello conferma o cancella (conferma lancia l'evento al server, cancella permette di cambiare scelta)
+                if(guiManager.numerOfPlayers() == 3) {
+                    selectedCards.add(godNames[i]);
+                    selectedGodCard3.setStyle(style);
+                }
                 break;
             case 3:
             default:
                 break;
         }
-
     }
+
+    @FXML
+    private void submit(ActionEvent event) {
+        if(guiManager.numerOfPlayers() == selectedCards.size()) {
+            GameEvent evt = new AvailableCardsEvent(guiManager.getData().getOwner(),
+                    selectedCards.toArray(GodName[]::new));
+            guiManager.getClient().raise(evt);
+        }
+    }
+
+
 }

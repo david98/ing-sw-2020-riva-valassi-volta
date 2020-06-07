@@ -7,6 +7,7 @@
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.FlowPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.control.Button?>
 
 <BorderPane xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
             fx:controller="it.polimi.vovarini.view.gui.ElectedPlayerController" fx:id="mainPane" styleClass="mainPane">
@@ -52,6 +53,7 @@
                     <ImageView fitHeight="168" fitWidth="100" fx:id="selectedGodCard1" styleClass="selectedGodCard"/>
                     <ImageView fitHeight="168" fitWidth="100" fx:id="selectedGodCard2" styleClass="selectedGodCard"/>
                     <ImageView fitHeight="168" fitWidth="100" fx:id="selectedGodCard3" styleClass="selectedGodCard"/>
+                    <Button fx:id="submit" onAction="#submit">SUBMIT</Button>
                 </FlowPane>
             </VBox>
         </HBox>

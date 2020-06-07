@@ -1,0 +1,36 @@
+@font-face {
+    src: url("../fonts/ethnocentric-rg.ttf");
+}
+
+@font-face {
+    src: url("../fonts/ethnocentric-rg-it.ttf");
+}
+
+@font-face {
+    src: url("../fonts/Exo2-Black.ttf");
+}
+
+@font-face {
+    src: url("../fonts/Exo2-Medium.ttf");
+}
+
+.mainPane {
+//-fx-background-image: url("../img/bg.png");
+    -fx-alignment: CENTER;
+}
+
+.topBox {
+    -fx-padding: 50 0 0 0;
+    -fx-alignment: CENTER;
+}
+
+.centerBox {
+    -fx-max-width: 900px;
+    -fx-spacing: 10;
+    -fx-alignment: CENTER;
+}
+
+.botBox {
+    -fx-padding: 0 0 50 0;
+    -fx-alignment: CENTER;
+}
