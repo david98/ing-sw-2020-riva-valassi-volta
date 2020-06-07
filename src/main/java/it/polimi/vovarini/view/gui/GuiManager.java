@@ -204,6 +204,11 @@ public class GuiManager extends View {
         //currentScreen.handleGodCardUpdate(e);
     }
 
+    @Override
+    @GameEventListener
+    public void handleVictory(VictoryEvent e) {
+    }
+
     /*public void render(){
         console.clear();
         console.println(currentScreen.render());

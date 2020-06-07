@@ -52,7 +52,7 @@ public class Application implements Callable<Integer> {
 
   @Override
   public Integer call() throws IOException {
-    if (exclusive.serverMode){
+    if (serverMode){
       launchServer(port, 3);
     } else {
       launchClient(useCLI ? ClientMode.CLI : ClientMode.GUI, serverIP, port);
