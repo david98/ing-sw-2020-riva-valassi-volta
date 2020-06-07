@@ -324,7 +324,7 @@ public class Controller implements EventListener {
     if (game.getCurrentPhase().equals(Phase.End)){
       game.getCurrentPlayer().setWorkerSelected(false);
     }
-    game.setCurrentPhase(game.getCurrentPlayer().getGodCard().computeNextPhase(game));
+    game.setCurrentPhase(game.getCurrentPlayer().getGodCard().computeNextPhase(game, true)); //TODO: fix
   }
 
 }

@@ -17,8 +17,6 @@ import java.util.Scanner;
 
 public class GameView extends View {
 
-  private final GameClient client;
-
   private Screen currentScreen;
 
   private final Console console;
@@ -164,9 +162,17 @@ public class GameView extends View {
     currentScreen.handleGodCardUpdate(e);
   }
 
+  @Override
+  @GameEventListener
+  public void handleVictory(VictoryEvent e) {
+    currentScreen = new WaitScreen(data, client, e.getWinningPlayer().getNickname() + " wins!");
+  }
+
   public void render(){
-    console.clear();
-    console.println(currentScreen.render());
+    if (currentScreen.isNeedsRender()) {
+      console.clear();
+      console.println(currentScreen.render());
+    }
   }
 
   public void handleInput() throws IOException{

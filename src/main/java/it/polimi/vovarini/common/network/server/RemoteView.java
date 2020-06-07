@@ -130,4 +130,8 @@ public class RemoteView extends View implements ClientConnectionHandler {
   public void handleRegistrationEvent(RegistrationEvent e) {
     data.setOwner(new Player(e.getNickname()));
   }
+
+  @Override
+  @GameEventListener
+  public void handleVictory(VictoryEvent e) { serverEvents.add(e); }
 }

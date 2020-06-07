@@ -24,8 +24,6 @@ public class MatchScreen extends Screen {
   private final PhasePrompt phasePrompt;
   private final Text message;
 
-  private boolean reRenderNeeded;
-
   private String lastContent;
 
   public MatchScreen(ViewData data, GameClient client){
@@ -36,8 +34,6 @@ public class MatchScreen extends Screen {
     boardElement = new BoardElement(data.getBoard(), data.getPlayerSet(), data.getPlayersColors(), Color.Green);
     phasePrompt = new PhasePrompt(data.getCurrentPhase());
     message = new Text("");
-
-    reRenderNeeded = true;
   }
 
   @Override
@@ -45,22 +41,22 @@ public class MatchScreen extends Screen {
     switch (key) {
       case A: {
         boardElement.moveCursor(Direction.Left);
-        reRenderNeeded = true;
+        needsRender = true;
         break;
       }
       case D: {
         boardElement.moveCursor(Direction.Right);
-        reRenderNeeded = true;
+        needsRender = true;
         break;
       }
       case W: {
         boardElement.moveCursor(Direction.Up);
-        reRenderNeeded = true;
+        needsRender = true;
         break;
       }
       case S: {
         boardElement.moveCursor(Direction.Down);
-        reRenderNeeded = true;
+        needsRender = true;
         break;
       }
       case Spacebar: {
@@ -84,22 +80,16 @@ public class MatchScreen extends Screen {
   @Override
   public String render() {
     StringBuilder content = new StringBuilder();
-    if (reRenderNeeded) {
-      content.append(playerList.render())
-              .append("\n")
-              .append(boardElement.render())
-              .append("\n")
-              .append(data.getCurrentPlayer().equals(data.getOwner()) ? phasePrompt.render() :
-                      "It's " + data.getCurrentPlayer().getNickname() + "'s turn.")
-              .append("\n")
-              .append(message.render());
-
-      reRenderNeeded = false;
-      lastContent = content.toString();
-      return content.toString();
-    } else {
-      return lastContent;
-    }
+    content.append(playerList.render())
+            .append("\n")
+            .append(boardElement.render())
+            .append("\n")
+            .append(data.getCurrentPlayer().equals(data.getOwner()) ? phasePrompt.render() :
+                    "It's " + data.getCurrentPlayer().getNickname() + "'s turn.")
+            .append("\n")
+            .append(message.render());
+    needsRender = false;
+    return content.toString();
   }
 
   private void deSelect(){
@@ -107,7 +97,7 @@ public class MatchScreen extends Screen {
     data.setCurrentStart(null);
     boardElement.resetMarkedPoints();
 
-    reRenderNeeded = true;
+    needsRender = true;
   }
 
   /**
@@ -128,6 +118,7 @@ public class MatchScreen extends Screen {
       boardElement.resetMarkedPoints();
       client.raise(new BuildEvent(data.getOwner(), dest, nextLevel));
       handlesInput = false;
+      needsRender = true;
     }
   }
 
@@ -145,12 +136,14 @@ public class MatchScreen extends Screen {
           data.setCurrentStart(boardElement.getCursorLocation());
           data.setSelectedWorker((Worker) item);
           data.getOwner().setCurrentSex(((Worker) item).getSex());
+          data.getCurrentPlayer().setCurrentSex(((Worker) item).getSex());
           // mark points reachable by the selected worker
           boardElement.markPoints(
                   data.getOwner().getGodCard().computeReachablePoints()
           );
           message.setContent("Press O to confirm your choice.");
-          reRenderNeeded = true;
+
+          needsRender = true;
         }
       }
     } else {
@@ -170,6 +163,7 @@ public class MatchScreen extends Screen {
                 data.getOwner(),
                 boardElement.getCursorLocation())
         );
+        needsRender = true;
         handlesInput = false;
     }
   }
@@ -207,7 +201,7 @@ public class MatchScreen extends Screen {
   @Override
   public void handleBoardUpdate(BoardUpdateEvent e) {
     boardElement.setBoard(e.getNewBoard());
-    reRenderNeeded = true;
+    needsRender = true;
   }
 
   @Override
@@ -219,8 +213,8 @@ public class MatchScreen extends Screen {
     if (e.getNewPlayer().equals(data.getCurrentPlayer())){
       handlesInput = true;
     }
+    needsRender = true;
 
-    reRenderNeeded = true;
   }
 
   @Override
@@ -244,10 +238,11 @@ public class MatchScreen extends Screen {
       }
       case End -> {
         if (data.getCurrentPlayer().equals(data.getOwner())) {
+          deSelect();
           message.setContent("Press N to end your turn.");
         }
       }
     }
-    reRenderNeeded = true;
+    needsRender = true;
   }
 }

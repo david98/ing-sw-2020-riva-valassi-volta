@@ -43,6 +43,7 @@ public class SpawnWorkersScreen extends Screen {
             .filter(p -> data.getBoard().getItems(p).isEmpty())
             .collect(Collectors.toList());
     boardElement.markPoints(freePoints);
+    needsRender = true;
   }
 
   private void spawnCurrent(){
@@ -67,6 +68,7 @@ public class SpawnWorkersScreen extends Screen {
       message.setContent("Place your " + sexes.get(0) + " worker.");
       markFreePoints();
     }
+    needsRender = true;
   }
 
   @Override
@@ -80,10 +82,12 @@ public class SpawnWorkersScreen extends Screen {
       default -> {
       }
     }
+    needsRender = true;
   }
 
   @Override
   public String render() {
+    needsRender = false;
     return boardElement.render() + "\n" + message.render();
   }
 }
