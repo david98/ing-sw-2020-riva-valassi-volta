@@ -2,7 +2,9 @@ package it.polimi.vovarini.model;
 
 import it.polimi.vovarini.common.events.*;
 import it.polimi.vovarini.common.exceptions.InvalidNumberOfPlayersException;
+import it.polimi.vovarini.common.exceptions.ItemNotFoundException;
 import it.polimi.vovarini.model.board.Board;
+import it.polimi.vovarini.model.board.items.Worker;
 import it.polimi.vovarini.model.godcards.GodCard;
 import it.polimi.vovarini.model.godcards.GodCardFactory;
 import it.polimi.vovarini.model.godcards.GodName;
@@ -12,6 +14,7 @@ import it.polimi.vovarini.model.moves.Movement;
 
 import java.io.Serializable;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class Game implements Serializable, GameDataAccessor {
 
@@ -173,6 +176,25 @@ public class Game implements Serializable, GameDataAccessor {
   public void setCurrentPhase(Phase phase){
     this.currentPhase = phase;
     GameEventManager.raise(new PhaseUpdateEvent(this, phase));
+
+    switch (currentPhase) {
+      case Start -> {
+          // check if at least one worker can move, else raise a LossEvent
+        if (getCurrentPlayer().getGodCard().computeReachablePoints().isEmpty()) {
+          getCurrentPlayer().setCurrentSex(getCurrentPlayer().getOtherWorker().getSex());
+          if (getCurrentPlayer().getGodCard().computeReachablePoints().isEmpty()) {
+            getCurrentPlayer().setHasLost(true);
+          }
+        }
+      }
+      case Construction -> {
+        if (getCurrentPlayer().getGodCard().computeBuildablePoints().isEmpty()) {
+          getCurrentPlayer().setHasLost(true);
+        }
+      }
+
+    }
+
   }
 
   // needs to manage turn flow

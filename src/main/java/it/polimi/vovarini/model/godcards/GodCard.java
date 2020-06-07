@@ -232,29 +232,6 @@ public class GodCard implements Serializable {
     } catch (ItemNotFoundException ignored) {
     }
 
-    if (reachablePoints.isEmpty()) {
-      try{
-        List<Point> otherWorkerPoints = new LinkedList<>();
-
-        Player player = gameData.getCurrentPlayer();
-        Board board = gameData.getBoard();
-        Worker unselectedWorker = player.getOtherWorker();
-        Point unselectedWorkerPosition = board.getItemPosition(unselectedWorker);
-
-        List<Point> otherCandidatePositions = board.getAdjacentPositions(unselectedWorkerPosition);
-        otherWorkerPoints =
-              otherCandidatePositions.stream()
-                      .filter(p -> movementConditions.stream().anyMatch(cond -> cond.apply(gameData, p)))
-                      .filter(p -> movementConstraints.stream().allMatch(cond -> cond.apply(gameData, p)))
-                      .collect(Collectors.toList());
-
-      if (otherWorkerPoints.isEmpty()) gameData.getCurrentPlayer().setHasLost(true);
-      else GameEventManager.raise(new ChangeWorkerEvent(this, unselectedWorker));
-
-      } catch (ItemNotFoundException ignored) {
-      }
-
-    }
     return reachablePoints;
   }
 
@@ -292,10 +269,7 @@ public class GodCard implements Serializable {
 
     } catch (ItemNotFoundException ignored) {
     }
-
-    if (buildablePoints.isEmpty()) {
-      gameData.getCurrentPlayer().setHasLost(true);
-    }
+    
     return buildablePoints;
   }
 

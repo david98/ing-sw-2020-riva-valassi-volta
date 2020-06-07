@@ -170,15 +170,17 @@ public class GameView extends View {
   @Override
   @GameEventListener
   public void handleVictory(VictoryEvent e) {
-    currentScreen = new WaitScreen(data, client, e.getWinningPlayer().getNickname() + " wins!");
     if (e.getWinningPlayer().equals(data.getOwner())) {
+      currentScreen = new WaitScreen(data, client, "VICTORY ROYALE!");
       playAudio("/audio/bgm/victory.wav", true);
     } else {
+      currentScreen = new WaitScreen(data, client, e.getWinningPlayer().getNickname() + " wins!");
       playAudio("/audio/bgm/loss.wav", true);
     }
   }
 
   @Override
+  @GameEventListener
   public void handleLoss(LossEvent e) {
     super.handleLoss(e);
   }

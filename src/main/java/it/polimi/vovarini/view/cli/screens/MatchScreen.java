@@ -16,6 +16,7 @@ import it.polimi.vovarini.view.cli.input.Key;
 import it.polimi.vovarini.view.cli.styling.Color;
 
 import java.util.Collection;
+import java.util.List;
 
 public class MatchScreen extends Screen {
 
@@ -96,6 +97,7 @@ public class MatchScreen extends Screen {
     data.setSelectedWorker(null);
     data.setCurrentStart(null);
     boardElement.resetMarkedPoints();
+    message.setContent("");
 
     needsRender = true;
   }
@@ -110,9 +112,6 @@ public class MatchScreen extends Screen {
 
     Collection<Point> buildablePoints = data.getOwner().getGodCard().computeBuildablePoints();
 
-    if (data.getOwner().isHasLost()){
-      System.exit(1);
-    }
     if (buildablePoints.contains(dest)){
       int nextLevel = data.getBoard().getBox(dest).getLevel() + 1;
       boardElement.resetMarkedPoints();
@@ -128,20 +127,21 @@ public class MatchScreen extends Screen {
         deSelect();
       } else {
         Item item = data.getBoard().getItems(boardElement.getCursorLocation()).peek();
-        if (data.getOwner().isHasLost()){
-          System.exit(1);
-        }
 
         if (data.getOwner().getWorkers().values().stream().anyMatch(w -> w.equals(item))) {
-          data.setCurrentStart(boardElement.getCursorLocation());
-          data.setSelectedWorker((Worker) item);
           data.getOwner().setCurrentSex(((Worker) item).getSex());
           data.getCurrentPlayer().setCurrentSex(((Worker) item).getSex());
           // mark points reachable by the selected worker
-          boardElement.markPoints(
-                  data.getOwner().getGodCard().computeReachablePoints()
-          );
-          message.setContent("Press O to confirm your choice.");
+          List<Point> reachablePoints = data.getOwner().getGodCard().computeReachablePoints();
+          if (!reachablePoints.isEmpty()) {
+            data.setCurrentStart(boardElement.getCursorLocation());
+            data.setSelectedWorker((Worker) item);
+
+            boardElement.markPoints(
+                    data.getOwner().getGodCard().computeReachablePoints()
+            );
+            message.setContent("Press O to confirm your choice.");
+          }
 
           needsRender = true;
         }
@@ -231,9 +231,6 @@ public class MatchScreen extends Screen {
       case Construction -> {
         if (data.getCurrentPlayer().equals(data.getOwner())) {
           boardElement.markPoints(data.getOwner().getGodCard().computeBuildablePoints());
-          if (data.getOwner().isHasLost()) {
-            System.exit(1);
-          }
         }
       }
       case End -> {
