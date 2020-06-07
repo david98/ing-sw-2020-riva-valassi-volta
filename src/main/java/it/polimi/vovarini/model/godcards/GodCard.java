@@ -299,14 +299,40 @@ public class GodCard implements Serializable {
     return buildablePoints;
   }
 
+  public Phase computeNextPhase(GameDataAccessor gameData) {
+    return computeNextPhase(gameData, false);
+  }
+
   /**
    * Function that computes the next phase of the current player's turn
    * @param gameData is the gameData all players are currently playing
    * @return the phase subsequent to the one currently in place
    */
-  public Phase computeNextPhase(GameDataAccessor gameData){
+  public Phase computeNextPhase(GameDataAccessor gameData, boolean skipIfPossible){
 
-    Phase next = nextPhase.apply(gameData);
+    Phase next;
+
+    if (skipIfPossible) {
+      switch (gameData.getCurrentPhase()) {
+        case Movement -> {
+          if (!gameData.getCurrentPlayer().getMovementList().isEmpty()) {
+            next = Phase.Construction;
+          } else {
+            next = nextPhase.apply(gameData);
+          }
+        }
+        case Construction -> {
+          if (!gameData.getCurrentPlayer().getConstructionList().isEmpty()) {
+            next = Phase.End;
+          } else {
+            next = nextPhase.apply(gameData);
+          }
+        }
+        default -> next = nextPhase.apply(gameData);
+      }
+    } else {
+      next = nextPhase.apply(gameData);
+    }
 
     if(next.equals(Phase.Start)){
 
