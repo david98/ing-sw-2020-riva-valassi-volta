@@ -168,6 +168,11 @@ public class GameView extends View {
     currentScreen = new WaitScreen(data, client, e.getWinningPlayer().getNickname() + " wins!");
   }
 
+  @Override
+  public void handleLoss(LossEvent e) {
+    super.handleLoss(e);
+  }
+
   public void render(){
     if (currentScreen.isNeedsRender()) {
       console.clear();

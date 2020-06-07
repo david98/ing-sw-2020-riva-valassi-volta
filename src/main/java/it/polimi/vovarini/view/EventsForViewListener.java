@@ -27,4 +27,6 @@ public interface EventsForViewListener {
   void handleGodCardUpdate(GodCardUpdateEvent e);
 
   void handleVictory(VictoryEvent e);
+
+  void handleLoss(LossEvent e);
 }
