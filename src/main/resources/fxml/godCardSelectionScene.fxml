@@ -26,6 +26,11 @@
                     <ImageView fitHeight="168" fitWidth="100" fx:id="godCard1" styleClass="godCard"/>
                     <ImageView fitHeight="168" fitWidth="100" fx:id="godCard2" styleClass="godCard"/>
                 </FlowPane>
+                <FlowPane styleClass="voteInnerBox">
+                    <Label prefWidth="100" fx:id="label0" styleClass="menuLabel"/>
+                    <Label prefWidth="100" fx:id="label1" styleClass="menuLabel"/>
+                    <Label prefWidth="100" fx:id="label2" styleClass="menuLabel"/>
+                </FlowPane>
             </VBox>
         </HBox>
     </center>

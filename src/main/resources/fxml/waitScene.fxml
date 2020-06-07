@@ -4,25 +4,22 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.layout.BorderPane?>
 <?import java.net.URL?>
-<?import javafx.scene.layout.HBox?>
 
-<?import javafx.scene.control.TextField?>
-<?import javafx.scene.control.Button?>
 <BorderPane xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
-            fx:controller="it.polimi.vovarini.view.gui.WaitController" fx:id="mainPane" styleClass="mainPane">
+            fx:controller="it.polimi.vovarini.view.gui.WaitController" fx:id="mainPane">
     <stylesheets>
         <URL value="@../css/waitScene.css"/>
     </stylesheets>
 
     <top>
         <VBox styleClass="topBox">
-            <Label text="Wait please" styleClass="menuTitle"/>
+            <Label text="Wait please"/>
         </VBox>
     </top>
 
     <center>
             <VBox styleClass="voteBox">
-                <Label fx:id="label" styleClass="menuLabel">Wait for another player...</Label>
+                <Label fx:id="label">Wait for another player...</Label>
             </VBox>
     </center>
 

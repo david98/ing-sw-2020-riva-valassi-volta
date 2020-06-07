@@ -63,9 +63,7 @@ public class RegistrationController {
     }
 
     void onConnectionResponse() {
-        System.out.println("sono il registrationController e ora passerò alla wait");
         GuiManager.setLayout(mainPane.getScene(), "/fxml/waitScene.fxml");
-        System.out.println("sono il registrationController sono passato alla wait");
     }
 
     void onInvalidNickname() {

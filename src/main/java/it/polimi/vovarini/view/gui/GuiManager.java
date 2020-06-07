@@ -17,8 +17,6 @@ public class GuiManager extends View {
     private static GuiManager instance = null;
 
     private GameClient client;
-    private boolean running;
-    private boolean waiting;
 
     private RegistrationController registrationController;
     private WaitController waitController;
@@ -32,10 +30,6 @@ public class GuiManager extends View {
 
         data = new ViewData();
 
-        running = true;
-
-        waiting = true;
-
         instance = this;
 
     }
@@ -46,32 +40,13 @@ public class GuiManager extends View {
         return instance;
     }
 
-    public GameClient getClient() {
-        return client;
-    }
-
-    private void waitForEvent(){
-        try {
-            GameEvent evtFromServer = client.getServerEvents().take();
-            GameEventManager.raise(evtFromServer);
-        } catch (InterruptedException e){
-            Thread.currentThread().interrupt();
-        }
-    }
-
     @Override
     @GameEventListener
     public void handleNewPlayer(NewPlayerEvent e) {
         super.handleNewPlayer(e);
 
-        System.out.println("nuovo giocatore!");
-        // se sono stato accettato, passo alla schermata di wait
         if(e.getNewPlayer().equals(data.getOwner())) {
-            System.out.println("Ti ordino di passare alla wait");
-            //Platform.runLater(() -> registrationController.onConnectionResponse());
-            waiting = false;
             registrationController.onConnectionResponse();
-            System.out.println("Sei passato alla wait");
         }
 
     }
@@ -105,7 +80,6 @@ public class GuiManager extends View {
     @Override
     @GameEventListener
     public void handleGodSelectionStart(GodSelectionStartEvent e) {
-        waiting = false;
         Player[] players = e.getPlayers();
         for (int i = 0; i < players.length; i++){
             for (Player p: data.getPlayerSet()){
@@ -123,39 +97,20 @@ public class GuiManager extends View {
         if (e.getElectedPlayer().equals(data.getOwner())) {
             Platform.runLater(() -> waitController.changeLayout("/fxml/electedPlayerScene.fxml"));
             Platform.runLater(() -> electedPlayerController.addImages(e.getAllGods()));
-            //gameLoop();
         } else {
             Platform.runLater(() -> waitController.waitMessage(e.getElectedPlayer().getNickname()));
-            //waitForEvent();
         }
-
-
     }
 
     @Override
     @GameEventListener
     public void handleSelectYourCard(SelectYourCardEvent e) {
-
         if(godCardSelectionController == null) {
             Platform.runLater(() -> waitController.changeLayout("/fxml/godCardSelectionScene.fxml"));
             Platform.runLater(() -> godCardSelectionController.addImages(e.getGodsLeft(), !e.getTargetPlayer().equals(data.getOwner())));
         } else {
             Platform.runLater(() -> godCardSelectionController.changeVisibility(e.getGodsLeft(), !e.getTargetPlayer().equals(data.getOwner())));
         }
-
-        /*
-
-        if (e.getTargetPlayer().equals(data.getOwner())){
-            currentScreen = new GodCardSelectionScreen(data, client, Arrays.asList(e.getGodsLeft()));
-            gameLoop();
-        } else {
-            currentScreen = new WaitScreen(data, client,
-                    "Waiting for all players to choose their card...");
-            render();
-            waitForEvent();
-        }
-
-        */
     }
 
     @Override
@@ -167,6 +122,7 @@ public class GuiManager extends View {
                 p.setGodCard(e.getAssignedCard());
             }
         }
+        Platform.runLater(() -> godCardSelectionController.showChoice(e.getTargetPlayer(), e.getAssignedCard()));
     }
 
     @Override
@@ -224,9 +180,6 @@ public class GuiManager extends View {
 
     public void startMatch() {
 
-        // METTO IN SCENA GAMESCENE
-
-        System.out.println("Carte scelte, finalmente si gioca!");
         //setto scena iniziale
         //currentScreen = new MatchScreen(data, client);
         //gameLoop();
@@ -258,29 +211,6 @@ public class GuiManager extends View {
         return loader.getController();
     }
 
-    public void gameLoop(){
-        //render();
-        while (running) {
-            GameEvent evt;
-            // consume events from the server
-            while ( client.getServerEvents().peek() != null) {
-                evt = client.getServerEvents().poll();
-                GameEventManager.raise(evt);
-            }
-            try {
-                //render();
-                if (data.getOwner().equals(data.getCurrentPlayer())) { // && currentScreen.isHandlesInput()) {
-                    //handleInput();
-                } else {
-                    // wait for event
-                    GameEventManager.raise(client.getServerEvents().take());
-                }
-            } catch (InterruptedException e){
-                Thread.currentThread().interrupt();
-            }
-        }
-    }
-
     public void createConnection(String nickname, String serverIP, int serverPort) throws IOException {
         client = new GameClient(serverIP, serverPort);
         client.raise(new RegistrationEvent(client.getIPv4Address(), nickname));
@@ -310,12 +240,9 @@ public class GuiManager extends View {
         return data;
     }
 
+    public GameClient getClient() { return client; }
+
     public int numerOfPlayers() {
         return data.getPlayerSet().size();
     }
-
-    public void stop(){
-        running = false;
-    }
-
 }

@@ -2,9 +2,12 @@ package it.polimi.vovarini.view.gui;
 
 import it.polimi.vovarini.common.events.CardChoiceEvent;
 import it.polimi.vovarini.common.events.GameEvent;
+import it.polimi.vovarini.model.Player;
+import it.polimi.vovarini.model.godcards.GodCard;
 import it.polimi.vovarini.model.godcards.GodName;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
+import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
@@ -30,7 +33,6 @@ public class GodCardSelectionController {
     @FXML
     public void initialize() {
 
-        /* altre eventuali inizializzazioni */
         guiManager = GuiManager.getInstance();
         guiManager.setGodCardSelectionController(this);
         bindEvents();
@@ -38,7 +40,6 @@ public class GodCardSelectionController {
 
     void addImages(GodName[] availableGodCards, boolean disabled) {
         allGods = availableGodCards;
-        // aggiungo le carte alla grafica
         String selector;
         for(int i = 0; i < availableGodCards.length; i++) {
 
@@ -55,7 +56,6 @@ public class GodCardSelectionController {
      * Binds click events
      */
     private void bindEvents() {
-        //ImageView non sono Button, quindi non hanno eventi su click o simili
         godCard0.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> onCardButtonClick(0));
         godCard1.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> onCardButtonClick(1));
         godCard2.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> onCardButtonClick(2));
@@ -74,12 +74,6 @@ public class GodCardSelectionController {
 
         GameEvent evt = new CardChoiceEvent(guiManager.getData().getOwner(), allGods[cardChosen]);
         guiManager.getClient().raise(evt);
-
-        /* qui dovrei inviare la scelta al server
-        *
-        * poi cambio Scena con qualcosa tipo:
-        * GuiManager.cambiaScena(new ScenaSuccessiva(parametri));
-        */
     }
 
     void changeVisibility(GodName[] godsLeft, boolean disabled) {
@@ -96,6 +90,16 @@ public class GodCardSelectionController {
                     Node temp = mainPane.lookup(selector);
                     temp.setDisable(disabled);
                 }
+            }
+        }
+    }
+
+    void showChoice(Player targetPlayer, GodCard assignedCard) {
+        for (int i = 0; i < allGods.length; i++) {
+            if (allGods[i].equals(assignedCard.getName())) {
+                String selector = "#label" + i;
+                Label temp = (Label) mainPane.lookup(selector);
+                temp.setText(targetPlayer.getNickname());
             }
         }
     }

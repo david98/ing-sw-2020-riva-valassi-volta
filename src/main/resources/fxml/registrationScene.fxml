@@ -24,8 +24,8 @@
         <HBox styleClass="voteHBox">
             <VBox styleClass="voteBox">
                 <Label fx:id="label" styleClass="menuLabel"/>
-                <TextField fx:id="addressField"/>
-                <TextField fx:id="portField"/>
+                <TextField fx:id="addressField">localhost</TextField>
+                <TextField fx:id="portField">6666</TextField>
                 <TextField fx:id="nicknameField"/>
                 <Button fx:id="submit" onAction="#onButtonClick">Submit</Button>
             </VBox>

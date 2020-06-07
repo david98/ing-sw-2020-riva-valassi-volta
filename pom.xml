@@ -21,7 +21,7 @@
         <sonar.language>java</sonar.language>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <javafx.mainClass>it.polimi.vovarini.view.gui.MainElectedPlayer</javafx.mainClass>
+        <javafx.mainClass>it.polimi.vovarini.view.gui.Gui</javafx.mainClass>
     </properties>
 
     <dependencies>

@@ -176,6 +176,7 @@ public class ElectedPlayerController {
             GameEvent evt = new AvailableCardsEvent(guiManager.getData().getOwner(),
                     selectedCards.toArray(GodName[]::new));
             guiManager.getClient().raise(evt);
+            GuiManager.setLayout(mainPane.getScene(), "/fxml/waitScene.fxml");
         }
     }
 

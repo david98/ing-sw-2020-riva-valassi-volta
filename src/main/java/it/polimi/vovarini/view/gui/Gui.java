@@ -12,9 +12,9 @@ public class Gui extends Application {
     @Override
     public void start(Stage stage) {
         stage.setMaximized(true);
-        //.setFullScreen(true);
+        //stage.setFullScreen(true);
         //stage.setFullScreenExitHint("");
-        stage.setFullScreenExitKeyCombination(KeyCombination.NO_MATCH);
+        //stage.setFullScreenExitKeyCombination(KeyCombination.NO_MATCH);
 
         stage.setScene(new Scene(new Pane()));
 

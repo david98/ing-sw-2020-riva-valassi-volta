@@ -23,7 +23,6 @@ public class GuiEventListener implements Runnable {
 
   @Override
   public void run() {
-    System.out.println("attendo ziocane");
     while (running) {
       try {
         GameEvent evtFromServer = client.getServerEvents().take();
