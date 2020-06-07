@@ -25,6 +25,8 @@ public class GuiManager extends View {
     private ElectedPlayerController electedPlayerController;
     private GodCardSelectionController godCardSelectionController;
 
+    private Thread guiEventListenerThread;
+
     private GuiManager() {
         super();
 
@@ -35,6 +37,7 @@ public class GuiManager extends View {
         waiting = true;
 
         instance = this;
+
     }
 
     public static GuiManager getInstance() {
@@ -65,7 +68,9 @@ public class GuiManager extends View {
         // se sono stato accettato, passo alla schermata di wait
         if(e.getNewPlayer().equals(data.getOwner())) {
             System.out.println("Ti ordino di passare alla wait");
-            Platform.runLater(() -> registrationController.onConnectionResponse());
+            //Platform.runLater(() -> registrationController.onConnectionResponse());
+            waiting = false;
+            registrationController.onConnectionResponse();
             System.out.println("Sei passato alla wait");
         }
 
@@ -276,20 +281,8 @@ public class GuiManager extends View {
         client.raise(new RegistrationEvent(client.getIPv4Address(), nickname));
         data.setOwner(new Player(nickname));
 
-        attendiZioCane();
-    }
-
-    public void attendiZioCane() {
-        System.out.println("attendo ziocane");
-        while (waiting) {
-            try {
-                GameEvent evtFromServer = client.getServerEvents().take();
-                System.out.println(evtFromServer.toString());
-                GameEventManager.raise(evtFromServer);
-            } catch (InterruptedException e){
-                Thread.currentThread().interrupt();
-            }
-        }
+        guiEventListenerThread = new Thread(new GuiEventListener(client));
+        guiEventListenerThread.start();
     }
 
     public void setRegistrationController(RegistrationController registrationController) {

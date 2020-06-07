@@ -14,15 +14,10 @@ import java.util.concurrent.Callable;
         description = "Starts Santorini")
 public class Application implements Callable<Integer> {
 
-  @CommandLine.ArgGroup(exclusive = true, multiplicity = "1")
-  Exclusive exclusive;
-
-  static class Exclusive {
-    @CommandLine.Option(names = {"-s", "--server"}, description = "Run as server")
-    private boolean serverMode;
-    @CommandLine.Parameters(arity = "0..1", index = "0", description = "The server hostname or IP address")
-    private String serverIP = "santorini.davide.gdn";
-  }
+  @CommandLine.Option(names = {"-s", "--server"}, description = "Run as server")
+  private boolean serverMode;
+  @CommandLine.Parameters(arity = "0..1", index = "0", description = "The server hostname or IP address")
+  private String serverIP = "santorini.davide.gdn";
 
   @CommandLine.Option(names = {"-p", "--port"}, description = "The port to connect to (or to listen on if running as server")
   private int port = Server.DEFAULT_PORT;
@@ -57,10 +52,10 @@ public class Application implements Callable<Integer> {
 
   @Override
   public Integer call() throws IOException { // your business logic goes here...
-    if (exclusive.serverMode){
+    if (serverMode){
       launchServer(port, 2);
     } else {
-      launchClient(useCLI ? ClientMode.CLI : ClientMode.GUI, exclusive.serverIP, port);
+      launchClient(useCLI ? ClientMode.CLI : ClientMode.GUI, serverIP, port);
     }
     return 0;
   }
