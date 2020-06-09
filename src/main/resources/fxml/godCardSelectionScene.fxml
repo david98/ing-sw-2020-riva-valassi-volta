@@ -13,14 +13,14 @@
 
     <top>
         <VBox styleClass="topBox">
-            <Label text="Santorini" styleClass="menuTitle"/>
+            <Label text="Choose your godCard:" styleClass="menuTitle"/>
         </VBox>
     </top>
 
     <center>
         <HBox styleClass="voteHBox">
             <VBox styleClass="voteBox">
-                <Label text="Choose your godCard:" styleClass="menuLabel"/>
+                <Label fx:id="instruction" styleClass="menuLabel"/>
                 <FlowPane styleClass="voteInnerBox">
                     <ImageView fitHeight="168" fitWidth="100" fx:id="godCard0" styleClass="godCard"/>
                     <ImageView fitHeight="168" fitWidth="100" fx:id="godCard1" styleClass="godCard"/>

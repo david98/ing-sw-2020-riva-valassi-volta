@@ -26,6 +26,9 @@ public class GodCardSelectionController {
     @FXML
     private ImageView godCard2;
 
+    @FXML
+    private Label instruction;
+
     private GuiManager guiManager;
 
     private GodName[] allGods;
@@ -50,6 +53,7 @@ public class GodCardSelectionController {
             temp.setStyle("-fx-image: " + url);
             temp.setDisable(disabled);
         }
+        changeVisibility(availableGodCards, disabled);
     }
 
     /**
@@ -70,8 +74,6 @@ public class GodCardSelectionController {
         godCard1.setDisable(true);
         godCard2.setDisable(true);
 
-        System.out.println("Carta scelta: " + cardChosen);
-
         GameEvent evt = new CardChoiceEvent(guiManager.getData().getOwner(), allGods[cardChosen]);
         guiManager.getClient().raise(evt);
     }
@@ -91,6 +93,12 @@ public class GodCardSelectionController {
                     temp.setDisable(disabled);
                 }
             }
+        }
+
+        if(disabled) {
+            instruction.setText("Wait for " + guiManager.getData().getCurrentPlayer().getNickname() + " choice");
+        } else {
+            instruction.setText("It's your turn, choose your card!");
         }
     }
 

@@ -13,13 +13,13 @@
 
     <top>
         <VBox styleClass="topBox">
-            <Label text="Wait please"/>
+            <Label text="Loading..." styleClass="menuTitle"/>
         </VBox>
     </top>
 
     <center>
             <VBox styleClass="voteBox">
-                <Label fx:id="label">Wait for another player...</Label>
+                <Label fx:id="label" styleClass="menuLabel">Wait for another player...</Label>
             </VBox>
     </center>
 

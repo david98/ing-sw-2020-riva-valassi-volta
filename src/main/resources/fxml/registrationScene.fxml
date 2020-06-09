@@ -23,10 +23,18 @@
     <center>
         <HBox styleClass="voteHBox">
             <VBox styleClass="voteBox">
-                <Label fx:id="label" styleClass="menuLabel"/>
-                <TextField fx:id="addressField">localhost</TextField>
-                <TextField fx:id="portField">6666</TextField>
-                <TextField fx:id="nicknameField"/>
+
+                <Label fx:id="error" styleClass="menuLabel"/>
+
+                <Label text="Enter your username:" styleClass="menuLabel"/>
+                <TextField fx:id="nicknameField" styleClass="menuTextField"/>
+
+                <Label text="Enter server address:" styleClass="menuLabel"/>
+                <TextField fx:id="addressField" text="localhost" styleClass="menuTextField"/>
+
+                <Label text="Enter server port:" styleClass="menuLabel"/>
+                <TextField fx:id="portField" text="6666" styleClass="menuTextField"/>
+
                 <Button fx:id="submit" onAction="#onButtonClick">Submit</Button>
             </VBox>
         </HBox>

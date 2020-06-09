@@ -4,10 +4,13 @@ import it.polimi.vovarini.common.events.RegistrationEvent;
 import it.polimi.vovarini.common.network.GameClient;
 import it.polimi.vovarini.model.Player;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 
 import java.io.IOException;
@@ -18,7 +21,7 @@ public class RegistrationController {
     private BorderPane mainPane;
 
     @FXML
-    private Label label;
+    private Label error;
 
     @FXML
     private TextField nicknameField;
@@ -38,8 +41,25 @@ public class RegistrationController {
     public void initialize() {
         guiManager = GuiManager.getInstance();
         guiManager.setRegistrationController(this);
-    }
 
+        nicknameField.setOnKeyPressed(keyEvent -> {
+            if (keyEvent.getCode() == KeyCode.ENTER) {
+                onButtonClick(null);
+            }
+        });
+
+        addressField.setOnKeyPressed(keyEvent -> {
+            if (keyEvent.getCode() == KeyCode.ENTER) {
+                onButtonClick(null);
+            }
+        });
+
+        portField.setOnKeyPressed(keyEvent -> {
+            if (keyEvent.getCode() == KeyCode.ENTER) {
+                onButtonClick(null);
+            }
+        });
+    }
 
     @FXML
     private void onButtonClick(ActionEvent event) {
@@ -49,9 +69,9 @@ public class RegistrationController {
         String serverPort = portField.getText();
 
         if ((nickname == null) || !nickname.matches("[A-Za-z0-9_]{4,16}$")) {
-            label.setText("Invalid nickname, type a new one.");
+            error.setText("Invalid nickname, type a new one.");
         } else {
-            label.setText("");
+            error.setText("");
             submit.setDisable(true);
 
             try {
@@ -67,6 +87,6 @@ public class RegistrationController {
     }
 
     void onInvalidNickname() {
-        label.setText("Nickname already exists!");
+        error.setText("Nickname already exists!");
     }
 }

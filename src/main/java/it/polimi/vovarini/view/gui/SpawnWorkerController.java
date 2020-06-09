@@ -105,12 +105,14 @@ public class SpawnWorkerController {
 
     void changeVisibility(boolean disabled, String currentPlayer) {
         for (int i = 0; i < 5; i++) {
-            String selector = "#button" + i + "0";
-            Node node = board.lookup(selector);
-            node.setDisable(disabled);
+            for (int j = 0; j < b.getSize(); j++) {
+                String selector = "#button" + i + j;
+                Node node = board.lookup(selector);
+                node.setDisable(disabled);
 
-            if(b.getBox(new Point(i,0)).getItems().peek() != null) {
-                node.setDisable(true);
+                if (b.getBox(new Point(i, j)).getItems().peek() != null) {
+                    node.setDisable(true);
+                }
             }
         }
 
