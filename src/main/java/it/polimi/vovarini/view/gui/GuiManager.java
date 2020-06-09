@@ -22,6 +22,7 @@ public class GuiManager extends View {
     private WaitController waitController;
     private ElectedPlayerController electedPlayerController;
     private GodCardSelectionController godCardSelectionController;
+    private SpawnWorkerController spawnWorkerController;
 
     private Thread guiEventListenerThread;
 
@@ -54,7 +55,8 @@ public class GuiManager extends View {
     @Override
     @GameEventListener
     public void handleBoardUpdate(BoardUpdateEvent e) {
-
+        data.setBoard(e.getNewBoard());
+        Platform.runLater(() -> spawnWorkerController.boardUpdate());
     }
 
     @Override
@@ -129,21 +131,12 @@ public class GuiManager extends View {
     @GameEventListener
     public void handlePlaceYourWorkers(PlaceYourWorkersEvent e) {
 
-        /*
-
-        if (e.getTargetPlayer().equals(data.getOwner())){
-          currentScreen = new SpawnWorkersScreen(data, client);
-          gameLoop();
-        } else {
-          // maybe we should show the board
-          currentScreen = new WaitScreen(data, client,
-                  "Waiting for all players to place their workers...");
-
-          render();
-          waitForEvent();
+        if(spawnWorkerController == null) {
+            Platform.runLater(() -> godCardSelectionController.changeLayout("/fxml/spawnWorkerScene.fxml"));
+            Platform.runLater(() -> spawnWorkerController.addImages(data.getPlayers()));
         }
 
-         */
+        Platform.runLater(() -> spawnWorkerController.changeVisibility(!e.getTargetPlayer().equals(data.getOwner()), e.getTargetPlayer().getNickname()));
     }
 
     @Override
@@ -234,6 +227,10 @@ public class GuiManager extends View {
 
     public void setGodCardSelectionController(GodCardSelectionController godCardSelectionController) {
         this.godCardSelectionController = godCardSelectionController;
+    }
+
+    public void setSpawnWorkerController(SpawnWorkerController spawnWorkerController) {
+        this.spawnWorkerController = spawnWorkerController;
     }
 
     public ViewData getData() {

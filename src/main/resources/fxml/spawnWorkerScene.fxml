@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+<?import java.net.URL?>
+
+<?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.control.Button?>
+<BorderPane xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
+            fx:controller="it.polimi.vovarini.view.gui.SpawnWorkerController" fx:id="mainPane" styleClass="mainPane">
+
+    <stylesheets>
+        <URL value="@../css/spawnWorkerScene.css"/>
+    </stylesheets>
+
+    <top>
+        <VBox styleClass="topBox">
+            <Label fx:id="instruction" text="GameScene" styleClass="menuTitle"/>
+        </VBox>
+    </top>
+
+    <center>
+       <GridPane prefHeight="500.0" prefWidth="500.0" fx:id="board" gridLinesVisible="true" styleClass="board">
+           <columnConstraints>
+               <ColumnConstraints minWidth="100.0" prefWidth="100.0"/>
+               <ColumnConstraints minWidth="100.0" prefWidth="100.0"/>
+               <ColumnConstraints minWidth="100.0" prefWidth="100.0"/>
+               <ColumnConstraints minWidth="100.0" prefWidth="100.0"/>
+               <ColumnConstraints minWidth="100.0" prefWidth="100.0"/>
+           </columnConstraints>
+           <rowConstraints>
+               <RowConstraints minHeight="100.0" prefHeight="100.0" />
+               <RowConstraints minHeight="100.0" prefHeight="100.0" />
+               <RowConstraints minHeight="100.0" prefHeight="100.0" />
+               <RowConstraints minHeight="100.0" prefHeight="100.0" />
+               <RowConstraints minHeight="100.0" prefHeight="100.0" />
+           </rowConstraints>
+           <children>
+               <ImageView fx:id="button00" fitHeight="100.0" fitWidth="100.0" GridPane.columnIndex="0" GridPane.rowIndex="0" styleClass="box"/>
+               <ImageView fx:id="button10" fitHeight="100.0" fitWidth="100.0" GridPane.columnIndex="1" GridPane.rowIndex="0" styleClass="box"/>
+               <ImageView fx:id="button20" fitHeight="100.0" fitWidth="100.0" GridPane.columnIndex="2" GridPane.rowIndex="0" styleClass="box"/>
+               <ImageView fx:id="button30" fitHeight="100.0" fitWidth="100.0" GridPane.columnIndex="3" GridPane.rowIndex="0" styleClass="box"/>
+               <ImageView fx:id="button40" fitHeight="100.0" fitWidth="100.0" GridPane.columnIndex="4" GridPane.rowIndex="0" styleClass="box"/>
+           </children>
+       </GridPane>
+   </center>
+
+   <bottom>
+      <HBox styleClass="voteHBox">
+            <Label fx:id="player0" text="Player0" />
+            <ImageView fx:id="godCard0" fitHeight="168.0" fitWidth="100.0" styleClass="godCard"/>
+            <Label fx:id="player1" text="Player1" />
+            <ImageView fx:id="godCard1" fitHeight="168.0" fitWidth="100.0" styleClass="godCard"/>
+            <Label fx:id="player2" text="Player2" />
+            <ImageView fx:id="godCard2" fitHeight="168.0" fitWidth="100.0" styleClass="godCard"/>
+      </HBox>
+   </bottom>
+
+   <right>
+      <Label fx:id="currentPhase" text="Current Phase: "/>
+   </right>
+</BorderPane>

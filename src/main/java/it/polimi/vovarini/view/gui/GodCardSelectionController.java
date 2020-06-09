@@ -103,4 +103,8 @@ public class GodCardSelectionController {
             }
         }
     }
+
+    void changeLayout(String path) {
+        GuiManager.setLayout(mainPane.getScene(), path);
+    }
 }
