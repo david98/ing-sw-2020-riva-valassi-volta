@@ -10,8 +10,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import java.net.URL?>
 
-<?import javafx.scene.layout.FlowPane?>
-<?import javafx.scene.control.Button?>
+
 <BorderPane xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
             fx:controller="it.polimi.vovarini.view.gui.SpawnWorkerController" fx:id="mainPane" styleClass="mainPane">
 
@@ -47,22 +46,43 @@
                <ImageView fx:id="button20" fitHeight="100.0" fitWidth="100.0" GridPane.columnIndex="2" GridPane.rowIndex="0" styleClass="box"/>
                <ImageView fx:id="button30" fitHeight="100.0" fitWidth="100.0" GridPane.columnIndex="3" GridPane.rowIndex="0" styleClass="box"/>
                <ImageView fx:id="button40" fitHeight="100.0" fitWidth="100.0" GridPane.columnIndex="4" GridPane.rowIndex="0" styleClass="box"/>
+
+               <ImageView fx:id="button01" fitHeight="100.0" fitWidth="100.0" GridPane.columnIndex="0" GridPane.rowIndex="1" styleClass="box"/>
+               <ImageView fx:id="button11" fitHeight="100.0" fitWidth="100.0" GridPane.columnIndex="1" GridPane.rowIndex="1" styleClass="box"/>
+               <ImageView fx:id="button21" fitHeight="100.0" fitWidth="100.0" GridPane.columnIndex="2" GridPane.rowIndex="1" styleClass="box"/>
+               <ImageView fx:id="button31" fitHeight="100.0" fitWidth="100.0" GridPane.columnIndex="3" GridPane.rowIndex="1" styleClass="box"/>
+               <ImageView fx:id="button41" fitHeight="100.0" fitWidth="100.0" GridPane.columnIndex="4" GridPane.rowIndex="1" styleClass="box"/>
+
+               <ImageView fx:id="button02" fitHeight="100.0" fitWidth="100.0" GridPane.columnIndex="0" GridPane.rowIndex="2" styleClass="box"/>
+               <ImageView fx:id="button12" fitHeight="100.0" fitWidth="100.0" GridPane.columnIndex="1" GridPane.rowIndex="2" styleClass="box"/>
+               <ImageView fx:id="button22" fitHeight="100.0" fitWidth="100.0" GridPane.columnIndex="2" GridPane.rowIndex="2" styleClass="box"/>
+               <ImageView fx:id="button32" fitHeight="100.0" fitWidth="100.0" GridPane.columnIndex="3" GridPane.rowIndex="2" styleClass="box"/>
+               <ImageView fx:id="button42" fitHeight="100.0" fitWidth="100.0" GridPane.columnIndex="4" GridPane.rowIndex="2" styleClass="box"/>
+
+               <ImageView fx:id="button03" fitHeight="100.0" fitWidth="100.0" GridPane.columnIndex="0" GridPane.rowIndex="3" styleClass="box"/>
+               <ImageView fx:id="button13" fitHeight="100.0" fitWidth="100.0" GridPane.columnIndex="1" GridPane.rowIndex="3" styleClass="box"/>
+               <ImageView fx:id="button23" fitHeight="100.0" fitWidth="100.0" GridPane.columnIndex="2" GridPane.rowIndex="3" styleClass="box"/>
+               <ImageView fx:id="button33" fitHeight="100.0" fitWidth="100.0" GridPane.columnIndex="3" GridPane.rowIndex="3" styleClass="box"/>
+               <ImageView fx:id="button43" fitHeight="100.0" fitWidth="100.0" GridPane.columnIndex="4" GridPane.rowIndex="3" styleClass="box"/>
+
+               <ImageView fx:id="button04" fitHeight="100.0" fitWidth="100.0" GridPane.columnIndex="0" GridPane.rowIndex="4" styleClass="box"/>
+               <ImageView fx:id="button14" fitHeight="100.0" fitWidth="100.0" GridPane.columnIndex="1" GridPane.rowIndex="4" styleClass="box"/>
+               <ImageView fx:id="button24" fitHeight="100.0" fitWidth="100.0" GridPane.columnIndex="2" GridPane.rowIndex="4" styleClass="box"/>
+               <ImageView fx:id="button34" fitHeight="100.0" fitWidth="100.0" GridPane.columnIndex="3" GridPane.rowIndex="4" styleClass="box"/>
+               <ImageView fx:id="button44" fitHeight="100.0" fitWidth="100.0" GridPane.columnIndex="4" GridPane.rowIndex="4" styleClass="box"/>
            </children>
        </GridPane>
    </center>
 
    <bottom>
       <HBox styleClass="voteHBox">
-            <Label fx:id="player0" text="Player0" />
-            <ImageView fx:id="godCard0" fitHeight="168.0" fitWidth="100.0" styleClass="godCard"/>
-            <Label fx:id="player1" text="Player1" />
-            <ImageView fx:id="godCard1" fitHeight="168.0" fitWidth="100.0" styleClass="godCard"/>
-            <Label fx:id="player2" text="Player2" />
-            <ImageView fx:id="godCard2" fitHeight="168.0" fitWidth="100.0" styleClass="godCard"/>
+            <Label fx:id="player0" styleClass="player"/>
+            <ImageView fx:id="godCard0" fitHeight="168.0" fitWidth="100.0"/>
+            <Label fx:id="player1" styleClass="player"/>
+            <ImageView fx:id="godCard1" fitHeight="168.0" fitWidth="100.0"/>
+            <Label fx:id="player2" styleClass="player"/>
+            <ImageView fx:id="godCard2" fitHeight="168.0" fitWidth="100.0" />
       </HBox>
    </bottom>
 
-   <right>
-      <Label fx:id="currentPhase" text="Current Phase: "/>
-   </right>
 </BorderPane>

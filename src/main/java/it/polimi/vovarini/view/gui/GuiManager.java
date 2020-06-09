@@ -23,6 +23,7 @@ public class GuiManager extends View {
     private ElectedPlayerController electedPlayerController;
     private GodCardSelectionController godCardSelectionController;
     private SpawnWorkerController spawnWorkerController;
+    private GameController gameController;
 
     private Thread guiEventListenerThread;
 
@@ -56,7 +57,9 @@ public class GuiManager extends View {
     @GameEventListener
     public void handleBoardUpdate(BoardUpdateEvent e) {
         data.setBoard(e.getNewBoard());
-        Platform.runLater(() -> spawnWorkerController.boardUpdate());
+        if(gameController == null) {
+            Platform.runLater(() -> spawnWorkerController.boardUpdate());
+        }
     }
 
     @Override
@@ -173,6 +176,7 @@ public class GuiManager extends View {
 
     public void startMatch() {
 
+        System.out.println("Iniziamo la partita!");
         //setto scena iniziale
         //currentScreen = new MatchScreen(data, client);
         //gameLoop();

@@ -48,6 +48,12 @@
     -fx-alignment: CENTER;
 }
 
+.player {
+    -fx-font-family: "Exo 2 Black";
+    -fx-font-size: 25px;
+    -fx-text-fill: orange;
+}
+
 .godCard:hover {
     -fx-effect: dropshadow(gaussian, #f44336, 15, 0.2, 0, 0);
 }
@@ -82,7 +88,7 @@
 .menuTitle {
     -fx-font-family: "Ethnocentric Rg";
     -fx-font-style: italic;
-    -fx-font-size: 50px;
+    -fx-font-size: 30px;
     -fx-text-fill: #f3997b;
 }
 
