@@ -1,9 +1,7 @@
 package it.polimi.vovarini.model.godcards;
 
-import it.polimi.vovarini.common.events.ChangeWorkerEvent;
 import it.polimi.vovarini.common.events.GameEventManager;
 import it.polimi.vovarini.common.events.GodCardUpdateEvent;
-import it.polimi.vovarini.common.events.PlayerInfoUpdateEvent;
 import it.polimi.vovarini.common.exceptions.InvalidPositionException;
 import it.polimi.vovarini.common.exceptions.ItemNotFoundException;
 import it.polimi.vovarini.model.GameDataAccessor;

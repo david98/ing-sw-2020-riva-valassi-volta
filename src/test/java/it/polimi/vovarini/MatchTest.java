@@ -301,6 +301,9 @@ public class MatchTest {
 
   @Test
   @Disabled
+  /*
+   * This test is being skipped due to some problems with permissions on Linux.
+   */
   void movesWithConsequences() throws InterruptedException, IOException {
     godSelection();
 

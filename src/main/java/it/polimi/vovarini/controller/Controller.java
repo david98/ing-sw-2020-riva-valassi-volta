@@ -9,7 +9,6 @@ import it.polimi.vovarini.model.Point;
 import it.polimi.vovarini.model.board.Board;
 import it.polimi.vovarini.model.board.items.Block;
 import it.polimi.vovarini.model.board.items.Item;
-import it.polimi.vovarini.common.exceptions.OverwrittenWorkerException;
 import it.polimi.vovarini.model.board.items.Worker;
 import it.polimi.vovarini.model.godcards.GodCard;
 import it.polimi.vovarini.model.godcards.GodCardFactory;

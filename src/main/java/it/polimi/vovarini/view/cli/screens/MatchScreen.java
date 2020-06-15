@@ -1,11 +1,11 @@
 package it.polimi.vovarini.view.cli.screens;
 
 import it.polimi.vovarini.common.events.*;
+import it.polimi.vovarini.common.network.GameClient;
 import it.polimi.vovarini.model.Phase;
 import it.polimi.vovarini.model.Point;
 import it.polimi.vovarini.model.board.items.Item;
 import it.polimi.vovarini.model.board.items.Worker;
-import it.polimi.vovarini.common.network.GameClient;
 import it.polimi.vovarini.view.ViewData;
 import it.polimi.vovarini.view.cli.Direction;
 import it.polimi.vovarini.view.cli.elements.BoardElement;

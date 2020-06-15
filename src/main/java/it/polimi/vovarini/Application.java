@@ -2,7 +2,6 @@ package it.polimi.vovarini;
 
 import it.polimi.vovarini.common.network.server.Server;
 import it.polimi.vovarini.view.cli.GameView;
-
 import picocli.CommandLine;
 
 import java.io.IOException;
