@@ -63,6 +63,7 @@ public class Controller implements EventListener {
       if (game.isFull()){
         game.drawElectedPlayer();
         GodName[] godNames = Arrays.stream(GodName.values()).filter(name -> name != GodName.Nobody).toArray(GodName[]::new);
+        GameEventManager.raise(new BoardUpdateEvent(game, game.getBoard())); //this is normally not needed
         GameEventManager.raise(new GodSelectionStartEvent(game, game.getPlayers(), game.getCurrentPlayer(), godNames));
       }
     } catch (InvalidNumberOfPlayersException e) {
@@ -313,6 +314,9 @@ public class Controller implements EventListener {
     Player currentPlayer = game.getCurrentPlayer();
     if (!currentPlayer.equals(evt.getSource())) throw new WrongPlayerException();
 
+    /*
+     * Prometheus can build before moving and this check will fail for him.
+     */
     if ((game.getCurrentPhase().equals(Phase.Start) && !currentPlayer.isWorkerSelected()) ||
             (game.getCurrentPhase().equals(Phase.Movement) && currentPlayer.getMovementList().isEmpty()) ||
             (game.getCurrentPhase().equals(Phase.Construction) && currentPlayer.getConstructionList().isEmpty())){
@@ -324,7 +328,7 @@ public class Controller implements EventListener {
     if (game.getCurrentPhase().equals(Phase.End)){
       game.getCurrentPlayer().setWorkerSelected(false);
     }
-    game.setCurrentPhase(game.getCurrentPlayer().getGodCard().computeNextPhase(game, true)); //TODO: fix
+    game.setCurrentPhase(game.getCurrentPlayer().getGodCard().computeNextPhase(game, true));
   }
 
 }

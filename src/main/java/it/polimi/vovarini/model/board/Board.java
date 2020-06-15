@@ -87,7 +87,9 @@ public class Board implements Serializable {
       throw new InvalidPositionException();
     }
     Box box = getBox(p);
-    return box.removeTopmost();
+    Item item = box.removeTopmost();
+    GameEventManager.raise(new BoardUpdateEvent(this, this));
+    return item;
   }
 
   public Point getItemPosition(Block block) {

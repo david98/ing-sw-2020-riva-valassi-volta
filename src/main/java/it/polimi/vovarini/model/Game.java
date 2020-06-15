@@ -4,6 +4,7 @@ import it.polimi.vovarini.common.events.*;
 import it.polimi.vovarini.common.exceptions.InvalidNumberOfPlayersException;
 import it.polimi.vovarini.common.exceptions.ItemNotFoundException;
 import it.polimi.vovarini.model.board.Board;
+import it.polimi.vovarini.model.board.items.Block;
 import it.polimi.vovarini.model.board.items.Worker;
 import it.polimi.vovarini.model.godcards.GodCard;
 import it.polimi.vovarini.model.godcards.GodCardFactory;
@@ -21,7 +22,7 @@ public class Game implements Serializable, GameDataAccessor {
   public static final int MIN_PLAYERS = 2;
   public static final int MAX_PLAYERS = 3;
 
-  private final Player[] players;
+  private Player[] players;
   private int currentPlayerIndex;
 
   private Phase currentPhase;
@@ -57,6 +58,43 @@ public class Game implements Serializable, GameDataAccessor {
     setupComplete = false;
 
     random = new Random();
+
+    // TODO: remove this test code
+    board.place(Block.blocks[0], new Point(1, 0));
+    board.place(Block.blocks[1], new Point(1, 0));
+    board.place(Block.blocks[2], new Point(1, 0));
+    board.place(Block.blocks[0], new Point(1, 1));
+    board.place(Block.blocks[1], new Point(1, 1));
+    board.place(Block.blocks[0], new Point(0, 1));
+
+    board.place(Block.blocks[0], new Point(3, 0));
+    board.place(Block.blocks[1], new Point(3, 0));
+    board.place(Block.blocks[2], new Point(3, 0));
+
+    board.place(Block.blocks[0], new Point(3, 1));
+    board.place(Block.blocks[1], new Point(3, 1));
+    board.place(Block.blocks[2], new Point(3, 1));
+    board.place(Block.blocks[0], new Point(4, 1));
+    board.place(Block.blocks[1], new Point(4, 1));
+    board.place(Block.blocks[0], new Point(4, 2));
+    board.place(Block.blocks[0], new Point(4, 3));
+    board.place(Block.blocks[1], new Point(4, 3));
+
+    board.place(Block.blocks[0], new Point(3, 3));
+    board.place(Block.blocks[1], new Point(3, 3));
+    board.place(Block.blocks[2], new Point(3, 3));
+
+    board.place(Block.blocks[0], new Point(3, 4));
+    board.place(Block.blocks[1], new Point(3, 4));
+    board.place(Block.blocks[2], new Point(3, 4));
+
+    board.place(Block.blocks[0], new Point(1, 3));
+    board.place(Block.blocks[1], new Point(1, 3));
+    board.place(Block.blocks[2], new Point(1, 3));
+
+    board.place(Block.blocks[0], new Point(1, 4));
+    board.place(Block.blocks[1], new Point(1, 4));
+    board.place(Block.blocks[2], new Point(1, 4));
   }
 
   public Board getBoard() {
@@ -173,27 +211,70 @@ public class Game implements Serializable, GameDataAccessor {
     GameEventManager.raise(new CurrentPlayerChangedEvent(this, players[currentPlayerIndex]));
   }
 
-  public void setCurrentPhase(Phase phase){
-    this.currentPhase = phase;
-    GameEventManager.raise(new PhaseUpdateEvent(this, phase));
-
+  private boolean currentPlayerHasLost() {
     switch (currentPhase) {
       case Start -> {
-          // check if at least one worker can move, else raise a LossEvent
+        // check if at least one worker can move, else raise a LossEvent
         if (getCurrentPlayer().getGodCard().computeReachablePoints().isEmpty()) {
           getCurrentPlayer().setCurrentSex(getCurrentPlayer().getOtherWorker().getSex());
           if (getCurrentPlayer().getGodCard().computeReachablePoints().isEmpty()) {
-            getCurrentPlayer().setHasLost(true);
+            return true;
           }
         }
         getCurrentPlayer().setWorkerSelected(false);
       }
+      case Movement -> {
+
+      }
       case Construction -> {
         if (getCurrentPlayer().getGodCard().computeBuildablePoints().isEmpty()) {
-          getCurrentPlayer().setHasLost(true);
+          return true;
         }
       }
+    }
 
+    return false;
+  }
+
+  private void removePlayer(Player p) {
+    Player[] newPlayersArray = new Player[players.length - 1];
+    int k = 0;
+    for (int i = 0; i < board.getSize(); i++){
+      for (int j = 0; j < board.getSize(); j++){
+        Point cur = new Point(i, j);
+        if (p.getWorkers().containsValue(board.getItems(cur).peek())) {
+          board.remove(cur);
+        }
+      }
+    }
+    for (Player player : players) {
+      if (!player.equals(p)) {
+        if (k >= newPlayersArray.length) {
+          throw new RuntimeException("WTF man? Player not found");
+        }
+        newPlayersArray[k] = player;
+        k++;
+      }
+    }
+
+    players = newPlayersArray;
+  }
+
+  public void setCurrentPhase(Phase phase){
+    this.currentPhase = phase;
+    GameEventManager.raise(new PhaseUpdateEvent(this, phase));
+    Player currentPlayer = getCurrentPlayer();
+    boolean lost = currentPlayerHasLost();
+    if (lost) {
+      removePlayer(currentPlayer);
+      if (players.length <= 1) {
+        GameEventManager.raise(new VictoryEvent(this, players[0]));
+      } else {
+        nextPlayer();
+        currentPlayer.setHasLost(true);
+      }
+    } else {
+      currentPlayer.setHasLost(false);
     }
 
   }
@@ -224,6 +305,7 @@ public class Game implements Serializable, GameDataAccessor {
     for (Player p: players){
       p.setWorkerSelected(false);
     }
+    setCurrentPhase(Phase.Start);
     GameEventManager.raise(new GameStartEvent(this, this.getPlayers()));
   }
 

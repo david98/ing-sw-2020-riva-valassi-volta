@@ -8,6 +8,7 @@ import it.polimi.vovarini.model.Point;
 import it.polimi.vovarini.model.board.items.Sex;
 import it.polimi.vovarini.model.godcards.GodName;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -299,6 +300,7 @@ public class MatchTest {
   }
 
   @Test
+  @Disabled
   void movesWithConsequences() throws InterruptedException, IOException {
     godSelection();
 

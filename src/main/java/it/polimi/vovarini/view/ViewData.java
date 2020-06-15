@@ -95,14 +95,6 @@ public class ViewData implements Serializable, GameDataAccessor {
 
   public void removePlayer(Player player) {
     players.remove(player);
-    for (int i = 0; i < board.getSize(); i++){
-      for (int j = 0; j < board.getSize(); j++){
-        Point cur = new Point(i, j);
-        if (player.getWorkers().containsValue(board.getItems(cur).peek())) {
-          board.getItems(cur).remove();
-        }
-      }
-    }
   }
 
   public Board getBoard() {

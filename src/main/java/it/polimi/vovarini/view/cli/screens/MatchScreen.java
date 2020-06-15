@@ -25,8 +25,6 @@ public class MatchScreen extends Screen {
   private final PhasePrompt phasePrompt;
   private final Text message;
 
-  private String lastContent;
-
   public MatchScreen(ViewData data, GameClient client){
     super(data, client);
 

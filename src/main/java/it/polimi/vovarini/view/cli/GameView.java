@@ -183,6 +183,9 @@ public class GameView extends View {
   @GameEventListener
   public void handleLoss(LossEvent e) {
     super.handleLoss(e);
+    if (e.getLosingPlayer().equals(data.getOwner())) {
+      currentScreen = new SpectScreen(data, client);
+    }
   }
 
   public void render(){
