@@ -23,11 +23,11 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class PanTests {
 
-    private static Game game;
-    private static GodCard pan;
+    private Game game;
+    private GodCard pan;
 
-    @BeforeAll
-    public static void init(){
+    @BeforeEach
+    public void init(){
         try{
             game = new Game(2);
 
@@ -41,17 +41,6 @@ public class PanTests {
             }
         } catch (InvalidNumberOfPlayersException e){
             e.printStackTrace();
-        }
-    }
-
-    @BeforeEach
-    private void resetGame(){
-        Board b = game.getBoard();
-        for (int x = 0; x < b.getSize(); x++){
-            for (int y = 0; y < b.getSize(); y++){
-                Point cur = new Point(x, y);
-                while (b.remove(cur) != null);
-            }
         }
     }
 

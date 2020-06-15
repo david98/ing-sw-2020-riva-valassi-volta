@@ -60,41 +60,7 @@ public class Game implements Serializable, GameDataAccessor {
     random = new Random();
 
     // TODO: remove this test code
-    board.place(Block.blocks[0], new Point(1, 0));
-    board.place(Block.blocks[1], new Point(1, 0));
-    board.place(Block.blocks[2], new Point(1, 0));
-    board.place(Block.blocks[0], new Point(1, 1));
-    board.place(Block.blocks[1], new Point(1, 1));
-    board.place(Block.blocks[0], new Point(0, 1));
 
-    board.place(Block.blocks[0], new Point(3, 0));
-    board.place(Block.blocks[1], new Point(3, 0));
-    board.place(Block.blocks[2], new Point(3, 0));
-
-    board.place(Block.blocks[0], new Point(3, 1));
-    board.place(Block.blocks[1], new Point(3, 1));
-    board.place(Block.blocks[2], new Point(3, 1));
-    board.place(Block.blocks[0], new Point(4, 1));
-    board.place(Block.blocks[1], new Point(4, 1));
-    board.place(Block.blocks[0], new Point(4, 2));
-    board.place(Block.blocks[0], new Point(4, 3));
-    board.place(Block.blocks[1], new Point(4, 3));
-
-    board.place(Block.blocks[0], new Point(3, 3));
-    board.place(Block.blocks[1], new Point(3, 3));
-    board.place(Block.blocks[2], new Point(3, 3));
-
-    board.place(Block.blocks[0], new Point(3, 4));
-    board.place(Block.blocks[1], new Point(3, 4));
-    board.place(Block.blocks[2], new Point(3, 4));
-
-    board.place(Block.blocks[0], new Point(1, 3));
-    board.place(Block.blocks[1], new Point(1, 3));
-    board.place(Block.blocks[2], new Point(1, 3));
-
-    board.place(Block.blocks[0], new Point(1, 4));
-    board.place(Block.blocks[1], new Point(1, 4));
-    board.place(Block.blocks[2], new Point(1, 4));
   }
 
   public Board getBoard() {
@@ -188,6 +154,10 @@ public class Game implements Serializable, GameDataAccessor {
 
   public Phase getCurrentPhase() {
     return currentPhase;
+  }
+
+  public void setPlayers(Player[] players){
+    this.players = players;
   }
 
   public Player[] getPlayers() {
