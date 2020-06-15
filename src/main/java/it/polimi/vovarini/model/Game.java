@@ -58,9 +58,6 @@ public class Game implements Serializable, GameDataAccessor {
     setupComplete = false;
 
     random = new Random();
-
-    // TODO: remove this test code
-
   }
 
   public Board getBoard() {
