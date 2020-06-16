@@ -15,5 +15,6 @@ public class KeycodeToKey {
           115, Key.S,
           32, Key.Spacebar,
           110, Key.N,
-          111, Key.O);
+          111, Key.O,
+          52, Key.Four);
 }

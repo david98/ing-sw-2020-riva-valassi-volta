@@ -7,5 +7,6 @@ public enum Key {
   D,
   Spacebar,
   O,
-  N
+  N,
+  Four
 }

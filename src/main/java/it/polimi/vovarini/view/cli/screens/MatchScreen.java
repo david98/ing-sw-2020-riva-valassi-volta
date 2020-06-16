@@ -4,8 +4,10 @@ import it.polimi.vovarini.common.events.*;
 import it.polimi.vovarini.common.network.GameClient;
 import it.polimi.vovarini.model.Phase;
 import it.polimi.vovarini.model.Point;
+import it.polimi.vovarini.model.board.items.Block;
 import it.polimi.vovarini.model.board.items.Item;
 import it.polimi.vovarini.model.board.items.Worker;
+import it.polimi.vovarini.model.moves.Construction;
 import it.polimi.vovarini.view.ViewData;
 import it.polimi.vovarini.view.cli.Direction;
 import it.polimi.vovarini.view.cli.elements.BoardElement;
@@ -16,7 +18,10 @@ import it.polimi.vovarini.view.cli.input.Key;
 import it.polimi.vovarini.view.cli.styling.Color;
 
 import java.util.Collection;
+import java.util.LinkedList;
 import java.util.List;
+
+import static it.polimi.vovarini.model.Phase.Construction;
 
 public class MatchScreen extends Screen {
 
@@ -59,7 +64,7 @@ public class MatchScreen extends Screen {
         break;
       }
       case Spacebar: {
-        select();
+        select(false);
         break;
       }
       case N: {
@@ -69,6 +74,11 @@ public class MatchScreen extends Screen {
       }
       case O: {
         confirm();
+      }
+      case Four: {
+        if (data.getCurrentPhase().equals(Construction)) {
+          select(true);
+        }
       }
       default: {
         break;
@@ -104,7 +114,7 @@ public class MatchScreen extends Screen {
    * This method handles a spacebar press when
    * the current phase is Construction.
    */
-  private void selectWhenConstructionPhase(){
+  private void selectWhenConstructionPhase(boolean dome){
 
     Point dest = boardElement.getCursorLocation();
 
@@ -112,10 +122,13 @@ public class MatchScreen extends Screen {
 
     if (buildablePoints.contains(dest)){
       int nextLevel = data.getBoard().getBox(dest).getLevel() + 1;
-      boardElement.resetMarkedPoints();
-      client.raise(new BuildEvent(data.getOwner(), dest, nextLevel));
-      handlesInput = false;
-      needsRender = true;
+      var sampleMove = new Construction(data.getBoard(), Block.blocks[(dome ? 4 : nextLevel) - 1], dest);
+      if (data.getOwner().getGodCard().validate(new LinkedList<>(buildablePoints), sampleMove)) {
+        client.raise(new BuildEvent(data.getOwner(), dest, dome ? 4 : nextLevel));
+        boardElement.resetMarkedPoints();
+        handlesInput = false;
+        needsRender = true;
+      }
     }
   }
 
@@ -167,17 +180,17 @@ public class MatchScreen extends Screen {
   }
 
   /**
-   * This method handles a spacebar press. The outcome depends
+   * This method handles a spacebar/four press. The outcome depends
    * on the current Phase and the game status.
    */
-  private void select(){
+  private void select(boolean dome){
     switch (data.getCurrentPhase()){
       case Start ->
               selectWorker();
       case Movement ->
               selectWhenMovementPhase();
       case Construction ->
-              selectWhenConstructionPhase();
+              selectWhenConstructionPhase(dome);
     }
   }
 
