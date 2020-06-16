@@ -244,8 +244,10 @@ public class Controller implements EventListener {
 
     Construction build = new Construction(board, toBuild, target, false);
 
-    if (!game.getCurrentPlayer().getGodCard().validate(game.getCurrentPlayer().getGodCard().computeBuildablePoints(), build))
-        throw new InvalidMoveException();
+    if (!game.getCurrentPlayer().getGodCard().validate(game.getCurrentPlayer().getGodCard().computeBuildablePoints(), build)) {
+      GameEventManager.raise(new PhaseUpdateEvent(game, game.getCurrentPhase())); // needed to avoid the client freezing
+      throw new InvalidMoveException();
+    }
 
     game.performMove(build);
     game.setCurrentPhase(game.getCurrentPlayer().getGodCard().computeNextPhase(game));

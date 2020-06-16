@@ -39,7 +39,7 @@ public class ElectedPlayerScreen extends Screen {
     switch (key){
       case W -> godNameMultiChoiceList.moveUp();
       case S -> godNameMultiChoiceList.moveDown();
-      case Spacebar -> godNameMultiChoiceList.select();
+      case SPACEBAR -> godNameMultiChoiceList.select();
       case O -> confirm();
     }
     needsRender = true;

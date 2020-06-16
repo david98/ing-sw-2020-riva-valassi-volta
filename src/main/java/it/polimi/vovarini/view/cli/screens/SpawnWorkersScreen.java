@@ -78,7 +78,7 @@ public class SpawnWorkersScreen extends Screen {
       case A -> boardElement.moveCursor(Direction.Left);
       case S -> boardElement.moveCursor(Direction.Down);
       case D -> boardElement.moveCursor(Direction.Right);
-      case Spacebar -> spawnCurrent();
+      case SPACEBAR -> spawnCurrent();
       default -> {
       }
     }
