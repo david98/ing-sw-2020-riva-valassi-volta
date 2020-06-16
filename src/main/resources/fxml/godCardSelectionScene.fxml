@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import java.net.URL?>
+<?import javafx.scene.image.ImageView?>
+
+<BorderPane xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
+            fx:controller="it.polimi.vovarini.view.gui.GodCardSelectionController" fx:id="mainPane" styleClass="mainPane">
+    <stylesheets>
+        <URL value="@../css/godCardSelectionScene.css"/>
+    </stylesheets>
+
+    <top>
+        <VBox styleClass="topBox">
+            <Label text="Choose your godCard:" styleClass="menuTitle"/>
+        </VBox>
+    </top>
+
+    <center>
+        <HBox styleClass="voteHBox">
+            <VBox styleClass="voteBox">
+                <Label fx:id="instruction" styleClass="menuLabel"/>
+                <FlowPane styleClass="voteInnerBox">
+                    <ImageView fitHeight="168" fitWidth="100" fx:id="godCard0" styleClass="godCard"/>
+                    <ImageView fitHeight="168" fitWidth="100" fx:id="godCard1" styleClass="godCard"/>
+                    <ImageView fitHeight="168" fitWidth="100" fx:id="godCard2" styleClass="godCard"/>
+                </FlowPane>
+                <FlowPane styleClass="voteInnerBox">
+                    <Label prefWidth="100" fx:id="label0" styleClass="menuLabel"/>
+                    <Label prefWidth="100" fx:id="label1" styleClass="menuLabel"/>
+                    <Label prefWidth="100" fx:id="label2" styleClass="menuLabel"/>
+                </FlowPane>
+            </VBox>
+        </HBox>
+    </center>
+</BorderPane>

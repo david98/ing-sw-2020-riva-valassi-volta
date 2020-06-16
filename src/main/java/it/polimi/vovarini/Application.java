@@ -2,6 +2,10 @@ package it.polimi.vovarini;
 
 import it.polimi.vovarini.common.network.server.Server;
 import it.polimi.vovarini.view.cli.GameView;
+
+import it.polimi.vovarini.view.gui.Gui;
+import it.polimi.vovarini.view.gui.GuiManager;
+
 import picocli.CommandLine;
 
 import java.io.IOException;
@@ -11,15 +15,10 @@ import java.util.concurrent.Callable;
         description = "Starts Santorini")
 public class Application implements Callable<Integer> {
 
-  @CommandLine.ArgGroup(exclusive = true, multiplicity = "1")
-  Exclusive exclusive;
-
-  static class Exclusive {
-    @CommandLine.Option(names = {"-s", "--server"}, description = "Run as server")
-    private boolean serverMode;
-    @CommandLine.Parameters(arity = "0..1", index = "0", description = "The server hostname or IP address")
-    private String serverIP = "santorini.davide.gdn";
-  }
+  @CommandLine.Option(names = {"-s", "--server"}, description = "Run as server")
+  private boolean serverMode;
+  @CommandLine.Parameters(arity = "0..1", index = "0", description = "The server hostname or IP address")
+  private String serverIP = "santorini.davide.gdn";
 
   @CommandLine.Option(names = {"-n", "--number"}, description = "The number of players")
   private int playersNumber = 3;
@@ -48,17 +47,19 @@ public class Application implements Callable<Integer> {
         GameView view = new GameView(serverIP, serverPort);
         view.gameSetup();
       }
-      case GUI ->
-        System.out.println("GUI isn't supported yet :D");
+      case GUI -> {
+        GuiManager gui = GuiManager.getInstance();
+        gui.gameSetup();
+      }
     }
   }
 
   @Override
   public Integer call() throws IOException {
-    if (exclusive.serverMode){
+    if (serverMode){
       launchServer(port, playersNumber);
     } else {
-      launchClient(useCLI ? ClientMode.CLI : ClientMode.GUI, exclusive.serverIP, port);
+      launchClient(useCLI ? ClientMode.CLI : ClientMode.GUI, serverIP, port);
     }
     return 0;
   }

@@ -234,7 +234,7 @@ public class GameView extends View {
   }
 
   public void gameLoop(){
-    render();
+    //render();
     while (running) {
       GameEvent evt;
       // consume events from the server
@@ -243,8 +243,8 @@ public class GameView extends View {
         GameEventManager.raise(evt);
       }
       try {
-        render();
-        if (data.getOwner().equals(data.getCurrentPlayer()) && currentScreen.isHandlesInput()) {
+        //render();
+        if (data.getOwner().equals(data.getCurrentPlayer())) { // && currentScreen.isHandlesInput()) {
           handleInput();
         } else {
           // wait for event

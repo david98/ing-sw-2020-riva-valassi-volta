@@ -1,0 +1,111 @@
+@font-face {
+    src: url("../fonts/ethnocentric-rg.ttf");
+}
+
+@font-face {
+    src: url("../fonts/ethnocentric-rg-it.ttf");
+}
+
+@font-face {
+    src: url("../fonts/Exo2-Black.ttf");
+}
+
+@font-face {
+    src: url("../fonts/Exo2-Medium.ttf");
+}
+
+.mainPane {
+//-fx-background-image: url("../img/bg.png");
+    -fx-alignment: CENTER;
+}
+
+.topBox {
+    -fx-padding: 50 0 0 0;
+    -fx-alignment: CENTER;
+}
+
+.centerBox {
+    -fx-max-width: 900px;
+    -fx-spacing: 10;
+    -fx-alignment: CENTER;
+}
+
+.box:hover {
+    -fx-effect: dropshadow(gaussian, #008000, 15, 0.2, 0, 0);
+}
+
+.box:pressed {
+    -fx-scale-y: 0.95;
+    -fx-scale-x: 0.95;
+}
+
+.botBox {
+    -fx-padding: 0 0 50 0;
+    -fx-alignment: CENTER;
+}
+
+.board {
+    -fx-alignment: CENTER;
+}
+
+.player {
+    -fx-font-family: "Exo 2 Black";
+    -fx-font-size: 25px;
+    -fx-text-fill: orange;
+}
+
+.godCard:hover {
+    -fx-effect: dropshadow(gaussian, #f44336, 15, 0.2, 0, 0);
+}
+
+.godCard:pressed {
+    -fx-scale-y: 0.95;
+    -fx-scale-x: 0.95;
+}
+
+.voteHBox {
+    -fx-min-width: 900px;
+    -fx-max-width: 900px;
+    -fx-padding: 10 10 10 10;
+    -fx-spacing: 20;
+    -fx-alignment: CENTER;
+}
+
+.voteBox {
+    -fx-min-width: 900px;
+    -fx-max-width: 900px;
+    -fx-padding: 10 10 10 10;
+    -fx-spacing: 20;
+    -fx-alignment: CENTER;
+}
+
+.voteInnerBox {
+    -fx-hgap: 20;
+    -fx-vgap: 20;
+    -fx-alignment: CENTER;
+}
+
+.menuTitle {
+    -fx-font-family: "Ethnocentric Rg";
+    -fx-font-style: italic;
+    -fx-font-size: 30px;
+    -fx-text-fill: #f3997b;
+}
+
+.menuLabel {
+    -fx-font-family: "Exo 2 Black";
+    -fx-font-size: 25px;
+    -fx-text-fill: orange;
+}
+
+.menuTextField {
+    -fx-background-color: rgba(136, 188, 231, .5);
+    -fx-border-color: #19110f;
+    -fx-border-width: 2px;
+    -fx-border-radius: 1px;
+
+    -fx-font-family: "Exo 2 Medium";
+    -fx-font-size: 20px;
+    -fx-text-fill: orange;
+    -fx-alignment: center;
+}
