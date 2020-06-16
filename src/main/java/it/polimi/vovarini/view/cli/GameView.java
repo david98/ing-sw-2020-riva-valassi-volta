@@ -1,8 +1,8 @@
 package it.polimi.vovarini.view.cli;
 
 import it.polimi.vovarini.common.events.*;
-import it.polimi.vovarini.model.Player;
 import it.polimi.vovarini.common.network.GameClient;
+import it.polimi.vovarini.model.Player;
 import it.polimi.vovarini.view.View;
 import it.polimi.vovarini.view.ViewData;
 import it.polimi.vovarini.view.cli.console.Console;
@@ -15,7 +15,6 @@ import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
 import java.io.IOException;
-import java.net.URL;
 import java.util.Arrays;
 import java.util.Scanner;
 
@@ -170,11 +169,21 @@ public class GameView extends View {
   @Override
   @GameEventListener
   public void handleVictory(VictoryEvent e) {
-    currentScreen = new WaitScreen(data, client, e.getWinningPlayer().getNickname() + " wins!");
     if (e.getWinningPlayer().equals(data.getOwner())) {
+      currentScreen = new WaitScreen(data, client, "VICTORY ROYALE!");
       playAudio("/audio/bgm/victory.wav", true);
     } else {
+      currentScreen = new WaitScreen(data, client, e.getWinningPlayer().getNickname() + " wins!");
       playAudio("/audio/bgm/loss.wav", true);
+    }
+  }
+
+  @Override
+  @GameEventListener
+  public void handleLoss(LossEvent e) {
+    super.handleLoss(e);
+    if (e.getLosingPlayer().equals(data.getOwner())) {
+      currentScreen = new SpectScreen(data, client);
     }
   }
 

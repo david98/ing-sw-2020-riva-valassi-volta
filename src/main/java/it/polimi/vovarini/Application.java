@@ -2,7 +2,6 @@ package it.polimi.vovarini;
 
 import it.polimi.vovarini.common.network.server.Server;
 import it.polimi.vovarini.view.cli.GameView;
-
 import picocli.CommandLine;
 
 import java.io.IOException;
@@ -21,6 +20,9 @@ public class Application implements Callable<Integer> {
     @CommandLine.Parameters(arity = "0..1", index = "0", description = "The server hostname or IP address")
     private String serverIP = "santorini.davide.gdn";
   }
+
+  @CommandLine.Option(names = {"-n", "--number"}, description = "The number of players")
+  private int playersNumber = 3;
 
   @CommandLine.Option(names = {"-p", "--port"}, description = "The port to connect to (or to listen on if running as server")
   private int port = Server.DEFAULT_PORT;
@@ -54,7 +56,7 @@ public class Application implements Callable<Integer> {
   @Override
   public Integer call() throws IOException {
     if (exclusive.serverMode){
-      launchServer(port, 3);
+      launchServer(port, playersNumber);
     } else {
       launchClient(useCLI ? ClientMode.CLI : ClientMode.GUI, exclusive.serverIP, port);
     }

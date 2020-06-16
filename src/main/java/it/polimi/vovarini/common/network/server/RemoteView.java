@@ -7,7 +7,6 @@ import it.polimi.vovarini.model.Player;
 import it.polimi.vovarini.view.View;
 
 import java.io.IOException;
-import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;
@@ -133,4 +132,8 @@ public class RemoteView extends View implements ClientConnectionHandler {
   @Override
   @GameEventListener
   public void handleVictory(VictoryEvent e) { serverEvents.add(e); }
+
+  @Override
+  @GameEventListener
+  public void handleLoss(LossEvent e) { serverEvents.add(e); }
 }

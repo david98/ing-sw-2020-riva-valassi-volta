@@ -18,7 +18,7 @@ public class Game implements Serializable, GameDataAccessor {
   public static final int MIN_PLAYERS = 2;
   public static final int MAX_PLAYERS = 3;
 
-  private final Player[] players;
+  private Player[] players;
   private int currentPlayerIndex;
 
   private Phase currentPhase;
@@ -117,11 +117,13 @@ public class Game implements Serializable, GameDataAccessor {
     GameEventManager.raise(new PlayerInfoUpdateEvent(this, getCurrentPlayer()));
     boolean isMovementWinning = getCurrentPlayer().getGodCard().isMovementWinning(move);
 
+
     for(Movement executableMove : getCurrentPlayer().getGodCard().consequences(move, this)) {
       Movement temp = new Movement(board, executableMove.getStart(), executableMove.getEnd());
       temp.execute();
       //executableMove.execute();
       //JDK ti odio più di sistemi informativi
+      //Questo non è possibile
     }
 
     if(isMovementWinning) {
@@ -147,6 +149,10 @@ public class Game implements Serializable, GameDataAccessor {
     return currentPhase;
   }
 
+  public void setPlayers(Player[] players){
+    this.players = players;
+  }
+
   public Player[] getPlayers() {
     return players;
   }
@@ -168,9 +174,72 @@ public class Game implements Serializable, GameDataAccessor {
     GameEventManager.raise(new CurrentPlayerChangedEvent(this, players[currentPlayerIndex]));
   }
 
+  private boolean currentPlayerHasLost() {
+    switch (currentPhase) {
+      case Start -> {
+        // check if at least one worker can move, else raise a LossEvent
+        if (getCurrentPlayer().getGodCard().computeReachablePoints().isEmpty()) {
+          getCurrentPlayer().setCurrentSex(getCurrentPlayer().getOtherWorker().getSex());
+          if (getCurrentPlayer().getGodCard().computeReachablePoints().isEmpty()) {
+            return true;
+          }
+        }
+        getCurrentPlayer().setWorkerSelected(false);
+      }
+      case Movement -> {
+
+      }
+      case Construction -> {
+        if (getCurrentPlayer().getGodCard().computeBuildablePoints().isEmpty()) {
+          return true;
+        }
+      }
+    }
+
+    return false;
+  }
+
+  private void removePlayer(Player p) {
+    Player[] newPlayersArray = new Player[players.length - 1];
+    int k = 0;
+    for (int i = 0; i < board.getSize(); i++){
+      for (int j = 0; j < board.getSize(); j++){
+        Point cur = new Point(i, j);
+        if (p.getWorkers().containsValue(board.getItems(cur).peek())) {
+          board.remove(cur);
+        }
+      }
+    }
+    for (Player player : players) {
+      if (!player.equals(p)) {
+        if (k >= newPlayersArray.length) {
+          throw new RuntimeException("WTF man? Player not found");
+        }
+        newPlayersArray[k] = player;
+        k++;
+      }
+    }
+
+    players = newPlayersArray;
+  }
+
   public void setCurrentPhase(Phase phase){
     this.currentPhase = phase;
     GameEventManager.raise(new PhaseUpdateEvent(this, phase));
+    Player currentPlayer = getCurrentPlayer();
+    boolean lost = currentPlayerHasLost();
+    if (lost) {
+      removePlayer(currentPlayer);
+      if (players.length <= 1) {
+        GameEventManager.raise(new VictoryEvent(this, players[0]));
+      } else {
+        nextPlayer();
+        currentPlayer.setHasLost(true);
+      }
+    } else {
+      currentPlayer.setHasLost(false);
+    }
+
   }
 
   // needs to manage turn flow
@@ -199,6 +268,7 @@ public class Game implements Serializable, GameDataAccessor {
     for (Player p: players){
       p.setWorkerSelected(false);
     }
+    setCurrentPhase(Phase.Start);
     GameEventManager.raise(new GameStartEvent(this, this.getPlayers()));
   }
 

@@ -2,7 +2,6 @@ package it.polimi.vovarini.model.godcards;
 
 import it.polimi.vovarini.common.events.GameEventManager;
 import it.polimi.vovarini.common.events.GodCardUpdateEvent;
-import it.polimi.vovarini.common.events.PlayerInfoUpdateEvent;
 import it.polimi.vovarini.common.exceptions.InvalidPositionException;
 import it.polimi.vovarini.common.exceptions.ItemNotFoundException;
 import it.polimi.vovarini.model.GameDataAccessor;
@@ -231,9 +230,6 @@ public class GodCard implements Serializable {
     } catch (ItemNotFoundException ignored) {
     }
 
-    if (reachablePoints.isEmpty()) {
-      gameData.getCurrentPlayer().setHasLost(true);
-    }
     return reachablePoints;
   }
 
@@ -271,10 +267,7 @@ public class GodCard implements Serializable {
 
     } catch (ItemNotFoundException ignored) {
     }
-
-    if (buildablePoints.isEmpty()) {
-      gameData.getCurrentPlayer().setHasLost(true);
-    }
+    
     return buildablePoints;
   }
 

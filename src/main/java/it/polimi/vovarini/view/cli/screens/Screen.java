@@ -96,4 +96,9 @@ public abstract class Screen implements Renderable, EventsForViewListener, KeyPr
   public void handleGodCardUpdate(GodCardUpdateEvent e) {
 
   }
+
+  @Override
+  public void handleLoss(LossEvent e) {
+  
+  }
 }

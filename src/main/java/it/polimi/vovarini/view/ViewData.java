@@ -93,6 +93,10 @@ public class ViewData implements Serializable, GameDataAccessor {
             random.nextInt(255)));
   }
 
+  public void removePlayer(Player player) {
+    players.remove(player);
+  }
+
   public Board getBoard() {
     return board;
   }
