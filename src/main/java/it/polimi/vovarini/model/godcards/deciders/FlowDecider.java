@@ -4,13 +4,13 @@ import it.polimi.vovarini.common.events.GameEventManager;
 import it.polimi.vovarini.common.events.GodCardUpdateEvent;
 import it.polimi.vovarini.common.events.PlayerInfoUpdateEvent;
 import it.polimi.vovarini.common.events.WorkerSelectionEvent;
+import it.polimi.vovarini.common.exceptions.InvalidLevelException;
 import it.polimi.vovarini.common.exceptions.ItemNotFoundException;
 import it.polimi.vovarini.model.GameDataAccessor;
 import it.polimi.vovarini.model.Phase;
 import it.polimi.vovarini.model.Player;
 import it.polimi.vovarini.model.Point;
 import it.polimi.vovarini.model.board.items.Block;
-import it.polimi.vovarini.common.exceptions.InvalidLevelException;
 import it.polimi.vovarini.model.board.items.Sex;
 import it.polimi.vovarini.model.godcards.GodCard;
 import it.polimi.vovarini.model.moves.Construction;
@@ -170,6 +170,18 @@ public class FlowDecider extends Decider {
      * @author Mattia Valassi
      */
     public static Phase applyMalus(GameDataAccessor gameData){
+        if(gameData.getCurrentPhase().equals(Phase.Start) && gameData.getCurrentPlayer().isHasLost()){
+            for (Player otherPlayer : gameData.getPlayers()){
+                if (!otherPlayer.equals(gameData.getCurrentPlayer())){
+                    switch (gameData.getCurrentPlayer().getGodCard().getName()){
+                        case Athena -> {
+                            otherPlayer.getGodCard().getMovementConstraints().clear();
+                            GameEventManager.raise(new GodCardUpdateEvent(gameData, otherPlayer.getGodCard(), otherPlayer));
+                        }
+                    }
+                }
+            }
+        }
         if (gameData.getCurrentPhase().equals(Phase.End)){
             if (gameData.getCurrentPlayer().hasPlayerRisen(gameData)){
                 for (Player otherPlayer : gameData.getPlayers()){

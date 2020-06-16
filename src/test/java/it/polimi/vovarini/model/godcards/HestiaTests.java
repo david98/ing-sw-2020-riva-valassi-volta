@@ -26,11 +26,11 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class HestiaTests {
 
-    private static Game game;
-    private static GodCard hestia;
+    private Game game;
+    private GodCard hestia;
 
-    @BeforeAll
-    public static void init(){
+    @BeforeEach
+    public void init(){
         try{
             game = new Game(2);
 
@@ -45,20 +45,6 @@ public class HestiaTests {
         } catch (InvalidNumberOfPlayersException e){
             e.printStackTrace();
         }
-    }
-
-    @BeforeEach
-    private void resetGame(){
-        Board b = game.getBoard();
-        for (int x = 0; x < b.getSize(); x++){
-            for (int y = 0; y < b.getSize(); y++){
-                Point cur = new Point(x, y);
-                while(b.remove(cur) != null);
-            }
-        }
-        game.setCurrentPhase(Phase.Start);
-        game.getCurrentPlayer().getConstructionList().clear();
-        hestia.getConstructionConstraints().clear();
     }
 
     private static Stream<Arguments> provideAllPossibleTarget() {

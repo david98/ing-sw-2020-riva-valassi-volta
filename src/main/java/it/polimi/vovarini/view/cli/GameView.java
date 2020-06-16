@@ -1,8 +1,8 @@
 package it.polimi.vovarini.view.cli;
 
 import it.polimi.vovarini.common.events.*;
-import it.polimi.vovarini.model.Player;
 import it.polimi.vovarini.common.network.GameClient;
+import it.polimi.vovarini.model.Player;
 import it.polimi.vovarini.view.View;
 import it.polimi.vovarini.view.ViewData;
 import it.polimi.vovarini.view.cli.console.Console;
@@ -11,6 +11,10 @@ import it.polimi.vovarini.view.cli.input.Key;
 import it.polimi.vovarini.view.cli.input.KeycodeToKey;
 import it.polimi.vovarini.view.cli.screens.*;
 
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
+import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Scanner;
@@ -96,6 +100,7 @@ public class GameView extends View {
       data.addPlayer(p);
     }
     data.setCurrentPlayer(e.getElectedPlayer());
+
     if (e.getElectedPlayer().equals(data.getOwner())) {
       currentScreen = new ElectedPlayerScreen(data, client, Arrays.asList(e.getAllGods()));
       gameLoop();
@@ -165,7 +170,22 @@ public class GameView extends View {
   @Override
   @GameEventListener
   public void handleVictory(VictoryEvent e) {
-    currentScreen = new WaitScreen(data, client, e.getWinningPlayer().getNickname() + " wins!");
+    if (e.getWinningPlayer().equals(data.getOwner())) {
+      currentScreen = new WaitScreen(data, client, "VICTORY ROYALE!");
+      playAudio("/audio/bgm/victory.wav", true);
+    } else {
+      currentScreen = new WaitScreen(data, client, e.getWinningPlayer().getNickname() + " wins!");
+      playAudio("/audio/bgm/loss.wav", true);
+    }
+  }
+
+  @Override
+  @GameEventListener
+  public void handleLoss(LossEvent e) {
+    super.handleLoss(e);
+    if (e.getLosingPlayer().equals(data.getOwner())) {
+      currentScreen = new SpectScreen(data, client);
+    }
   }
 
   public void render(){
@@ -240,5 +260,22 @@ public class GameView extends View {
 
   public void stop(){
     running = false;
+  }
+
+  public static synchronized void playAudio(String path, boolean looping) {
+    try {
+      Clip clip = AudioSystem.getClip();
+      System.out.println(clip.toString());
+      AudioInputStream inputStream = AudioSystem.getAudioInputStream(
+              new BufferedInputStream(GameView.class.getResourceAsStream(path)));
+      clip.open(inputStream);
+      if (!looping) {
+        clip.start();
+      } else {
+        clip.loop(Clip.LOOP_CONTINUOUSLY);
+      }
+    } catch (Exception e) {
+      System.err.println(e.getMessage());
+    }
   }
 }

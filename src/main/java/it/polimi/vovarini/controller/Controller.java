@@ -9,7 +9,6 @@ import it.polimi.vovarini.model.Point;
 import it.polimi.vovarini.model.board.Board;
 import it.polimi.vovarini.model.board.items.Block;
 import it.polimi.vovarini.model.board.items.Item;
-import it.polimi.vovarini.common.exceptions.OverwrittenWorkerException;
 import it.polimi.vovarini.model.board.items.Worker;
 import it.polimi.vovarini.model.godcards.GodCard;
 import it.polimi.vovarini.model.godcards.GodCardFactory;
@@ -63,6 +62,7 @@ public class Controller implements EventListener {
       if (game.isFull()){
         game.drawElectedPlayer();
         GodName[] godNames = Arrays.stream(GodName.values()).filter(name -> name != GodName.Nobody).toArray(GodName[]::new);
+        GameEventManager.raise(new BoardUpdateEvent(game, game.getBoard())); //this is normally not needed
         GameEventManager.raise(new GodSelectionStartEvent(game, game.getPlayers(), game.getCurrentPlayer(), godNames));
       }
     } catch (InvalidNumberOfPlayersException e) {
@@ -244,8 +244,10 @@ public class Controller implements EventListener {
 
     Construction build = new Construction(board, toBuild, target, false);
 
-    if (!game.getCurrentPlayer().getGodCard().validate(game.getCurrentPlayer().getGodCard().computeBuildablePoints(), build))
-        throw new InvalidMoveException();
+    if (!game.getCurrentPlayer().getGodCard().validate(game.getCurrentPlayer().getGodCard().computeBuildablePoints(), build)) {
+      GameEventManager.raise(new PhaseUpdateEvent(game, game.getCurrentPhase())); // needed to avoid the client freezing
+      throw new InvalidMoveException();
+    }
 
     game.performMove(build);
     game.setCurrentPhase(game.getCurrentPlayer().getGodCard().computeNextPhase(game));
@@ -313,6 +315,9 @@ public class Controller implements EventListener {
     Player currentPlayer = game.getCurrentPlayer();
     if (!currentPlayer.equals(evt.getSource())) throw new WrongPlayerException();
 
+    /*
+     * Prometheus can build before moving and this check will fail for him.
+     */
     if ((game.getCurrentPhase().equals(Phase.Start) && !currentPlayer.isWorkerSelected()) ||
             (game.getCurrentPhase().equals(Phase.Movement) && currentPlayer.getMovementList().isEmpty()) ||
             (game.getCurrentPhase().equals(Phase.Construction) && currentPlayer.getConstructionList().isEmpty())){
@@ -324,7 +329,7 @@ public class Controller implements EventListener {
     if (game.getCurrentPhase().equals(Phase.End)){
       game.getCurrentPlayer().setWorkerSelected(false);
     }
-    game.setCurrentPhase(game.getCurrentPlayer().getGodCard().computeNextPhase(game, true)); //TODO: fix
+    game.setCurrentPhase(game.getCurrentPlayer().getGodCard().computeNextPhase(game, true));
   }
 
 }

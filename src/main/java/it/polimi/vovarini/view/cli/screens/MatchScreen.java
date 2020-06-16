@@ -1,11 +1,13 @@
 package it.polimi.vovarini.view.cli.screens;
 
 import it.polimi.vovarini.common.events.*;
+import it.polimi.vovarini.common.network.GameClient;
 import it.polimi.vovarini.model.Phase;
 import it.polimi.vovarini.model.Point;
+import it.polimi.vovarini.model.board.items.Block;
 import it.polimi.vovarini.model.board.items.Item;
 import it.polimi.vovarini.model.board.items.Worker;
-import it.polimi.vovarini.common.network.GameClient;
+import it.polimi.vovarini.model.moves.Construction;
 import it.polimi.vovarini.view.ViewData;
 import it.polimi.vovarini.view.cli.Direction;
 import it.polimi.vovarini.view.cli.elements.BoardElement;
@@ -16,6 +18,10 @@ import it.polimi.vovarini.view.cli.input.Key;
 import it.polimi.vovarini.view.cli.styling.Color;
 
 import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
+
+import static it.polimi.vovarini.model.Phase.Construction;
 
 public class MatchScreen extends Screen {
 
@@ -23,8 +29,6 @@ public class MatchScreen extends Screen {
   private final BoardElement boardElement;
   private final PhasePrompt phasePrompt;
   private final Text message;
-
-  private String lastContent;
 
   public MatchScreen(ViewData data, GameClient client){
     super(data, client);
@@ -39,40 +43,38 @@ public class MatchScreen extends Screen {
   @Override
   public void handleKeyPress(Key key) {
     switch (key) {
-      case A: {
+      case A -> {
         boardElement.moveCursor(Direction.Left);
         needsRender = true;
-        break;
       }
-      case D: {
+      case D -> {
         boardElement.moveCursor(Direction.Right);
         needsRender = true;
-        break;
       }
-      case W: {
+      case W -> {
         boardElement.moveCursor(Direction.Up);
         needsRender = true;
-        break;
       }
-      case S: {
+      case S -> {
         boardElement.moveCursor(Direction.Down);
         needsRender = true;
-        break;
       }
-      case Spacebar: {
-        select();
-        break;
+      case SPACEBAR -> {
+        select(false);
       }
-      case N: {
+      case N -> {
         client.raise(new SkipEvent(data.getOwner()));
         handlesInput = false;
-        break;
       }
-      case O: {
+      case O -> {
         confirm();
       }
-      default: {
-        break;
+      case FOUR -> {
+        if (data.getCurrentPhase().equals(Construction)) {
+          select(true);
+        }
+      }
+      default -> {
       }
     }
   }
@@ -96,6 +98,7 @@ public class MatchScreen extends Screen {
     data.setSelectedWorker(null);
     data.setCurrentStart(null);
     boardElement.resetMarkedPoints();
+    message.setContent("");
 
     needsRender = true;
   }
@@ -104,21 +107,21 @@ public class MatchScreen extends Screen {
    * This method handles a spacebar press when
    * the current phase is Construction.
    */
-  private void selectWhenConstructionPhase(){
+  private void selectWhenConstructionPhase(boolean dome){
 
     Point dest = boardElement.getCursorLocation();
 
     Collection<Point> buildablePoints = data.getOwner().getGodCard().computeBuildablePoints();
 
-    if (data.getOwner().isHasLost()){
-      System.exit(1);
-    }
     if (buildablePoints.contains(dest)){
       int nextLevel = data.getBoard().getBox(dest).getLevel() + 1;
-      boardElement.resetMarkedPoints();
-      client.raise(new BuildEvent(data.getOwner(), dest, nextLevel));
-      handlesInput = false;
-      needsRender = true;
+      var sampleMove = new Construction(data.getBoard(), Block.blocks[(dome ? 4 : nextLevel) - 1], dest);
+      if (data.getOwner().getGodCard().validate(new LinkedList<>(buildablePoints), sampleMove)) {
+        client.raise(new BuildEvent(data.getOwner(), dest, dome ? 4 : nextLevel));
+        boardElement.resetMarkedPoints();
+        handlesInput = false;
+        needsRender = true;
+      }
     }
   }
 
@@ -128,20 +131,21 @@ public class MatchScreen extends Screen {
         deSelect();
       } else {
         Item item = data.getBoard().getItems(boardElement.getCursorLocation()).peek();
-        if (data.getOwner().isHasLost()){
-          System.exit(1);
-        }
 
         if (data.getOwner().getWorkers().values().stream().anyMatch(w -> w.equals(item))) {
-          data.setCurrentStart(boardElement.getCursorLocation());
-          data.setSelectedWorker((Worker) item);
           data.getOwner().setCurrentSex(((Worker) item).getSex());
           data.getCurrentPlayer().setCurrentSex(((Worker) item).getSex());
           // mark points reachable by the selected worker
-          boardElement.markPoints(
-                  data.getOwner().getGodCard().computeReachablePoints()
-          );
-          message.setContent("Press O to confirm your choice.");
+          List<Point> reachablePoints = data.getOwner().getGodCard().computeReachablePoints();
+          if (!reachablePoints.isEmpty()) {
+            data.setCurrentStart(boardElement.getCursorLocation());
+            data.setSelectedWorker((Worker) item);
+
+            boardElement.markPoints(
+                    data.getOwner().getGodCard().computeReachablePoints()
+            );
+            message.setContent("Press O to confirm your choice.");
+          }
 
           needsRender = true;
         }
@@ -169,17 +173,17 @@ public class MatchScreen extends Screen {
   }
 
   /**
-   * This method handles a spacebar press. The outcome depends
+   * This method handles a spacebar/four press. The outcome depends
    * on the current Phase and the game status.
    */
-  private void select(){
+  private void select(boolean dome){
     switch (data.getCurrentPhase()){
       case Start ->
               selectWorker();
       case Movement ->
               selectWhenMovementPhase();
       case Construction ->
-              selectWhenConstructionPhase();
+              selectWhenConstructionPhase(dome);
     }
   }
 
@@ -231,9 +235,6 @@ public class MatchScreen extends Screen {
       case Construction -> {
         if (data.getCurrentPlayer().equals(data.getOwner())) {
           boardElement.markPoints(data.getOwner().getGodCard().computeBuildablePoints());
-          if (data.getOwner().isHasLost()) {
-            System.exit(1);
-          }
         }
       }
       case End -> {

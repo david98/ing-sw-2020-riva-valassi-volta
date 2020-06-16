@@ -55,4 +55,9 @@ public abstract class View implements EventsForViewListener {
       }
     }
   }
+
+  @Override
+  public void handleLoss(LossEvent e) {
+    data.removePlayer(e.getLosingPlayer());
+  }
 }

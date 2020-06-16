@@ -25,12 +25,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class TritonTests {
-    private static Game game;
-    private static GodCard triton;
+    private Game game;
+    private GodCard triton;
 
-    @BeforeAll
-    public static void init(){
-        try{
+    @BeforeEach
+    public void init() {
+        try {
             game = new Game(2);
 
             game.addPlayer("Guest01");
@@ -38,26 +38,12 @@ public class TritonTests {
 
             triton = GodCardFactory.create(GodName.Triton);
             triton.setGameData(game);
-            for (Player player: game.getPlayers()){
+            for (Player player : game.getPlayers()) {
                 player.setGodCard(triton);
             }
-        } catch (InvalidNumberOfPlayersException e){
+        } catch (InvalidNumberOfPlayersException e) {
             e.printStackTrace();
         }
-    }
-
-    @BeforeEach
-    private void resetGame(){
-        Board b = game.getBoard();
-        for (int x = 0; x < b.getSize(); x++){
-            for (int y = 0; y < b.getSize(); y++){
-                Point cur = new Point(x, y);
-                while(b.remove(cur) != null);
-            }
-        }
-        game.setCurrentPhase(Phase.Start);
-        game.getCurrentPlayer().getMovementList().clear();
-        triton.getMovementConstraints().clear();
     }
 
     private static Stream<Arguments> provideAllPossibleMovementMoves() {

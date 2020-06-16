@@ -24,12 +24,12 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class DemeterTests {
 
-    private static Game game;
-    private static GodCard demeter;
+    private Game game;
+    private GodCard demeter;
 
-    @BeforeAll
-    public static void init(){
-        try{
+    @BeforeEach
+    public void init() {
+        try {
             game = new Game(2);
 
             game.addPlayer("Guest01");
@@ -37,26 +37,12 @@ public class DemeterTests {
 
             demeter = GodCardFactory.create(GodName.Demeter);
             demeter.setGameData(game);
-            for (Player player: game.getPlayers()){
+            for (Player player : game.getPlayers()) {
                 player.setGodCard(demeter);
             }
-        } catch (InvalidNumberOfPlayersException e){
+        } catch (InvalidNumberOfPlayersException e) {
             e.printStackTrace();
         }
-    }
-
-    @BeforeEach
-    private void resetGame(){
-        Board b = game.getBoard();
-        for (int x = 0; x < b.getSize(); x++){
-            for (int y = 0; y < b.getSize(); y++){
-                Point cur = new Point(x, y);
-                while (b.remove(cur) != null);
-            }
-        }
-        game.setCurrentPhase(Phase.Start);
-        game.getCurrentPlayer().getConstructionList().clear();
-        demeter.getWinningConstraints().clear();
     }
 
     private static Stream<Arguments> provideAllPossibleTarget() {

@@ -21,11 +21,11 @@ import java.util.stream.Stream;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class ApolloTests {
-    private static Game game;
-    private static GodCard apollo;
+    private Game game;
+    private GodCard apollo;
 
-    @BeforeAll
-    public static void init(){
+    @BeforeEach
+    public void init(){
         try{
             game = new Game(2);
 
@@ -40,20 +40,6 @@ public class ApolloTests {
         } catch (InvalidNumberOfPlayersException e){
             e.printStackTrace();
         }
-    }
-
-    @BeforeEach
-    private void resetGame(){
-        Board b = game.getBoard();
-        for (int x = 0; x < b.getSize(); x++){
-            for (int y = 0; y < b.getSize(); y++){
-                Point cur = new Point(x, y);
-                while(b.remove(cur) != null);
-            }
-        }
-        game.setCurrentPhase(Phase.Start);
-        game.getCurrentPlayer().getMovementList().clear();
-        apollo.getMovementConstraints().clear();
     }
 
     private static Stream<Arguments> provideAllPossibleMovementMoves() {
