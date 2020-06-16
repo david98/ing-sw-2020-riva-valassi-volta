@@ -14,6 +14,7 @@ import it.polimi.vovarini.view.cli.screens.*;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
+import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Scanner;
@@ -266,7 +267,7 @@ public class GameView extends View {
       Clip clip = AudioSystem.getClip();
       System.out.println(clip.toString());
       AudioInputStream inputStream = AudioSystem.getAudioInputStream(
-              GameView.class.getResourceAsStream(path));
+              new BufferedInputStream(GameView.class.getResourceAsStream(path)));
       clip.open(inputStream);
       if (!looping) {
         clip.start();
