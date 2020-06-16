@@ -36,7 +36,6 @@ public class GodCardSelectionController extends GUIController {
     public void initialize() {
 
         guiManager = GuiManager.getInstance();
-        guiManager.setGodCardSelectionController(this);
         bindEvents();
     }
 

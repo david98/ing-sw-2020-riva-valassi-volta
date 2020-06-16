@@ -38,7 +38,6 @@ public class SpawnWorkerController extends GUIController {
     public void initialize() {
 
         guiManager = GuiManager.getInstance();
-        guiManager.setSpawnWorkerController(this);
         bindEvents();
     }
 

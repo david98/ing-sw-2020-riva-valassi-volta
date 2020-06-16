@@ -2,6 +2,7 @@ package it.polimi.vovarini.view.gui.controllers;
 
 import it.polimi.vovarini.common.events.*;
 import it.polimi.vovarini.view.EventsForViewListener;
+import it.polimi.vovarini.view.gui.GuiManager;
 import javafx.fxml.FXML;
 import javafx.scene.layout.BorderPane;
 
@@ -9,6 +10,11 @@ public class GUIController implements EventsForViewListener {
 
   @FXML
   protected BorderPane mainPane;
+
+  @FXML
+  public void initialize() {
+    /* altre eventuali inizializzazioni */
+  }
 
   @Override
   public void handleBoardUpdate(BoardUpdateEvent e) {

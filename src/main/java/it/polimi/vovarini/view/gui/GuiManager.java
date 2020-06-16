@@ -13,6 +13,7 @@ import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
+import javafx.stage.Stage;
 
 import java.io.IOException;
 
@@ -22,11 +23,13 @@ public class GuiManager extends View {
 
     private GameClient client;
 
+    private Stage stage;
+
     private Scene currentScene;
     private GUIController currentController;
 
-    private GodCardSelectionController godCardSelectionController;
-    private SpawnWorkerController spawnWorkerController;
+    private boolean godSelectionStarted;
+    private boolean placeWorkersStarted;
 
     private Thread guiEventListenerThread;
 
@@ -36,7 +39,8 @@ public class GuiManager extends View {
         data = new ViewData();
 
         instance = this;
-
+        godSelectionStarted = false;
+        placeWorkersStarted = false;
     }
 
     public static GuiManager getInstance() {
@@ -64,7 +68,6 @@ public class GuiManager extends View {
     public void handleCurrentPlayerUpdate(CurrentPlayerChangedEvent e) {
         data.setCurrentPlayer(e.getNewPlayer());
         Platform.runLater(() -> currentController.handleCurrentPlayerUpdate(e));
-        // se sei in GameScene, aggiorna il currentPlayer a video
     }
 
     @Override
@@ -72,7 +75,6 @@ public class GuiManager extends View {
     public void handlePhaseUpdate(PhaseUpdateEvent e) {
         data.setCurrentPhase(e.getNewPhase());
         Platform.runLater(() -> currentController.handlePhaseUpdate(e));
-        //se sei in GameScene, aggiorna currentPhase a video
     }
 
     @Override
@@ -87,12 +89,13 @@ public class GuiManager extends View {
         super.handleGodSelectionStart(e);
 
         if (e.getElectedPlayer().equals(data.getOwner())) {
-            setLayout("/fxml/electedPlayerScene.fxml");
+            Platform.runLater(() -> setLayout(Settings.ELECTED_PLAYER_SCENE_PATH));
         } else {
-            setLayout("/fxml/waitScene.fxml");
-            // TODO: find a better way
-            ((WaitController) currentController).setWaitMessage("Waiting for " + e.getElectedPlayer().getNickname() + " to choose which" +
-                    "God Cards will be available...");
+            Platform.runLater(() -> {
+                setLayout(Settings.WAIT_SCENE_FXML);
+                ((WaitController) currentController).setWaitMessage("Waiting for " + e.getElectedPlayer().getNickname() + " to choose which" +
+                        "God Cards will be available...");
+            });
         }
 
         Platform.runLater(() -> currentController.handleGodSelectionStart(e));
@@ -101,9 +104,9 @@ public class GuiManager extends View {
     @Override
     @GameEventListener
     public void handleSelectYourCard(SelectYourCardEvent e) {
-        // TODO: find a better way
-        if(godCardSelectionController == null) {
-            setLayout("/fxml/godCardSelectionScene.fxml");
+        if (!godSelectionStarted) {
+            Platform.runLater(() -> setLayout(Settings.GODCARD_SELECTION_SCENE_PATH));
+            godSelectionStarted = true;
         }
         Platform.runLater(() -> currentController.handleSelectYourCard(e));
     }
@@ -118,9 +121,9 @@ public class GuiManager extends View {
     @Override
     @GameEventListener
     public void handlePlaceYourWorkers(PlaceYourWorkersEvent e) {
-        // TODO: find a better way
-        if(spawnWorkerController == null) {
-            setLayout("/fxml/spawnWorkerScene.fxml");
+        if (!placeWorkersStarted) {
+            Platform.runLater(() -> setLayout(Settings.SPAWN_WORKER_SCENE_PATH));
+            placeWorkersStarted = true;
         }
         Platform.runLater(() -> currentController.handlePlaceYourWorkers(e));
     }
@@ -162,7 +165,7 @@ public class GuiManager extends View {
      *
      * @param path  path of the FXML file
      */
-     public void setLayout(String path) {
+    public void setLayout(String path) {
 
         FXMLLoader loader = new FXMLLoader();
         loader.setLocation(GuiManager.class.getResource(path));
@@ -170,11 +173,15 @@ public class GuiManager extends View {
         try {
             pane = loader.load();
             currentScene.setRoot(pane);
+            this.currentController = loader.getController();
+            stage.setMinWidth(0);
+            stage.setMinHeight(0);
+            stage.sizeToScene();
+            stage.setMinWidth(stage.getWidth());
+            stage.setMinHeight(stage.getHeight());
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-        this.currentController = loader.getController();
     }
 
     public void createConnection(String nickname, String serverIP, int serverPort) throws IOException {
@@ -186,29 +193,32 @@ public class GuiManager extends View {
         guiEventListenerThread.start();
     }
 
-    public void setGodCardSelectionController(GodCardSelectionController godCardSelectionController) {
-        this.godCardSelectionController = godCardSelectionController;
-    }
-
-    public void setSpawnWorkerController(SpawnWorkerController spawnWorkerController) {
-        this.spawnWorkerController = spawnWorkerController;
-    }
-
     public ViewData getData() {
         return data;
     }
 
-    public GameClient getClient() { return client; }
+    public GameClient getClient() {
+        return client;
+    }
 
     public int getNumberOfPlayers() {
         return data.getPlayerSet().size();
     }
 
     public Scene getCurrentScene() {
-         return currentScene;
+        return currentScene;
     }
 
     public void setCurrentScene(Scene scene) {
-         this.currentScene = scene;
-     }
+        this.currentScene = scene;
+    }
+
+    public Stage getStage() {
+        return stage;
+    }
+
+    public void setStage(Stage stage) {
+        this.stage = stage;
+    }
 }
+

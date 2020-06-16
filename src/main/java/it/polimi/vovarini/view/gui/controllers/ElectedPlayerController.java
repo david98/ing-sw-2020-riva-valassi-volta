@@ -4,6 +4,7 @@ import it.polimi.vovarini.common.events.AvailableCardsEvent;
 import it.polimi.vovarini.common.events.GameEvent;
 import it.polimi.vovarini.common.events.GodSelectionStartEvent;
 import it.polimi.vovarini.model.godcards.GodName;
+import it.polimi.vovarini.view.gui.Gui;
 import it.polimi.vovarini.view.gui.GuiManager;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -73,13 +74,10 @@ public class ElectedPlayerController extends GUIController {
     private ImageView godCard13;
 
     private final List<GodName> selectedCards = new LinkedList<>();
-    private GuiManager guiManager;
 
-    @FXML
+    @Override
     public void initialize() {
-
-        /* altre eventuali inizializzazioni */
-        guiManager = GuiManager.getInstance();
+        super.initialize();
         bindEvents();
     }
 
@@ -156,7 +154,7 @@ public class ElectedPlayerController extends GUIController {
                 selectedGodCard2.setStyle(style);
                 break;
             case 2:
-                if (guiManager.getNumberOfPlayers() == 3) {
+                if (GuiManager.getInstance().getNumberOfPlayers() == 3) {
                     selectedCards.add(godNames[i]);
                     selectedGodCard3.setStyle(style);
                 }
@@ -169,10 +167,10 @@ public class ElectedPlayerController extends GUIController {
 
     @FXML
     private void submit(ActionEvent event) {
-        if (guiManager.getNumberOfPlayers() == selectedCards.size()) {
-            GameEvent evt = new AvailableCardsEvent(guiManager.getData().getOwner(),
+        if (GuiManager.getInstance().getNumberOfPlayers() == selectedCards.size()) {
+            GameEvent evt = new AvailableCardsEvent(GuiManager.getInstance().getData().getOwner(),
                     selectedCards.toArray(GodName[]::new));
-            guiManager.getClient().raise(evt);
+            GuiManager.getInstance().getClient().raise(evt);
             GuiManager.getInstance().setCurrentScene(mainPane.getScene());
             GuiManager.getInstance().setLayout("/fxml/waitScene.fxml");
         }
