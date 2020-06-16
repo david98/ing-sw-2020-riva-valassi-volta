@@ -43,45 +43,38 @@ public class MatchScreen extends Screen {
   @Override
   public void handleKeyPress(Key key) {
     switch (key) {
-      case A: {
+      case A -> {
         boardElement.moveCursor(Direction.Left);
         needsRender = true;
-        break;
       }
-      case D: {
+      case D -> {
         boardElement.moveCursor(Direction.Right);
         needsRender = true;
-        break;
       }
-      case W: {
+      case W -> {
         boardElement.moveCursor(Direction.Up);
         needsRender = true;
-        break;
       }
-      case S: {
+      case S -> {
         boardElement.moveCursor(Direction.Down);
         needsRender = true;
-        break;
       }
-      case Spacebar: {
+      case SPACEBAR -> {
         select(false);
-        break;
       }
-      case N: {
+      case N -> {
         client.raise(new SkipEvent(data.getOwner()));
         handlesInput = false;
-        break;
       }
-      case O: {
+      case O -> {
         confirm();
       }
-      case Four: {
+      case FOUR -> {
         if (data.getCurrentPhase().equals(Construction)) {
           select(true);
         }
       }
-      default: {
-        break;
+      default -> {
       }
     }
   }

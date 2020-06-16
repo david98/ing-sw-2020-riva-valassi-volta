@@ -13,8 +13,8 @@ public class KeycodeToKey {
           100, Key.D,
           119, Key.W,
           115, Key.S,
-          32, Key.Spacebar,
+          32, Key.SPACEBAR,
           110, Key.N,
           111, Key.O,
-          52, Key.Four);
+          52, Key.FOUR);
 }
