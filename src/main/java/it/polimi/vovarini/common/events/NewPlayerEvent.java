@@ -11,7 +11,7 @@ import it.polimi.vovarini.model.Player;
  */
 public class NewPlayerEvent extends GameEvent {
 
-  private Player newPlayer;
+  private final Player newPlayer;
 
   /**
    *
@@ -20,7 +20,7 @@ public class NewPlayerEvent extends GameEvent {
    */
   public NewPlayerEvent(Object source, Player newPlayer){
     super(source);
-    this.newPlayer = newPlayer.clone();
+    this.newPlayer = newPlayer;
   }
 
   public Player getNewPlayer() {

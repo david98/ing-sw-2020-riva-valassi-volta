@@ -1,6 +1,8 @@
 package it.polimi.vovarini.model.godcards;
 
-import it.polimi.vovarini.common.exceptions.*;
+import it.polimi.vovarini.common.exceptions.BoxFullException;
+import it.polimi.vovarini.common.exceptions.InvalidNumberOfPlayersException;
+import it.polimi.vovarini.common.exceptions.InvalidPositionException;
 import it.polimi.vovarini.model.Game;
 import it.polimi.vovarini.model.Phase;
 import it.polimi.vovarini.model.Player;
@@ -23,11 +25,11 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class ArtemisTests {
 
-    private static Game game;
-    private static GodCard artemis;
+    private Game game;
+    private GodCard artemis;
 
-    @BeforeAll
-    public static void init(){
+    @BeforeEach
+    public void init(){
         try{
             game = new Game(2);
 
@@ -40,28 +42,8 @@ public class ArtemisTests {
                 player.setGodCard(artemis);
             }
         } catch (InvalidNumberOfPlayersException e){
-            e.printStackTrace();;
+            e.printStackTrace();
         }
-    }
-
-    @BeforeEach
-    private void resetGame(){
-        Board b = game.getBoard();
-        for (int x = 0; x < b.getSize(); x++){
-            for (int y = 0; y < b.getSize(); y++){
-                Point cur = new Point(x, y);
-                while (true){
-                    try {
-                        b.remove(cur);
-                    } catch (BoxEmptyException | InvalidPositionException e){
-                        break;
-                    }
-                }
-            }
-        }
-        game.setCurrentPhase(Phase.Start);
-        game.getCurrentPlayer().getMovementList().clear();
-        artemis.movementConstraints.clear();
     }
 
     private static Stream<Arguments> provideAllPossibleMovementMoves() {

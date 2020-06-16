@@ -2,24 +2,25 @@ package it.polimi.vovarini.model.board;
 
 import it.polimi.vovarini.common.events.BoardUpdateEvent;
 import it.polimi.vovarini.common.events.GameEventManager;
-import it.polimi.vovarini.common.exceptions.BoxEmptyException;
-import it.polimi.vovarini.common.exceptions.BoxFullException;
 import it.polimi.vovarini.common.exceptions.InvalidPositionException;
 import it.polimi.vovarini.common.exceptions.ItemNotFoundException;
 import it.polimi.vovarini.model.Point;
+import it.polimi.vovarini.model.board.items.Block;
 import it.polimi.vovarini.model.board.items.Item;
+import it.polimi.vovarini.model.board.items.Worker;
 
 import java.io.Serializable;
+import java.util.Deque;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Stack;
+import java.util.Objects;
 
-public class Board implements Cloneable, Serializable {
+public class Board implements Serializable {
 
   public static final int DEFAULT_SIZE = 5;
 
-  private Box[][] boxes;
-  private int size;
+  private final Box[][] boxes;
+  private final int size;
 
   /*
    * Si presuppone che la plancia sia quadrata
@@ -30,6 +31,16 @@ public class Board implements Cloneable, Serializable {
     for (int i = 0; i < size; i++) {
       for (int j = 0; j < size; j++) {
         boxes[i][j] = new Box();
+      }
+    }
+  }
+
+  public Board(Board b){
+    size = b.size;
+    boxes = new Box[size][size];
+    for (int i = 0; i < size; i++) {
+      for (int j = 0; j < size; j++) {
+        boxes[i][j] = new Box(b.boxes[i][j]);
       }
     }
   }
@@ -55,46 +66,52 @@ public class Board implements Cloneable, Serializable {
     return boxes[position.getY()][position.getX()];
   }
 
-  public void place(Item item, Point p) throws InvalidPositionException, BoxFullException {
+  public void place(Item item, Point p) {
     if (!isPositionValid(p)) {
       throw new InvalidPositionException();
     }
     Box box = getBox(p);
     box.place(item);
-    GameEventManager.raise(new BoardUpdateEvent(this, this.clone()));
+    GameEventManager.raise(new BoardUpdateEvent(this, this));
   }
 
-  public Stack<Item> getItems(Point p) throws InvalidPositionException, BoxEmptyException {
+  public Deque<Item> getItems(Point p) {
     if (!isPositionValid(p)) {
       throw new InvalidPositionException();
     }
     return getBox(p).getItems();
   }
 
-  public Stack<Item> safeGetItems(Point p){
-    try {
-      return getItems(p);
-    } catch (InvalidPositionException | BoxEmptyException e){
-      return new Stack<Item>();
-    }
-  }
-
-  public Item remove(Point p) throws InvalidPositionException, BoxEmptyException {
+  public Item remove(Point p) {
     if (!isPositionValid(p)) {
       throw new InvalidPositionException();
     }
     Box box = getBox(p);
-    return box.removeTopmost();
+    Item item = box.removeTopmost();
+    GameEventManager.raise(new BoardUpdateEvent(this, this));
+    return item;
   }
 
-  public Point getItemPosition(Item item) throws ItemNotFoundException {
+  public Point getItemPosition(Block block) {
     for (int i = 0; i < boxes.length; i++) {
       for (int j = 0; j < boxes.length; j++) {
-        try {
-          if (boxes[j][i].getItems().peek().equals(item)) {
+        if (Objects.equals(boxes[j][i].getItems().peek(), block))
+        {
+          return new Point(i, j);
+        }
+      }
+    }
+    throw new ItemNotFoundException();
+  }
+
+  public Point getItemPosition(Worker worker) {
+    for (int i = 0; i < boxes.length; i++) {
+      for (int j = 0; j < boxes.length; j++) {
+        if (boxes[j][i].getItems().peek() != null && boxes[j][i].getItems().peek().canBeRemoved()) {
+          Worker peekedWorker = (Worker) boxes[j][i].getItems().peek();
+          if (Objects.equals(peekedWorker, worker)) {
             return new Point(i, j);
           }
-        } catch (BoxEmptyException ignored) {
         }
       }
     }
@@ -103,21 +120,6 @@ public class Board implements Cloneable, Serializable {
 
   public int getSize() {
     return size;
-  }
-
-  public Board clone() {
-    try {
-      Board b = (Board) super.clone();
-      b.boxes = new Box[size][size];
-      for (int i = 0; i < size; i++) {
-        for (int j = 0; j < size; j++) {
-          b.boxes[i][j] = boxes[i][j].clone();
-        }
-      }
-      return b;
-    } catch (CloneNotSupportedException e) {
-      throw new RuntimeException(e);
-    }
   }
 
 }

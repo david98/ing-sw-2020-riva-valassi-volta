@@ -1,6 +1,6 @@
 package it.polimi.vovarini.model.godcards;
 
-import it.polimi.vovarini.common.exceptions.*;
+import it.polimi.vovarini.common.exceptions.InvalidNumberOfPlayersException;
 import it.polimi.vovarini.model.Game;
 import it.polimi.vovarini.model.Phase;
 import it.polimi.vovarini.model.Player;
@@ -24,12 +24,12 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class DemeterTests {
 
-    private static Game game;
-    private static GodCard demeter;
+    private Game game;
+    private GodCard demeter;
 
-    @BeforeAll
-    public static void init(){
-        try{
+    @BeforeEach
+    public void init() {
+        try {
             game = new Game(2);
 
             game.addPlayer("Guest01");
@@ -37,32 +37,12 @@ public class DemeterTests {
 
             demeter = GodCardFactory.create(GodName.Demeter);
             demeter.setGameData(game);
-            for (Player player: game.getPlayers()){
+            for (Player player : game.getPlayers()) {
                 player.setGodCard(demeter);
             }
-        } catch (InvalidNumberOfPlayersException e){
-            e.printStackTrace();;
+        } catch (InvalidNumberOfPlayersException e) {
+            e.printStackTrace();
         }
-    }
-
-    @BeforeEach
-    private void resetGame(){
-        Board b = game.getBoard();
-        for (int x = 0; x < b.getSize(); x++){
-            for (int y = 0; y < b.getSize(); y++){
-                Point cur = new Point(x, y);
-                while (true){
-                    try {
-                        b.remove(cur);
-                    } catch (BoxEmptyException | InvalidPositionException e){
-                        break;
-                    }
-                }
-            }
-        }
-        game.setCurrentPhase(Phase.Start);
-        game.getCurrentPlayer().getConstructionList().clear();
-        demeter.constructionConstraints.clear();
     }
 
     private static Stream<Arguments> provideAllPossibleTarget() {
@@ -92,34 +72,30 @@ public class DemeterTests {
     @Test
     @DisplayName("Test that a GodCard of type Demeter can be instantiated correctly")
     public void demeterCreation() {
-        assertEquals(game.getCurrentPlayer().getGodCard().name, GodName.Demeter);
+        assertEquals(GodName.Demeter, game.getCurrentPlayer().getGodCard().name);
     }
 
     @ParameterizedTest
     @MethodSource("provideAllPossibleTarget")
     @DisplayName("Test that Demeter's construction constraints are correctly applied")
-    public void testConstructionConstraint(Point start, Point firstTarget, Point secondTarget) {
+    void testConstructionConstraint(Point start, Point firstTarget, Point secondTarget) {
         Board board = game.getBoard();
 
-        try {
-            board.place(game.getCurrentPlayer().getCurrentWorker(), start);
-            if(!firstTarget.equals(secondTarget)) {
-                board.place(Block.blocks[0], secondTarget);
-            }
-        } catch (InvalidPositionException | BoxFullException e) {
-            e.printStackTrace();
+        board.place(game.getCurrentPlayer().getCurrentWorker(), start);
+        if(!firstTarget.equals(secondTarget)) {
+            board.place(Block.blocks[0], secondTarget);
         }
 
         game.setCurrentPhase(demeter.computeNextPhase(game));
         game.setCurrentPhase(demeter.computeNextPhase(game));
-        assertEquals(game.getCurrentPhase(), Phase.Construction);
+        assertEquals(Phase.Construction, game.getCurrentPhase());
 
         Construction firstConstruction = new Construction(board, Block.blocks[0], firstTarget);
         assertTrue(demeter.validate(demeter.computeBuildablePoints(), firstConstruction));
         game.performMove(firstConstruction);
 
         game.setCurrentPhase(demeter.computeNextPhase(game));
-        assertEquals(game.getCurrentPhase(), Phase.Construction);
+        assertEquals(Phase.Construction, game.getCurrentPhase());
 
         Construction secondConstruction = new Construction(board, Block.blocks[1], secondTarget);
         assertEquals(!secondTarget.equals(firstTarget), demeter.validate(demeter.computeBuildablePoints(), secondConstruction));

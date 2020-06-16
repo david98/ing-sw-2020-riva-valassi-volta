@@ -1,23 +1,27 @@
 package it.polimi.vovarini.view.cli.screens;
 
 import it.polimi.vovarini.common.events.*;
-import it.polimi.vovarini.common.exceptions.BoxEmptyException;
-import it.polimi.vovarini.common.exceptions.InvalidPositionException;
+import it.polimi.vovarini.common.network.GameClient;
 import it.polimi.vovarini.model.Phase;
 import it.polimi.vovarini.model.Point;
+import it.polimi.vovarini.model.board.items.Block;
 import it.polimi.vovarini.model.board.items.Item;
 import it.polimi.vovarini.model.board.items.Worker;
-import it.polimi.vovarini.server.GameClient;
+import it.polimi.vovarini.model.moves.Construction;
 import it.polimi.vovarini.view.ViewData;
-import it.polimi.vovarini.view.cli.elements.Text;
-import it.polimi.vovarini.view.cli.input.Key;
-import it.polimi.vovarini.view.cli.styling.Color;
 import it.polimi.vovarini.view.cli.Direction;
 import it.polimi.vovarini.view.cli.elements.BoardElement;
 import it.polimi.vovarini.view.cli.elements.PhasePrompt;
 import it.polimi.vovarini.view.cli.elements.PlayerList;
+import it.polimi.vovarini.view.cli.elements.Text;
+import it.polimi.vovarini.view.cli.input.Key;
+import it.polimi.vovarini.view.cli.styling.Color;
 
 import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
+
+import static it.polimi.vovarini.model.Phase.Construction;
 
 public class MatchScreen extends Screen {
 
@@ -25,10 +29,6 @@ public class MatchScreen extends Screen {
   private final BoardElement boardElement;
   private final PhasePrompt phasePrompt;
   private final Text message;
-
-  private boolean reRenderNeeded;
-
-  private String lastContent;
 
   public MatchScreen(ViewData data, GameClient client){
     super(data, client);
@@ -38,46 +38,43 @@ public class MatchScreen extends Screen {
     boardElement = new BoardElement(data.getBoard(), data.getPlayerSet(), data.getPlayersColors(), Color.Green);
     phasePrompt = new PhasePrompt(data.getCurrentPhase());
     message = new Text("");
-
-    reRenderNeeded = true;
   }
 
   @Override
   public void handleKeyPress(Key key) {
     switch (key) {
-      case A: {
+      case A -> {
         boardElement.moveCursor(Direction.Left);
-        reRenderNeeded = true;
-        break;
+        needsRender = true;
       }
-      case D: {
+      case D -> {
         boardElement.moveCursor(Direction.Right);
-        reRenderNeeded = true;
-        break;
+        needsRender = true;
       }
-      case W: {
+      case W -> {
         boardElement.moveCursor(Direction.Up);
-        reRenderNeeded = true;
-        break;
+        needsRender = true;
       }
-      case S: {
+      case S -> {
         boardElement.moveCursor(Direction.Down);
-        reRenderNeeded = true;
-        break;
+        needsRender = true;
       }
-      case Spacebar: {
-        select();
-        break;
+      case SPACEBAR -> {
+        select(false);
       }
-      case N: {
+      case N -> {
         client.raise(new SkipEvent(data.getOwner()));
-        break;
+        handlesInput = false;
       }
-      case O: {
+      case O -> {
         confirm();
       }
-      default: {
-        break;
+      case FOUR -> {
+        if (data.getCurrentPhase().equals(Construction)) {
+          select(true);
+        }
+      }
+      default -> {
       }
     }
   }
@@ -85,28 +82,16 @@ public class MatchScreen extends Screen {
   @Override
   public String render() {
     StringBuilder content = new StringBuilder();
-    if (reRenderNeeded) {
-      content.append(playerList.render())
-              .append("\n")
-              .append(boardElement.render())
-              .append("\n")
-              .append(data.getCurrentPlayer().equals(data.getOwner()) ? phasePrompt.render() :
-                      "It's " + data.getCurrentPlayer().getNickname() + "'s turn.")
-              .append("\n")
-              .append(message.render());
-      /*
-      if (data.getOwner().equals(data.getCurrentPlayer())) {
-        console.println(getPhasePrompt(data.getCurrentPhase()));
-      } else {
-        console.println("It's " + data.getCurrentPlayer().getNickname() + "'s turn.");
-      }*/
-
-      reRenderNeeded = false;
-      lastContent = content.toString();
-      return content.toString();
-    } else {
-      return lastContent;
-    }
+    content.append(playerList.render())
+            .append("\n")
+            .append(boardElement.render())
+            .append("\n")
+            .append(data.getCurrentPlayer().equals(data.getOwner()) ? phasePrompt.render() :
+                    "It's " + data.getCurrentPlayer().getNickname() + "'s turn.")
+            .append("\n")
+            .append(message.render());
+    needsRender = false;
+    return content.toString();
   }
 
   private void deSelect(){
@@ -115,30 +100,29 @@ public class MatchScreen extends Screen {
     boardElement.resetMarkedPoints();
     message.setContent("");
 
-    reRenderNeeded = true;
+    needsRender = true;
   }
 
   /**
    * This method handles a spacebar press when
    * the current phase is Construction.
    */
-  private void selectWhenConstructionPhase(){
+  private void selectWhenConstructionPhase(boolean dome){
 
     Point dest = boardElement.getCursorLocation();
 
     Collection<Point> buildablePoints = data.getOwner().getGodCard().computeBuildablePoints();
 
-    if (data.getOwner().isHasLost()){
-      System.exit(1);
-    }
     if (buildablePoints.contains(dest)){
       int nextLevel = data.getBoard().getBox(dest).getLevel() + 1;
-      deSelect();
-      client.raise(new BuildEvent(data.getOwner().getNickname(), dest, nextLevel));
+      var sampleMove = new Construction(data.getBoard(), Block.blocks[(dome ? 4 : nextLevel) - 1], dest);
+      if (data.getOwner().getGodCard().validate(new LinkedList<>(buildablePoints), sampleMove)) {
+        client.raise(new BuildEvent(data.getOwner(), dest, dome ? 4 : nextLevel));
+        boardElement.resetMarkedPoints();
+        handlesInput = false;
+        needsRender = true;
+      }
     }
-
-
-
   }
 
   private void selectWorker(){
@@ -146,27 +130,25 @@ public class MatchScreen extends Screen {
       if (boardElement.getCursorLocation().equals(data.getCurrentStart())) {
         deSelect();
       } else {
-        try {
-          Item item = data.getBoard().getItems(boardElement.getCursorLocation()).peek();
-          if (data.getOwner().isHasLost()){
-            System.exit(1);
-          }
+        Item item = data.getBoard().getItems(boardElement.getCursorLocation()).peek();
 
-          if (data.getOwner().getWorkers().values().stream().anyMatch(w -> w.equals(item))) {
+        if (data.getOwner().getWorkers().values().stream().anyMatch(w -> w.equals(item))) {
+          data.getOwner().setCurrentSex(((Worker) item).getSex());
+          data.getCurrentPlayer().setCurrentSex(((Worker) item).getSex());
+          // mark points reachable by the selected worker
+          List<Point> reachablePoints = data.getOwner().getGodCard().computeReachablePoints();
+          if (!reachablePoints.isEmpty()) {
             data.setCurrentStart(boardElement.getCursorLocation());
             data.setSelectedWorker((Worker) item);
-            data.getOwner().setCurrentSex(((Worker) item).getSex());
-            // mark points reachable by the selected worker
+
             boardElement.markPoints(
                     data.getOwner().getGodCard().computeReachablePoints()
             );
             message.setContent("Press O to confirm your choice.");
-            reRenderNeeded = true;
           }
-        } catch (BoxEmptyException ignored) {
-        } catch (InvalidPositionException ignored) {
-        }
 
+          needsRender = true;
+        }
       }
     } else {
       deSelect();
@@ -178,58 +160,30 @@ public class MatchScreen extends Screen {
    * the current phase is Movement.
    */
   private void selectWhenMovementPhase(){
-    if (data.getSelectedWorker() != null){
-      if (boardElement.getCursorLocation().equals(data.getCurrentStart())){
-        deSelect();
-      } else if (boardElement.getMarkedPoints().contains(boardElement.getCursorLocation())){
+    if (data.getSelectedWorker() != null &&
+      boardElement.getMarkedPoints().contains(boardElement.getCursorLocation())){
         boardElement.resetMarkedPoints();
         client.raise(new MovementEvent(
-                data.getOwner().getNickname(),
+                data.getOwner(),
                 boardElement.getCursorLocation())
         );
-      }
-    } else {
-      // check if one of the player's workers is under the cursor
-      try {
-        Item item = data.getBoard().getItems(boardElement.getCursorLocation()).peek();
-        if (data.getOwner().isHasLost()){
-          System.exit(1);
-        }
-
-        if (data.getOwner().getWorkers().values().stream().anyMatch(w -> w.equals(item))) {
-          data.setCurrentStart(boardElement.getCursorLocation());
-          data.setSelectedWorker((Worker) item);
-          client.raise(
-                  new WorkerSelectionEvent(
-                          data.getOwner().getNickname(),
-                          data.getSelectedWorker().getSex())
-          );
-          // mark points reachable by the selected worker
-          boardElement.markPoints(
-                  data.getOwner().getGodCard().computeReachablePoints()
-          );
-
-          reRenderNeeded = true;
-        }
-      } catch (BoxEmptyException ignored) {
-      } catch (InvalidPositionException ignored) {
-      }
-
+        needsRender = true;
+        handlesInput = false;
     }
   }
 
   /**
-   * This method handles a spacebar press. The outcome depends
+   * This method handles a spacebar/four press. The outcome depends
    * on the current Phase and the game status.
    */
-  private void select(){
+  private void select(boolean dome){
     switch (data.getCurrentPhase()){
       case Start ->
               selectWorker();
       case Movement ->
               selectWhenMovementPhase();
       case Construction ->
-              selectWhenConstructionPhase();
+              selectWhenConstructionPhase(dome);
     }
   }
 
@@ -238,63 +192,58 @@ public class MatchScreen extends Screen {
    */
   private void confirm(){
     switch (data.getCurrentPhase()){
-      case Start ->
-        GameEventManager.raise(
-                new WorkerSelectionEvent(data.getOwner(), data.getOwner().getCurrentWorker().getSex())
-        );
-    }
-  }
-
-  @Override
-  public void handleBoardUpdate(BoardUpdateEvent e) {
-    boardElement.setBoard(e.getNewBoard());
-  }
-
-  @Override
-  public void handleCurrentPlayerUpdate(CurrentPlayerChangedEvent e) {
-    playerList.setCurrentPlayer(e.getNewPlayer());
-  }
-
-  @Override
-  public void handlePhaseUpdate(PhaseUpdateEvent e) {
-    switch (data.getCurrentPhase()) {
-      case Construction -> {
-        boardElement.markPoints(data.getOwner().getGodCard().computeBuildablePoints());
-        phasePrompt.setCurrentPhase(e.getNewPhase());
-        if (data.getOwner().isHasLost()) {
-          System.exit(1);
+      case Start -> {
+        if (data.getSelectedWorker() != null){
+          client.raise(
+                  new WorkerSelectionEvent(data.getOwner(), data.getSelectedWorker().getSex()));
+          handlesInput = false;
         }
       }
     }
   }
 
   @Override
-  public void handleGameStart(GameStartEvent e) {
+  public void handleBoardUpdate(BoardUpdateEvent e) {
+    boardElement.setBoard(e.getNewBoard());
+    needsRender = true;
+  }
+
+  @Override
+  public void handleCurrentPlayerUpdate(CurrentPlayerChangedEvent e) {
+    playerList.setCurrentPlayer(e.getNewPlayer());
+    message.setContent("");
+    phasePrompt.setCurrentPhase(Phase.Start);
+
+    if (e.getNewPlayer().equals(data.getCurrentPlayer())){
+      handlesInput = true;
+    }
+    needsRender = true;
 
   }
 
   @Override
-  public void handleNewPlayer(NewPlayerEvent e) {
-
-  }
-
-  @Override
-  public void handleGodSelectionStart(GodSelectionStartEvent e) {
-
-  }
-
-  @Override
-  public void handleSelectYourCard(SelectYourCardEvent e) {
-
-  }
-
-  @Override
-  public void handleCardAssignment(CardAssignmentEvent e) {
-
-  }
-
-  @Override
-  public void handlePlaceYourWorkers(PlaceYourWorkersEvent e) {
-
+  public void handlePhaseUpdate(PhaseUpdateEvent e) {
+    handlesInput = true;
+    phasePrompt.setCurrentPhase(e.getNewPhase());
+    message.setContent("");
+    switch (data.getCurrentPhase()) {
+      case Movement -> {
+        if (data.getCurrentPlayer().equals(data.getOwner())) {
+          boardElement.markPoints(data.getOwner().getGodCard().computeReachablePoints());
+        }
+      }
+      case Construction -> {
+        if (data.getCurrentPlayer().equals(data.getOwner())) {
+          boardElement.markPoints(data.getOwner().getGodCard().computeBuildablePoints());
+        }
+      }
+      case End -> {
+        if (data.getCurrentPlayer().equals(data.getOwner())) {
+          deSelect();
+          message.setContent("Press N to end your turn.");
+        }
+      }
+    }
+    needsRender = true;
   }
 }

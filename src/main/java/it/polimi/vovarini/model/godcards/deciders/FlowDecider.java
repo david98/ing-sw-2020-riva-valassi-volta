@@ -2,12 +2,16 @@ package it.polimi.vovarini.model.godcards.deciders;
 
 import it.polimi.vovarini.common.events.GameEventManager;
 import it.polimi.vovarini.common.events.GodCardUpdateEvent;
+import it.polimi.vovarini.common.events.PlayerInfoUpdateEvent;
+import it.polimi.vovarini.common.events.WorkerSelectionEvent;
+import it.polimi.vovarini.common.exceptions.InvalidLevelException;
+import it.polimi.vovarini.common.exceptions.ItemNotFoundException;
 import it.polimi.vovarini.model.GameDataAccessor;
 import it.polimi.vovarini.model.Phase;
 import it.polimi.vovarini.model.Player;
 import it.polimi.vovarini.model.Point;
 import it.polimi.vovarini.model.board.items.Block;
-import it.polimi.vovarini.model.board.items.InvalidLevelException;
+import it.polimi.vovarini.model.board.items.Sex;
 import it.polimi.vovarini.model.godcards.GodCard;
 import it.polimi.vovarini.model.moves.Construction;
 import it.polimi.vovarini.model.moves.Move;
@@ -30,26 +34,62 @@ public class FlowDecider extends Decider {
     public static Phase extendsConstruction(GameDataAccessor gameData){
         GodCard currentPlayerGodCard = gameData.getCurrentPlayer().getGodCard();
 
-        if (gameData.getCurrentPhase().equals(Phase.Construction) && gameData.getCurrentPlayer().getConstructionList().size() == 1){
-            switch (currentPlayerGodCard.getName()){
-                case Demeter:
-                  currentPlayerGodCard.getConstructionConstraints().add(BuildabilityDecider::denyPreviousTarget);
-                  GameEventManager.raise(new GodCardUpdateEvent(currentPlayerGodCard, gameData.getCurrentPlayer()));
-                  break;
-                case Hephaestus:
-                  currentPlayerGodCard.getConstructionConstraints().add(BuildabilityDecider::buildOnSameTarget);
-                  GameEventManager.raise(new GodCardUpdateEvent(currentPlayerGodCard, gameData.getCurrentPlayer()));
-                  break;
-                default:
-                    break;
+        if (gameData.getCurrentPhase().equals(Phase.Construction)) {
+
+            if(gameData.getCurrentPlayer().getConstructionList().size() == 1){
+                switch (currentPlayerGodCard.getName()){
+                    case Demeter:
+                      currentPlayerGodCard.getConstructionConstraints().add(BuildabilityDecider::denyPreviousTarget);
+                      GameEventManager.raise(new GodCardUpdateEvent(gameData, currentPlayerGodCard, gameData.getCurrentPlayer()));
+                      break;
+                    case Hephaestus:
+                      currentPlayerGodCard.getConstructionConstraints().add(BuildabilityDecider::buildOnSameTarget);
+                      GameEventManager.raise(new GodCardUpdateEvent(gameData, currentPlayerGodCard, gameData.getCurrentPlayer()));
+                      break;
+                    case Hestia:
+                        currentPlayerGodCard.getConstructionConstraints().add(BuildabilityDecider::denyPerimeterSpace);
+                        GameEventManager.raise(new GodCardUpdateEvent(gameData, currentPlayerGodCard, gameData.getCurrentPlayer()));
+                        break;
+                    case Poseidon:
+                        try {
+                            Point otherWorkerPosition = gameData.getBoard().getItemPosition(gameData.getCurrentPlayer().getOtherWorker());
+                            int otherWorkerLevel = gameData.getBoard().getBox(otherWorkerPosition).getLevel();
+
+                            if(otherWorkerLevel == 0) {
+                                if(gameData.getCurrentPlayer().getCurrentWorker().getSex().equals(Sex.Male)) {
+                                    gameData.getCurrentPlayer().setCurrentSex(Sex.Female);
+                                    GameEventManager.raise(new WorkerSelectionEvent(gameData.getCurrentPlayer(), Sex.Female));
+                                }
+                                else {
+                                    gameData.getCurrentPlayer().setCurrentSex(Sex.Male);
+                                    GameEventManager.raise(new WorkerSelectionEvent(gameData.getCurrentPlayer(), Sex.Male));
+                                }
+
+                                return Phase.Construction;
+                            }
+                            return Phase.End;
+
+                        } catch (ItemNotFoundException ignored) {
+                            System.err.println("This really should never happen...");
+                        }
+                        break;
+                    default:
+                        break;
+                }
+                return Phase.Construction;
+
+            } else if(gameData.getCurrentPlayer().getConstructionList().size() > 1 &&
+                    gameData.getCurrentPlayer().getConstructionList().size() < 4) {
+                switch (currentPlayerGodCard.getName()) {
+                    case Poseidon:
+                        return Phase.Construction;
+                    default:
+                        return gameData.getCurrentPhase().next();
+                }
             }
-            return Phase.Construction;
-        }
-        else {
-            return gameData.getCurrentPhase().next();
         }
 
-
+        return gameData.getCurrentPhase().next();
     }
 
     /**
@@ -61,21 +101,28 @@ public class FlowDecider extends Decider {
     public static Phase extendsMovement(GameDataAccessor gameData){
 
         GodCard currentPlayerGodCard = gameData.getCurrentPlayer().getGodCard();
+        int size = gameData.getCurrentPlayer().getMovementList().size();
 
-        if (gameData.getCurrentPhase().equals((Phase.Movement)) && gameData.getCurrentPlayer().getMovementList().size() == 1){
-            switch (currentPlayerGodCard.getName()){
-                case Artemis:
-                  currentPlayerGodCard.getMovementConstraints().add(ReachabilityDecider::previousBoxDenied);
-                  GameEventManager.raise(new GodCardUpdateEvent(currentPlayerGodCard, gameData.getCurrentPlayer()));
-                  break;
-                default:
-                  break;
-            }
-            return Phase.Movement;
+        switch (currentPlayerGodCard.getName()) {
+            case Triton:
+                if (gameData.getCurrentPhase().equals(Phase.Movement) &&
+                        gameData.getCurrentPlayer().getMovementList().get(size - 1).getEnd().isPerimeterSpace()) {
+                    return Phase.Movement;
+                }
+
+                break;
+            case Artemis:
+                if (gameData.getCurrentPhase().equals(Phase.Movement) && size == 1) {
+                    currentPlayerGodCard.getMovementConstraints().add(ReachabilityDecider::previousBoxDenied);
+                    GameEventManager.raise(new GodCardUpdateEvent(gameData, currentPlayerGodCard, gameData.getCurrentPlayer()));
+                    return Phase.Movement;
+                }
+
+                break;
+            default:
+                break;
         }
-        else {
-            return gameData.getCurrentPhase().next();
-        }
+        return gameData.getCurrentPhase().next();
     }
 
     /**
@@ -88,6 +135,7 @@ public class FlowDecider extends Decider {
         if (gameData.getCurrentPhase().equals(Phase.Start)){
             try {
                 gameData.getCurrentPlayer().getConstructionList().add(new Construction(gameData.getBoard(), new Block(Block.MAX_LEVEL), new Point(0, 0), true));
+                GameEventManager.raise(new PlayerInfoUpdateEvent(gameData, gameData.getCurrentPlayer()));
             } catch (InvalidLevelException ignored) {}
             return Phase.Construction;
         }
@@ -98,13 +146,15 @@ public class FlowDecider extends Decider {
             gameData.getCurrentPlayer().getConstructionList().get(0).isForced()
         ){
             gameData.getCurrentPlayer().getConstructionList().clear();
+            GameEventManager.raise(new PlayerInfoUpdateEvent(gameData, gameData.getCurrentPlayer()));
             return Phase.Movement;
         }
         else if (gameData.getCurrentPlayer().getConstructionList().size() == 2
                 && gameData.getCurrentPhase().equals(Phase.Construction)){
           gameData.getCurrentPlayer().getConstructionList().removeIf(Move::isForced);
+          GameEventManager.raise(new PlayerInfoUpdateEvent(gameData, gameData.getCurrentPlayer()));
           gameData.getCurrentPlayer().getGodCard().getMovementConstraints().add(ReachabilityDecider::cannotMoveUp);
-          GameEventManager.raise(new GodCardUpdateEvent(gameData.getCurrentPlayer().getGodCard(), gameData.getCurrentPlayer()));
+          GameEventManager.raise(new GodCardUpdateEvent(gameData, gameData.getCurrentPlayer().getGodCard(), gameData.getCurrentPlayer()));
           return Phase.Movement;
         }
         else {
@@ -120,6 +170,18 @@ public class FlowDecider extends Decider {
      * @author Mattia Valassi
      */
     public static Phase applyMalus(GameDataAccessor gameData){
+        if(gameData.getCurrentPhase().equals(Phase.Start) && gameData.getCurrentPlayer().isHasLost()){
+            for (Player otherPlayer : gameData.getPlayers()){
+                if (!otherPlayer.equals(gameData.getCurrentPlayer())){
+                    switch (gameData.getCurrentPlayer().getGodCard().getName()){
+                        case Athena -> {
+                            otherPlayer.getGodCard().getMovementConstraints().clear();
+                            GameEventManager.raise(new GodCardUpdateEvent(gameData, otherPlayer.getGodCard(), otherPlayer));
+                        }
+                    }
+                }
+            }
+        }
         if (gameData.getCurrentPhase().equals(Phase.End)){
             if (gameData.getCurrentPlayer().hasPlayerRisen(gameData)){
                 for (Player otherPlayer : gameData.getPlayers()){
@@ -127,13 +189,13 @@ public class FlowDecider extends Decider {
                         switch (gameData.getCurrentPlayer().getGodCard().getName()){
                             case Athena -> {
                                 otherPlayer.getGodCard().getMovementConstraints().add(ReachabilityDecider::cannotMoveUp);
-                                GameEventManager.raise(new GodCardUpdateEvent(otherPlayer.getGodCard(), otherPlayer));
-                                return Phase.Start;
+                                GameEventManager.raise(new GodCardUpdateEvent(gameData, otherPlayer.getGodCard(), otherPlayer));
                             }
                         }
                     }
                 }
             }
+            return Phase.Start;
         }
 
         return gameData.getCurrentPhase().next();

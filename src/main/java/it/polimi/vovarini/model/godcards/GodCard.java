@@ -2,23 +2,21 @@ package it.polimi.vovarini.model.godcards;
 
 import it.polimi.vovarini.common.events.GameEventManager;
 import it.polimi.vovarini.common.events.GodCardUpdateEvent;
-import it.polimi.vovarini.common.exceptions.BoxEmptyException;
 import it.polimi.vovarini.common.exceptions.InvalidPositionException;
 import it.polimi.vovarini.common.exceptions.ItemNotFoundException;
-import it.polimi.vovarini.model.*;
+import it.polimi.vovarini.model.GameDataAccessor;
+import it.polimi.vovarini.model.Phase;
+import it.polimi.vovarini.model.Player;
+import it.polimi.vovarini.model.Point;
 import it.polimi.vovarini.model.board.Board;
 import it.polimi.vovarini.model.board.Box;
 import it.polimi.vovarini.model.board.items.Block;
-import it.polimi.vovarini.model.board.items.Item;
 import it.polimi.vovarini.model.board.items.Worker;
 import it.polimi.vovarini.model.moves.Construction;
 import it.polimi.vovarini.model.moves.Movement;
 
 import java.io.Serializable;
 import java.util.*;
-import java.util.function.BiFunction;
-import java.util.function.Function;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 /**
@@ -31,8 +29,8 @@ import java.util.stream.Collectors;
  * @version 0.2
  * @since 0.1
  */
-public class GodCard implements Cloneable, Serializable {
-  protected GameDataAccessor gameData;
+public class GodCard implements Serializable {
+  protected transient GameDataAccessor gameData;
   protected GodName name;
 
   /**
@@ -41,17 +39,6 @@ public class GodCard implements Cloneable, Serializable {
    */
   GodCard(GodName name) {
     this.name = name;
-    initCollections();
-  }
-
-  /**
-   * Constructor method of GodCard
-   * @param name Name of the Card I want to create, must be a value of the GodName enumeration
-   * @param gameData Instance of game currently played by all the players
-   */
-  GodCard(GodName name, GameDataAccessor gameData) {
-    this.name = name;
-    this.gameData = gameData;
     initCollections();
   }
 
@@ -88,16 +75,12 @@ public class GodCard implements Cloneable, Serializable {
             return false;
           }
 
-          try {
-            Box destinationBox = gameData.getBoard().getBox(point);
-            Stack<Item> destinationItems = destinationBox.getItems();
-            int destinationLevel = destinationBox.getLevel();
-            int currentWorkerLevel = gameData.getBoard().getBox(currentWorkerPosition).getLevel();
-            return (destinationLevel - currentWorkerLevel <= 1)
-                && currentWorker.canBePlacedOn(destinationItems.peek());
-          } catch (BoxEmptyException ignored) {
-            return true;
-          }
+          Box destinationBox = gameData.getBoard().getBox(point);
+          var destinationItems = destinationBox.getItems();
+          int destinationLevel = destinationBox.getLevel();
+          int currentWorkerLevel = gameData.getBoard().getBox(currentWorkerPosition).getLevel();
+          return (destinationLevel - currentWorkerLevel <= 1)
+              && currentWorker.canBePlacedOn(destinationItems.peek());
 
         } catch (ItemNotFoundException ignored) {
           System.err.println("This really should never happen...");
@@ -120,13 +103,10 @@ public class GodCard implements Cloneable, Serializable {
             return false;
           }
 
-          try {
-            Stack<Item> destinationItems = gameData.getBoard().getItems(point);
-            return Arrays.stream(Block.blocks)
-                .anyMatch(block -> block.canBePlacedOn(destinationItems.peek()));
-          } catch (BoxEmptyException ignored) {
-            return true;
-          }
+          var destinationItems = gameData.getBoard().getItems(point);
+          return Arrays.stream(Block.blocks)
+              .anyMatch(block -> block.canBePlacedOn(destinationItems.peek()));
+
         } catch (ItemNotFoundException | InvalidPositionException e) {
           System.err.println("This really should never happen...");
         }
@@ -185,15 +165,11 @@ public class GodCard implements Cloneable, Serializable {
    */
   SerializableBiFunction<List<Point>, Construction, Boolean> validateConstruction =
           (List<Point> list, Construction construction) -> {
-            try {
               Block b = construction.getBlock();
               Point t = construction.getTarget();
-              Stack<Item> s = gameData.getBoard().getBox(t).getItems();
+              var s = gameData.getBoard().getBox(t).getItems();
               return list.contains(construction.getTarget()) &&
                           b.canBePlacedOn(s.peek());
-            } catch (BoxEmptyException ignored){
-              return list.contains(construction.getTarget()) && construction.getBlock().getLevel() == 1;
-            }
           };
 
   /**
@@ -222,14 +198,14 @@ public class GodCard implements Cloneable, Serializable {
   SerializableBiFunction<GameDataAccessor, Point, Boolean> constraintMovement =
           (GameDataAccessor gameData, Point p) -> true;
 
-  Collection<BiFunction<GameDataAccessor, Point, Boolean>> movementConditions;
-  Collection<BiFunction<GameDataAccessor, Point, Boolean>> movementConstraints;
+  private HashSet<SerializableBiFunction<GameDataAccessor, Point, Boolean>> movementConditions;
+  private HashSet<SerializableBiFunction<GameDataAccessor, Point, Boolean>> movementConstraints;
 
-  Collection<BiFunction<GameDataAccessor, Point, Boolean>> constructionConditions;
-  Collection<BiFunction<GameDataAccessor, Point, Boolean>> constructionConstraints;
+  private HashSet<SerializableBiFunction<GameDataAccessor, Point, Boolean>> constructionConditions;
+  private HashSet<SerializableBiFunction<GameDataAccessor, Point, Boolean>> constructionConstraints;
 
-  Collection<Predicate<Movement>> winningConditions;
-  Collection<Predicate<Movement>> winningConstraints;
+  private HashSet<SerializablePredicate<Movement>> winningConditions;
+  private HashSet<SerializablePredicate<Movement>> winningConstraints;
 
   /**
    * Function that computes a list of all the points where moving is possible
@@ -254,9 +230,6 @@ public class GodCard implements Cloneable, Serializable {
     } catch (ItemNotFoundException ignored) {
     }
 
-    if (reachablePoints.isEmpty()) {
-      gameData.getCurrentPlayer().setHasLost(true);
-    }
     return reachablePoints;
   }
 
@@ -267,7 +240,7 @@ public class GodCard implements Cloneable, Serializable {
    */
   public boolean isMovementWinning(Movement movement) {
     return !movement.isForced() && winningConditions.stream().anyMatch(cond -> cond.test(movement)) &&
-            winningConstraints.stream().noneMatch(cond -> cond.test(movement));
+            winningConstraints.stream().allMatch(cond -> cond.test(movement));
   }
 
   /**
@@ -284,6 +257,7 @@ public class GodCard implements Cloneable, Serializable {
       Point workerPosition = board.getItemPosition(selectedWorker);
 
       List<Point> candidatePositions = board.getAdjacentPositions(workerPosition);
+      candidatePositions.add(workerPosition);
 
       buildablePoints =
           candidatePositions.stream()
@@ -293,11 +267,12 @@ public class GodCard implements Cloneable, Serializable {
 
     } catch (ItemNotFoundException ignored) {
     }
-
-    if (buildablePoints.isEmpty()) {
-      gameData.getCurrentPlayer().setHasLost(true);
-    }
+    
     return buildablePoints;
+  }
+
+  public Phase computeNextPhase(GameDataAccessor gameData) {
+    return computeNextPhase(gameData, false);
   }
 
   /**
@@ -305,16 +280,38 @@ public class GodCard implements Cloneable, Serializable {
    * @param gameData is the gameData all players are currently playing
    * @return the phase subsequent to the one currently in place
    */
-  public Phase computeNextPhase(GameDataAccessor gameData){
+  public Phase computeNextPhase(GameDataAccessor gameData, boolean skipIfPossible){
 
-    Phase next = nextPhase.apply(gameData);
+    Phase next;
+
+    if (skipIfPossible) {
+      switch (gameData.getCurrentPhase()) {
+        case Movement -> {
+          if (!gameData.getCurrentPlayer().getMovementList().isEmpty()) {
+            next = Phase.Construction;
+          } else {
+            next = nextPhase.apply(gameData);
+          }
+        }
+        case Construction -> {
+          if (!gameData.getCurrentPlayer().getConstructionList().isEmpty()) {
+            next = Phase.End;
+          } else {
+            next = nextPhase.apply(gameData);
+          }
+        }
+        default -> next = nextPhase.apply(gameData);
+      }
+    } else {
+      next = nextPhase.apply(gameData);
+    }
 
     if(next.equals(Phase.Start)){
 
       resetPlayerInfo(gameData);
       gameData.getCurrentPlayer().getGodCard().movementConstraints.clear();
       gameData.getCurrentPlayer().getGodCard().constructionConstraints.clear();
-      GameEventManager.raise(new GodCardUpdateEvent(this, gameData.getCurrentPlayer()));
+      GameEventManager.raise(new GodCardUpdateEvent(gameData, this, gameData.getCurrentPlayer()));
       gameData.nextPlayer();
     }
 
@@ -329,14 +326,14 @@ public class GodCard implements Cloneable, Serializable {
     gameData.getCurrentPlayer().setWorkerSelected(false);
     gameData.getCurrentPlayer().getMovementList().clear();
     gameData.getCurrentPlayer().getConstructionList().clear();
-    gameData.getCurrentPlayer().setBoardStatus(gameData.getBoard().clone());
+    gameData.getCurrentPlayer().setBoardStatus(gameData.getBoard());
   }
 
-  public List<Movement> consequences(Movement movement) {
-    return listMovementEffects.apply(gameData, movement);
+  public List<Movement> consequences(Movement movement, GameDataAccessor gameData) {
+    return listMovementEffects.apply(this.gameData, movement);
   }
 
-  public List<Construction> consequences(Construction construction){
+  public List<Construction> consequences(Construction construction, GameDataAccessor gameData){
     return listConstructionEffects.apply(gameData, construction);
   }
 
@@ -356,54 +353,48 @@ public class GodCard implements Cloneable, Serializable {
     this.gameData = gameData;
   }
 
-  public GodCard clone(){
-    GodCard clone = GodCardFactory.create(name);
-    clone.movementConditions = new HashSet<>(movementConditions);
-    clone.movementConstraints = new HashSet<>(movementConstraints);
-
-    clone.constructionConditions = new HashSet<>(constructionConditions);
-    clone.constructionConstraints = new HashSet<>(constructionConstraints);
-
-    clone.winningConditions = new HashSet<>(winningConditions);
-    clone.winningConstraints = new HashSet<>(winningConstraints);
-    return clone;
-  }
-
   @Override
   public int hashCode() {
     return name.hashCode();
   }
 
+  /**
+   * Two GodCard objects are equal if they have the same name
+   *
+   * @param obj The object that this should be compared to.
+   * @return If this object is equal to obj.
+   */
   @Override
   public boolean equals(Object obj) {
     if (obj instanceof GodCard) {
-      return name.equals(((GodCard) obj).name);
+      GodCard other = (GodCard) obj;
+      return name.equals(other.name);
     } else {
       return super.equals(obj);
     }
   }
 
-  public Collection<BiFunction<GameDataAccessor, Point, Boolean>> getMovementConditions() {
+  public Set<SerializableBiFunction<GameDataAccessor, Point, Boolean>> getMovementConditions() {
     return movementConditions;
   }
 
-  public Collection<BiFunction<GameDataAccessor, Point, Boolean>> getMovementConstraints() {
+  public Set<SerializableBiFunction<GameDataAccessor, Point, Boolean>> getMovementConstraints() {
     return movementConstraints;
   }
 
-  public Collection<BiFunction<GameDataAccessor, Point, Boolean>> getConstructionConditions() {
+  public Set<SerializableBiFunction<GameDataAccessor, Point, Boolean>> getConstructionConditions() {
     return constructionConditions;
   }
 
-  public Collection<BiFunction<GameDataAccessor, Point, Boolean>> getConstructionConstraints() {
+  public Set<SerializableBiFunction<GameDataAccessor, Point, Boolean>> getConstructionConstraints() {
     return constructionConstraints;
   }
 
-  public Collection<Predicate<Movement>> getWinningConditions() {
+  public Set<SerializablePredicate<Movement>> getWinningConditions() {
     return winningConditions;
   }
 
-  public Collection<Predicate<Movement>> getWinningConstraints() {
+  public Set<SerializablePredicate<Movement>> getWinningConstraints() {
     return winningConstraints;
   }
 }

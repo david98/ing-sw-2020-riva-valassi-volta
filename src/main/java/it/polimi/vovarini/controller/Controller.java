@@ -8,7 +8,7 @@ import it.polimi.vovarini.model.Player;
 import it.polimi.vovarini.model.Point;
 import it.polimi.vovarini.model.board.Board;
 import it.polimi.vovarini.model.board.items.Block;
-import it.polimi.vovarini.model.board.items.OverwrittenWorkerException;
+import it.polimi.vovarini.model.board.items.Item;
 import it.polimi.vovarini.model.board.items.Worker;
 import it.polimi.vovarini.model.godcards.GodCard;
 import it.polimi.vovarini.model.godcards.GodCardFactory;
@@ -46,7 +46,7 @@ public class Controller implements EventListener {
    * @throws InvalidNumberOfPlayersException if another player wants to log into the game, but the game already has all its players
    */
   @GameEventListener
-  public void update(RegistrationEvent evt) throws InvalidNicknameException, InvalidNumberOfPlayersException {
+  public void update(RegistrationEvent evt) throws InvalidNicknameException {
     for (Player player : game.getPlayers()) {
       if(player == null) break ;
       if (player.getNickname().equalsIgnoreCase(evt.getNickname())) {
@@ -61,9 +61,9 @@ public class Controller implements EventListener {
       game.addPlayer(evt.getNickname());
       if (game.isFull()){
         game.drawElectedPlayer();
-        Player[] clonedPlayers = Arrays.stream(game.getPlayers()).map(Player::clone).toArray(Player[]::new);
         GodName[] godNames = Arrays.stream(GodName.values()).filter(name -> name != GodName.Nobody).toArray(GodName[]::new);
-        GameEventManager.raise(new GodSelectionStartEvent(game, clonedPlayers, game.getCurrentPlayer().clone(), godNames));
+        GameEventManager.raise(new BoardUpdateEvent(game, game.getBoard())); //this is normally not needed
+        GameEventManager.raise(new GodSelectionStartEvent(game, game.getPlayers(), game.getCurrentPlayer(), godNames));
       }
     } catch (InvalidNumberOfPlayersException e) {
       throw new InvalidNumberOfPlayersException();
@@ -71,7 +71,7 @@ public class Controller implements EventListener {
   }
 
   @GameEventListener
-  public void update(AvailableCardsEvent evt) throws WrongPlayerException, InvalidCardException, InvalidNumberOfGodCardsException, AvailableCardsAlreadySetException {
+  public void update(AvailableCardsEvent evt) {
 
     // ho già ricevuto le carte scelte per questa partita
     if(game.isAvailableCardsAlreadySet())
@@ -88,10 +88,10 @@ public class Controller implements EventListener {
     for (int i = 0; i < evt.getSelectedGods().length-1; i++) {
 
       // la carta scelta è nulla
-      if(evt.getSelectedGods()[i] == null) throw new InvalidCardException();
+      if(evt.getSelectedGods()[i] == null || evt.getSelectedGods()[i+1] == null) throw new InvalidCardException();
 
       // la carta scelta non esiste
-      if(!values.contains(evt.getSelectedGods()[i])) throw new InvalidCardException();
+      if(!values.contains(evt.getSelectedGods()[i]) || !values.contains(evt.getSelectedGods()[i+1])) throw new InvalidCardException();
 
       // ci sono due carte uguali
       for(int k = i+1; k < evt.getSelectedGods().length; k++)
@@ -105,9 +105,7 @@ public class Controller implements EventListener {
   }
 
   @GameEventListener
-  public void update(CardChoiceEvent evt)
-          throws CardsNotSelectedException, InvalidCardException, WrongPlayerException {
-
+  public void update(CardChoiceEvent evt) {
     // carte non ancora scelte
     if(!game.isAvailableCardsAlreadySet()) throw new CardsNotSelectedException();
 
@@ -129,12 +127,10 @@ public class Controller implements EventListener {
     playerCard.setGameData(game);
     currentPlayer.setGodCard(playerCard);
 
-    // io questo 'raise' lo metterei su Player#setGodCard()
-    GameEventManager.raise(new CardAssignmentEvent(game, currentPlayer, playerCard));
-
     availableGods.remove(evt.getSelectedGod());
 
     game.setAvailableGodCards(availableGods.toArray(GodName[]::new));
+    GameEventManager.raise(new CardAssignmentEvent(game, currentPlayer, playerCard));
     game.setupGodCards();
   }
 
@@ -145,7 +141,7 @@ public class Controller implements EventListener {
    * @throws WrongPlayerException Another player must not be able to select a Worker when he's not playing
    */
   @GameEventListener
-  public void update(WorkerSelectionEvent evt) throws InvalidPhaseException, WrongPlayerException {
+  public void update(WorkerSelectionEvent evt) {
     Player currentPlayer = game.getCurrentPlayer();
     if (!currentPlayer.equals(evt.getSource())) throw new WrongPlayerException();
 
@@ -167,7 +163,7 @@ public class Controller implements EventListener {
    * @throws OverwrittenWorkerException If the player tries to put his Worker on top of another Worker (of any player)
    */
   @GameEventListener
-  public void update(SpawnWorkerEvent evt) throws WrongPlayerException, InvalidPositionException, OverwrittenWorkerException {
+  public void update(SpawnWorkerEvent evt) {
 
     Player currentPlayer = game.getCurrentPlayer();
     if (!currentPlayer.equals(evt.getSource())) throw new WrongPlayerException();
@@ -180,53 +176,44 @@ public class Controller implements EventListener {
     try {
       game.getBoard().getItemPosition(currentWorker);  // se scatena ItemNotFoundExc, può essere piazzato
       // worker già piazzato
-      throw new OverwrittenWorkerException();
+      throw new WorkerAlreadySpawnedException();
 
     } catch (ItemNotFoundException e) {
-      try {
-        if (!currentWorker.canBePlacedOn(game.getBoard().getItems(target).peek())) {
-          // Worker sopra altro worker
-          throw new OverwrittenWorkerException();
+      Item targetItem = game.getBoard().getItems(target).peek();
+      if (targetItem != null && !currentWorker.canBePlacedOn(game.getBoard().getItems(target).peek())){
+        // Worker sopra altro worker
+        throw new OverwrittenWorkerException();
+      } else {
+        game.getBoard().place(currentPlayer.getCurrentWorker(), target);
+
+        /**
+         * controlliamo, se ha piazzato tutti i propri operai passiamo la mano al
+         * giocatore successivo
+         */
+        if (currentPlayer.getWorkers().values().stream().noneMatch(worker -> {
+          try {
+            game.getBoard().getItemPosition(worker);
+            return false;
+          } catch (ItemNotFoundException exception){
+            return true;
+          }
         }
-
-        // non dovrebbe mai arrivare qui, viene sempre scatenata BoxEmptyException
-        // se arrivo qui, la cella è libera da worker e cupola, ma non è al livello 0 (impossibile per regole)
-
-      } catch (BoxEmptyException ex) {
-        try {
-          game.getBoard().place(currentPlayer.getCurrentWorker(), target);
-
-          /**
-           * controlliamo, se ha piazzato tutti i propri operai passiamo la mano al
-           * giocatore successivo
-           */
-          if (currentPlayer.getWorkers().values().stream().noneMatch(worker -> {
-            try {
-              game.getBoard().getItemPosition(worker);
-              return false;
-            } catch (ItemNotFoundException exception){
-              return true;
-            }
-          }
-          )) {
-            game.nextPlayer();
-            if (game.getCurrentPlayer().getWorkers().values().stream().noneMatch(worker -> {
-                      try {
-                        game.getBoard().getItemPosition(worker);
-                        return false;
-                      } catch (ItemNotFoundException exception){
-                        return true;
-                      }
+        )) {
+          game.nextPlayer();
+          if (game.getCurrentPlayer().getWorkers().values().stream().noneMatch(worker -> {
+                    try {
+                      game.getBoard().getItemPosition(worker);
+                      return false;
+                    } catch (ItemNotFoundException exception){
+                      return true;
                     }
-            )) {
-              // tutti hanno piazzato
-              game.start();
-            } else {
-              GameEventManager.raise(new PlaceYourWorkersEvent(game, game.getCurrentPlayer()));
-            }
+                  }
+          )) {
+            // tutti hanno piazzato
+            game.start();
+          } else {
+            GameEventManager.raise(new PlaceYourWorkersEvent(game, game.getCurrentPlayer()));
           }
-        } catch (BoxFullException ignored) {
-          // Non dovrebbe mai succedere
         }
       }
     }
@@ -241,10 +228,7 @@ public class Controller implements EventListener {
    * @throws InvalidMoveException If a player selects a valid Box, but tries to build an invalid block in terms of level
    */
   @GameEventListener
-  public void update(BuildEvent evt)
-      throws InvalidPositionException, InvalidPhaseException,
-          WrongPlayerException, InvalidMoveException {
-
+  public void update(BuildEvent evt) {
     Player currentPlayer = game.getCurrentPlayer();
     if (!currentPlayer.equals(evt.getSource())) throw new WrongPlayerException();
 
@@ -260,8 +244,10 @@ public class Controller implements EventListener {
 
     Construction build = new Construction(board, toBuild, target, false);
 
-    if (!game.getCurrentPlayer().getGodCard().validate(game.getCurrentPlayer().getGodCard().computeReachablePoints(), build))
-        throw new InvalidMoveException();
+    if (!game.getCurrentPlayer().getGodCard().validate(game.getCurrentPlayer().getGodCard().computeBuildablePoints(), build)) {
+      GameEventManager.raise(new PhaseUpdateEvent(game, game.getCurrentPhase())); // needed to avoid the client freezing
+      throw new InvalidMoveException();
+    }
 
     game.performMove(build);
     game.setCurrentPhase(game.getCurrentPlayer().getGodCard().computeNextPhase(game));
@@ -276,9 +262,7 @@ public class Controller implements EventListener {
    * @throws InvalidMoveException This should never happen, as there are not other controls to perform other than reach.
    */
   @GameEventListener
-  public void update(MovementEvent evt)
-          throws InvalidPhaseException, WrongPlayerException, InvalidPositionException,
-          InvalidMoveException {
+  public void update(MovementEvent evt) {
     try {
       Player currentPlayer = game.getCurrentPlayer();
       if (!currentPlayer.equals(evt.getSource())) throw new WrongPlayerException();
@@ -311,7 +295,7 @@ public class Controller implements EventListener {
    * @throws WrongPlayerException if another player tries to undo the last move performed, a move that he did not perform
    */
   @GameEventListener
-  public void update(UndoEvent evt) throws WrongPlayerException {
+  public void update(UndoEvent evt) {
 
     Player currentPlayer = game.getCurrentPlayer();
     if (!currentPlayer.equals(evt.getSource())) throw new WrongPlayerException();
@@ -326,17 +310,26 @@ public class Controller implements EventListener {
    * @throws UnskippablePhaseException if the current player tries to skip a phase while he did not perform the required actions of that phase
    */
   @GameEventListener
-  public void update(SkipEvent evt) throws WrongPlayerException, UnskippablePhaseException {
+  public void update(SkipEvent evt) {
 
     Player currentPlayer = game.getCurrentPlayer();
     if (!currentPlayer.equals(evt.getSource())) throw new WrongPlayerException();
 
-    if (game.getCurrentPhase().equals(Phase.Start) && !currentPlayer.isWorkerSelected()) throw new UnskippablePhaseException();
-    if (game.getCurrentPhase().equals(Phase.Movement) && currentPlayer.getMovementList().isEmpty()) throw new UnskippablePhaseException();
-    if (game.getCurrentPhase().equals(Phase.Construction) && currentPlayer.getConstructionList().isEmpty()) throw new UnskippablePhaseException();
+    /*
+     * Prometheus can build before moving and this check will fail for him.
+     */
+    if ((game.getCurrentPhase().equals(Phase.Start) && !currentPlayer.isWorkerSelected()) ||
+            (game.getCurrentPhase().equals(Phase.Movement) && currentPlayer.getMovementList().isEmpty()) ||
+            (game.getCurrentPhase().equals(Phase.Construction) && currentPlayer.getConstructionList().isEmpty())){
+      // otherwise clients get stuck waiting for an event
+      GameEventManager.raise(new PhaseUpdateEvent(game, game.getCurrentPhase()));
+      throw new UnskippablePhaseException();
+    }
 
-    game.setCurrentPhase(game.getCurrentPlayer().getGodCard().computeNextPhase(game));
+    if (game.getCurrentPhase().equals(Phase.End)){
+      game.getCurrentPlayer().setWorkerSelected(false);
+    }
+    game.setCurrentPhase(game.getCurrentPlayer().getGodCard().computeNextPhase(game, true));
   }
 
-  public static void main(String[] args) {}
 }

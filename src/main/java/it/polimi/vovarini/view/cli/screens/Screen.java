@@ -1,12 +1,12 @@
 package it.polimi.vovarini.view.cli.screens;
 
 import it.polimi.vovarini.common.events.*;
-import it.polimi.vovarini.server.GameClient;
+import it.polimi.vovarini.common.network.GameClient;
 import it.polimi.vovarini.view.EventsForViewListener;
 import it.polimi.vovarini.view.ViewData;
+import it.polimi.vovarini.view.cli.elements.Renderable;
 import it.polimi.vovarini.view.cli.input.Key;
 import it.polimi.vovarini.view.cli.input.KeyPressListener;
-import it.polimi.vovarini.view.cli.elements.Renderable;
 
 public abstract class Screen implements Renderable, EventsForViewListener, KeyPressListener {
 
@@ -14,9 +14,22 @@ public abstract class Screen implements Renderable, EventsForViewListener, KeyPr
 
   protected final ViewData data;
 
+  protected boolean handlesInput;
+  protected boolean needsRender;
+
   protected Screen(ViewData data, GameClient client) {
     this.client = client;
     this.data = data;
+    this.handlesInput = true;
+    this.needsRender = true;
+  }
+
+  public boolean isHandlesInput() {
+    return handlesInput;
+  }
+
+  public boolean isNeedsRender() {
+    return needsRender;
   }
 
   @Override
@@ -65,7 +78,27 @@ public abstract class Screen implements Renderable, EventsForViewListener, KeyPr
   }
 
   @Override
+  public void handleVictory(VictoryEvent e) {
+
+  }
+
+  @Override
   public void handleKeyPress(Key key) {
 
+  }
+
+  @Override
+  public void handlePlayerInfoUpdate(PlayerInfoUpdateEvent e) {
+
+  }
+
+  @Override
+  public void handleGodCardUpdate(GodCardUpdateEvent e) {
+
+  }
+
+  @Override
+  public void handleLoss(LossEvent e) {
+  
   }
 }

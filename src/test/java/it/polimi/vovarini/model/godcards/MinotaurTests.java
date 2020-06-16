@@ -1,6 +1,7 @@
 package it.polimi.vovarini.model.godcards;
 
-import it.polimi.vovarini.common.exceptions.*;
+import it.polimi.vovarini.common.exceptions.BoxFullException;
+import it.polimi.vovarini.common.exceptions.InvalidNumberOfPlayersException;
 import it.polimi.vovarini.model.Game;
 import it.polimi.vovarini.model.Player;
 import it.polimi.vovarini.model.Point;
@@ -70,7 +71,7 @@ public class MinotaurTests {
 
 
       if (game.getCurrentPlayer().getGodCard().validate(game.getCurrentPlayer().getGodCard().computeReachablePoints(), movement)) {
-        List<Movement> movementList = minotaur.consequences(movement);
+        List<Movement> movementList = minotaur.consequences(movement, game);
         for (Movement m : movementList) {
           game.performMove(m);
         }
@@ -82,8 +83,6 @@ public class MinotaurTests {
       assertEquals(otherWorker, board.getBox(end).getItems().peek());
 
     } catch (BoxFullException ignored) {
-    } catch (BoxEmptyException ignored) {
-    } catch (InvalidPositionException ignored) {
     }
   }
 
@@ -106,7 +105,7 @@ public class MinotaurTests {
       Board board = game.getBoard();
       Point start = new Point(0, 0);
       Point end = new Point(1, 1);
-      Point forcedDestination = new Point(2,2);
+      Point forcedDestination = new Point(2, 2);
       Movement movement = new Movement(board, start, end);
 
       board.place(Block.blocks[0], start);
@@ -117,7 +116,7 @@ public class MinotaurTests {
 
 
       if (game.getCurrentPlayer().getGodCard().validate(game.getCurrentPlayer().getGodCard().computeReachablePoints(), movement)) {
-        List<Movement> movementList = minotaur.consequences(movement);
+        List<Movement> movementList = minotaur.consequences(movement, game);
         for (Movement m : movementList) {
           game.performMove(m);
         }
@@ -130,8 +129,6 @@ public class MinotaurTests {
       assertEquals(otherWorker, board.getBox(forcedDestination).getItems().peek());
 
     } catch (BoxFullException ignored) {
-    } catch (BoxEmptyException ignored) {
-    } catch (InvalidPositionException ignored) {
     }
   }
 
@@ -168,7 +165,7 @@ public class MinotaurTests {
 
 
       if (game.getCurrentPlayer().getGodCard().validate(game.getCurrentPlayer().getGodCard().computeReachablePoints(), movement)) {
-        List<Movement> movementList = minotaur.consequences(movement);
+        List<Movement> movementList = minotaur.consequences(movement, game);
         for (Movement m : movementList) {
           game.performMove(m);
         }
@@ -180,8 +177,6 @@ public class MinotaurTests {
       assertEquals(enemyWorker, board.getBox(end).getItems().peek());
 
     } catch (BoxFullException ignored) {
-    } catch (BoxEmptyException ignored) {
-    } catch (InvalidPositionException ignored) {
     }
   }
 
@@ -220,7 +215,7 @@ public class MinotaurTests {
 
 
       if (game.getCurrentPlayer().getGodCard().validate(game.getCurrentPlayer().getGodCard().computeReachablePoints(), movement)) {
-        List<Movement> movementList = minotaur.consequences(movement);
+        List<Movement> movementList = minotaur.consequences(movement, game);
         for (Movement m : movementList) {
           game.performMove(m);
         }
@@ -231,8 +226,6 @@ public class MinotaurTests {
       assertEquals(enemyWorker, board.getBox(forcedDestination).getItems().peek());
 
     } catch (BoxFullException ignored) {
-    } catch (BoxEmptyException ignored) {
-    } catch (InvalidPositionException ignored) {
     }
   }
 
@@ -274,7 +267,7 @@ public class MinotaurTests {
 
 
       if (game.getCurrentPlayer().getGodCard().validate(game.getCurrentPlayer().getGodCard().computeReachablePoints(), movement)) {
-        List<Movement> movementList = minotaur.consequences(movement);
+        List<Movement> movementList = minotaur.consequences(movement, game);
         for (Movement m : movementList) {
           game.performMove(m);
         }
@@ -285,8 +278,6 @@ public class MinotaurTests {
       assertEquals(enemyWorker, board.getBox(forcedDestination).getItems().peek());
 
     } catch (BoxFullException ignored) {
-    } catch (BoxEmptyException ignored) {
-    } catch (InvalidPositionException ignored) {
     }
   }
 
@@ -314,7 +305,7 @@ public class MinotaurTests {
       board.place(enemyWorker, end);
 
       if(minotaur.validate(minotaur.computeReachablePoints(), movement)) {
-        List<Movement> movementList = minotaur.consequences(movement);
+        List<Movement> movementList = minotaur.consequences(movement, game);
         for(Movement m : movementList) {
           game.performMove(m);
         }
@@ -325,8 +316,6 @@ public class MinotaurTests {
       assertEquals(enemyWorker, board.getBox(end).getItems().peek());
 
     } catch (BoxFullException ignored) {
-    } catch (BoxEmptyException ignored) {
-    } catch (InvalidPositionException ignored) {
     }
   }
 }

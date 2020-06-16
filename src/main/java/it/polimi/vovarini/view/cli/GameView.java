@@ -1,9 +1,8 @@
 package it.polimi.vovarini.view.cli;
 
 import it.polimi.vovarini.common.events.*;
+import it.polimi.vovarini.common.network.GameClient;
 import it.polimi.vovarini.model.Player;
-import it.polimi.vovarini.server.GameClient;
-import it.polimi.vovarini.server.Server;
 import it.polimi.vovarini.view.View;
 import it.polimi.vovarini.view.ViewData;
 import it.polimi.vovarini.view.cli.console.Console;
@@ -12,29 +11,32 @@ import it.polimi.vovarini.view.cli.input.Key;
 import it.polimi.vovarini.view.cli.input.KeycodeToKey;
 import it.polimi.vovarini.view.cli.screens.*;
 
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
+import java.io.BufferedInputStream;
 import java.io.IOException;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Scanner;
 
 public class GameView extends View {
-
-  private final GameClient client;
-
-  private boolean reRenderNeeded;
 
   private Screen currentScreen;
 
   private final Console console;
 
-  public GameView() throws IOException {
+  private boolean running;
+
+  public GameView(String serverIP, int serverPort) throws IOException {
     super();
 
     data = new ViewData();
 
-    this.reRenderNeeded = true;
-
     console = new FullScreenConsole();
 
-    client = new GameClient("127.0.0.1", Server.DEFAULT_PORT);
+    client = new GameClient(serverIP, serverPort);
+
+    running = true;
   }
 
   private void waitForEvent(){
@@ -42,7 +44,7 @@ public class GameView extends View {
       GameEvent evtFromServer = client.getServerEvents().take();
       GameEventManager.raise(evtFromServer);
     } catch (InterruptedException e){
-      waitForEvent();
+      Thread.currentThread().interrupt();
     }
   }
 
@@ -79,11 +81,7 @@ public class GameView extends View {
   @Override
   @GameEventListener
   public void handleNewPlayer(NewPlayerEvent e) {
-    Player p = e.getNewPlayer().clone();
-    if (p.equals(data.getOwner())) {
-      data.setOwner(p);
-    }
-    data.addPlayer(p);
+    super.handleNewPlayer(e);
   }
 
   @Override
@@ -96,12 +94,13 @@ public class GameView extends View {
           players[i] = p;
         }
       }
-      players[i].getGodCard().setGameData(data);
     }
     data.getPlayerSet().clear();
     for (Player p: players){
       data.addPlayer(p);
     }
+    data.setCurrentPlayer(e.getElectedPlayer());
+
     if (e.getElectedPlayer().equals(data.getOwner())) {
       currentScreen = new ElectedPlayerScreen(data, client, Arrays.asList(e.getAllGods()));
       gameLoop();
@@ -148,14 +147,52 @@ public class GameView extends View {
       // maybe we should show the board
       currentScreen = new WaitScreen(data, client,
               "Waiting for all players to place their workers...");
+
       render();
       waitForEvent();
     }
   }
 
+  @Override
+  @GameEventListener
+  public void handlePlayerInfoUpdate(PlayerInfoUpdateEvent e) {
+    super.handlePlayerInfoUpdate(e);
+    currentScreen.handlePlayerInfoUpdate(e);
+  }
+
+  @Override
+  @GameEventListener
+  public void handleGodCardUpdate(GodCardUpdateEvent e) {
+    super.handleGodCardUpdate(e);
+    currentScreen.handleGodCardUpdate(e);
+  }
+
+  @Override
+  @GameEventListener
+  public void handleVictory(VictoryEvent e) {
+    if (e.getWinningPlayer().equals(data.getOwner())) {
+      currentScreen = new WaitScreen(data, client, "VICTORY ROYALE!");
+      playAudio("/audio/bgm/victory.wav", true);
+    } else {
+      currentScreen = new WaitScreen(data, client, e.getWinningPlayer().getNickname() + " wins!");
+      playAudio("/audio/bgm/loss.wav", true);
+    }
+  }
+
+  @Override
+  @GameEventListener
+  public void handleLoss(LossEvent e) {
+    super.handleLoss(e);
+    if (e.getLosingPlayer().equals(data.getOwner())) {
+      currentScreen = new SpectScreen(data, client);
+    }
+  }
+
   public void render(){
-    console.clear();
-    console.println(currentScreen.render());
+    if (currentScreen.isNeedsRender()) {
+      console.clear();
+      console.println(currentScreen.render());
+    }
   }
 
   public void handleInput() throws IOException{
@@ -186,19 +223,19 @@ public class GameView extends View {
     data.setOwner(new Player(nickname));
     System.out.println("Now waiting for other players...");
     console.enterRawMode();
-    while (true) {
+    while (running) {
       try {
         GameEvent evtFromServer = client.getServerEvents().take();
         GameEventManager.raise(evtFromServer);
       } catch (InterruptedException e){
-        e.printStackTrace();
+        Thread.currentThread().interrupt();
       }
     }
   }
 
   public void gameLoop(){
     render();
-    while (true) {
+    while (running) {
       GameEvent evt;
       // consume events from the server
       while ( client.getServerEvents().peek() != null) {
@@ -206,25 +243,39 @@ public class GameView extends View {
         GameEventManager.raise(evt);
       }
       try {
-        if (data.getOwner().equals(data.getCurrentPlayer())) {
+        render();
+        if (data.getOwner().equals(data.getCurrentPlayer()) && currentScreen.isHandlesInput()) {
           handleInput();
-          render();
         } else {
           // wait for event
           GameEventManager.raise(client.getServerEvents().take());
         }
-      } catch (IOException | InterruptedException e){
+      } catch (IOException e){
         e.printStackTrace();
+      } catch (InterruptedException e){
+        Thread.currentThread().interrupt();
       }
     }
   }
 
-  public static void main(String[] args){
+  public void stop(){
+    running = false;
+  }
+
+  public static synchronized void playAudio(String path, boolean looping) {
     try {
-      GameView view = new GameView();
-      view.gameSetup();
-    } catch (IOException e){
-      e.printStackTrace();
+      Clip clip = AudioSystem.getClip();
+      System.out.println(clip.toString());
+      AudioInputStream inputStream = AudioSystem.getAudioInputStream(
+              new BufferedInputStream(GameView.class.getResourceAsStream(path)));
+      clip.open(inputStream);
+      if (!looping) {
+        clip.start();
+      } else {
+        clip.loop(Clip.LOOP_CONTINUOUSLY);
+      }
+    } catch (Exception e) {
+      System.err.println(e.getMessage());
     }
   }
 }

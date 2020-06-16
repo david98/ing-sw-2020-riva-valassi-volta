@@ -1,5 +1,7 @@
 package it.polimi.vovarini.model;
 
+import it.polimi.vovarini.model.board.Board;
+
 import java.io.Serializable;
 import java.util.Random;
 
@@ -7,6 +9,8 @@ public class Point implements Serializable {
   private final int x;
 
   private final int y;
+
+  private final static Random random = new Random();
 
   public Point(int x, int y) {
     this.x = x;
@@ -47,11 +51,14 @@ public class Point implements Serializable {
 
   @Override
   public int hashCode() {
-    return x * 10 + y;
+    return x * 17 + y;
   }
 
   public static Point random(int xBound, int yBound){
-    Random r = new Random();
-    return new Point(r.nextInt(xBound), r.nextInt(yBound));
+    return new Point(random.nextInt(xBound), random.nextInt(yBound));
+  }
+
+  public boolean isPerimeterSpace() {
+    return x == 0 || x == Board.DEFAULT_SIZE - 1 || y == 0 || y == Board.DEFAULT_SIZE - 1;
   }
 }

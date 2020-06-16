@@ -1,14 +1,14 @@
 package it.polimi.vovarini.model.board;
 
-import it.polimi.vovarini.common.exceptions.BoxEmptyException;
 import it.polimi.vovarini.common.exceptions.BoxFullException;
+import it.polimi.vovarini.common.exceptions.InvalidLevelException;
+import it.polimi.vovarini.model.Player;
 import it.polimi.vovarini.model.board.items.*;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.util.LinkedList;
-import java.util.Stack;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -32,17 +32,9 @@ public class BoxTests {
   @DisplayName("Test that a Box can be instantiated correctly")
   void boxCreation() {
     Box box = new Box();
-    BoxEmptyException thrown =
-        assertThrows(
-            BoxEmptyException.class,
-            box::getItems,
-            "Expected getItems() to throw BoxEmptyException, but it didn't");
+    assertTrue(box.getItems().isEmpty());
 
-    thrown =
-        assertThrows(
-            BoxEmptyException.class,
-            box::removeTopmost,
-            "Expected removeTopmost() to throw BoxEmptyException, but it didn't");
+    assertNull(box.removeTopmost());
   }
 
   @Test
@@ -64,7 +56,8 @@ public class BoxTests {
 
       }
     }
-    assertThrows(BoxFullException.class, () -> box.place(new Worker(Sex.Male)));
+    Player testPlayer = new Player("test_player");
+    assertThrows(BoxFullException.class, () -> box.place(new Worker(Sex.Male, testPlayer)));
   }
 
   @Test
@@ -78,36 +71,23 @@ public class BoxTests {
 
       }
     }
-    try {
-      Stack<Item> items = box.getItems();
-      items.clear();
-      items = box.getItems();
-      assertFalse(items.isEmpty());
-    } catch (BoxEmptyException ignored) {
-
-    }
+    var items = box.getItems();
+    items.clear();
+    items = box.getItems();
+    assertFalse(items.isEmpty());
   }
 
   @Test
-  @DisplayName("Test that the clone() method on Box works")
-  void cloneWorks(){
-    Box box = new Box();
+  @DisplayName("Test that toString works as expected")
+  void toStringTest(){
+    Box aBox = new Box();
 
-    for (int i = 0; i < Box.MAX_ITEMS; i++) {
-      try {
-        box.place(allBlocks.get(i));
-      } catch (BoxFullException ignored) {
+    Block block = new Block(Block.MIN_LEVEL);
+    aBox.place(block);
+    Player testPlayer = new Player("test_player");
+    Worker worker = new Worker(Sex.Female, testPlayer);
+    aBox.place(worker);
 
-      }
-    }
-
-    Box box2 = box.clone();
-    try {
-      box2.removeTopmost();
-      box2.removeTopmost();
-      assertEquals(box.getItems().size(), Box.MAX_ITEMS);
-    } catch (BoxEmptyException ignored){
-
-    }
+    assertEquals("F - 1 - ", aBox.toString());
   }
 }

@@ -1,6 +1,5 @@
 package it.polimi.vovarini.model.moves;
 
-import it.polimi.vovarini.common.exceptions.BoxEmptyException;
 import it.polimi.vovarini.common.exceptions.BoxFullException;
 import it.polimi.vovarini.common.exceptions.InvalidPositionException;
 import it.polimi.vovarini.model.Point;
@@ -43,26 +42,24 @@ public class Movement extends Move {
   }
 
   @Override
-  public void execute() {
+  public void execute() throws RuntimeException{
     try {
       Item startItem = board.remove(start);
-      Item endItem = null;
-      try {
-        endItem = board.getItems(end).peek();
-        if (endItem.canBeRemoved()) {
-          board.remove(end);
-          board.place(endItem, start);
-        }
-      } catch (BoxEmptyException ignored) {
 
+      if (startItem == null){
+        throw new RuntimeException(); //invalid start
+      }
+
+      Item endItem = board.getItems(end).peek();
+      if (endItem != null && endItem.canBeRemoved()) {
+        board.remove(end);
+        board.place(endItem, start);
       }
       board.place(startItem, end);
-    } catch (BoxEmptyException e) {
-      System.err.println("Start was empty.");
-    } catch (InvalidPositionException e) {
-      System.err.println("Invalid start/end");
+    }  catch (InvalidPositionException e) {
+      throw new RuntimeException(); //invalid start or end
     } catch (BoxFullException e) {
-      System.err.println("End box is full.");
+      throw new RuntimeException(); //end box is full
     }
   }
 

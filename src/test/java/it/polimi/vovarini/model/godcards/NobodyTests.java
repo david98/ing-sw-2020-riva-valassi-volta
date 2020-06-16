@@ -1,7 +1,7 @@
 package it.polimi.vovarini.model.godcards;
 
-import it.polimi.vovarini.model.Game;
 import it.polimi.vovarini.common.exceptions.InvalidNumberOfPlayersException;
+import it.polimi.vovarini.model.Game;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -27,6 +27,6 @@ public class NobodyTests {
   @DisplayName("Test that a GodCard of type Nobody can be instantiated correctly")
   void nobodyCreation() {
     GodCard nobody = GodCardFactory.create(GodName.Nobody);
-    assertEquals(nobody.name, GodName.Nobody);
+    assertEquals(GodName.Nobody, nobody.name);
   }
 }

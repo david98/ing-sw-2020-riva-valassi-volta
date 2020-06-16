@@ -1,6 +1,5 @@
 package it.polimi.vovarini.model.godcards;
 
-import it.polimi.vovarini.common.exceptions.BoxEmptyException;
 import it.polimi.vovarini.common.exceptions.BoxFullException;
 import it.polimi.vovarini.common.exceptions.InvalidNumberOfPlayersException;
 import it.polimi.vovarini.common.exceptions.InvalidPositionException;
@@ -27,12 +26,12 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class AthenaTests {
 
-    private static Game game;
-    private static GodCard athena;
-    private static GodCard nobody;
+    private Game game;
+    private GodCard athena;
+    private GodCard nobody;
 
-    @BeforeAll
-    public static void init(){
+    @BeforeEach
+    public void init(){
         try{
             game = new Game(2);
 
@@ -46,34 +45,7 @@ public class AthenaTests {
             game.getPlayers()[0].setGodCard(athena);
             game.getPlayers()[1].setGodCard(nobody);
         } catch (InvalidNumberOfPlayersException e){
-            e.printStackTrace();;
-        }
-    }
-
-    @BeforeEach
-    private void resetGame(){
-        Board b = game.getBoard();
-        for (int x = 0; x < b.getSize(); x++){
-            for (int y = 0; y < b.getSize(); y++){
-                Point cur = new Point(x, y);
-                while (true){
-                    try {
-                        b.remove(cur);
-                    } catch (BoxEmptyException | InvalidPositionException e){
-                        break;
-                    }
-                }
-            }
-        }
-        game.setCurrentPhase(Phase.Start);
-        nobody.movementConstraints.clear();
-
-        for(Player p : game.getPlayers()) {
-            p.getMovementList().clear();
-            p.getConstructionList().clear();
-        }
-        if(game.getCurrentPlayer().getGodCard().equals(nobody)) {
-            game.nextPlayer();
+            e.printStackTrace();
         }
     }
 

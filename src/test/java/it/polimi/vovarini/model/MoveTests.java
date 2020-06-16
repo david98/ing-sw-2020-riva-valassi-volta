@@ -1,16 +1,20 @@
 package it.polimi.vovarini.model;
 
-import it.polimi.vovarini.common.exceptions.BoxEmptyException;
 import it.polimi.vovarini.common.exceptions.BoxFullException;
 import it.polimi.vovarini.common.exceptions.InvalidPositionException;
 import it.polimi.vovarini.common.exceptions.ItemNotFoundException;
 import it.polimi.vovarini.model.board.*;
+import it.polimi.vovarini.model.board.items.Block;
 import it.polimi.vovarini.model.board.items.Sex;
 import it.polimi.vovarini.model.board.items.Worker;
+import it.polimi.vovarini.model.moves.Construction;
+import it.polimi.vovarini.model.moves.Destruction;
+import it.polimi.vovarini.model.moves.Move;
 import it.polimi.vovarini.model.moves.Movement;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -29,10 +33,11 @@ public class MoveTests {
 
   @BeforeAll
   private static void init() {
+    Player testPlayer = new Player("test_player");
     board = new Board(Board.DEFAULT_SIZE);
     workers = new EnumMap<>(Sex.class);
-    workers.put(Sex.Male, new Worker(Sex.Male));
-    workers.put(Sex.Female, new Worker(Sex.Female));
+    workers.put(Sex.Male, new Worker(Sex.Male, testPlayer));
+    workers.put(Sex.Female, new Worker(Sex.Female, testPlayer));
   }
 
   @BeforeEach
@@ -74,9 +79,40 @@ public class MoveTests {
       Movement movement = new Movement(board, start, end);
       movement.execute();
       assertEquals(board.getItemPosition(workers.get(Sex.Male)), end);
-      BoxEmptyException thrown = assertThrows(BoxEmptyException.class, () -> board.getItems(start));
-    } catch (InvalidPositionException | BoxFullException | ItemNotFoundException ignored) {
+      assertTrue(board.getItems(start).isEmpty());
+    } catch (BoxFullException | ItemNotFoundException ignored) {
 
     }
+  }
+
+  @Test
+  @DisplayName("Test that the reverse method generates a reverse movement")
+  void testReverse(){
+    Movement okMove = new Movement(board, new Point(0,0), new Point(1,1), true);
+    Move okRev = okMove.reverse();
+    Movement rev = (Movement) okRev;
+
+    assertEquals(okMove.getEnd(), rev.getStart());
+    assertEquals(okMove.getStart(), rev.getEnd());
+    assertEquals(okMove.getBoard(), rev.getBoard());
+    assertEquals(okMove.isForced(), rev.isForced());
+
+    Construction okCon = new Construction(board, new Block(Block.MIN_LEVEL), new Point(1,1), true);
+    Move okRevTwo = okCon.reverse();
+    Destruction revCon = (Destruction) okRevTwo;
+
+    assertEquals(okCon.getTarget(), revCon.getTarget());
+    assertEquals(okCon.getBlock(), revCon.getBlock());
+    assertEquals(okCon.getBoard(), revCon.getBoard());
+    assertEquals(okCon.isForced(), revCon.isForced());
+
+    Destruction okDes = new Destruction(board, new Block(Block.MAX_LEVEL), new Point(3,3), true);
+    Move okRevThree = okDes.reverse();
+    Construction revDes = (Construction) okRevThree;
+
+    assertEquals(okDes.getBlock(), revDes.getBlock());
+    assertEquals(okDes.getTarget(), revDes.getTarget());
+    assertEquals(okDes.isForced(), revDes.isForced());
+    assertEquals(okDes.getBoard(), revDes.getBoard());
   }
 }

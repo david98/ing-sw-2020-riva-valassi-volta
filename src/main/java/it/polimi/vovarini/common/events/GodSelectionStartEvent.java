@@ -4,6 +4,8 @@ package it.polimi.vovarini.common.events;
 import it.polimi.vovarini.model.Player;
 import it.polimi.vovarini.model.godcards.GodName;
 
+import java.util.Arrays;
+
 /**
  * Represents that all players have registered and the selection/assignment
  * of the god cards can now begin.
@@ -27,7 +29,7 @@ public class GodSelectionStartEvent extends GameEvent {
    */
   public GodSelectionStartEvent(Object source, Player[] players, Player electedPlayer, GodName[] allGods){
     super(source);
-    this.players = players;
+    this.players = Arrays.stream(players).map(Player::new).toArray(Player[]::new); //clone
     this.electedPlayer = electedPlayer;
     this.allGods = allGods;
   }

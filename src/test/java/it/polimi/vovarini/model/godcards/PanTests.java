@@ -1,14 +1,13 @@
 package it.polimi.vovarini.model.godcards;
 
-import it.polimi.vovarini.model.Game;
+import it.polimi.vovarini.common.exceptions.BoxFullException;
 import it.polimi.vovarini.common.exceptions.InvalidNumberOfPlayersException;
+import it.polimi.vovarini.common.exceptions.InvalidPositionException;
+import it.polimi.vovarini.model.Game;
 import it.polimi.vovarini.model.Player;
 import it.polimi.vovarini.model.moves.Movement;
 import it.polimi.vovarini.model.Point;
 import it.polimi.vovarini.model.board.Board;
-import it.polimi.vovarini.common.exceptions.BoxEmptyException;
-import it.polimi.vovarini.common.exceptions.BoxFullException;
-import it.polimi.vovarini.common.exceptions.InvalidPositionException;
 import it.polimi.vovarini.model.board.items.Block;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -24,11 +23,11 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class PanTests {
 
-    private static Game game;
-    private static GodCard pan;
+    private Game game;
+    private GodCard pan;
 
-    @BeforeAll
-    public static void init(){
+    @BeforeEach
+    public void init(){
         try{
             game = new Game(2);
 
@@ -41,24 +40,7 @@ public class PanTests {
                 player.setGodCard(pan);
             }
         } catch (InvalidNumberOfPlayersException e){
-            e.printStackTrace();;
-        }
-    }
-
-    @BeforeEach
-    private void resetGame(){
-        Board b = game.getBoard();
-        for (int x = 0; x < b.getSize(); x++){
-            for (int y = 0; y < b.getSize(); y++){
-                Point cur = new Point(x, y);
-                while (true){
-                    try {
-                        b.remove(cur);
-                    } catch (BoxEmptyException | InvalidPositionException e){
-                        break;
-                    }
-                }
-            }
+            e.printStackTrace();
         }
     }
 

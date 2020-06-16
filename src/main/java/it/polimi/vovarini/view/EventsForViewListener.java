@@ -20,4 +20,12 @@ public interface EventsForViewListener {
   void handleCardAssignment(CardAssignmentEvent e);
 
   void handlePlaceYourWorkers(PlaceYourWorkersEvent e);
+
+  void handlePlayerInfoUpdate(PlayerInfoUpdateEvent e);
+
+  void handleGodCardUpdate(GodCardUpdateEvent e);
+
+  void handleVictory(VictoryEvent e);
+
+  void handleLoss(LossEvent e);
 }

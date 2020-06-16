@@ -1,48 +1,43 @@
 package it.polimi.vovarini.model.board;
 
-import it.polimi.vovarini.common.exceptions.BoxEmptyException;
 import it.polimi.vovarini.common.exceptions.BoxFullException;
 import it.polimi.vovarini.model.board.items.Item;
 
 import java.io.Serializable;
-import java.util.EmptyStackException;
-import java.util.Stack;
+import java.util.ArrayDeque;
+import java.util.Deque;
+import java.util.NoSuchElementException;
 
-public class Box implements Cloneable, Serializable {
+public class Box implements Serializable {
 
   public static final int MAX_ITEMS = 4;
 
-  private Stack<Item> items;
+  private final Deque<Item> items;
 
   public Box() {
-    items = new Stack<>();
+    items = new ArrayDeque<>();
   }
 
-  // prima permetteva di sovrascrivere un worker di un altro giocatore. Magari le carte porteranno a
-  // nuove modifiche
+  public Box(Box b) {
+    items = new ArrayDeque<>(b.items);
+  }
+
   public void place(Item item) throws BoxFullException {
     if (items.size() >= MAX_ITEMS) {
       throw new BoxFullException();
     }
-
-    // if ( !(items.empty()) && )
-
     items.push(item);
   }
 
-  @SuppressWarnings(value = "unchecked")
-  public Stack<Item> getItems() throws BoxEmptyException {
-    if (items.isEmpty()) {
-      throw new BoxEmptyException();
-    }
-    return (Stack<Item>) items.clone();
+  public Deque<Item> getItems() {
+    return new ArrayDeque<>(items);
   }
 
-  public Item removeTopmost() throws BoxEmptyException {
+  public Item removeTopmost() {
     try {
       return items.pop();
-    } catch (EmptyStackException e) {
-      throw new BoxEmptyException();
+    } catch (NoSuchElementException e) {
+      return null;
     }
   }
 
@@ -54,7 +49,7 @@ public class Box implements Cloneable, Serializable {
      * anywhere, but no Worker can stand on top of a level 4 Block
      * so this assumption is still valid.
      */
-    if (items.size() == 0) {
+    if (items.isEmpty()) {
       return 0;
     } else if (items.peek().canBeRemoved()) {
       return items.size() - 1;
@@ -69,20 +64,5 @@ public class Box implements Cloneable, Serializable {
       rep.append(item.toString()).append(" - ");
     }
     return rep.toString();
-  }
-
-
-  public Box clone(){
-    Box box;
-    try{
-      box = (Box) super.clone();
-      box.items = getItems();
-      return box;
-    } catch (CloneNotSupportedException e){
-      throw new RuntimeException(e);
-    } catch (BoxEmptyException e){
-      box = new Box();
-      return box;
-    }
   }
 }

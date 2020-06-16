@@ -1,14 +1,13 @@
 package it.polimi.vovarini.view.cli.elements;
 
-import it.polimi.vovarini.common.exceptions.BoxEmptyException;
 import it.polimi.vovarini.model.Player;
 import it.polimi.vovarini.model.Point;
 import it.polimi.vovarini.model.board.Board;
 import it.polimi.vovarini.model.board.Box;
 import it.polimi.vovarini.model.board.items.Item;
-import it.polimi.vovarini.view.cli.styling.Color;
 import it.polimi.vovarini.view.cli.Direction;
 import it.polimi.vovarini.view.cli.Utils;
+import it.polimi.vovarini.view.cli.styling.Color;
 
 import java.util.*;
 
@@ -66,24 +65,14 @@ public class BoardElement extends CLIElement {
     int newX = cursorLocation.getX();
     int newY = cursorLocation.getY();
     switch (direction) {
-      case Up: {
+      case Up ->
         newY = Utils.clamp(cursorLocation.getY() - 1, 0, Board.DEFAULT_SIZE);
-        break;
-      }
-      case Down: {
+      case Down ->
         newY = Utils.clamp(cursorLocation.getY() + 1, 0, Board.DEFAULT_SIZE);
-        break;
-      }
-      case Left: {
+      case Left ->
         newX = Utils.clamp(cursorLocation.getX() - 1, 0, Board.DEFAULT_SIZE);
-        break;
-      }
-      case Right: {
+      case Right ->
         newX = Utils.clamp(cursorLocation.getX() + 1, 0, Board.DEFAULT_SIZE);
-      }
-      default: {
-        break;
-      }
     }
     if (cursorLocation.getX() != newX || cursorLocation.getY() != newY) {
       cursorLocation = new Point(newX, newY);
@@ -91,23 +80,21 @@ public class BoardElement extends CLIElement {
   }
 
   private String renderBox(Box box, boolean hasCursor){
-    try {
-      Stack<Item> items = box.getItems();
+    var items = box.getItems();
 
-      if (items.peek().canBeRemoved()) {
-        Item topMostItem = items.pop();
-        if (items.empty()) {
-          return " " + (hasCursor ? "▮" : renderItem(topMostItem));
-        } else {
-          return renderItem(items.pop())
-                  + (hasCursor ? "▮" : renderItem(topMostItem));
-        }
-      } else if (!items.empty()){
-        return renderItem(items.pop()) + (hasCursor ? "▮" : " ");
+    if (items.peek() != null && items.peek().canBeRemoved()) {
+      Item topMostItem = items.pop();
+      if (items.isEmpty()) {
+        return " " + (hasCursor ? Color.White.bgWrap(renderItem(topMostItem)) : renderItem(topMostItem));
+      } else {
+        return renderItem(items.pop())
+                + (hasCursor ? Color.White.bgWrap(renderItem(topMostItem)) : renderItem(topMostItem));
       }
-    } catch (BoxEmptyException ignored) {
+    } else if (!items.isEmpty()){
+      return renderItem(items.pop()) + (hasCursor ? Color.White.bgWrap(" ") : " ");
     }
-    return " " + (hasCursor ? "▮" : " ");
+
+    return " " + (hasCursor ? Color.White.bgWrap(" ") : " ");
   }
 
   private String renderItem(Item item) {

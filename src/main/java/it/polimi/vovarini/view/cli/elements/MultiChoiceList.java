@@ -2,7 +2,6 @@ package it.polimi.vovarini.view.cli.elements;
 
 import it.polimi.vovarini.view.cli.styling.Color;
 import it.polimi.vovarini.view.cli.styling.TextStyle;
-import org.w3c.dom.Text;
 
 import java.util.HashSet;
 import java.util.List;

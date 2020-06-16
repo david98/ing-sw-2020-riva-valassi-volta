@@ -1,9 +1,12 @@
 package it.polimi.vovarini.model;
 
+import it.polimi.vovarini.common.events.GameEventManager;
+import it.polimi.vovarini.common.events.LossEvent;
 import it.polimi.vovarini.model.board.Board;
 import it.polimi.vovarini.model.board.items.Sex;
 import it.polimi.vovarini.model.board.items.Worker;
 import it.polimi.vovarini.model.godcards.GodCard;
+import it.polimi.vovarini.model.godcards.GodCardFactory;
 import it.polimi.vovarini.model.moves.Construction;
 import it.polimi.vovarini.model.moves.Movement;
 
@@ -13,7 +16,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-public class Player implements Cloneable, Serializable {
+public class Player implements Serializable {
 
   private final EnumMap<Sex, Worker> workers;
   private Sex currentSex;
@@ -29,8 +32,8 @@ public class Player implements Cloneable, Serializable {
 
   public Player(String nickname) {
     workers = new EnumMap<>(Sex.class);
-    workers.put(Sex.Female, new Worker(Sex.Female));
-    workers.put(Sex.Male, new Worker(Sex.Male));
+    workers.put(Sex.Female, new Worker(Sex.Female, this));
+    workers.put(Sex.Male, new Worker(Sex.Male, this));
     currentSex = Sex.Male;
 
     this.nickname = nickname;
@@ -45,8 +48,8 @@ public class Player implements Cloneable, Serializable {
 
   public Player(GodCard assignedCard, String nickname) {
     workers = new EnumMap<>(Sex.class);
-    workers.put(Sex.Female, new Worker(Sex.Female));
-    workers.put(Sex.Male, new Worker(Sex.Male));
+    workers.put(Sex.Female, new Worker(Sex.Female, this));
+    workers.put(Sex.Male, new Worker(Sex.Male, this));
     currentSex = Sex.Male;
     godCard = assignedCard;
 
@@ -57,6 +60,25 @@ public class Player implements Cloneable, Serializable {
     constructionList = new LinkedList<>();
     boardStatus = new Board(Board.DEFAULT_SIZE);
     hasLost = false;
+  }
+
+  public Player(Player p){
+    workers = new EnumMap<>(Sex.class);
+    workers.put(Sex.Male, p.workers.get(Sex.Male));
+    workers.put(Sex.Female, p.workers.get(Sex.Female));
+    currentSex = p.currentSex;
+
+    if (p.godCard != null) {
+      godCard = GodCardFactory.clone(p.godCard);
+    }
+
+    nickname = p.nickname;
+
+    isWorkerSelected = p.isWorkerSelected;
+    movementList = new LinkedList<>(p.movementList);
+    constructionList = new LinkedList<>(p.constructionList);
+    boardStatus = p.boardStatus;
+    hasLost = p.hasLost;
   }
 
   public Map<Sex, Worker> getWorkers() {
@@ -117,10 +139,11 @@ public class Player implements Cloneable, Serializable {
     return constructionList;
   }
 
+
   public void setHasLost(boolean hasLost) {
     this.hasLost = hasLost;
     if(hasLost){
-      //throw event to inform everyone of the loss
+      GameEventManager.raise(new LossEvent(this, this));
     }
   }
 
@@ -131,22 +154,12 @@ public class Player implements Cloneable, Serializable {
   public boolean hasPlayerRisen(GameDataAccessor gameData){
 
     for (Movement movement : movementList){
-      if (gameData.getBoard().getBox(movement.getEnd()).getLevel() - gameData.getBoard().getBox(movement.getStart()).getLevel() == 1) return true;
+      if (gameData.getBoard().getBox(movement.getEnd()).getLevel() -
+              gameData.getBoard().getBox(movement.getStart()).getLevel() == 1)
+        return true;
     }
 
     return false;
-  }
-
-  public Player clone() {
-    try {
-      Player p = (Player) super.clone();
-      if (p.godCard != null) {
-        p.godCard = godCard.clone();
-      }
-      return p;
-    } catch (CloneNotSupportedException e) {
-      throw new RuntimeException(e);
-    }
   }
 
   @Override

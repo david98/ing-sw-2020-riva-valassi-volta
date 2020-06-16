@@ -35,5 +35,5 @@ jobs:
       - name: Upload
         uses: actions/upload-artifact@v1
         with:
-          name: App
+          name: GC14
           path: staging

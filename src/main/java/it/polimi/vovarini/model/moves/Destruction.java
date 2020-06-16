@@ -28,4 +28,9 @@ public class Destruction extends Move {
 
   @Override
   public void execute() {}
+
+  public Block getBlock() { return block; }
+
+  public Point getTarget() { return target; }
+
 }

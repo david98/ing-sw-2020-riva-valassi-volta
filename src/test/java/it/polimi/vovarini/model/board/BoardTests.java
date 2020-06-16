@@ -1,11 +1,9 @@
 package it.polimi.vovarini.model.board;
 
-import it.polimi.vovarini.common.exceptions.BoxEmptyException;
-import it.polimi.vovarini.common.exceptions.BoxFullException;
+import it.polimi.vovarini.common.exceptions.InvalidLevelException;
 import it.polimi.vovarini.common.exceptions.InvalidPositionException;
 import it.polimi.vovarini.model.Point;
 import it.polimi.vovarini.model.board.items.Block;
-import it.polimi.vovarini.model.board.items.InvalidLevelException;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -115,21 +113,5 @@ public class BoardTests {
   void placeAndCheckPosition(Point p) {
     assertDoesNotThrow(() -> board.place(minLevelBlock, p));
     assertDoesNotThrow(() -> assertEquals(p, board.getItemPosition(minLevelBlock)));
-  }
-
-  @Test
-  @DisplayName("Tests that the clone() method actually returns a deep copy")
-  void cloneWorks(){
-    Board b = new Board(Board.DEFAULT_SIZE);
-    try {
-      b.place(Block.blocks[0], new Point(0, 0));
-      Board b2 = b.clone();
-      b2.remove(new Point(0,0));
-      assertDoesNotThrow(() -> b.getItems(new Point(0, 0)));
-    } catch (InvalidPositionException ignored){
-    } catch (BoxFullException ignored){
-    } catch (BoxEmptyException ignored){
-    }
-
   }
 }

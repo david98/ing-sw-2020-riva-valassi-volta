@@ -1,8 +1,10 @@
 package it.polimi.vovarini.model.board.items;
 
+import it.polimi.vovarini.common.exceptions.InvalidLevelException;
+
 import java.util.stream.IntStream;
 
-public class Block extends Item implements Cloneable {
+public class Block extends Item {
 
   public static final int MIN_LEVEL = 1;
   public static final int MAX_LEVEL = 4;
@@ -12,9 +14,9 @@ public class Block extends Item implements Cloneable {
   public static final Block[] blocks =
       IntStream.range(MIN_LEVEL, MAX_LEVEL + 1)
           .mapToObj(
-              level -> {
+              l -> {
                 try {
-                  return new Block(level);
+                  return new Block(l);
                 } catch (InvalidLevelException ignored) {
                   return null;
                 }
@@ -23,19 +25,26 @@ public class Block extends Item implements Cloneable {
 
   protected int level;
 
-  public Block(int level) throws InvalidLevelException {
+  public Block(int level) {
     if (level < MIN_LEVEL || level > MAX_LEVEL) {
       throw new InvalidLevelException();
     }
     this.level = level;
   }
 
+  public Block(Block b){
+    level = b.level;
+  }
+
   public int getLevel() {
     return level;
   }
 
+  @Override
   public boolean canBePlacedOn(Item item) {
-    if (item instanceof Block) {
+    if (item == null){
+      return level == 1;
+    } else if (item instanceof Block) {
       Block block = (Block) item;
       return level == (block.getLevel() + 1);
     } else {

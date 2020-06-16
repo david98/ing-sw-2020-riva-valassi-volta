@@ -1,8 +1,8 @@
 package it.polimi.vovarini.view.cli.screens;
 
-import it.polimi.vovarini.common.events.*;
+import it.polimi.vovarini.common.events.CardChoiceEvent;
+import it.polimi.vovarini.common.network.GameClient;
 import it.polimi.vovarini.model.godcards.GodName;
-import it.polimi.vovarini.server.GameClient;
 import it.polimi.vovarini.view.ViewData;
 import it.polimi.vovarini.view.cli.elements.MultiChoiceList;
 import it.polimi.vovarini.view.cli.elements.Text;
@@ -24,6 +24,7 @@ public class GodCardSelectionScreen extends Screen{
     if (godNameMultiChoiceList.maxSelected()) {
       client.raise(new CardChoiceEvent(data.getOwner(),
               godNameMultiChoiceList.getSelectedOptions().iterator().next()));
+      handlesInput = false;
     }
   }
 
@@ -32,13 +33,15 @@ public class GodCardSelectionScreen extends Screen{
     switch (key){
       case W -> godNameMultiChoiceList.moveUp();
       case S -> godNameMultiChoiceList.moveDown();
-      case Spacebar -> godNameMultiChoiceList.select();
+      case SPACEBAR -> godNameMultiChoiceList.select();
       case O -> confirm();
     }
+    needsRender = true;
   }
 
   @Override
   public String render(){
+    needsRender = false;
     return godNameMultiChoiceList.render() +
             (godNameMultiChoiceList.maxSelected() ? ("\n" + confirmationPrompt.render()) : "");
   }

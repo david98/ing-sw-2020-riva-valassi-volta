@@ -6,7 +6,6 @@ import it.polimi.vovarini.model.Player;
 import it.polimi.vovarini.model.Point;
 import it.polimi.vovarini.model.board.Board;
 import it.polimi.vovarini.model.board.items.Worker;
-import it.polimi.vovarini.model.godcards.GodName;
 import it.polimi.vovarini.view.cli.styling.Color;
 
 import java.io.Serializable;
@@ -29,11 +28,15 @@ public class ViewData implements Serializable, GameDataAccessor {
   private Worker selectedWorker;
   private Point currentStart;
 
+  private final Random random;
+
   public ViewData(){
     currentPhase = Phase.Start;
     board = new Board(Board.DEFAULT_SIZE);
     players = new LinkedHashSet<>();
     playersColors = new HashMap<>();
+
+    random = new Random();
   }
 
   public Phase getCurrentPhase() {
@@ -85,8 +88,13 @@ public class ViewData implements Serializable, GameDataAccessor {
   }
 
   public void addPlayer(Player player){
-    Random rand = new Random();
-    addPlayer(player, new Color(rand.nextInt(255), rand.nextInt(255), rand.nextInt(255)));
+    addPlayer(player, new Color(random.nextInt(255),
+            random.nextInt(255),
+            random.nextInt(255)));
+  }
+
+  public void removePlayer(Player player) {
+    players.remove(player);
   }
 
   public Board getBoard() {
