@@ -213,10 +213,7 @@ public class ControllerTests {
   }
 
   @Test
-  @Disabled
-  /*
-   * This test is waiting for a fix due to recent changes in Game.
-   */
+  @Disabled("This test is waiting for a fix due to recent changes in Game.")
   @DisplayName("Player moves due to a MovementEvent. Tests sequence of calls")
   void movementTest() {
 
@@ -310,10 +307,7 @@ public class ControllerTests {
   }
 
   @Test
-  @Disabled
-  /*
-   * This test is waiting for a fix due to recent changes in Game.
-   */
+  @Disabled("This test is waiting for a fix due to recent changes in Game.")
   @DisplayName("Player builds due to a ConstructionEvent. Tests sequence of calls")
   void constructionTest() {
     game.getCurrentPlayer().setCurrentSex(Sex.Female);
@@ -534,10 +528,7 @@ public class ControllerTests {
   }
 
   @Test
-  @Disabled
-  /*
-   * This test is waiting for a fix due to recent changes in Game.
-   */
+  @Disabled("This test is waiting for a fix due to recent changes in Game.")
   @DisplayName("Tests that the game skips the Start phase only if a worker has been selected")
   void skipStartTest(){
     game.setCurrentPhase(Phase.Start);
