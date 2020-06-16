@@ -1,8 +1,10 @@
-package it.polimi.vovarini.view.gui;
+package it.polimi.vovarini.view.gui.controllers;
 
 import it.polimi.vovarini.common.events.AvailableCardsEvent;
 import it.polimi.vovarini.common.events.GameEvent;
 import it.polimi.vovarini.model.godcards.GodName;
+import it.polimi.vovarini.view.gui.GuiManager;
+import it.polimi.vovarini.view.gui.controllers.GUIController;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
@@ -15,10 +17,7 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
-public class ElectedPlayerController {
-
-    @FXML
-    private BorderPane mainPane;
+public class ElectedPlayerController extends GUIController {
 
     @FXML
     private ImageView selectedGodCard1;
@@ -86,7 +85,7 @@ public class ElectedPlayerController {
         bindEvents();
     }
 
-    void addImages(GodName[] allGods) {
+    public void addImages(GodName[] allGods) {
         // aggiungo le carte alla grafica
         //GodName[] godNames = Arrays.stream(GodName.values()).filter(name -> name != GodName.Nobody).toArray(GodName[]::new);
         String selector;
@@ -159,7 +158,7 @@ public class ElectedPlayerController {
                 selectedGodCard2.setStyle(style);
                 break;
             case 2:
-                if(guiManager.numerOfPlayers() == 3) {
+                if(guiManager.getNumberOfPlayers() == 3) {
                     selectedCards.add(godNames[i]);
                     selectedGodCard3.setStyle(style);
                 }
@@ -172,11 +171,12 @@ public class ElectedPlayerController {
 
     @FXML
     private void submit(ActionEvent event) {
-        if(guiManager.numerOfPlayers() == selectedCards.size()) {
+        if(guiManager.getNumberOfPlayers() == selectedCards.size()) {
             GameEvent evt = new AvailableCardsEvent(guiManager.getData().getOwner(),
                     selectedCards.toArray(GodName[]::new));
             guiManager.getClient().raise(evt);
-            GuiManager.setLayout(mainPane.getScene(), "/fxml/waitScene.fxml");
+            GuiManager.getInstance().setCurrentScene(mainPane.getScene());
+            GuiManager.getInstance().setLayout("/fxml/waitScene.fxml");
         }
     }
 

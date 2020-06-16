@@ -1,10 +1,12 @@
-package it.polimi.vovarini.view.gui;
+package it.polimi.vovarini.view.gui.controllers;
 
 import it.polimi.vovarini.common.events.CardChoiceEvent;
 import it.polimi.vovarini.common.events.GameEvent;
 import it.polimi.vovarini.model.Player;
 import it.polimi.vovarini.model.godcards.GodCard;
 import it.polimi.vovarini.model.godcards.GodName;
+import it.polimi.vovarini.view.gui.GuiManager;
+import it.polimi.vovarini.view.gui.controllers.GUIController;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
@@ -12,10 +14,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 
-public class GodCardSelectionController {
-
-    @FXML
-    private BorderPane mainPane;
+public class GodCardSelectionController extends GUIController {
 
     @FXML
     private ImageView godCard0;
@@ -41,7 +40,7 @@ public class GodCardSelectionController {
         bindEvents();
     }
 
-    void addImages(GodName[] availableGodCards, boolean disabled) {
+    public void addImages(GodName[] availableGodCards, boolean disabled) {
         allGods = availableGodCards;
         String selector;
         for(int i = 0; i < availableGodCards.length; i++) {
@@ -78,7 +77,7 @@ public class GodCardSelectionController {
         guiManager.getClient().raise(evt);
     }
 
-    void changeVisibility(GodName[] godsLeft, boolean disabled) {
+    public void changeVisibility(GodName[] godsLeft, boolean disabled) {
 
         godCard0.setDisable(true);
         godCard1.setDisable(true);
@@ -102,7 +101,7 @@ public class GodCardSelectionController {
         }
     }
 
-    void showChoice(Player targetPlayer, GodCard assignedCard) {
+    public void showChoice(Player targetPlayer, GodCard assignedCard) {
         for (int i = 0; i < allGods.length; i++) {
             if (allGods[i].equals(assignedCard.getName())) {
                 String selector = "#label" + i;
@@ -112,7 +111,8 @@ public class GodCardSelectionController {
         }
     }
 
-    void changeLayout(String path) {
-        GuiManager.setLayout(mainPane.getScene(), path);
+    public void changeLayout() {
+        GuiManager.getInstance().setCurrentScene(mainPane.getScene());
+        GuiManager.getInstance().setLayout("/fxml/spawnWorkerScene.fxml");
     }
 }

@@ -1,4 +1,4 @@
-package it.polimi.vovarini.view.gui;
+package it.polimi.vovarini.view.gui.controllers;
 
 import it.polimi.vovarini.common.events.SpawnWorkerEvent;
 import it.polimi.vovarini.common.events.WorkerSelectionEvent;
@@ -6,6 +6,8 @@ import it.polimi.vovarini.model.Player;
 import it.polimi.vovarini.model.Point;
 import it.polimi.vovarini.model.board.Board;
 import it.polimi.vovarini.model.board.items.Sex;
+import it.polimi.vovarini.view.gui.GuiManager;
+import it.polimi.vovarini.view.gui.controllers.GUIController;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
@@ -18,10 +20,7 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
-public class SpawnWorkerController {
-
-    @FXML
-    private BorderPane mainPane;
+public class SpawnWorkerController extends GUIController {
 
     @FXML
     private GridPane board;
@@ -64,7 +63,7 @@ public class SpawnWorkerController {
         }
     }
 
-    void addImages(Player[] players) {
+    public void addImages(Player[] players) {
         String selector;
         for(int i = 0; i < players.length; i++) {
             selector = "#player" + i;
@@ -85,7 +84,7 @@ public class SpawnWorkerController {
         guiManager.getClient().raise(new SpawnWorkerEvent(guiManager.getData().getOwner(), p));
     }
 
-    void boardUpdate() {
+    public void boardUpdate() {
         b = guiManager.getData().getBoard();
 
         for (int i = 0; i < b.getSize(); i++) {
@@ -103,7 +102,7 @@ public class SpawnWorkerController {
         changeVisibility(!guiManager.getData().getOwner().equals(guiManager.getData().getCurrentPlayer()), guiManager.getData().getCurrentPlayer().getNickname());
     }
 
-    void changeVisibility(boolean disabled, String currentPlayer) {
+    public void changeVisibility(boolean disabled, String currentPlayer) {
         for (int i = 0; i < 5; i++) {
             for (int j = 0; j < b.getSize(); j++) {
                 String selector = "#button" + i + j;

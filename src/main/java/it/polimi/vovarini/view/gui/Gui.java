@@ -11,15 +11,15 @@ public class Gui extends Application {
 
     @Override
     public void start(Stage stage) {
-        stage.setMaximized(true);
-        //stage.setFullScreen(true);
-        //stage.setFullScreenExitHint("");
-        //stage.setFullScreenExitKeyCombination(KeyCombination.NO_MATCH);
-
         stage.setScene(new Scene(new Pane()));
 
-        GuiManager.setLayout(stage.getScene(), "/fxml/registrationScene.fxml");
+        stage.sizeToScene();
+
+        GuiManager.getInstance().setCurrentScene(stage.getScene());
+        GuiManager.getInstance().setLayout("/fxml/registrationScene.fxml");
         stage.show();
+        stage.setMinWidth(stage.getWidth());
+        stage.setMinHeight(stage.getHeight());
     }
 
     public static void main(String[] args) {

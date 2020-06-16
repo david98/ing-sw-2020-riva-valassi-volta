@@ -6,7 +6,7 @@
 <?import java.net.URL?>
 
 <BorderPane xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
-            fx:controller="it.polimi.vovarini.view.gui.WaitController" fx:id="mainPane">
+            fx:controller="it.polimi.vovarini.view.gui.controllers.WaitController" fx:id="mainPane">
     <stylesheets>
         <URL value="@../css/waitScene.css"/>
     </stylesheets>

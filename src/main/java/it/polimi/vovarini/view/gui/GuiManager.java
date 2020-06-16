@@ -5,6 +5,7 @@ import it.polimi.vovarini.common.network.GameClient;
 import it.polimi.vovarini.model.Player;
 import it.polimi.vovarini.view.View;
 import it.polimi.vovarini.view.ViewData;
+import it.polimi.vovarini.view.gui.controllers.*;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -17,6 +18,9 @@ public class GuiManager extends View {
     private static GuiManager instance = null;
 
     private GameClient client;
+
+    private Scene currentScene;
+    private GUIController currentController;
 
     private RegistrationController registrationController;
     private WaitController waitController;
@@ -135,7 +139,7 @@ public class GuiManager extends View {
     public void handlePlaceYourWorkers(PlaceYourWorkersEvent e) {
 
         if(spawnWorkerController == null) {
-            Platform.runLater(() -> godCardSelectionController.changeLayout("/fxml/spawnWorkerScene.fxml"));
+            Platform.runLater(() -> godCardSelectionController.changeLayout());
             Platform.runLater(() -> spawnWorkerController.addImages(data.getPlayers()));
         }
 
@@ -146,19 +150,20 @@ public class GuiManager extends View {
     @GameEventListener
     public void handlePlayerInfoUpdate(PlayerInfoUpdateEvent e) {
         super.handlePlayerInfoUpdate(e);
-        //currentScreen.handlePlayerInfoUpdate(e);
+        currentController.handlePlayerInfoUpdate(e);
     }
 
     @Override
     @GameEventListener
     public void handleGodCardUpdate(GodCardUpdateEvent e) {
         super.handleGodCardUpdate(e);
-        //currentScreen.handleGodCardUpdate(e);
+        currentController.handleGodCardUpdate(e);
     }
 
     @Override
     @GameEventListener
     public void handleVictory(VictoryEvent e) {
+        currentController.handleVictory(e);
     }
 
     /*public void render(){
@@ -187,25 +192,23 @@ public class GuiManager extends View {
     }
 
     /**
-     * Sets a layout form FXML file and returns the scene controller
+     * Sets a layout from FXML file
      *
-     * @param scene scene where to set the layout
      * @param path  path of the FXML file
-     * @param <T>   type of the scene controller
-     * @return the scene controller
      */
-    static <T> T setLayout(Scene scene, String path) {
+     public void setLayout(String path) {
 
-        FXMLLoader loader = new FXMLLoader(GuiManager.class.getResource(path));
+        FXMLLoader loader = new FXMLLoader();
+        loader.setLocation(GuiManager.class.getResource(path));
         Pane pane;
         try {
             pane = loader.load();
-            scene.setRoot(pane);
+            currentScene.setRoot(pane);
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-        return loader.getController();
+        this.currentController = loader.getController();
     }
 
     public void createConnection(String nickname, String serverIP, int serverPort) throws IOException {
@@ -243,7 +246,15 @@ public class GuiManager extends View {
 
     public GameClient getClient() { return client; }
 
-    public int numerOfPlayers() {
+    public int getNumberOfPlayers() {
         return data.getPlayerSet().size();
     }
+
+    public Scene getCurrentScene() {
+         return currentScene;
+    }
+
+    public void setCurrentScene(Scene scene) {
+         this.currentScene = scene;
+     }
 }
