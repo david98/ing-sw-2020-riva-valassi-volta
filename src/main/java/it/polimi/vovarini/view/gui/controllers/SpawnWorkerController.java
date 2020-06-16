@@ -1,5 +1,7 @@
 package it.polimi.vovarini.view.gui.controllers;
 
+import it.polimi.vovarini.common.events.BoardUpdateEvent;
+import it.polimi.vovarini.common.events.PlaceYourWorkersEvent;
 import it.polimi.vovarini.common.events.SpawnWorkerEvent;
 import it.polimi.vovarini.common.events.WorkerSelectionEvent;
 import it.polimi.vovarini.model.Player;
@@ -7,13 +9,11 @@ import it.polimi.vovarini.model.Point;
 import it.polimi.vovarini.model.board.Board;
 import it.polimi.vovarini.model.board.items.Sex;
 import it.polimi.vovarini.view.gui.GuiManager;
-import it.polimi.vovarini.view.gui.controllers.GUIController;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 
 import java.util.Arrays;
@@ -32,7 +32,7 @@ public class SpawnWorkerController extends GUIController {
 
     private final List<Sex> sexes = new LinkedList<>(Arrays.asList(Sex.values()));
 
-    private Board b = new Board(Board.DEFAULT_SIZE);
+    private final Board b = new Board(Board.DEFAULT_SIZE);
 
     @FXML
     public void initialize() {
@@ -85,21 +85,7 @@ public class SpawnWorkerController extends GUIController {
     }
 
     public void boardUpdate() {
-        b = guiManager.getData().getBoard();
 
-        for (int i = 0; i < b.getSize(); i++) {
-            for (int j = 0; j < b.getSize(); j++) {
-                Point p = new Point(i, j);
-                if (b.getBox(p).getItems().peek() != null) {
-                    String selector = "#button" + i + j;
-                    ImageView img = (ImageView) board.lookup(selector);
-                    String url = "url('/img/prova/worker" + b.getBox(p).getItems().peek().toString() + ".png');";
-                    img.setStyle("-fx-image: " + url);
-                    img.setDisable(true);
-                }
-            }
-        }
-        changeVisibility(!guiManager.getData().getOwner().equals(guiManager.getData().getCurrentPlayer()), guiManager.getData().getCurrentPlayer().getNickname());
     }
 
     public void changeVisibility(boolean disabled, String currentPlayer) {
@@ -131,5 +117,31 @@ public class SpawnWorkerController extends GUIController {
             instruction.setText("Place your " + sexes.get(0).toString() + " worker.");
             guiManager.getClient().raise(new WorkerSelectionEvent(guiManager.getData().getOwner(), sexes.get(0)));
         }
+    }
+
+    @Override
+    public void handleBoardUpdate(BoardUpdateEvent e) {
+        var b = e.getNewBoard();
+
+        for (int i = 0; i < b.getSize(); i++) {
+            for (int j = 0; j < b.getSize(); j++) {
+                Point p = new Point(i, j);
+                if (b.getBox(p).getItems().peek() != null) {
+                    String selector = "#button" + i + j;
+                    ImageView img = (ImageView) board.lookup(selector);
+                    String url = "url('/img/prova/worker" + b.getBox(p).getItems().peek().toString() + ".png');";
+                    img.setStyle("-fx-image: " + url);
+                    img.setDisable(true);
+                }
+            }
+        }
+        changeVisibility(!guiManager.getData().getOwner().equals(guiManager.getData().getCurrentPlayer()), guiManager.getData().getCurrentPlayer().getNickname());
+    }
+
+    @Override
+    public void handlePlaceYourWorkers(PlaceYourWorkersEvent e) {
+        super.handlePlaceYourWorkers(e);
+        addImages(GuiManager.getInstance().getData().getPlayers());
+        changeVisibility(!e.getTargetPlayer().equals(GuiManager.getInstance().getData().getOwner()), e.getTargetPlayer().getNickname());
     }
 }

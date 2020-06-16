@@ -5,7 +5,10 @@ import it.polimi.vovarini.common.network.GameClient;
 import it.polimi.vovarini.model.Player;
 import it.polimi.vovarini.view.View;
 import it.polimi.vovarini.view.ViewData;
-import it.polimi.vovarini.view.gui.controllers.*;
+import it.polimi.vovarini.view.gui.controllers.GUIController;
+import it.polimi.vovarini.view.gui.controllers.GodCardSelectionController;
+import it.polimi.vovarini.view.gui.controllers.SpawnWorkerController;
+import it.polimi.vovarini.view.gui.controllers.WaitController;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -22,12 +25,8 @@ public class GuiManager extends View {
     private Scene currentScene;
     private GUIController currentController;
 
-    private RegistrationController registrationController;
-    private WaitController waitController;
-    private ElectedPlayerController electedPlayerController;
     private GodCardSelectionController godCardSelectionController;
     private SpawnWorkerController spawnWorkerController;
-    private GameController gameController;
 
     private Thread guiEventListenerThread;
 
@@ -50,26 +49,21 @@ public class GuiManager extends View {
     @GameEventListener
     public void handleNewPlayer(NewPlayerEvent e) {
         super.handleNewPlayer(e);
-
-        if(e.getNewPlayer().equals(data.getOwner())) {
-            registrationController.onConnectionResponse();
-        }
-
+        Platform.runLater(() -> currentController.handleNewPlayer(e));
     }
 
     @Override
     @GameEventListener
     public void handleBoardUpdate(BoardUpdateEvent e) {
         data.setBoard(e.getNewBoard());
-        if(gameController == null) {
-            Platform.runLater(() -> spawnWorkerController.boardUpdate());
-        }
+        Platform.runLater(() -> currentController.handleBoardUpdate(e));
     }
 
     @Override
     @GameEventListener
     public void handleCurrentPlayerUpdate(CurrentPlayerChangedEvent e) {
         data.setCurrentPlayer(e.getNewPlayer());
+        Platform.runLater(() -> currentController.handleCurrentPlayerUpdate(e));
         // se sei in GameScene, aggiorna il currentPlayer a video
     }
 
@@ -77,6 +71,7 @@ public class GuiManager extends View {
     @GameEventListener
     public void handlePhaseUpdate(PhaseUpdateEvent e) {
         data.setCurrentPhase(e.getNewPhase());
+        Platform.runLater(() -> currentController.handlePhaseUpdate(e));
         //se sei in GameScene, aggiorna currentPhase a video
     }
 
@@ -89,95 +84,66 @@ public class GuiManager extends View {
     @Override
     @GameEventListener
     public void handleGodSelectionStart(GodSelectionStartEvent e) {
-        Player[] players = e.getPlayers();
-        for (int i = 0; i < players.length; i++){
-            for (Player p: data.getPlayerSet()){
-                if (players[i].equals(p)){
-                    players[i] = p;
-                }
-            }
-        }
-        data.getPlayerSet().clear();
-        for (Player p: players){
-            data.addPlayer(p);
-        }
-        data.setCurrentPlayer(e.getElectedPlayer());
+        super.handleGodSelectionStart(e);
 
         if (e.getElectedPlayer().equals(data.getOwner())) {
-            Platform.runLater(() -> waitController.changeLayout("/fxml/electedPlayerScene.fxml"));
-            Platform.runLater(() -> electedPlayerController.addImages(e.getAllGods()));
+            setLayout("/fxml/electedPlayerScene.fxml");
         } else {
-            Platform.runLater(() -> waitController.waitMessage(e.getElectedPlayer().getNickname()));
+            setLayout("/fxml/waitScene.fxml");
+            // TODO: find a better way
+            ((WaitController) currentController).setWaitMessage("Waiting for " + e.getElectedPlayer().getNickname() + " to choose which" +
+                    "God Cards will be available...");
         }
+
+        Platform.runLater(() -> currentController.handleGodSelectionStart(e));
     }
 
     @Override
     @GameEventListener
     public void handleSelectYourCard(SelectYourCardEvent e) {
+        // TODO: find a better way
         if(godCardSelectionController == null) {
-            Platform.runLater(() -> waitController.changeLayout("/fxml/godCardSelectionScene.fxml"));
-            Platform.runLater(() -> godCardSelectionController.addImages(e.getGodsLeft(), !e.getTargetPlayer().equals(data.getOwner())));
-        } else {
-            Platform.runLater(() -> godCardSelectionController.changeVisibility(e.getGodsLeft(), !e.getTargetPlayer().equals(data.getOwner())));
+            setLayout("/fxml/godCardSelectionScene.fxml");
         }
+        Platform.runLater(() -> currentController.handleSelectYourCard(e));
     }
 
     @Override
     @GameEventListener
     public void handleCardAssignment(CardAssignmentEvent e) {
-        for (Player p: data.getPlayerSet()){
-            if (p.equals(e.getTargetPlayer())){
-                e.getAssignedCard().setGameData(data);
-                p.setGodCard(e.getAssignedCard());
-            }
-        }
-        Platform.runLater(() -> godCardSelectionController.showChoice(e.getTargetPlayer(), e.getAssignedCard()));
+        super.handleCardAssignment(e);
+        Platform.runLater(() -> currentController.handleCardAssignment(e));
     }
 
     @Override
     @GameEventListener
     public void handlePlaceYourWorkers(PlaceYourWorkersEvent e) {
-
+        // TODO: find a better way
         if(spawnWorkerController == null) {
-            Platform.runLater(() -> godCardSelectionController.changeLayout());
-            Platform.runLater(() -> spawnWorkerController.addImages(data.getPlayers()));
+            setLayout("/fxml/spawnWorkerScene.fxml");
         }
-
-        Platform.runLater(() -> spawnWorkerController.changeVisibility(!e.getTargetPlayer().equals(data.getOwner()), e.getTargetPlayer().getNickname()));
+        Platform.runLater(() -> currentController.handlePlaceYourWorkers(e));
     }
 
     @Override
     @GameEventListener
     public void handlePlayerInfoUpdate(PlayerInfoUpdateEvent e) {
         super.handlePlayerInfoUpdate(e);
-        currentController.handlePlayerInfoUpdate(e);
+        Platform.runLater(() -> currentController.handlePlayerInfoUpdate(e));
     }
 
     @Override
     @GameEventListener
     public void handleGodCardUpdate(GodCardUpdateEvent e) {
         super.handleGodCardUpdate(e);
-        currentController.handleGodCardUpdate(e);
+        Platform.runLater(() -> currentController.handleGodCardUpdate(e));
     }
 
     @Override
     @GameEventListener
     public void handleVictory(VictoryEvent e) {
-        currentController.handleVictory(e);
+        Platform.runLater(() -> currentController.handleVictory(e));
     }
-
-    /*public void render(){
-        console.clear();
-        console.println(currentScreen.render());
-    }
-
-    public void handleInput() throws IOException{
-        int input = console.getReader().read();
-        Key key = KeycodeToKey.map.get(input);
-        if (key != null) {
-            currentScreen.handleKeyPress(key);
-        }
-    }*/
 
     public void startMatch() {
 
@@ -218,18 +184,6 @@ public class GuiManager extends View {
 
         guiEventListenerThread = new Thread(new GuiEventListener(client));
         guiEventListenerThread.start();
-    }
-
-    public void setRegistrationController(RegistrationController registrationController) {
-        this.registrationController = registrationController;
-    }
-
-    public void setWaitController(WaitController waitController) {
-        this.waitController = waitController;
-    }
-
-    public void setElectedPlayerController(ElectedPlayerController electedPlayerController) {
-        this.electedPlayerController = electedPlayerController;
     }
 
     public void setGodCardSelectionController(GodCardSelectionController godCardSelectionController) {

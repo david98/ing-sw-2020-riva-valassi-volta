@@ -1,18 +1,18 @@
 package it.polimi.vovarini.view.gui.controllers;
 
+import it.polimi.vovarini.common.events.CardAssignmentEvent;
 import it.polimi.vovarini.common.events.CardChoiceEvent;
 import it.polimi.vovarini.common.events.GameEvent;
+import it.polimi.vovarini.common.events.SelectYourCardEvent;
 import it.polimi.vovarini.model.Player;
 import it.polimi.vovarini.model.godcards.GodCard;
 import it.polimi.vovarini.model.godcards.GodName;
 import it.polimi.vovarini.view.gui.GuiManager;
-import it.polimi.vovarini.view.gui.controllers.GUIController;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.BorderPane;
 
 public class GodCardSelectionController extends GUIController {
 
@@ -111,8 +111,16 @@ public class GodCardSelectionController extends GUIController {
         }
     }
 
-    public void changeLayout() {
-        GuiManager.getInstance().setCurrentScene(mainPane.getScene());
-        GuiManager.getInstance().setLayout("/fxml/spawnWorkerScene.fxml");
+    @Override
+    public void handleSelectYourCard(SelectYourCardEvent e) {
+        super.handleSelectYourCard(e);
+        addImages(e.getGodsLeft(), !e.getTargetPlayer().equals(GuiManager.getInstance().getData().getOwner()));
+        changeVisibility(e.getGodsLeft(), !e.getTargetPlayer().equals(GuiManager.getInstance().getData().getOwner()));
+    }
+
+    @Override
+    public void handleCardAssignment(CardAssignmentEvent e) {
+        super.handleCardAssignment(e);
+        showChoice(e.getTargetPlayer(), e.getAssignedCard());
     }
 }

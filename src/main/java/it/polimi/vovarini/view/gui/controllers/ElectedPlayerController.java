@@ -2,16 +2,15 @@ package it.polimi.vovarini.view.gui.controllers;
 
 import it.polimi.vovarini.common.events.AvailableCardsEvent;
 import it.polimi.vovarini.common.events.GameEvent;
+import it.polimi.vovarini.common.events.GodSelectionStartEvent;
 import it.polimi.vovarini.model.godcards.GodName;
 import it.polimi.vovarini.view.gui.GuiManager;
-import it.polimi.vovarini.view.gui.controllers.GUIController;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.BorderPane;
 
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -73,7 +72,7 @@ public class ElectedPlayerController extends GUIController {
     @FXML
     private ImageView godCard13;
 
-    private List<GodName> selectedCards = new LinkedList<>();
+    private final List<GodName> selectedCards = new LinkedList<>();
     private GuiManager guiManager;
 
     @FXML
@@ -81,7 +80,6 @@ public class ElectedPlayerController extends GUIController {
 
         /* altre eventuali inizializzazioni */
         guiManager = GuiManager.getInstance();
-        guiManager.setElectedPlayerController(this);
         bindEvents();
     }
 
@@ -89,7 +87,7 @@ public class ElectedPlayerController extends GUIController {
         // aggiungo le carte alla grafica
         //GodName[] godNames = Arrays.stream(GodName.values()).filter(name -> name != GodName.Nobody).toArray(GodName[]::new);
         String selector;
-        for(int i = 0; i < allGods.length; i++) {
+        for (int i = 0; i < allGods.length; i++) {
 
             selector = "#godCard" + i;
             Node temp = mainPane.lookup(selector);
@@ -158,7 +156,7 @@ public class ElectedPlayerController extends GUIController {
                 selectedGodCard2.setStyle(style);
                 break;
             case 2:
-                if(guiManager.getNumberOfPlayers() == 3) {
+                if (guiManager.getNumberOfPlayers() == 3) {
                     selectedCards.add(godNames[i]);
                     selectedGodCard3.setStyle(style);
                 }
@@ -171,7 +169,7 @@ public class ElectedPlayerController extends GUIController {
 
     @FXML
     private void submit(ActionEvent event) {
-        if(guiManager.getNumberOfPlayers() == selectedCards.size()) {
+        if (guiManager.getNumberOfPlayers() == selectedCards.size()) {
             GameEvent evt = new AvailableCardsEvent(guiManager.getData().getOwner(),
                     selectedCards.toArray(GodName[]::new));
             guiManager.getClient().raise(evt);
@@ -180,5 +178,9 @@ public class ElectedPlayerController extends GUIController {
         }
     }
 
-
+    @Override
+    public void handleGodSelectionStart(GodSelectionStartEvent e) {
+        super.handleGodSelectionStart(e);
+        addImages(e.getAllGods());
+    }
 }

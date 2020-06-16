@@ -1,19 +1,13 @@
 package it.polimi.vovarini.view.gui.controllers;
 
-import it.polimi.vovarini.common.events.RegistrationEvent;
-import it.polimi.vovarini.common.network.GameClient;
-import it.polimi.vovarini.model.Player;
+import it.polimi.vovarini.common.events.NewPlayerEvent;
 import it.polimi.vovarini.view.gui.GuiManager;
-import it.polimi.vovarini.view.gui.controllers.GUIController;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
-import javafx.scene.layout.BorderPane;
 
 import java.io.IOException;
 
@@ -39,7 +33,6 @@ public class RegistrationController extends GUIController {
     @FXML
     public void initialize() {
         guiManager = GuiManager.getInstance();
-        guiManager.setRegistrationController(this);
 
         nicknameField.setOnKeyPressed(keyEvent -> {
             if (keyEvent.getCode() == KeyCode.ENTER) {
@@ -81,9 +74,12 @@ public class RegistrationController extends GUIController {
         }
     }
 
-    public void onConnectionResponse() {
-        GuiManager.getInstance().setCurrentScene(mainPane.getScene());
-        GuiManager.getInstance().setLayout("/fxml/waitScene.fxml");
+    @Override
+    public void handleNewPlayer(NewPlayerEvent e) {
+        if (e.getNewPlayer().equals(GuiManager.getInstance().getData().getOwner())) {
+            GuiManager.getInstance().setCurrentScene(mainPane.getScene());
+            GuiManager.getInstance().setLayout("/fxml/waitScene.fxml");
+        }
     }
 
     void onInvalidNickname() {
