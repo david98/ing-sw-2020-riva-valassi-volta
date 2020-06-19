@@ -80,7 +80,9 @@ public class GuiManager extends View {
     @Override
     @GameEventListener
     public void handleGameStart(GameStartEvent e) {
-        startMatch();
+        Platform.runLater(() ->
+                setLayout(Settings.GAME_SCENE_FXML)
+        );
     }
 
     @Override
@@ -146,12 +148,6 @@ public class GuiManager extends View {
     @GameEventListener
     public void handleVictory(VictoryEvent e) {
         Platform.runLater(() -> currentController.handleVictory(e));
-    }
-
-    public void startMatch() {
-        Platform.runLater(() ->
-            setLayout(Settings.GAME_SCENE_FXML)
-        );
     }
 
     public void gameSetup() {
