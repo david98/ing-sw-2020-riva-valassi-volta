@@ -49,9 +49,7 @@ public class GodCardSelectionController extends GUIController {
 
             String url = "url('/img/godcards/" + availableGodCards[i].name() + ".png');";
             temp.setStyle("-fx-image: " + url);
-            //temp.setDisable(disabled);
         }
-        //changeVisibility(availableGodCards, disabled);
     }
 
     /**

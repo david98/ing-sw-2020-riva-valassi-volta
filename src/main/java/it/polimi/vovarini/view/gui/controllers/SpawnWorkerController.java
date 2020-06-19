@@ -32,13 +32,14 @@ public class SpawnWorkerController extends GUIController {
 
     private final List<Sex> sexes = new LinkedList<>(Arrays.asList(Sex.values()));
 
-    private final Board b = new Board(Board.DEFAULT_SIZE);
+    private Board b = new Board(Board.DEFAULT_SIZE);
 
     @FXML
     public void initialize() {
 
         guiManager = GuiManager.getInstance();
         bindEvents();
+        addImages(guiManager.getData().getPlayers());
     }
 
     /**
@@ -83,24 +84,21 @@ public class SpawnWorkerController extends GUIController {
         guiManager.getClient().raise(new SpawnWorkerEvent(guiManager.getData().getOwner(), p));
     }
 
-    public void boardUpdate() {
-
-    }
-
     public void changeVisibility(boolean disabled, String currentPlayer) {
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < b.getSize(); i++) {
             for (int j = 0; j < b.getSize(); j++) {
                 String selector = "#button" + i + j;
                 Node node = board.lookup(selector);
                 node.setDisable(disabled);
 
-                if (b.getBox(new Point(i, j)).getItems().peek() != null) {
+                Point p = new Point(i,j);
+                if (b.getBox(p).getItems().peek() != null) {
                     node.setDisable(true);
                 }
             }
         }
 
-        for(int i = 0; i< guiManager.getData().getPlayers().length; i++) {
+        for(int i = 0; i< guiManager.getNumberOfPlayers(); i++) {
             String selector = "#player" + i;
             Label player = (Label) mainPane.lookup(selector);
             if(currentPlayer.equals(guiManager.getData().getPlayers()[i].getNickname())) {
@@ -112,7 +110,7 @@ public class SpawnWorkerController extends GUIController {
 
         if(disabled) {
             instruction.setText("Wait for " + currentPlayer + "\n to place him workers...");
-        } else {
+        } else if(!sexes.isEmpty()){
             instruction.setText("Place your " + sexes.get(0).toString() + " worker.");
             guiManager.getClient().raise(new WorkerSelectionEvent(guiManager.getData().getOwner(), sexes.get(0)));
         }
@@ -120,7 +118,7 @@ public class SpawnWorkerController extends GUIController {
 
     @Override
     public void handleBoardUpdate(BoardUpdateEvent e) {
-        var b = e.getNewBoard();
+        b = e.getNewBoard();
 
         for (int i = 0; i < b.getSize(); i++) {
             for (int j = 0; j < b.getSize(); j++) {
@@ -140,7 +138,6 @@ public class SpawnWorkerController extends GUIController {
     @Override
     public void handlePlaceYourWorkers(PlaceYourWorkersEvent e) {
         super.handlePlaceYourWorkers(e);
-        addImages(GuiManager.getInstance().getData().getPlayers());
         changeVisibility(!e.getTargetPlayer().equals(GuiManager.getInstance().getData().getOwner()), e.getTargetPlayer().getNickname());
     }
 }

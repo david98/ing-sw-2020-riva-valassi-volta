@@ -18,7 +18,7 @@ public class Application implements Callable<Integer> {
   private String serverIP = "santorini.davide.gdn";
 
   @CommandLine.Option(names = {"-n", "--number"}, description = "The number of players")
-  private int playersNumber = 3;
+  private int playersNumber = 2;
 
   @CommandLine.Option(names = {"-p", "--port"}, description = "The port to connect to (or to listen on if running as server")
   private int port = Server.DEFAULT_PORT;
