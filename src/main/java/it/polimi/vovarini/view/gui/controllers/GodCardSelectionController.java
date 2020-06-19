@@ -39,7 +39,7 @@ public class GodCardSelectionController extends GUIController {
         bindEvents();
     }
 
-    public void addImages(GodName[] availableGodCards, boolean disabled) {
+     public void addImages(GodName[] availableGodCards) {
         allGods = availableGodCards;
         String selector;
         for(int i = 0; i < availableGodCards.length; i++) {
@@ -49,9 +49,9 @@ public class GodCardSelectionController extends GUIController {
 
             String url = "url('/img/godcards/" + availableGodCards[i].name() + ".png');";
             temp.setStyle("-fx-image: " + url);
-            temp.setDisable(disabled);
+            //temp.setDisable(disabled);
         }
-        changeVisibility(availableGodCards, disabled);
+        //changeVisibility(availableGodCards, disabled);
     }
 
     /**
@@ -113,7 +113,13 @@ public class GodCardSelectionController extends GUIController {
     @Override
     public void handleSelectYourCard(SelectYourCardEvent e) {
         super.handleSelectYourCard(e);
-        addImages(e.getGodsLeft(), !e.getTargetPlayer().equals(GuiManager.getInstance().getData().getOwner()));
+
+        // solo al primo SelectYourCardEvent stampo a video le immagini delle carte,
+        // poi disabilito quelle scelte e basta (le img a video restano le stesse)
+        if(e.getGodsLeft().length == guiManager.getNumberOfPlayers()) {
+            addImages(e.getGodsLeft());
+        }
+
         changeVisibility(e.getGodsLeft(), !e.getTargetPlayer().equals(GuiManager.getInstance().getData().getOwner()));
     }
 
