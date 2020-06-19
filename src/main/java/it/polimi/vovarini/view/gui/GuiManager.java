@@ -149,11 +149,9 @@ public class GuiManager extends View {
     }
 
     public void startMatch() {
-
-        System.out.println("Iniziamo la partita!");
-        //setto scena iniziale
-        //currentScreen = new MatchScreen(data, client);
-        //gameLoop();
+        Platform.runLater(() ->
+            setLayout(Settings.GAME_SCENE_FXML)
+        );
     }
 
     public void gameSetup() {

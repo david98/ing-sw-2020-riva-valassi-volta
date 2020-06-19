@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.net.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane fx:id="mainPane" styleClass="mainPane" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.vovarini.view.gui.controllers.SpawnWorkerController">
+
+    <stylesheets>
+        <URL value="@../css/spawnWorkerScene.css" />
+    </stylesheets>
+
+    <top>
+        <VBox styleClass="topBox">
+            <Label fx:id="instruction" styleClass="menuTitle" text="Match in progress" />
+        </VBox>
+    </top>
+
+    <center>
+        <GridPane fx:id="board" gridLinesVisible="true" prefHeight="500.0" prefWidth="500.0" styleClass="board">
+            <columnConstraints>
+                <ColumnConstraints minWidth="100.0" prefWidth="100.0" />
+                <ColumnConstraints minWidth="100.0" prefWidth="100.0" />
+                <ColumnConstraints minWidth="100.0" prefWidth="100.0" />
+                <ColumnConstraints minWidth="100.0" prefWidth="100.0" />
+                <ColumnConstraints minWidth="100.0" prefWidth="100.0" />
+            </columnConstraints>
+            <rowConstraints>
+                <RowConstraints minHeight="100.0" prefHeight="100.0" />
+                <RowConstraints minHeight="100.0" prefHeight="100.0" />
+                <RowConstraints minHeight="100.0" prefHeight="100.0" />
+                <RowConstraints minHeight="100.0" prefHeight="100.0" />
+                <RowConstraints minHeight="100.0" prefHeight="100.0" />
+            </rowConstraints>
+            <children>
+                <ImageView fx:id="button00" fitHeight="100.0" fitWidth="100.0" styleClass="box" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+                <ImageView fx:id="button10" fitHeight="100.0" fitWidth="100.0" styleClass="box" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+                <ImageView fx:id="button20" fitHeight="100.0" fitWidth="100.0" styleClass="box" GridPane.columnIndex="2" GridPane.rowIndex="0" />
+                <ImageView fx:id="button30" fitHeight="100.0" fitWidth="100.0" styleClass="box" GridPane.columnIndex="3" GridPane.rowIndex="0" />
+                <ImageView fx:id="button40" fitHeight="100.0" fitWidth="100.0" styleClass="box" GridPane.columnIndex="4" GridPane.rowIndex="0" />
+
+                <ImageView fx:id="button01" fitHeight="100.0" fitWidth="100.0" styleClass="box" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+                <ImageView fx:id="button11" fitHeight="100.0" fitWidth="100.0" styleClass="box" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                <ImageView fx:id="button21" fitHeight="100.0" fitWidth="100.0" styleClass="box" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+                <ImageView fx:id="button31" fitHeight="100.0" fitWidth="100.0" styleClass="box" GridPane.columnIndex="3" GridPane.rowIndex="1" />
+                <ImageView fx:id="button41" fitHeight="100.0" fitWidth="100.0" styleClass="box" GridPane.columnIndex="4" GridPane.rowIndex="1" />
+
+                <ImageView fx:id="button02" fitHeight="100.0" fitWidth="100.0" styleClass="box" GridPane.columnIndex="0" GridPane.rowIndex="2" />
+                <ImageView fx:id="button12" fitHeight="100.0" fitWidth="100.0" styleClass="box" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                <ImageView fx:id="button22" fitHeight="100.0" fitWidth="100.0" styleClass="box" GridPane.columnIndex="2" GridPane.rowIndex="2" />
+                <ImageView fx:id="button32" fitHeight="100.0" fitWidth="100.0" styleClass="box" GridPane.columnIndex="3" GridPane.rowIndex="2" />
+                <ImageView fx:id="button42" fitHeight="100.0" fitWidth="100.0" styleClass="box" GridPane.columnIndex="4" GridPane.rowIndex="2" />
+
+                <ImageView fx:id="button03" fitHeight="100.0" fitWidth="100.0" styleClass="box" GridPane.columnIndex="0" GridPane.rowIndex="3" />
+                <ImageView fx:id="button13" fitHeight="100.0" fitWidth="100.0" styleClass="box" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                <ImageView fx:id="button23" fitHeight="100.0" fitWidth="100.0" styleClass="box" GridPane.columnIndex="2" GridPane.rowIndex="3" />
+                <ImageView fx:id="button33" fitHeight="100.0" fitWidth="100.0" styleClass="box" GridPane.columnIndex="3" GridPane.rowIndex="3" />
+                <ImageView fx:id="button43" fitHeight="100.0" fitWidth="100.0" styleClass="box" GridPane.columnIndex="4" GridPane.rowIndex="3" />
+
+                <ImageView fx:id="button04" fitHeight="100.0" fitWidth="100.0" styleClass="box" GridPane.columnIndex="0" GridPane.rowIndex="4" />
+                <ImageView fx:id="button14" fitHeight="100.0" fitWidth="100.0" styleClass="box" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                <ImageView fx:id="button24" fitHeight="100.0" fitWidth="100.0" styleClass="box" GridPane.columnIndex="2" GridPane.rowIndex="4" />
+                <ImageView fx:id="button34" fitHeight="100.0" fitWidth="100.0" styleClass="box" GridPane.columnIndex="3" GridPane.rowIndex="4" />
+                <ImageView fx:id="button44" fitHeight="100.0" fitWidth="100.0" styleClass="box" GridPane.columnIndex="4" GridPane.rowIndex="4" />
+            </children>
+        </GridPane>
+    </center>
+
+    <bottom>
+        <HBox styleClass="voteHBox">
+            <Label fx:id="player0" styleClass="player" />
+            <ImageView fx:id="godCard0" fitHeight="168.0" fitWidth="100.0" />
+            <Label fx:id="player1" styleClass="player" />
+            <ImageView fx:id="godCard1" fitHeight="168.0" fitWidth="100.0" />
+            <Label fx:id="player2" styleClass="player" />
+            <ImageView fx:id="godCard2" fitHeight="168.0" fitWidth="100.0" />
+        </HBox>
+    </bottom>
+
+</BorderPane>
