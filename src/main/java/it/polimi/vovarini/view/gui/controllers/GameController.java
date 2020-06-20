@@ -64,7 +64,7 @@ public class GameController extends GUIController {
                 final int x = i;
                 final int y = j;
 
-                img.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> onButtonClick(img, new Point(x, y)));
+                //img.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> onButtonClick(img, new Point(x, y)));
                 img.addEventHandler(MouseEvent.MOUSE_ENTERED, event -> onMouseEntered(img, new Point(x, y)));
                 img.addEventHandler(MouseEvent.MOUSE_EXITED, event -> onMouseExited(img, new Point(x, y)));
             }
@@ -150,6 +150,16 @@ public class GameController extends GUIController {
     }
 
     @FXML
+    public void onGridClick(MouseEvent event) {
+        Node clickedNode = event.getPickResult().getIntersectedNode();
+
+        // click on descendant node
+        Integer colIndex = GridPane.getColumnIndex(clickedNode);
+        Integer rowIndex = GridPane.getRowIndex(clickedNode);
+        System.out.println("Mouse clicked cell: " + colIndex + " And: " + rowIndex);
+    }
+
+    @FXML
     private void onButtonClick(ImageView img, Point p) {
         Board b = guiManager.getData().getBoard();
 
@@ -170,9 +180,6 @@ public class GameController extends GUIController {
             case Construction -> {
                 int levelToBuild = b.getBox(p).getLevel() + 1;
                 guiManager.getClient().raise(new BuildEvent(guiManager.getData().getOwner(), p, levelToBuild));
-            }
-            case End -> {
-                // ripristino tutto (currentSex, currentStart, ecc...) ?
             }
             default -> {}
         }
