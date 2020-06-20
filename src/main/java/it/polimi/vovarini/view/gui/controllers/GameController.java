@@ -56,7 +56,7 @@ public class GameController extends GUIController {
                 String selector = "#button" + i + j;
                 ImageView img = (ImageView) board.lookup(selector);
 
-                String url = "url('/img/prova/minecraft.png');";
+                String url = "url('/img/workers/free.png');";
                 img.setStyle("-fx-image: " + url);
 
                 int x = i;
@@ -87,8 +87,14 @@ public class GameController extends GUIController {
                 if (b.getBox(p).getItems().peek() != null) {
                     selector = "#button" + i + j;
                     ImageView img = (ImageView) board.lookup(selector);
-                    String url = "url('/img/prova/worker" + b.getBox(p).getItems().peek().toString() + ".png');";
-                    img.setStyle("-fx-image: " + url);
+
+                    for(int k = 0; k < guiManager.getNumberOfPlayers(); k++) {
+                        if(guiManager.getData().getPlayers()[k].getWorkers().values().stream().anyMatch(w -> w.equals((Worker) b.getBox(p).getItems().peek()))) {
+                            String url = "url('/img/workers/" + k + b.getBox(p).getItems().peek().toString() + ".png');";
+                            img.setStyle("-fx-image: " + url);
+                        }
+                    }
+
                     img.setDisable(true);
                 }
             }
@@ -110,8 +116,11 @@ public class GameController extends GUIController {
                 guiManager.getClient().raise( new WorkerSelectionEvent(guiManager.getData().getOwner(), guiManager.getData().getSelectedWorker().getSex()));
                 break;
             case "MOVEMENT":
+                guiManager.getClient().raise(new MovementEvent(guiManager.getData().getOwner(), p));
                 break;
             case "CONSTRUCTION":
+                int levelToBuild = b.getBox(p).getLevel() + 1;
+                guiManager.getClient().raise(new BuildEvent(guiManager.getData().getOwner(),p,levelToBuild));
                 break;
             case "END":
                 // ripristino tutto (currentSex, currentStart, ecc...) ?
@@ -136,20 +145,17 @@ public class GameController extends GUIController {
                 Item item = b.getBox(p).getItems().peek();
 
                 if(!disabled) {
-                    System.out.println("sto modificando la visibilità del current Player");
                     List<Point> reachablePoints = guiManager.getData().getOwner().getGodCard().computeReachablePoints();
                     List<Point> buildablePoints = guiManager.getData().getOwner().getGodCard().computeBuildablePoints();
 
                     switch (currentPhase.getText().toUpperCase()) {
                         case "START":
-                            System.out.println("sto modificando dentro start");
                             // abilito solo i worker del currentPlayer che hanno almeno 1 punto raggiungibile
                             if (guiManager.getData().getOwner().getWorkers().values().stream().anyMatch(w -> w.equals(item))) {
                                 guiManager.getData().setSelectedWorker((Worker) item);
                                 reachablePoints = guiManager.getData().getOwner().getGodCard().computeReachablePoints();
                                 node.setDisable(reachablePoints.isEmpty());
                                 guiManager.getData().setSelectedWorker(null);
-                                System.out.println("sto disabilitando il worker in " + p.toString() + " con " + reachablePoints.isEmpty());
                             }
                             break;
                         case "MOVEMENT":
@@ -193,16 +199,48 @@ public class GameController extends GUIController {
     @Override
     public void handleBoardUpdate(BoardUpdateEvent e) {
         b = e.getNewBoard();
+        Point p;
+        String selector, url;
+        ImageView button, level;
+
+        int index = 0;
+        for(int k = 0; k < guiManager.getNumberOfPlayers(); k++) {
+            if(guiManager.getData().getCurrentPlayer().equals(guiManager.getData().getPlayers()[k])) {
+                index = k;
+            }
+        }
 
         for (int i = 0; i < b.getSize(); i++) {
             for (int j = 0; j < b.getSize(); j++) {
-                Point p = new Point(i, j);
-                if (b.getBox(p).getItems().peek() != null) {
-                    String selector = "#button" + i + j;
-                    ImageView img = (ImageView) board.lookup(selector);
-                    String url = "url('/img/prova/worker" + b.getBox(p).getItems().peek().toString() + ".png');";
-                    img.setStyle("-fx-image: " + url);
-                    img.setDisable(true);
+                p = new Point(i, j);
+                selector = "#button" + i + j;
+                button = (ImageView) board.lookup(selector);
+                selector = "#level" + i + j;
+                level = (ImageView) board.lookup(selector);
+
+                Item item = b.getBox(p).getItems().peek();
+
+                if(item == null) {
+                    level.setStyle("");
+                    url = "url('/img/workers/free.png');";
+                    button.setStyle("-fx-image: " + url);
+                } else {
+                    if(b.getBox(p).getLevel() == 0) {
+                        level.setStyle("");
+                    } else {
+                        url = "url('/img/levels/" + b.getBox(p).getLevel() + ".png');";
+                        level.setStyle("-fx-image: " + url);
+                    }
+
+                    if(item.canBeRemoved()) {
+                        for(int k = 0; k < guiManager.getNumberOfPlayers(); k++) {
+                            if(guiManager.getData().getPlayers()[k].getWorkers().values().stream().anyMatch(w -> w.equals((Worker) item))) {
+                                url = "url('/img/workers/" + k + b.getBox(p).getItems().peek().toString() + ".png');";
+                                button.setStyle("-fx-image: " + url);
+                            }
+                        }
+                    }
+
                 }
             }
         }

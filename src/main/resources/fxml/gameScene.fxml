@@ -33,6 +33,39 @@
                 <RowConstraints minHeight="100.0" prefHeight="100.0" />
                 <RowConstraints minHeight="100.0" prefHeight="100.0" />
             </rowConstraints>
+
+            <children>
+                <ImageView fx:id="level00" fitHeight="100.0" fitWidth="100.0" styleClass="box" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+                <ImageView fx:id="level10" fitHeight="100.0" fitWidth="100.0" styleClass="box" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+                <ImageView fx:id="level20" fitHeight="100.0" fitWidth="100.0" styleClass="box" GridPane.columnIndex="2" GridPane.rowIndex="0" />
+                <ImageView fx:id="level30" fitHeight="100.0" fitWidth="100.0" styleClass="box" GridPane.columnIndex="3" GridPane.rowIndex="0" />
+                <ImageView fx:id="level40" fitHeight="100.0" fitWidth="100.0" styleClass="box" GridPane.columnIndex="4" GridPane.rowIndex="0" />
+
+                <ImageView fx:id="level01" fitHeight="100.0" fitWidth="100.0" styleClass="box" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+                <ImageView fx:id="level11" fitHeight="100.0" fitWidth="100.0" styleClass="box" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                <ImageView fx:id="level21" fitHeight="100.0" fitWidth="100.0" styleClass="box" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+                <ImageView fx:id="level31" fitHeight="100.0" fitWidth="100.0" styleClass="box" GridPane.columnIndex="3" GridPane.rowIndex="1" />
+                <ImageView fx:id="level41" fitHeight="100.0" fitWidth="100.0" styleClass="box" GridPane.columnIndex="4" GridPane.rowIndex="1" />
+
+                <ImageView fx:id="level02" fitHeight="100.0" fitWidth="100.0" styleClass="box" GridPane.columnIndex="0" GridPane.rowIndex="2" />
+                <ImageView fx:id="level12" fitHeight="100.0" fitWidth="100.0" styleClass="box" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                <ImageView fx:id="level22" fitHeight="100.0" fitWidth="100.0" styleClass="box" GridPane.columnIndex="2" GridPane.rowIndex="2" />
+                <ImageView fx:id="level32" fitHeight="100.0" fitWidth="100.0" styleClass="box" GridPane.columnIndex="3" GridPane.rowIndex="2" />
+                <ImageView fx:id="level42" fitHeight="100.0" fitWidth="100.0" styleClass="box" GridPane.columnIndex="4" GridPane.rowIndex="2" />
+
+                <ImageView fx:id="level03" fitHeight="100.0" fitWidth="100.0" styleClass="box" GridPane.columnIndex="0" GridPane.rowIndex="3" />
+                <ImageView fx:id="level13" fitHeight="100.0" fitWidth="100.0" styleClass="box" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                <ImageView fx:id="level23" fitHeight="100.0" fitWidth="100.0" styleClass="box" GridPane.columnIndex="2" GridPane.rowIndex="3" />
+                <ImageView fx:id="level33" fitHeight="100.0" fitWidth="100.0" styleClass="box" GridPane.columnIndex="3" GridPane.rowIndex="3" />
+                <ImageView fx:id="level43" fitHeight="100.0" fitWidth="100.0" styleClass="box" GridPane.columnIndex="4" GridPane.rowIndex="3" />
+
+                <ImageView fx:id="level04" fitHeight="100.0" fitWidth="100.0" styleClass="box" GridPane.columnIndex="0" GridPane.rowIndex="4" />
+                <ImageView fx:id="level14" fitHeight="100.0" fitWidth="100.0" styleClass="box" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                <ImageView fx:id="level24" fitHeight="100.0" fitWidth="100.0" styleClass="box" GridPane.columnIndex="2" GridPane.rowIndex="4" />
+                <ImageView fx:id="level34" fitHeight="100.0" fitWidth="100.0" styleClass="box" GridPane.columnIndex="3" GridPane.rowIndex="4" />
+                <ImageView fx:id="level44" fitHeight="100.0" fitWidth="100.0" styleClass="box" GridPane.columnIndex="4" GridPane.rowIndex="4" />
+            </children>
+
             <children>
                 <ImageView fx:id="button00" fitHeight="100.0" fitWidth="100.0" styleClass="box" GridPane.columnIndex="0" GridPane.rowIndex="0" />
                 <ImageView fx:id="button10" fitHeight="100.0" fitWidth="100.0" styleClass="box" GridPane.columnIndex="1" GridPane.rowIndex="0" />

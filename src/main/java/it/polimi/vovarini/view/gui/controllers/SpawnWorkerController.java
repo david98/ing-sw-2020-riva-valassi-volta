@@ -1,13 +1,11 @@
 package it.polimi.vovarini.view.gui.controllers;
 
-import it.polimi.vovarini.common.events.BoardUpdateEvent;
-import it.polimi.vovarini.common.events.PlaceYourWorkersEvent;
-import it.polimi.vovarini.common.events.SpawnWorkerEvent;
-import it.polimi.vovarini.common.events.WorkerSelectionEvent;
+import it.polimi.vovarini.common.events.*;
 import it.polimi.vovarini.model.Player;
 import it.polimi.vovarini.model.Point;
 import it.polimi.vovarini.model.board.Board;
 import it.polimi.vovarini.model.board.items.Sex;
+import it.polimi.vovarini.model.board.items.Worker;
 import it.polimi.vovarini.view.gui.GuiManager;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
@@ -52,7 +50,7 @@ public class SpawnWorkerController extends GUIController {
                 String selector = "#button" + i + j;
                 ImageView img = (ImageView) board.lookup(selector);
 
-                String url = "url('/img/prova/minecraft.png');";
+                String url = "url('/img/workers/free.png');";
                 img.setStyle("-fx-image: " + url);
 
                 int x = i;
@@ -126,8 +124,13 @@ public class SpawnWorkerController extends GUIController {
                 if (b.getBox(p).getItems().peek() != null) {
                     String selector = "#button" + i + j;
                     ImageView img = (ImageView) board.lookup(selector);
-                    String url = "url('/img/prova/worker" + b.getBox(p).getItems().peek().toString() + ".png');";
-                    img.setStyle("-fx-image: " + url);
+
+                    for(int k = 0; k < guiManager.getNumberOfPlayers(); k++) {
+                        if(guiManager.getData().getPlayers()[k].getWorkers().values().stream().anyMatch(w -> w.equals((Worker) b.getBox(p).getItems().peek()))) {
+                            String url = "url('/img/workers/" + k + b.getBox(p).getItems().peek().toString() + ".png');";
+                            img.setStyle("-fx-image: " + url);
+                        }
+                    }
                     img.setDisable(true);
                 }
             }
@@ -139,5 +142,10 @@ public class SpawnWorkerController extends GUIController {
     public void handlePlaceYourWorkers(PlaceYourWorkersEvent e) {
         super.handlePlaceYourWorkers(e);
         changeVisibility(!e.getTargetPlayer().equals(GuiManager.getInstance().getData().getOwner()), e.getTargetPlayer().getNickname());
+    }
+
+    @Override
+    public void handleCurrentPlayerUpdate(CurrentPlayerChangedEvent e) {
+        super.handleCurrentPlayerUpdate(e);
     }
 }
