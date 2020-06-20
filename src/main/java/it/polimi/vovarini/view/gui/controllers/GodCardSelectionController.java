@@ -8,6 +8,7 @@ import it.polimi.vovarini.model.Player;
 import it.polimi.vovarini.model.godcards.GodCard;
 import it.polimi.vovarini.model.godcards.GodName;
 import it.polimi.vovarini.view.gui.GuiManager;
+import it.polimi.vovarini.view.gui.Settings;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
@@ -45,10 +46,9 @@ public class GodCardSelectionController extends GUIController {
         for(int i = 0; i < availableGodCards.length; i++) {
 
             selector = "#godCard" + i;
-            Node temp = mainPane.lookup(selector);
+            ImageView temp = (ImageView) mainPane.lookup(selector);
 
-            String url = "url('/img/godcards/" + availableGodCards[i].name() + ".png');";
-            temp.setStyle("-fx-image: " + url);
+            temp.setImage(Settings.godImages.get(availableGodCards[i]));
         }
     }
 

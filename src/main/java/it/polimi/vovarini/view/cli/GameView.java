@@ -51,7 +51,7 @@ public class GameView extends View {
 
   @GameEventListener
   public void handleBoardUpdate(BoardUpdateEvent e){
-    data.setBoard(e.getNewBoard());
+    super.handleBoardUpdate(e);
     if (currentScreen != null) {
       currentScreen.handleBoardUpdate(e);
     }

@@ -2,6 +2,7 @@ package it.polimi.vovarini.view.gui.controllers;
 
 import it.polimi.vovarini.common.events.NewPlayerEvent;
 import it.polimi.vovarini.view.gui.GuiManager;
+import it.polimi.vovarini.view.gui.Settings;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -78,7 +79,7 @@ public class RegistrationController extends GUIController {
     public void handleNewPlayer(NewPlayerEvent e) {
         if (e.getNewPlayer().equals(GuiManager.getInstance().getData().getOwner())) {
             GuiManager.getInstance().setCurrentScene(mainPane.getScene());
-            GuiManager.getInstance().setLayout("/fxml/waitScene.fxml");
+            GuiManager.getInstance().setLayout(Settings.WAIT_SCENE_FXML);
         }
     }
 

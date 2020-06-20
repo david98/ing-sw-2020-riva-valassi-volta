@@ -152,6 +152,7 @@ public class GuiManager extends View {
 
     public void gameSetup() {
         javafx.application.Application.launch(Gui.class);
+        Settings.load();
     }
 
     /**

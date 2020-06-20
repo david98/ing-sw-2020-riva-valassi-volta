@@ -73,6 +73,11 @@ public abstract class View implements EventsForViewListener {
   }
 
   @Override
+  public void handleBoardUpdate(BoardUpdateEvent e) {
+    data.setBoard(e.getNewBoard());
+  }
+
+  @Override
   public void handleGodSelectionStart(GodSelectionStartEvent e) {
     Player[] players = e.getPlayers();
     for (int i = 0; i < players.length; i++){

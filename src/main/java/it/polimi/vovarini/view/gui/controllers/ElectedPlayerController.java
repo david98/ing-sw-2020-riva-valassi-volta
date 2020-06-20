@@ -6,10 +6,12 @@ import it.polimi.vovarini.common.events.GodSelectionStartEvent;
 import it.polimi.vovarini.model.godcards.GodName;
 import it.polimi.vovarini.view.gui.Gui;
 import it.polimi.vovarini.view.gui.GuiManager;
+import it.polimi.vovarini.view.gui.Settings;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 
@@ -88,10 +90,9 @@ public class ElectedPlayerController extends GUIController {
         for (int i = 0; i < allGods.length; i++) {
 
             selector = "#godCard" + i;
-            Node temp = mainPane.lookup(selector);
+            ImageView temp = (ImageView) mainPane.lookup(selector);
 
-            String url = "url('/img/godcards/" + allGods[i].name() + ".png');";
-            temp.setStyle("-fx-image: " + url);
+            temp.setImage(Settings.godImages.get(allGods[i]));
         }
     }
 
@@ -120,6 +121,7 @@ public class ElectedPlayerController extends GUIController {
 
         GodName[] godNames = Arrays.stream(GodName.values()).filter(name -> name != GodName.Nobody).toArray(GodName[]::new);
         String style = godCard.getStyle();
+        Image img = godCard.getImage();
 
         // se già scelta precedentemente, deseleziona carta
         if (selectedCards.contains(godNames[i])) {
@@ -128,12 +130,22 @@ public class ElectedPlayerController extends GUIController {
 
             switch (index) {
                 case 0:
-                    selectedGodCard1.setStyle(selectedGodCard2.getStyle());
-                    selectedGodCard2.setStyle(selectedGodCard3.getStyle());
-                    selectedGodCard3.setStyle("");
+                    //selectedGodCard1.setStyle(selectedGodCard2.getStyle());
+                    selectedGodCard1.setImage(null);
+                    selectedGodCard1.setImage(selectedGodCard2.getImage());
+                    selectedGodCard2.setImage(null);
+                    //selectedGodCard2.setStyle(selectedGodCard3.getStyle());
+                    selectedGodCard2.setImage(null);
+                    selectedGodCard2.setImage(selectedGodCard3.getImage());
+                    selectedGodCard3.setImage(null);
+                    //selectedGodCard3.setStyle("");
+                    selectedGodCard3.setImage(null);
                     break;
                 case 1:
+                    selectedGodCard2.setImage(null);
                     selectedGodCard2.setStyle(selectedGodCard3.getStyle());
+                    selectedGodCard2.setImage(selectedGodCard3.getImage());
+                    selectedGodCard3.setImage(null);
                     selectedGodCard3.setStyle("");
                     break;
                 case 2:
@@ -148,15 +160,18 @@ public class ElectedPlayerController extends GUIController {
             case 0:
                 selectedCards.add(godNames[i]);
                 selectedGodCard1.setStyle(style);
+                selectedGodCard1.setImage(img);
                 break;
             case 1:
                 selectedCards.add(godNames[i]);
                 selectedGodCard2.setStyle(style);
+                selectedGodCard2.setImage(img);
                 break;
             case 2:
                 if (GuiManager.getInstance().getNumberOfPlayers() == 3) {
                     selectedCards.add(godNames[i]);
                     selectedGodCard3.setStyle(style);
+                    selectedGodCard3.setImage(img);
                 }
                 break;
             case 3:
@@ -172,7 +187,7 @@ public class ElectedPlayerController extends GUIController {
                     selectedCards.toArray(GodName[]::new));
             GuiManager.getInstance().getClient().raise(evt);
             GuiManager.getInstance().setCurrentScene(mainPane.getScene());
-            GuiManager.getInstance().setLayout("/fxml/waitScene.fxml");
+            GuiManager.getInstance().setLayout(Settings.WAIT_SCENE_FXML);
         }
     }
 
