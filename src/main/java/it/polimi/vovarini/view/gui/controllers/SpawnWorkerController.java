@@ -55,7 +55,7 @@ public class SpawnWorkerController extends GUIController {
                 int x = i;
                 int y = j;
 
-                img.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> onButtonClick(img, new Point(x, y)));
+                //img.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> onButtonClick(img, new Point(x, y)));
             }
         }
     }
@@ -78,35 +78,13 @@ public class SpawnWorkerController extends GUIController {
     public void onGridClick(MouseEvent event) {
         Node clickedNode = event.getPickResult().getIntersectedNode();
 
-        System.out.println(event.getPickResult().getIntersectedTexCoord());
-
-        System.out.println(clickedNode.getId());
-        System.out.println(event.getPickResult().getIntersectedPoint());
-        System.out.println(((Node) event.getSource()).getId());
-
-        Node source = (Node) event.getSource() ;
-        Integer colIndex = GridPane.getColumnIndex(source);
-        Integer rowIndex = GridPane.getRowIndex(source);
-        System.out.println("Mouse clicked cell: " + colIndex + "And: " + rowIndex);
-
-
-        if (clickedNode != board) {
-            // click on descendant node
-            Node parent = clickedNode.getParent();
-            while (parent != board) {
-                clickedNode = parent;
-                parent = clickedNode.getParent();
-            }
-
-            // click on descendant node
-            //Integer colIndex = GridPane.getColumnIndex(clickedNode);
-            //Integer rowIndex = GridPane.getRowIndex(clickedNode);
-            //System.out.println("Mouse clicked cell: " + colIndex + " And: " + rowIndex);
-        }
+        // click on descendant node
+        Integer colIndex = GridPane.getColumnIndex(clickedNode);
+        Integer rowIndex = GridPane.getRowIndex(clickedNode);
+        spawnWorker(new Point(colIndex, rowIndex));
     }
 
-    @FXML
-    private void onButtonClick(ImageView img, Point p) {
+    private void spawnWorker(Point p) {
         sexes.remove(0);
         guiManager.getClient().raise(new SpawnWorkerEvent(guiManager.getData().getOwner(), p));
     }

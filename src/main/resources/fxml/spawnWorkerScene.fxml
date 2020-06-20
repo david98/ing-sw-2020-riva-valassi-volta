@@ -41,35 +41,35 @@
                <RowConstraints minHeight="100.0" prefHeight="100.0" />
            </rowConstraints>
            <children>
-               <ImageView fx:id="button00" fitHeight="100.0" fitWidth="100.0" GridPane.columnIndex="0" GridPane.rowIndex="0" styleClass="box"/>
-               <ImageView fx:id="button10" fitHeight="100.0" fitWidth="100.0" GridPane.columnIndex="1" GridPane.rowIndex="0" styleClass="box"/>
-               <ImageView fx:id="button20" fitHeight="100.0" fitWidth="100.0" GridPane.columnIndex="2" GridPane.rowIndex="0" styleClass="box"/>
-               <ImageView fx:id="button30" fitHeight="100.0" fitWidth="100.0" GridPane.columnIndex="3" GridPane.rowIndex="0" styleClass="box"/>
-               <ImageView fx:id="button40" fitHeight="100.0" fitWidth="100.0" GridPane.columnIndex="4" GridPane.rowIndex="0" styleClass="box"/>
+               <ImageView fx:id="button00" pickOnBounds="true" fitHeight="100.0" fitWidth="100.0" GridPane.columnIndex="0" GridPane.rowIndex="0" styleClass="box"/>
+               <ImageView fx:id="button10" pickOnBounds="true" fitHeight="100.0" fitWidth="100.0" GridPane.columnIndex="1" GridPane.rowIndex="0" styleClass="box"/>
+               <ImageView fx:id="button20" pickOnBounds="true" fitHeight="100.0" fitWidth="100.0" GridPane.columnIndex="2" GridPane.rowIndex="0" styleClass="box"/>
+               <ImageView fx:id="button30" pickOnBounds="true" fitHeight="100.0" fitWidth="100.0" GridPane.columnIndex="3" GridPane.rowIndex="0" styleClass="box"/>
+               <ImageView fx:id="button40" pickOnBounds="true" fitHeight="100.0" fitWidth="100.0" GridPane.columnIndex="4" GridPane.rowIndex="0" styleClass="box"/>
 
-               <ImageView fx:id="button01" fitHeight="100.0" fitWidth="100.0" GridPane.columnIndex="0" GridPane.rowIndex="1" styleClass="box"/>
-               <ImageView fx:id="button11" fitHeight="100.0" fitWidth="100.0" GridPane.columnIndex="1" GridPane.rowIndex="1" styleClass="box"/>
-               <ImageView fx:id="button21" fitHeight="100.0" fitWidth="100.0" GridPane.columnIndex="2" GridPane.rowIndex="1" styleClass="box"/>
-               <ImageView fx:id="button31" fitHeight="100.0" fitWidth="100.0" GridPane.columnIndex="3" GridPane.rowIndex="1" styleClass="box"/>
-               <ImageView fx:id="button41" fitHeight="100.0" fitWidth="100.0" GridPane.columnIndex="4" GridPane.rowIndex="1" styleClass="box"/>
+               <ImageView fx:id="button01" pickOnBounds="true" fitHeight="100.0" fitWidth="100.0" GridPane.columnIndex="0" GridPane.rowIndex="1" styleClass="box"/>
+               <ImageView fx:id="button11" pickOnBounds="true" fitHeight="100.0" fitWidth="100.0" GridPane.columnIndex="1" GridPane.rowIndex="1" styleClass="box"/>
+               <ImageView fx:id="button21" pickOnBounds="true" fitHeight="100.0" fitWidth="100.0" GridPane.columnIndex="2" GridPane.rowIndex="1" styleClass="box"/>
+               <ImageView fx:id="button31" pickOnBounds="true" fitHeight="100.0" fitWidth="100.0" GridPane.columnIndex="3" GridPane.rowIndex="1" styleClass="box"/>
+               <ImageView fx:id="button41" pickOnBounds="true" fitHeight="100.0" fitWidth="100.0" GridPane.columnIndex="4" GridPane.rowIndex="1" styleClass="box"/>
 
-               <ImageView fx:id="button02" fitHeight="100.0" fitWidth="100.0" GridPane.columnIndex="0" GridPane.rowIndex="2" styleClass="box"/>
-               <ImageView fx:id="button12" fitHeight="100.0" fitWidth="100.0" GridPane.columnIndex="1" GridPane.rowIndex="2" styleClass="box"/>
-               <ImageView fx:id="button22" fitHeight="100.0" fitWidth="100.0" GridPane.columnIndex="2" GridPane.rowIndex="2" styleClass="box"/>
-               <ImageView fx:id="button32" fitHeight="100.0" fitWidth="100.0" GridPane.columnIndex="3" GridPane.rowIndex="2" styleClass="box"/>
-               <ImageView fx:id="button42" fitHeight="100.0" fitWidth="100.0" GridPane.columnIndex="4" GridPane.rowIndex="2" styleClass="box"/>
+               <ImageView fx:id="button02" pickOnBounds="true" fitHeight="100.0" fitWidth="100.0" GridPane.columnIndex="0" GridPane.rowIndex="2" styleClass="box"/>
+               <ImageView fx:id="button12" pickOnBounds="true" fitHeight="100.0" fitWidth="100.0" GridPane.columnIndex="1" GridPane.rowIndex="2" styleClass="box"/>
+               <ImageView fx:id="button22" pickOnBounds="true" fitHeight="100.0" fitWidth="100.0" GridPane.columnIndex="2" GridPane.rowIndex="2" styleClass="box"/>
+               <ImageView fx:id="button32" pickOnBounds="true" fitHeight="100.0" fitWidth="100.0" GridPane.columnIndex="3" GridPane.rowIndex="2" styleClass="box"/>
+               <ImageView fx:id="button42" pickOnBounds="true" fitHeight="100.0" fitWidth="100.0" GridPane.columnIndex="4" GridPane.rowIndex="2" styleClass="box"/>
 
-               <ImageView fx:id="button03" fitHeight="100.0" fitWidth="100.0" GridPane.columnIndex="0" GridPane.rowIndex="3" styleClass="box"/>
-               <ImageView fx:id="button13" fitHeight="100.0" fitWidth="100.0" GridPane.columnIndex="1" GridPane.rowIndex="3" styleClass="box"/>
-               <ImageView fx:id="button23" fitHeight="100.0" fitWidth="100.0" GridPane.columnIndex="2" GridPane.rowIndex="3" styleClass="box"/>
-               <ImageView fx:id="button33" fitHeight="100.0" fitWidth="100.0" GridPane.columnIndex="3" GridPane.rowIndex="3" styleClass="box"/>
-               <ImageView fx:id="button43" fitHeight="100.0" fitWidth="100.0" GridPane.columnIndex="4" GridPane.rowIndex="3" styleClass="box"/>
+               <ImageView fx:id="button03" pickOnBounds="true" fitHeight="100.0" fitWidth="100.0" GridPane.columnIndex="0" GridPane.rowIndex="3" styleClass="box"/>
+               <ImageView fx:id="button13" pickOnBounds="true" fitHeight="100.0" fitWidth="100.0" GridPane.columnIndex="1" GridPane.rowIndex="3" styleClass="box"/>
+               <ImageView fx:id="button23" pickOnBounds="true" fitHeight="100.0" fitWidth="100.0" GridPane.columnIndex="2" GridPane.rowIndex="3" styleClass="box"/>
+               <ImageView fx:id="button33" pickOnBounds="true" fitHeight="100.0" fitWidth="100.0" GridPane.columnIndex="3" GridPane.rowIndex="3" styleClass="box"/>
+               <ImageView fx:id="button43" pickOnBounds="true" fitHeight="100.0" fitWidth="100.0" GridPane.columnIndex="4" GridPane.rowIndex="3" styleClass="box"/>
 
-               <ImageView fx:id="button04" fitHeight="100.0" fitWidth="100.0" GridPane.columnIndex="0" GridPane.rowIndex="4" styleClass="box"/>
-               <ImageView fx:id="button14" fitHeight="100.0" fitWidth="100.0" GridPane.columnIndex="1" GridPane.rowIndex="4" styleClass="box"/>
-               <ImageView fx:id="button24" fitHeight="100.0" fitWidth="100.0" GridPane.columnIndex="2" GridPane.rowIndex="4" styleClass="box"/>
-               <ImageView fx:id="button34" fitHeight="100.0" fitWidth="100.0" GridPane.columnIndex="3" GridPane.rowIndex="4" styleClass="box"/>
-               <ImageView fx:id="button44" fitHeight="100.0" fitWidth="100.0" GridPane.columnIndex="4" GridPane.rowIndex="4" styleClass="box"/>
+               <ImageView fx:id="button04" pickOnBounds="true" fitHeight="100.0" fitWidth="100.0" GridPane.columnIndex="0" GridPane.rowIndex="4" styleClass="box"/>
+               <ImageView fx:id="button14" pickOnBounds="true" fitHeight="100.0" fitWidth="100.0" GridPane.columnIndex="1" GridPane.rowIndex="4" styleClass="box"/>
+               <ImageView fx:id="button24" pickOnBounds="true" fitHeight="100.0" fitWidth="100.0" GridPane.columnIndex="2" GridPane.rowIndex="4" styleClass="box"/>
+               <ImageView fx:id="button34" pickOnBounds="true" fitHeight="100.0" fitWidth="100.0" GridPane.columnIndex="3" GridPane.rowIndex="4" styleClass="box"/>
+               <ImageView fx:id="button44" pickOnBounds="true" fitHeight="100.0" fitWidth="100.0" GridPane.columnIndex="4" GridPane.rowIndex="4" styleClass="box"/>
            </children>
        </GridPane>
    </center>
