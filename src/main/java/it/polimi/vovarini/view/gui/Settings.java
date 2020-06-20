@@ -11,7 +11,7 @@ public class Settings {
   public static final HashMap<GodName, Image> godImages = new HashMap<>();
   public static final HashMap<Sex, Image>[] workersImages = new HashMap[3];
   public static final Image[] levelsImages = new Image[4];
-  public static final Image freeImage = new Image(Settings.class.getResource("/img/workers/free.png").toExternalForm(), true);
+  public static final Image bg = new Image(Settings.class.getResource("/img/bg.png").toExternalForm(), true);
 
   static {
     for (GodName name: GodName.values()) {
@@ -54,7 +54,6 @@ public class Settings {
       lvlImg.toString();
     }
 
-    freeImage.toString();
   }
 
 }

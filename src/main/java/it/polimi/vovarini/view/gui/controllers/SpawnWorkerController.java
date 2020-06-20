@@ -36,28 +36,7 @@ public class SpawnWorkerController extends GUIController {
     public void initialize() {
 
         guiManager = GuiManager.getInstance();
-        bindEvents();
         addImages(guiManager.getData().getPlayers());
-    }
-
-    /**
-     * Binds click events
-     */
-    private void bindEvents() {
-
-        for(int i = 0; i < Board.DEFAULT_SIZE; i++) {
-            for(int j = 0; j < Board.DEFAULT_SIZE; j++) {
-                String selector = "#button" + i + j;
-                ImageView img = (ImageView) board.lookup(selector);
-
-                img.setImage(new Image(GameController.class.getResource("/img/workers/free.png").toExternalForm()));
-
-                int x = i;
-                int y = j;
-
-                //img.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> onButtonClick(img, new Point(x, y)));
-            }
-        }
     }
 
     public void addImages(Player[] players) {
@@ -78,10 +57,9 @@ public class SpawnWorkerController extends GUIController {
     public void onGridClick(MouseEvent event) {
         Node clickedNode = event.getPickResult().getIntersectedNode();
 
-        // click on descendant node
-        Integer colIndex = GridPane.getColumnIndex(clickedNode);
-        Integer rowIndex = GridPane.getRowIndex(clickedNode);
-        spawnWorker(new Point(colIndex, rowIndex));
+        Integer x = GridPane.getColumnIndex(clickedNode);
+        Integer y = GridPane.getRowIndex(clickedNode);
+        spawnWorker(new Point(x, y));
     }
 
     private void spawnWorker(Point p) {
