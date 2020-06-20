@@ -35,6 +35,8 @@ public class GameController extends GUIController {
 
     private Board b = new Board(Board.DEFAULT_SIZE);
 
+    private Point currentWorkerPosition;
+
     @FXML
     public void initialize() {
 
@@ -92,40 +94,84 @@ public class GameController extends GUIController {
             }
         }
 
-        currentPhase.setText(guiManager.getData().getCurrentPhase().name().toUpperCase());
-
         changeVisibility(!guiManager.getData().getOwner().equals(guiManager.getData().getCurrentPlayer()), guiManager.getData().getCurrentPlayer().getNickname());
     }
 
     @FXML
     private void onButtonClick(ImageView img, Point p) {
-        if(currentPhase.getText().equals(Phase.Start.name().toUpperCase())) {
-            //controllare che la lista di reachablePoints sia NON vuota
-            Item item = b.getBox(p).getItems().peek();
-            guiManager.getData().getOwner().setCurrentSex(((Worker) item).getSex());
-            guiManager.getData().getCurrentPlayer().setCurrentSex(((Worker) item).getSex());
-            guiManager.getClient().raise( new WorkerSelectionEvent(guiManager.getData().getOwner(), guiManager.getData().getSelectedWorker().getSex()));
+
+        switch (currentPhase.getText()) {
+            case "START":
+                Worker selectedWorker = (Worker) b.getBox(p).getItems().peek();
+                guiManager.getData().getOwner().setCurrentSex(selectedWorker.getSex());
+                guiManager.getData().getCurrentPlayer().setCurrentSex(selectedWorker.getSex());
+                guiManager.getData().setSelectedWorker(selectedWorker);
+                guiManager.getData().setCurrentStart(p);
+                guiManager.getClient().raise( new WorkerSelectionEvent(guiManager.getData().getOwner(), guiManager.getData().getSelectedWorker().getSex()));
+                break;
+            case "MOVEMENT":
+                break;
+            case "CONSTRUCTION":
+                break;
+            case "END":
+                // ripristino tutto (currentSex, currentStart, ecc...) ?
+                break;
+            default:
+                break;
         }
     }
 
     public void changeVisibility(boolean disabled, String currentPlayer) {
+
+        // aggiorno a video currentPhase
+        currentPhase.setText(guiManager.getData().getCurrentPhase().name().toUpperCase());
+
         for (int i = 0; i < b.getSize(); i++) {
             for (int j = 0; j < b.getSize(); j++) {
                 String selector = "#button" + i + j;
                 Node node = board.lookup(selector);
-                node.setDisable(disabled);
+                node.setDisable(true);
 
                 Point p = new Point(i,j);
                 Item item = b.getBox(p).getItems().peek();
 
-                if (guiManager.getData().getOwner().getWorkers().values().stream().anyMatch(w -> w.equals(item))) {
-                    node.setDisable(disabled);
-                } else {
-                    node.setDisable(true);
+                if(!disabled) {
+                    System.out.println("sto modificando la visibilità del current Player");
+                    List<Point> reachablePoints = guiManager.getData().getOwner().getGodCard().computeReachablePoints();
+                    List<Point> buildablePoints = guiManager.getData().getOwner().getGodCard().computeBuildablePoints();
+
+                    switch (currentPhase.getText().toUpperCase()) {
+                        case "START":
+                            System.out.println("sto modificando dentro start");
+                            // abilito solo i worker del currentPlayer che hanno almeno 1 punto raggiungibile
+                            if (guiManager.getData().getOwner().getWorkers().values().stream().anyMatch(w -> w.equals(item))) {
+                                guiManager.getData().setSelectedWorker((Worker) item);
+                                reachablePoints = guiManager.getData().getOwner().getGodCard().computeReachablePoints();
+                                node.setDisable(reachablePoints.isEmpty());
+                                guiManager.getData().setSelectedWorker(null);
+                                System.out.println("sto disabilitando il worker in " + p.toString() + " con " + reachablePoints.isEmpty());
+                            }
+                            break;
+                        case "MOVEMENT":
+                            node.setDisable(!reachablePoints.contains(p));
+                            //andrebbero evidenziati con qualcosa di grafico
+                            break;
+                        case "CONSTRUCTION":
+                            node.setDisable(!buildablePoints.contains(p));
+                            //andrebbero evidenziati con qualcosa di grafico
+                            break;
+                        case "END":
+                            // disabilito tutto?
+                            // skippo in automatico?
+                            break;
+                        default:
+                            break;
+                    }
                 }
             }
         }
 
+        // aggiorno a video CurrentPlayer
         for(int i = 0; i< guiManager.getNumberOfPlayers(); i++) {
             String selector = "#player" + i;
             Label player = (Label) mainPane.lookup(selector);
@@ -136,11 +182,11 @@ public class GameController extends GUIController {
             }
         }
 
+        // aggiorno a video il messaggio in alto
         if(disabled) {
-            instruction.setText("Wait for " + currentPlayer + "...");
-       } else {
+            instruction.setText("It's " + currentPlayer + "'s turn");
+        } else {
             instruction.setText("It's your turn!");
-            //guiManager.getClient().raise(new WorkerSelectionEvent(guiManager.getData().getOwner(), sexes.get(0)));
         }
     }
 
@@ -166,7 +212,7 @@ public class GameController extends GUIController {
     @Override
     public void handlePhaseUpdate(PhaseUpdateEvent e) {
         super.handlePhaseUpdate(e);
-        currentPhase.setText("Current phase: " + e.getNewPhase().name().toUpperCase());
+        changeVisibility(!guiManager.getData().getOwner().equals(guiManager.getData().getCurrentPlayer()), guiManager.getData().getCurrentPlayer().getNickname());
     }
 
     @Override
