@@ -243,14 +243,9 @@ public class FlowDecider extends Decider {
                         }
                     }
                 }
+                return Phase.Movement;
             }
             case Movement -> {
-                return GodCard.normalNextPhaseFromMovement(gameData);
-            }
-            case Construction -> {
-                return GodCard.normalNextPhaseFromConstruction(gameData);
-            }
-            case End -> {
                 if (gameData.getCurrentPlayer().hasPlayerRisen(gameData)) {
                     for (Player otherPlayer : gameData.getPlayers()) {
                         if (!otherPlayer.equals(gameData.getCurrentPlayer())) {
@@ -263,6 +258,12 @@ public class FlowDecider extends Decider {
                         }
                     }
                 }
+                return GodCard.normalNextPhaseFromMovement(gameData);
+            }
+            case Construction -> {
+                return GodCard.normalNextPhaseFromConstruction(gameData);
+            }
+            case End -> {
                 return Phase.Start;
             }
         }
