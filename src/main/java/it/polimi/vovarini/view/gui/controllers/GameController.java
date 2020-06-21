@@ -361,6 +361,9 @@ public class GameController extends GUIController {
             popup.getContent().add(loss);
             popup.setAutoHide(true);
             popup.show(guiManager.getStage());
+
+            // non puoi andare avanti
+            board.setDisable(true);
         } else {
             // Devo notificare oppure tolgo le pedine e bon?
             System.out.println("Lozio " + e.getLosingPlayer().getNickname() + " ha perso");
@@ -383,5 +386,8 @@ public class GameController extends GUIController {
 
         popup.setAutoHide(true);
         popup.show(guiManager.getStage());
+
+        // non puoi andare avanti
+        board.setDisable(true);
     }
 }
