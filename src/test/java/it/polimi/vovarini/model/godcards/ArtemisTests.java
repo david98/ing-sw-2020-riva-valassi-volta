@@ -90,6 +90,8 @@ public class ArtemisTests {
         } catch (InvalidPositionException | BoxFullException ignored) {
         }
 
+        game.setCurrentPhase(Phase.Start);
+        game.getCurrentPlayer().setWorkerSelected(true);
         game.setCurrentPhase(artemis.computeNextPhase(game));
         assertEquals(Phase.Movement, game.getCurrentPhase());
 

@@ -185,7 +185,7 @@ public class FlowDecider extends Decider {
                 return Phase.Construction;
             }
             case Movement -> {
-                return GodCard.normalNextPhaseFromMovement(gameData);
+                return Phase.Construction;
             }
             case Construction -> {
                 if (gameData.getCurrentPlayer().getConstructionList().size() == 1) {
