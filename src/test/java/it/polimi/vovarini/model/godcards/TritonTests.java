@@ -90,6 +90,8 @@ public class TritonTests {
         } catch (InvalidPositionException | BoxFullException ignored) {
         }
 
+        game.setCurrentPhase(Phase.Start);
+        game.getCurrentPlayer().setWorkerSelected(true);
         game.setCurrentPhase(triton.computeNextPhase(game));
         assertEquals(Phase.Movement, game.getCurrentPhase());
 

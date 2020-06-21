@@ -73,6 +73,7 @@ public class PoseidonTests {
         }
 
         assertEquals(game.getCurrentPhase(), Phase.Start);
+        game.getCurrentPlayer().setWorkerSelected(true);
         game.setCurrentPhase(poseidon.computeNextPhase(game));
         assertEquals(game.getCurrentPhase(), Phase.Movement);
         game.setCurrentPhase(poseidon.computeNextPhase(game));
