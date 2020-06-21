@@ -54,6 +54,8 @@ public class Settings {
       lvlImg.toString();
     }
 
+    bg.toString();
+
   }
 
 }

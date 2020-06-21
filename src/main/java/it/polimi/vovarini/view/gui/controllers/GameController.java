@@ -57,40 +57,46 @@ public class GameController extends GUIController {
         for(int i = 0; i < Board.DEFAULT_SIZE; i++) {
             for(int j = 0; j < Board.DEFAULT_SIZE; j++) {
                 String selector = "#button" + i + j;
-                ImageView img = (ImageView) board.lookup(selector);
+                ImageView button = (ImageView) board.lookup(selector);
                 // needed because the event handler needs final variables
                 final int x = i;
                 final int y = j;
 
-                img.addEventHandler(MouseEvent.MOUSE_ENTERED, event -> onMouseEntered(new Point(x, y)));
-                img.addEventHandler(MouseEvent.MOUSE_EXITED, event -> onMouseExited());
+                button.addEventHandler(MouseEvent.MOUSE_ENTERED, event -> onMouseEntered(new Point(x, y)));
+                button.addEventHandler(MouseEvent.MOUSE_EXITED, event -> onMouseExited());
             }
         }
     }
 
     private void onMouseEntered(Point p) {
 
-        Board b = guiManager.getData().getBoard();
-        if (guiManager.getData().getOwner().getWorkers()
-                .values()
-                .stream()
-                .anyMatch(w -> w.equals(b.getBox(p).getItems().peek()))) {
-            var worker = (Worker) b.getBox(p).getItems().peek();
-            guiManager.getData().getCurrentPlayer().setCurrentSex(worker.getSex());
-            List<Point> reachablePoints = guiManager.getData().getOwner().getGodCard().computeReachablePoints();
-            highlightPoints(reachablePoints);
+        if(guiManager.getData().getCurrentPhase().equals(Phase.Start)) {
+            Board b = guiManager.getData().getBoard();
+            if (guiManager.getData().getOwner().getWorkers()
+                    .values()
+                    .stream()
+                    .anyMatch(w -> w.equals(b.getBox(p).getItems().peek()))) {
+                var worker = (Worker) b.getBox(p).getItems().peek();
+                guiManager.getData().getCurrentPlayer().setCurrentSex(worker.getSex());
+                List<Point> reachablePoints = guiManager.getData().getOwner().getGodCard().computeReachablePoints();
+                highlightPoints(reachablePoints);
+            }
         }
     }
 
     private void highlightPoints(Collection<Point> points) {
 
+
         for (Point point: points) {
 
             String selector = "#level" + point.getX() + point.getY();
             Pane level = (Pane) board.lookup(selector);
-            //imageView.setStyle("-fx-effect: innershadow(gaussian, #F44336, 15, 0.2, 0, 0);");
-            level.setStyle("-fx-background-color: rgba(255, 0, 0, 0.2)");
 
+            if(guiManager.getData().getBoard().getBox(point).getItems().size() == 0) {
+                level.setStyle("-fx-background-color: rgba(255, 0, 0, 0.2)");
+            } else {
+                level.setStyle("-fx-effect: dropshadow(gaussian, #F44336, 15, 0.2, 0, 0);");
+            }
         }
     }
 
@@ -144,7 +150,6 @@ public class GameController extends GUIController {
             }
         }
 
-
         // new BackgroundSize(width, height, widthAsPercentage, heightAsPercentage, contain, cover)
         BackgroundSize backgroundSize = new BackgroundSize(500, 500, false, false, true, false);
         // new BackgroundImage(image, repeatX, repeatY, position, size)
@@ -181,15 +186,20 @@ public class GameController extends GUIController {
                             guiManager.getData().getSelectedWorker().getSex()));
                 }
             }
-            case Movement ->
-                guiManager.getClient().raise(new MovementEvent(guiManager.getData().getOwner(), p));
-                // aggiungere spostamento automatico
-            case Construction -> {
-                int levelToBuild = b.getBox(p).getLevel() + 1;
-                guiManager.getClient().raise(new BuildEvent(guiManager.getData().getOwner(), p, levelToBuild));
+            case Movement -> {
+                List<Point> reachablePoints = guiManager.getData().getOwner().getGodCard().computeReachablePoints();
+                if (reachablePoints.contains(p)) {
+                    guiManager.getClient().raise(new MovementEvent(guiManager.getData().getOwner(), p));
+                    // aggiungere spostamento automatico prima della risposta del server
+                }
             }
-            case End -> {
-                guiManager.getClient().raise(new SkipEvent(guiManager.getData().getOwner()));
+            case Construction -> {
+                List<Point> buildablePoints = guiManager.getData().getOwner().getGodCard().computeBuildablePoints();
+                if(buildablePoints.contains(p)) {
+                    int levelToBuild = b.getBox(p).getLevel() + 1;
+                    guiManager.getClient().raise(new BuildEvent(guiManager.getData().getOwner(), p, levelToBuild));
+                    // aggiungere costruzione automatica prima della risposta del server
+                }
             }
             default -> {}
         }
@@ -319,6 +329,12 @@ public class GameController extends GUIController {
     public void handlePhaseUpdate(PhaseUpdateEvent e) {
         super.handlePhaseUpdate(e);
         updateView();
+        //skip automatico
+        if(e.getNewPhase().equals(Phase.End)) {
+            if(guiManager.getData().getOwner().equals(guiManager.getData().getCurrentPlayer())) {
+                guiManager.getClient().raise(new SkipEvent(guiManager.getData().getOwner()));
+            }
+        }
     }
 
     @Override

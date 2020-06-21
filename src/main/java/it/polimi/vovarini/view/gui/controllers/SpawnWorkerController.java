@@ -11,7 +11,6 @@ import it.polimi.vovarini.view.gui.Settings;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
@@ -59,7 +58,14 @@ public class SpawnWorkerController extends GUIController {
 
         Integer x = GridPane.getColumnIndex(clickedNode);
         Integer y = GridPane.getRowIndex(clickedNode);
-        spawnWorker(new Point(x, y));
+
+        Point p = new Point(x,y);
+
+        // piazzo il worker solo se il box è libero
+        if (guiManager.getData().getBoard().getBox(p).getItems().peek() == null) {
+            spawnWorker(p);
+        }
+
     }
 
     private void spawnWorker(Point p) {
@@ -68,19 +74,8 @@ public class SpawnWorkerController extends GUIController {
     }
 
     public void updateView(boolean disabled, String currentPlayer) {
-        Board b = guiManager.getData().getBoard();
-        for (int i = 0; i < b.getSize(); i++) {
-            for (int j = 0; j < b.getSize(); j++) {
-                String selector = "#button" + i + j;
-                Node node = board.lookup(selector);
-                node.setDisable(disabled);
 
-                Point p = new Point(i,j);
-                if (b.getBox(p).getItems().peek() != null) {
-                    node.setDisable(true);
-                }
-            }
-        }
+        board.setDisable(disabled);
 
         for(int i = 0; i< guiManager.getNumberOfPlayers(); i++) {
             String selector = "#player" + i;
@@ -109,15 +104,14 @@ public class SpawnWorkerController extends GUIController {
                 Point p = new Point(i, j);
                 if (b.getBox(p).getItems().peek() != null) {
                     String selector = "#button" + i + j;
-                    ImageView img = (ImageView) board.lookup(selector);
+                    ImageView button = (ImageView) board.lookup(selector);
 
                     for(int k = 0; k < guiManager.getNumberOfPlayers(); k++) {
-                        if(guiManager.getData().getPlayers()[k].getWorkers().values().stream().anyMatch(w -> w.equals(b.getBox(p).getItems().peek()))) {
-                            img.setImage(
+                        if (guiManager.getData().getPlayers()[k].getWorkers().values().stream().anyMatch(w -> w.equals(b.getBox(p).getItems().peek()))) {
+                            button.setImage(
                                     Settings.workersImages[k].get(((Worker) b.getBox(p).getItems().peek()).getSex()));
                         }
                     }
-                    img.setDisable(true);
                 }
             }
         }
