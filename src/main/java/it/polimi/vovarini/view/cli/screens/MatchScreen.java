@@ -229,11 +229,13 @@ public class MatchScreen extends Screen {
     switch (data.getCurrentPhase()) {
       case Movement -> {
         if (data.getCurrentPlayer().equals(data.getOwner())) {
+          boardElement.resetMarkedPoints();
           boardElement.markPoints(data.getOwner().getGodCard().computeReachablePoints());
         }
       }
       case Construction -> {
         if (data.getCurrentPlayer().equals(data.getOwner())) {
+          boardElement.resetMarkedPoints();
           boardElement.markPoints(data.getOwner().getGodCard().computeBuildablePoints());
         }
       }
