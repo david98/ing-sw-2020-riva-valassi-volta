@@ -13,7 +13,7 @@ import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.GridPane;
+import javafx.scene.layout.*;
 
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -50,6 +50,11 @@ public class SpawnWorkerController extends GUIController {
 
             godCard.setImage(Settings.godImages.get(players[i].getGodCard().getName()));
         }
+
+        BackgroundSize backgroundSize = new BackgroundSize(500, 500, false, false, true, false);
+        BackgroundImage backgroundImage = new BackgroundImage(Settings.bg, BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.CENTER, backgroundSize);
+        Background background = new Background(backgroundImage);
+        board.setBackground(background);
     }
 
     @FXML

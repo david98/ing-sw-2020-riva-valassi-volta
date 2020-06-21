@@ -110,6 +110,7 @@
             <ImageView fx:id="godCard2" fitHeight="168.0" fitWidth="100.0" />
 
             <Label fx:id="currentPhase" styleClass="player" />
+            <Label fx:id="skipButton" styleClass="menuLabel" text="SKIP"/>
         </HBox>
     </bottom>
 

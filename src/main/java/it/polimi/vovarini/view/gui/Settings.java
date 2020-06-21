@@ -12,6 +12,9 @@ public class Settings {
   public static final HashMap<Sex, Image>[] workersImages = new HashMap[3];
   public static final Image[] levelsImages = new Image[4];
   public static final Image bg = new Image(Settings.class.getResource("/img/bg.png").toExternalForm(), true);
+  public static final Image victory = new Image(Settings.class.getResource("/img/victory.png").toExternalForm(), true);
+  public static final Image loss = new Image(Settings.class.getResource("/img/loss.png").toExternalForm(), true);
+
 
   static {
     for (GodName name: GodName.values()) {
@@ -55,7 +58,8 @@ public class Settings {
     }
 
     bg.toString();
-
+    victory.toString();
+    loss.toString();
   }
 
 }

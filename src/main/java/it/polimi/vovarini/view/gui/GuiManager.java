@@ -150,6 +150,12 @@ public class GuiManager extends View {
         Platform.runLater(() -> currentController.handleVictory(e));
     }
 
+    @Override
+    @GameEventListener
+    public void handleLoss(LossEvent e) {
+        Platform.runLater(() -> currentController.handleLoss(e));
+    }
+
     public void gameSetup() {
         javafx.application.Application.launch(Gui.class);
         Settings.load();

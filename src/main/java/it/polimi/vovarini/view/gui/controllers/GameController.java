@@ -11,10 +11,16 @@ import it.polimi.vovarini.view.gui.GuiManager;
 import it.polimi.vovarini.view.gui.Settings;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.PopupControl;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
+import javafx.stage.Modality;
+import javafx.stage.Popup;
+import javafx.stage.PopupWindow;
+import javafx.stage.Stage;
 
 import java.util.Collection;
 import java.util.LinkedList;
@@ -30,6 +36,9 @@ public class GameController extends GUIController {
 
     @FXML
     private Label currentPhase;
+
+    @FXML
+    private Label skipButton;
 
     private GuiManager guiManager;
 
@@ -66,6 +75,7 @@ public class GameController extends GUIController {
                 button.addEventHandler(MouseEvent.MOUSE_EXITED, event -> onMouseExited());
             }
         }
+        skipButton.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> skipPhase());
     }
 
     private void onMouseEntered(Point p) {
@@ -325,6 +335,10 @@ public class GameController extends GUIController {
         updateView();
     }
 
+    private void skipPhase() {
+        guiManager.getClient().raise(new SkipEvent(guiManager.getData().getOwner()));
+    }
+
     @Override
     public void handlePhaseUpdate(PhaseUpdateEvent e) {
         super.handlePhaseUpdate(e);
@@ -340,10 +354,34 @@ public class GameController extends GUIController {
     @Override
     public void handleLoss(LossEvent e) {
         super.handleLoss(e);
+
+        Popup popup = new Popup();
+        if(e.getLosingPlayer().equals(guiManager.getData().getOwner())) {
+            ImageView loss = new ImageView(Settings.loss);
+            popup.getContent().add(loss);
+            popup.setAutoHide(true);
+            popup.show(guiManager.getStage());
+        } else {
+            // Devo notificare oppure tolgo le pedine e bon?
+            System.out.println("Lozio " + e.getLosingPlayer().getNickname() + " ha perso");
+        }
+
     }
 
     @Override
     public void handleVictory(VictoryEvent e) {
         super.handleVictory(e);
+
+        Popup popup = new Popup();
+        if(e.getWinningPlayer().equals(guiManager.getData().getOwner())) {
+            ImageView victory = new ImageView(Settings.victory);
+            popup.getContent().add(victory);
+        } else {
+            ImageView loss = new ImageView(Settings.loss);
+            popup.getContent().add(loss);
+        }
+
+        popup.setAutoHide(true);
+        popup.show(guiManager.getStage());
     }
 }
