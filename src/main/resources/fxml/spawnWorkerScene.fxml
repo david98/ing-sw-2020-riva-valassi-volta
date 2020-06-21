@@ -25,7 +25,7 @@
     </top>
 
     <center>
-       <GridPane prefHeight="500.0" prefWidth="500.0" fx:id="board" gridLinesVisible="true" styleClass="board" onMouseClicked="#onGridClick">
+       <GridPane prefHeight="500.0" prefWidth="500.0" fx:id="board" styleClass="board" onMouseClicked="#onGridClick">
            <columnConstraints>
                <ColumnConstraints minWidth="100.0" prefWidth="100.0"/>
                <ColumnConstraints minWidth="100.0" prefWidth="100.0"/>
