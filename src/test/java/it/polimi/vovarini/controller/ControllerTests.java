@@ -9,6 +9,8 @@ import it.polimi.vovarini.model.board.items.Sex;
 import it.polimi.vovarini.model.godcards.GodCard;
 import it.polimi.vovarini.model.godcards.GodCardFactory;
 import it.polimi.vovarini.model.godcards.GodName;
+import it.polimi.vovarini.model.moves.Construction;
+import it.polimi.vovarini.model.moves.Movement;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
@@ -200,8 +202,8 @@ public class ControllerTests {
             });
     assertFalse(game.getCurrentPlayer().isWorkerSelected());
 
-    game.getCurrentPlayer().setWorkerSelected(false);
-    game.setCurrentPhase(game.getCurrentPlayer().getGodCard().computeNextPhase(game));
+    game.setCurrentPhase(Phase.Movement);
+
     WorkerSelectionEvent evtNextPhase =
             new WorkerSelectionEvent(game.getCurrentPlayer(), Sex.Female);
     assertThrows(
@@ -213,36 +215,22 @@ public class ControllerTests {
   }
 
   @Test
-  @Disabled("This test is waiting for a fix due to recent changes in Game.")
   @DisplayName("Player moves due to a MovementEvent. Tests sequence of calls")
   void movementTest() {
 
     Point point = new Point(0, 1);
-
+    game.getBoard().place(game.getCurrentPlayer().getCurrentWorker(), new Point(0, 0));
 
     game.getCurrentPlayer().setCurrentSex(Sex.Male);
-    try {
-      game.getBoard().place(game.getCurrentPlayer().getCurrentWorker(), new Point(0, 0));
-    } catch (InvalidPositionException ignored) {
-    } catch (BoxFullException ignored) {
-    }
+    game.getCurrentPlayer().setWorkerSelected(true);
 
     game.setCurrentPhase(game.getCurrentPlayer().getGodCard().computeNextPhase(game));
 
+    assertEquals(Phase.Movement, game.getCurrentPhase());
     MovementEvent evt = new MovementEvent(game.getCurrentPlayer(), point);
-    try {
-      controller.update(evt);
-      try {
-        assertTrue(
-                point.equals(
-                        game.getBoard().getItemPosition(game.getCurrentPlayer().getCurrentWorker())));
-      } catch (ItemNotFoundException ignored) {
-      }
-    } catch (InvalidPhaseException ignored) {
-    } catch (WrongPlayerException ignored) {
-    } catch (InvalidPositionException ignored) {
-    } catch (InvalidMoveException ignored) {
-    }
+
+    controller.update(evt);
+    assertTrue(point.equals(game.getBoard().getItemPosition(game.getCurrentPlayer().getCurrentWorker())));
     assertFalse(game.getCurrentPlayer().getMovementList().isEmpty());
     game.getCurrentPlayer().getMovementList().clear();
     game.setCurrentPhase(Phase.Movement);
@@ -279,9 +267,9 @@ public class ControllerTests {
     });
     assertTrue(game.getCurrentPlayer().getMovementList().isEmpty());
 
-    game.setCurrentPhase(Phase.End);
-    game.setCurrentPhase(game.getCurrentPlayer().getGodCard().computeNextPhase(game));
-    game.setCurrentPhase(game.getCurrentPlayer().getGodCard().computeNextPhase(game));
+    game.nextPlayer();
+    game.getCurrentPlayer().setWorkerSelected(true);
+    game.setCurrentPhase(Phase.Movement);
 
     MovementEvent evtInvalidPlayer = new MovementEvent(game.getPlayers()[0], point);
 
@@ -290,12 +278,14 @@ public class ControllerTests {
     });
     assertTrue(game.getCurrentPlayer().getMovementList().isEmpty());
 
+    game.nextPlayer();
+    game.setCurrentPhase(Phase.Start);
+    game.getCurrentPlayer().setWorkerSelected(true);
+    game.setCurrentPhase(game.getCurrentPlayer().getGodCard().computeNextPhase(game));
+
+    assertEquals(Phase.Movement, game.getCurrentPhase());
+
     game.setCurrentPhase(Phase.End);
-    game.setCurrentPhase(game.getCurrentPlayer().getGodCard().computeNextPhase(game));
-
-
-    game.setCurrentPhase(game.getCurrentPlayer().getGodCard().computeNextPhase(game));
-    game.setCurrentPhase(game.getCurrentPlayer().getGodCard().computeNextPhase(game));
     Point newPoint = new Point(0, 2);
     MovementEvent evtInvalidPhase = new MovementEvent(game.getCurrentPlayer(), newPoint);
 
@@ -307,7 +297,6 @@ public class ControllerTests {
   }
 
   @Test
-  @Disabled("This test is waiting for a fix due to recent changes in Game.")
   @DisplayName("Player builds due to a ConstructionEvent. Tests sequence of calls")
   void constructionTest() {
     game.getCurrentPlayer().setCurrentSex(Sex.Female);
@@ -319,6 +308,7 @@ public class ControllerTests {
     }
 
     game.getCurrentPlayer().setCurrentSex(Sex.Male);
+    game.getCurrentPlayer().setWorkerSelected(true);
 
     Point malePos = new Point(0, 0);
     try {
@@ -327,6 +317,8 @@ public class ControllerTests {
     }
 
     game.setCurrentPhase(game.getCurrentPlayer().getGodCard().computeNextPhase(game));
+    // movimento fittizio altrimenti non mi fa skippare
+    game.getCurrentPlayer().getMovementList().add(new Movement(game.getBoard(), new Point(0,0), new Point(1,1)));
     game.setCurrentPhase(game.getCurrentPlayer().getGodCard().computeNextPhase(game));
 
     assertEquals(Phase.Construction, game.getCurrentPhase());
@@ -362,7 +354,7 @@ public class ControllerTests {
 
     BuildEvent evtInvalidMove2 = new BuildEvent(game.getCurrentPlayer(), femalePos, level);
     assertThrows(InvalidMoveException.class, () -> {
-      controller.update(evtInvalidMove);
+      controller.update(evtInvalidMove2);
     });
     assertTrue(game.getCurrentPlayer().getConstructionList().isEmpty());
 
@@ -385,8 +377,8 @@ public class ControllerTests {
     });
     assertTrue(game.getCurrentPlayer().getConstructionList().isEmpty());
 
-    game.setCurrentPhase(Phase.End);
-    game.setCurrentPhase(game.getCurrentPlayer().getGodCard().computeNextPhase(game));
+    game.setCurrentPhase(Phase.Start);
+    game.nextPlayer();
     BuildEvent evtInvalidPhase = new BuildEvent(game.getCurrentPlayer(), target, level);
     assertThrows(InvalidPhaseException.class, () -> {
       controller.update(evtInvalidPhase);
@@ -528,30 +520,26 @@ public class ControllerTests {
   }
 
   @Test
-  @Disabled("This test is waiting for a fix due to recent changes in Game.")
   @DisplayName("Tests that the game skips the Start phase only if a worker has been selected")
   void skipStartTest(){
-    game.setCurrentPhase(Phase.Start);
 
+    game.getBoard().place(game.getCurrentPlayer().getCurrentWorker(), new Point(0,0));
     WorkerSelectionEvent wse_evt = new WorkerSelectionEvent(game.getCurrentPlayer(), Sex.Female);
-    try{
-      controller.update(wse_evt);
-    }catch (InvalidPhaseException ignored){}
-    catch (WrongPlayerException ignored){}
+    controller.update(wse_evt);
 
     SkipEvent evt = new SkipEvent(game.getCurrentPlayer());
-    try{
-      controller.update(evt);
-    }catch (WrongPlayerException ignored){}
-    catch (UnskippablePhaseException ignored){}
 
-    assertTrue(game.getCurrentPhase().equals(Phase.Movement));
-    game.getCurrentPlayer().setWorkerSelected(false);
+    controller.update(evt);
 
+    assertEquals(Phase.Movement, game.getCurrentPhase());
+
+    game.getBoard().place(game.getCurrentPlayer().getCurrentWorker(), new Point(0,0));
     game.setCurrentPhase(Phase.Start);
+
     SkipEvent invalidStartEvt = new SkipEvent(game.getCurrentPlayer());
-    assertThrows(UnskippablePhaseException.class, () ->
-      controller.update(invalidStartEvt));
+    controller.update(invalidStartEvt);
+    assertEquals(Phase.Start, game.getCurrentPhase());
+
 
 
 
@@ -565,21 +553,12 @@ public class ControllerTests {
 
 
     game.getCurrentPlayer().setCurrentSex(Sex.Male);
-    try {
-      game.getBoard().place(game.getCurrentPlayer().getCurrentWorker(), new Point(0, 0));
-    } catch (InvalidPositionException ignored) {
-    } catch (BoxFullException ignored) {
-    }
+    game.getBoard().place(game.getCurrentPlayer().getCurrentWorker(), new Point(0, 0));
 
     game.setCurrentPhase(Phase.Movement);
     MovementEvent mv_evt = new MovementEvent(game.getCurrentPlayer(), point);
-    try{
-      controller.update(mv_evt);
-    }catch (InvalidPhaseException ignored) {
-    } catch (WrongPlayerException ignored) {
-    } catch (InvalidPositionException ignored) {
-    } catch (InvalidMoveException ignored) {
-    }
+
+    controller.update(mv_evt);
 
     SkipEvent evt = new SkipEvent(game.getCurrentPlayer());
     try{
@@ -592,13 +571,8 @@ public class ControllerTests {
 
     game.setCurrentPhase(Phase.Movement);
     SkipEvent evtMovementListEmpty = new SkipEvent(game.getCurrentPlayer());
-    assertThrows(UnskippablePhaseException.class, () -> {
-      controller.update(evtMovementListEmpty);
-    });
-
-
-
-
+    controller.update(evtMovementListEmpty);
+    assertEquals(Phase.Movement, game.getCurrentPhase());
   }
 
   @Test
@@ -609,22 +583,18 @@ public class ControllerTests {
     game.getCurrentPlayer().setCurrentSex(Sex.Female);
 
     Point femalePos = new Point(0, 1);
-    try {
-      game.getBoard().place(game.getCurrentPlayer().getCurrentWorker(), femalePos);
-    } catch (InvalidPositionException ignored) {
-    } catch (BoxFullException ignored) {
-    }
+
+    game.getBoard().place(game.getCurrentPlayer().getCurrentWorker(), femalePos);
 
     game.getCurrentPlayer().setCurrentSex(Sex.Male);
 
     Point malePos = new Point(0, 0);
-    try {
-      game.getBoard().place(game.getCurrentPlayer().getCurrentWorker(), malePos);
-    } catch (InvalidPositionException ignored) {
-    } catch (BoxFullException ignored) {
-    }
 
+    game.getBoard().place(game.getCurrentPlayer().getCurrentWorker(), malePos);
+
+    game.getCurrentPlayer().setWorkerSelected(true);
     game.setCurrentPhase(game.getCurrentPlayer().getGodCard().computeNextPhase(game));
+    game.getCurrentPlayer().getMovementList().add(new Movement(game.getBoard(), new Point(0,0), new Point(0,0)));
     game.setCurrentPhase(game.getCurrentPlayer().getGodCard().computeNextPhase(game));
 
     assertEquals(game.getCurrentPhase(), Phase.Construction);
@@ -634,21 +604,13 @@ public class ControllerTests {
 
     BuildEvent bd_evt = new BuildEvent(game.getCurrentPlayer(), target, level);
 
-    try {
-      controller.update(bd_evt);
-    } catch (InvalidPositionException ignored) {
-    } catch (InvalidPhaseException ignored) {
-    } catch (WrongPlayerException ignored) {
-    } catch (InvalidMoveException ignored) {
-    }
+    controller.update(bd_evt);
 
     game.setCurrentPhase(Phase.Construction);
 
     SkipEvent evt = new SkipEvent(game.getCurrentPlayer());
-    try{
-      controller.update(evt);
-    }catch (WrongPlayerException ignored){}
-    catch (UnskippablePhaseException ignored){}
+
+    controller.update(evt);
 
     assertTrue(game.getCurrentPhase().equals(Phase.End));
     game.getCurrentPlayer().getConstructionList().clear();
@@ -656,11 +618,9 @@ public class ControllerTests {
     game.setCurrentPhase(Phase.Construction);
     SkipEvent evtConstructionNotPerformed = new SkipEvent(game.getCurrentPlayer());
 
-    assertThrows(UnskippablePhaseException.class, () -> {
-      controller.update(evtConstructionNotPerformed);
-    });
+    controller.update(evtConstructionNotPerformed);
 
-
+    assertEquals(Phase.Construction, game.getCurrentPhase());
   }
 
   @ParameterizedTest
