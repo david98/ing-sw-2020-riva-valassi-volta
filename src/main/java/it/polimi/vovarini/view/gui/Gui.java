@@ -20,6 +20,14 @@ public class Gui extends Application {
         stage.show();
         stage.setMinWidth(stage.getWidth());
         stage.setMinHeight(stage.getHeight());
+        stage.setTitle("Santorini");
+        stage.setFullScreen(true);
+    }
+
+    @Override
+    public void stop() throws Exception {
+        super.stop();
+        GuiManager.getInstance().stopEventListener();
     }
 
     public static void main(String[] args) {

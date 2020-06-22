@@ -35,7 +35,8 @@
                 <Label text="Enter server port:" styleClass="menuLabel"/>
                 <TextField fx:id="portField" text="6666" styleClass="menuTextField"/>
 
-                <Button fx:id="submit" onAction="#onButtonClick">Submit</Button>
+                <Button fx:id="submit" onAction="#onButtonClick">
+                </Button>
             </VBox>
         </HBox>
     </center>

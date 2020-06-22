@@ -175,11 +175,13 @@ public class GuiManager extends View {
             pane = loader.load();
             currentScene.setRoot(pane);
             this.currentController = loader.getController();
-            stage.setMinWidth(0);
-            stage.setMinHeight(0);
-            stage.sizeToScene();
-            stage.setMinWidth(stage.getWidth());
-            stage.setMinHeight(stage.getHeight());
+            if (!(stage.isMaximized() || stage.isFullScreen())) {
+                stage.setMinWidth(0);
+                stage.setMinHeight(0);
+                stage.sizeToScene();
+                stage.setMinWidth(stage.getWidth());
+                stage.setMinHeight(stage.getHeight());
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -220,6 +222,10 @@ public class GuiManager extends View {
 
     public void setStage(Stage stage) {
         this.stage = stage;
+    }
+
+    public void stopEventListener() {
+        guiEventListenerThread.interrupt();
     }
 }
 
