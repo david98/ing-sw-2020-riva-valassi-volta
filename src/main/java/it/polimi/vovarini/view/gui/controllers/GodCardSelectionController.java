@@ -39,9 +39,6 @@ public class GodCardSelectionController extends GUIController {
 
         guiManager = GuiManager.getInstance();
         bindEvents();
-        addImages(new GodName[]{GodName.Artemis, GodName.Apollo});
-        instruction.setText("It's your turn, choose your card!");
-        showChoice(new Player("nomelunghissimoporcalaputtanachecoglione"), GodCardFactory.create(GodName.Artemis));
     }
 
      public void addImages(GodName[] availableGodCards) {

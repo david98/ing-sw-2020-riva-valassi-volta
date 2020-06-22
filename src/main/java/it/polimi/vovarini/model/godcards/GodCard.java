@@ -325,13 +325,12 @@ public class GodCard implements Serializable {
    * @return the phase subsequent to the one currently in place
    */
   public Phase computeNextPhase(GameDataAccessor gameData, boolean skipIfPossible){
-
+    Phase previous = gameData.getCurrentPhase();
     Phase next;
 
     next = nextPhase.apply(gameData, skipIfPossible);
 
-    if(next.equals(Phase.Start)){
-
+    if(!previous.equals(Phase.Start) && next.equals(Phase.Start)){
       resetPlayerInfo(gameData);
       gameData.getCurrentPlayer().getGodCard().movementConstraints.clear();
       gameData.getCurrentPlayer().getGodCard().constructionConstraints.clear();
