@@ -175,13 +175,19 @@ public class GuiManager extends View {
             pane = loader.load();
             currentScene.setRoot(pane);
             this.currentController = loader.getController();
-            if (!(stage.isMaximized() || stage.isFullScreen())) {
+            boolean isMaximized = stage.isMaximized();
+            boolean isFullScreen = stage.isFullScreen();
+            if (!isFullScreen && !isMaximized) {
                 stage.setMinWidth(0);
                 stage.setMinHeight(0);
                 stage.sizeToScene();
                 stage.setMinWidth(stage.getWidth());
                 stage.setMinHeight(stage.getHeight());
             }
+
+            //stage.setMaximized(isMaximized);
+            //stage.setFullScreen(isFullScreen);
+
         } catch (IOException e) {
             e.printStackTrace();
         }

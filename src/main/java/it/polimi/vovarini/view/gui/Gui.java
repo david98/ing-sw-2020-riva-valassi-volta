@@ -2,11 +2,18 @@ package it.polimi.vovarini.view.gui;
 
 import javafx.application.Application;
 import javafx.scene.Scene;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyCodeCombination;
+import javafx.scene.input.KeyCombination;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 
 
 public class Gui extends Application {
+
+    private final KeyCombination FullScreenKeyCombo =
+            new KeyCodeCombination(KeyCode.ENTER, KeyCombination.ALT_DOWN);
 
     @Override
     public void start(Stage stage) {
@@ -16,12 +23,29 @@ public class Gui extends Application {
 
         GuiManager.getInstance().setStage(stage);
         GuiManager.getInstance().setCurrentScene(stage.getScene());
-        GuiManager.getInstance().setLayout(Settings.REGISTRATION_SCENE_PATH);
+        GuiManager.getInstance().setLayout(Settings.GODCARD_SELECTION_SCENE_PATH);
         stage.show();
         stage.setMinWidth(stage.getWidth());
         stage.setMinHeight(stage.getHeight());
         stage.setTitle("Santorini");
         stage.setFullScreen(true);
+
+        stage.maximizedProperty().addListener((obs, wasMaximized, willBeMaximized) -> {
+            if (wasMaximized && !willBeMaximized) {
+                stage.sizeToScene();
+                stage.setMinWidth(stage.getWidth());
+                stage.setMinHeight(stage.getHeight());
+            }
+        });
+
+        // toggle full-screen when alt + enter is pressed
+        stage.addEventHandler(KeyEvent.KEY_PRESSED, event -> {
+
+            if(FullScreenKeyCombo.match(event)) {
+                stage.setFullScreen(!stage.isFullScreen());
+            }
+        });
+
     }
 
     @Override

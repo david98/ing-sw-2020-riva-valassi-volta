@@ -1,26 +1,18 @@
 @font-face {
-    src: url("../fonts/ethnocentric-rg.ttf");
+    src: url("../fonts/DalekPinpointBold.ttf");
 }
 
 @font-face {
-    src: url("../fonts/ethnocentric-rg-it.ttf");
-}
-
-@font-face {
-    src: url("../fonts/Exo2-Black.ttf");
-}
-
-@font-face {
-    src: url("../fonts/Exo2-Medium.ttf");
+    src: url("../fonts/Romanica.ttf");
 }
 
 .mainPane {
-//-fx-background-image: url("../img/bg.png");
+    -fx-background-image: url("../img/selection_bg.png");
     -fx-alignment: CENTER;
 }
 
 .topBox {
-    -fx-padding: 50 0 0 0;
+    -fx-padding: 50 20 50 20;
     -fx-alignment: CENTER;
 }
 
@@ -39,37 +31,64 @@
     -fx-scale-x: 0.95;
 }
 
-.voteHBox {
-    -fx-min-width: 400px;
-    -fx-max-width: 400px;
+.allGodsBox {
+    -fx-min-width: 900px;
+    -fx-max-width: 900px;
+    -fx-min-height: 500px;
     -fx-padding: 10 10 10 10;
     -fx-spacing: 20;
     -fx-alignment: CENTER;
 }
 
-.voteBox {
-    -fx-min-width: 400px;
-    -fx-max-width: 400px;
-    -fx-padding: 10 10 10 10;
-    -fx-spacing: 20;
+.godsPane {
+    -fx-text-alignment: center;
+    -fx-hgap: 50;
+    -fx-vgap: 20;
     -fx-alignment: CENTER;
 }
 
-.voteInnerBox {
-    -fx-hgap: 20;
+.labelsPane {
+    -fx-text-alignment: center;
+    -fx-hgap: 50;
     -fx-vgap: 20;
     -fx-alignment: CENTER;
 }
 
 .menuTitle {
-    -fx-font-family: "Ethnocentric Rg";
-    -fx-font-style: italic;
-    -fx-font-size: 50px;
-    -fx-text-fill: #f3997b;
+    -fx-font-family: "Dalek Pinpoint";
+    -fx-font-weight: bold;
+    -fx-font-size: 90px;
+    -fx-text-fill: #2786D1;
 }
 
-.menuLabel {
-    -fx-font-family: "Exo 2 Black";
-    -fx-font-size: 25px;
-    -fx-text-fill: orange;
+.menuTitle .text {
+    -fx-effect: dropshadow(gaussian, #000000, 15, 0.2, 0, 0);
+    -fx-stroke-width: 2px;
+    -fx-stroke: #ffffff;
+}
+
+.prompt {
+    -fx-font-family: "Romanica";
+    -fx-font-size: 40px;
+    -fx-text-fill: #2786D1;
+    -fx-alignment: center;
+    -fx-text-alignment: center;
+}
+
+.prompt .text {
+    -fx-stroke-width: 1px;
+    -fx-stroke: #ffffff;
+}
+
+.cardLabel {
+    -fx-font-family: "Romanica";
+    -fx-font-size: 30px;
+    -fx-text-fill: #2786D1;
+    -fx-alignment: center;
+    -fx-text-alignment: center;
+}
+
+.cardLabel .text {
+    -fx-stroke-width: 1px;
+    -fx-stroke: #ffffff;
 }

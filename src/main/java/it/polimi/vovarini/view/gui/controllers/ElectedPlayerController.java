@@ -81,11 +81,11 @@ public class ElectedPlayerController extends GUIController {
     public void initialize() {
         super.initialize();
         bindEvents();
+        //addImages(Arrays.stream(GodName.values()).filter(name -> name != GodName.Nobody).toArray(GodName[]::new));
     }
 
     public void addImages(GodName[] allGods) {
         // aggiungo le carte alla grafica
-        //GodName[] godNames = Arrays.stream(GodName.values()).filter(name -> name != GodName.Nobody).toArray(GodName[]::new);
         String selector;
         for (int i = 0; i < allGods.length; i++) {
 

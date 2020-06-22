@@ -6,6 +6,7 @@ import it.polimi.vovarini.common.events.GameEvent;
 import it.polimi.vovarini.common.events.SelectYourCardEvent;
 import it.polimi.vovarini.model.Player;
 import it.polimi.vovarini.model.godcards.GodCard;
+import it.polimi.vovarini.model.godcards.GodCardFactory;
 import it.polimi.vovarini.model.godcards.GodName;
 import it.polimi.vovarini.view.gui.GuiManager;
 import it.polimi.vovarini.view.gui.Settings;
@@ -38,6 +39,9 @@ public class GodCardSelectionController extends GUIController {
 
         guiManager = GuiManager.getInstance();
         bindEvents();
+        addImages(new GodName[]{GodName.Artemis, GodName.Apollo});
+        instruction.setText("It's your turn, choose your card!");
+        showChoice(new Player("nomelunghissimoporcalaputtanachecoglione"), GodCardFactory.create(GodName.Artemis));
     }
 
      public void addImages(GodName[] availableGodCards) {
