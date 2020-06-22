@@ -50,7 +50,7 @@ public class Controller implements EventListener {
     for (Player player : game.getPlayers()) {
       if(player == null) break ;
       if (player.getNickname().equalsIgnoreCase(evt.getNickname())) {
-        throw new InvalidNicknameException(InvalidNicknameException.ERROR_DUPLICATE);
+        GameEventManager.raise(new InvalidNicknameEvent(game, evt.getNickname()));
       }
     }
     if (!Player.validateNickname(evt.getNickname())) {
