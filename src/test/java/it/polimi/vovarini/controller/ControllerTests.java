@@ -80,6 +80,32 @@ public class ControllerTests {
   }
 
   @Test
+  @DisplayName("Test duplicate nickname registration part")
+  void registrationTest() {
+    game = new Game(2);
+    controller = new Controller(game);
+
+    try {
+
+      RegistrationEvent evt = new RegistrationEvent(game, "PlayerOne");
+      controller.update(evt);
+      assertNotNull(game.getPlayers()[0]);
+      assertNull(game.getPlayers()[1]);
+
+      evt = new RegistrationEvent(game, "PlayerOne");
+      controller.update(evt);
+      assertNull(game.getPlayers()[1]);
+
+      evt = new RegistrationEvent(game, "PlayerTwo");
+      controller.update(evt);
+      assertNotNull(game.getPlayers()[1].getNickname());
+
+    } catch (InvalidNicknameException e) {
+      e.printStackTrace();
+    }
+  }
+
+  @Test
   @DisplayName("Test card selection part")
   void cardChoiceTest() {
 
