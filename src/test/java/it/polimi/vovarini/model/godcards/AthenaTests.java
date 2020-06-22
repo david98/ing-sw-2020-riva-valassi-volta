@@ -9,6 +9,7 @@ import it.polimi.vovarini.model.Player;
 import it.polimi.vovarini.model.Point;
 import it.polimi.vovarini.model.board.Board;
 import it.polimi.vovarini.model.board.items.Block;
+import it.polimi.vovarini.model.moves.Construction;
 import it.polimi.vovarini.model.moves.Movement;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -97,23 +98,22 @@ public class AthenaTests {
         Point athenaStart = new Point(0, 0);
         Point athenaEnd = new Point(1, 1);
 
-        try {
-            for(int i = 0; i < startLevel; i++) {
-                board.place(Block.blocks[i], athenaStart);
-                board.place(Block.blocks[i], enemyStart);
-            }
 
-            board.place(game.getPlayers()[0].getCurrentWorker(), athenaStart);
-            board.place(game.getPlayers()[1].getCurrentWorker(), enemyStart);
-
-            for(int i = 0; i < endLevel; i++) {
-                board.place(Block.blocks[i], athenaEnd);
-                board.place(Block.blocks[i], enemyEnd);
-            }
-        } catch (InvalidPositionException | BoxFullException e) {
-            e.printStackTrace();
+        for(int i = 0; i < startLevel; i++) {
+            board.place(Block.blocks[i], athenaStart);
+            board.place(Block.blocks[i], enemyStart);
         }
 
+        board.place(game.getPlayers()[0].getCurrentWorker(), athenaStart);
+        board.place(game.getPlayers()[1].getCurrentWorker(), enemyStart);
+
+        for(int i = 0; i < endLevel; i++) {
+            board.place(Block.blocks[i], athenaEnd);
+            board.place(Block.blocks[i], enemyEnd);
+        }
+
+
+        game.getCurrentPlayer().setWorkerSelected(true);
         game.setCurrentPhase(athena.computeNextPhase(game));
         assertEquals(Phase.Movement, game.getCurrentPhase());
 
@@ -122,10 +122,17 @@ public class AthenaTests {
         game.performMove(athenaMovement);
 
         game.setCurrentPhase(athena.computeNextPhase(game));
+
+        //costruzione fittizia altrimenti non mi fa skippare
+        game.getCurrentPlayer().getConstructionList().add(new Construction(board, Block.blocks[0], new Point(0,0)));
+
         game.setCurrentPhase(athena.computeNextPhase(game));
         game.setCurrentPhase(athena.computeNextPhase(game));
+
+
         assertEquals(game.getPlayers()[1], game.getCurrentPlayer());
 
+        game.getCurrentPlayer().setWorkerSelected(true);
         game.setCurrentPhase(nobody.computeNextPhase(game));
         assertEquals(Phase.Movement, game.getCurrentPhase());
 

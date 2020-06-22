@@ -10,6 +10,7 @@ import it.polimi.vovarini.model.Point;
 import it.polimi.vovarini.model.board.Board;
 import it.polimi.vovarini.model.board.items.Block;
 import it.polimi.vovarini.model.moves.Construction;
+import it.polimi.vovarini.model.moves.Movement;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -92,7 +93,12 @@ public class HestiaTests {
             e.printStackTrace();
         }
 
+        game.getCurrentPlayer().setWorkerSelected(true);
         game.setCurrentPhase(hestia.computeNextPhase(game));
+        assertEquals(Phase.Movement, game.getCurrentPhase());
+        //movimento fittizio altrimenti non mi fa skippare
+        game.getCurrentPlayer().getMovementList().add(new Movement(board, new Point(0,0) , start));
+
         game.setCurrentPhase(hestia.computeNextPhase(game));
         assertEquals(game.getCurrentPhase(), Phase.Construction);
 
