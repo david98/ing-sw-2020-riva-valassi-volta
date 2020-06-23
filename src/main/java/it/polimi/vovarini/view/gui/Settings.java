@@ -19,7 +19,7 @@ public class Settings {
   static {
     for (GodName name: GodName.values()) {
       if (name != GodName.Nobody) {
-        godImages.put(name, new Image(Settings.class.getClassLoader().getResource("img/godcards/" + name.toString() + ".png")
+        godImages.put(name, new Image(Settings.class.getClassLoader().getResource("img/godCards/" + name.toString() + ".png")
                 .toExternalForm(), true));
       }
     }

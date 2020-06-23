@@ -26,9 +26,16 @@
 }
 
 .box:hover {
+    /*-*/
+}
+
+.freeBox {
+    -fx-background-color: rgba(0, 255, 0, 0.4);
+}
+
+.freeBox:hover {
     -fx-image: -worker-img;
     -fx-opacity: 0.5;
-    /*-fx-effect: innershadow(gaussian, #000000, 15, 0.2, 0, 0);*/
 }
 
 .box:pressed {

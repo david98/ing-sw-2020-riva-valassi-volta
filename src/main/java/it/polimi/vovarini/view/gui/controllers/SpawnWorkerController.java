@@ -1,11 +1,14 @@
 package it.polimi.vovarini.view.gui.controllers;
 
 import it.polimi.vovarini.common.events.*;
+import it.polimi.vovarini.model.Phase;
 import it.polimi.vovarini.model.Player;
 import it.polimi.vovarini.model.Point;
 import it.polimi.vovarini.model.board.Board;
 import it.polimi.vovarini.model.board.items.Sex;
 import it.polimi.vovarini.model.board.items.Worker;
+import it.polimi.vovarini.model.godcards.GodCardFactory;
+import it.polimi.vovarini.model.godcards.GodName;
 import it.polimi.vovarini.view.gui.GuiManager;
 import it.polimi.vovarini.view.gui.Settings;
 import javafx.fxml.FXML;
@@ -45,7 +48,8 @@ public class SpawnWorkerController extends GUIController {
                         (sexes.get(0).equals(Sex.Male) ? "M" : "F") + ".png');");
             }
         }
-        //addImages(guiManager.getData().getPlayers());
+
+        addImages(guiManager.getData().getPlayers());
 
     }
 
@@ -91,7 +95,9 @@ public class SpawnWorkerController extends GUIController {
         guiManager.getClient().raise(new SpawnWorkerEvent(guiManager.getData().getOwner(), p));
     }
 
-    public void updateView(boolean disabled, String currentPlayer) {
+    public void updateView() {
+
+        boolean disabled = !guiManager.getData().getOwner().equals(guiManager.getData().getCurrentPlayer());
 
         board.setDisable(disabled);
 
@@ -104,7 +110,7 @@ public class SpawnWorkerController extends GUIController {
                         (sexes.get(0).equals(Sex.Male) ? "M" : "F") + ".png');");
             }
 
-            if(currentPlayer.equals(guiManager.getData().getPlayers()[i].getNickname())) {
+            if(guiManager.getData().getCurrentPlayer().equals(guiManager.getData().getPlayers()[i])) {
                 player.setStyle("-fx-effect: innershadow(gaussian, #f44336, 15, 0.2, 0, 0);");
             } else {
                 player.setStyle("");
@@ -112,11 +118,10 @@ public class SpawnWorkerController extends GUIController {
         }
 
         if(disabled) {
-            instruction.setText("Wait for " + currentPlayer + "\n to place him workers...");
+            instruction.setText("Wait for " + guiManager.getData().getCurrentPlayer().getNickname() + "\n to place his workers...");
         } else if(!sexes.isEmpty()){
             instruction.setText("Place your " + sexes.get(0).toString() + " worker.");
             guiManager.getClient().raise(new WorkerSelectionEvent(guiManager.getData().getOwner(), sexes.get(0)));
-
         }
     }
 
@@ -133,20 +138,23 @@ public class SpawnWorkerController extends GUIController {
 
                     for(int k = 0; k < guiManager.getNumberOfPlayers(); k++) {
                         if (guiManager.getData().getPlayers()[k].getWorkers().values().stream().anyMatch(w -> w.equals(b.getBox(p).getItems().peek()))) {
-                            cell.setImage(
-                                    Settings.workersImages[k].get(((Worker) b.getBox(p).getItems().peek()).getSex()));
+                            Worker w = (Worker) b.getBox(p).getItems().peek();
+                            Sex sex = w.getSex();
+                            cell.getStyleClass().remove("freeBox");
+                            cell.getStyleClass().add("box");
+                            cell.setImage(Settings.workersImages[k].get(sex));
                         }
                     }
                 }
             }
         }
-        updateView(!guiManager.getData().getOwner().equals(guiManager.getData().getCurrentPlayer()), guiManager.getData().getCurrentPlayer().getNickname());
+        updateView();
     }
 
     @Override
     public void handlePlaceYourWorkers(PlaceYourWorkersEvent e) {
         super.handlePlaceYourWorkers(e);
-        updateView(!e.getTargetPlayer().equals(GuiManager.getInstance().getData().getOwner()), e.getTargetPlayer().getNickname());
+        updateView();
     }
 
     @Override

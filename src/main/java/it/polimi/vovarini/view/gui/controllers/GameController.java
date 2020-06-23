@@ -70,14 +70,14 @@ public class GameController extends GUIController {
         b.place(owner.getWorkers().get(Sex.Male), new Point(0, 0));
         b.place(owner.getWorkers().get(Sex.Female), new Point(4, 0));
         b.place(other.getWorkers().get(Sex.Male), new Point(0, 3));
-        b.place(other.getWorkers().get(Sex.Female), new Point(2, 0));
+        b.place(other.getWorkers().get(Sex.Female), new Point(2, 0));*/
 
 
         for (int i = 0; i < guiManager.getData().getBoard().getSize(); i++) {
             for (int j = 0; j < guiManager.getData().getBoard().getSize(); j++) {
                 allPoints.add(new Point(i, j));
             }
-        }*/
+        }
 
         GuiManager.playBackgroundSound("bgm/match.mp3", true);
 
