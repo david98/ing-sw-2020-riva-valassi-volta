@@ -1,21 +1,13 @@
 @font-face {
-    src: url("../fonts/ethnocentric-rg.ttf");
+    src: url("../fonts/DalekPinpointBold.ttf");
 }
 
 @font-face {
-    src: url("../fonts/ethnocentric-rg-it.ttf");
-}
-
-@font-face {
-    src: url("../fonts/Exo2-Black.ttf");
-}
-
-@font-face {
-    src: url("../fonts/Exo2-Medium.ttf");
+    src: url("../fonts/Romanica.ttf");
 }
 
 .mainPane {
-//-fx-background-image: url("../img/bg.png");
+    -fx-background-image: url("../img/match_bg.png");
     -fx-alignment: CENTER;
 }
 
@@ -30,13 +22,22 @@
     -fx-alignment: CENTER;
 }
 
+.box {
+
+}
+
 .box:hover {
-    -fx-effect: dropshadow(gaussian, #008000, 15, 0.2, 0, 0);
+    /*-fx-effect: dropshadow(gaussian, #008000, 15, 0.2, 0, 0);*/
 }
 
 .box:pressed {
     -fx-scale-y: 0.95;
     -fx-scale-x: 0.95;
+}
+
+.box.highlighted {
+    -fx-background-color: rgba(255, 0, 0, 0.2);
+    -fx-effect: dropshadow(gaussian, #F44336, 15, 0.2, 0, 0);
 }
 
 .botBox {
@@ -46,152 +47,75 @@
 
 .board {
     -fx-alignment: CENTER;
+    -fx-background-image: url("/img/bg.png");
+    -fx-background-size: contain;
+    -fx-background-repeat: no-repeat;
+    -fx-background-position: center center;
+    -fx-min-width: 500px;
+    -fx-max-width: 500px;
+    -fx-min-height: 500px;
+    -fx-max-height: 500px;
 }
 
 .player {
-    -fx-font-family: "Exo 2 Black";
-    -fx-font-size: 25px;
-    -fx-text-fill: orange;
+    -fx-font-family: "Romanica";
+    -fx-font-size: 40px;
+    -fx-text-fill: #2786D1;
+    -fx-alignment: center;
+    -fx-text-alignment: center;
 }
 
-.godCard:hover {
-    -fx-effect: dropshadow(gaussian, #f44336, 15, 0.2, 0, 0);
+.player.current {
+    -fx-font-size: 50px;
+    -fx-effect: dropshadow(gaussian, #ffffff, 15, 0.2, 0, 0);
 }
 
-.godCard:pressed {
-    -fx-scale-y: 0.95;
-    -fx-scale-x: 0.95;
+.player .text {
+    -fx-stroke-width: 1px;
+    -fx-stroke: #ffffff;
 }
 
-.voteHBox {
-    -fx-min-width: 900px;
-    -fx-max-width: 900px;
+.playersBox {
+    -fx-min-width: 1500px;
+    -fx-max-width: 1500px;
     -fx-padding: 10 10 10 10;
     -fx-spacing: 20;
-    -fx-alignment: CENTER;
-}
-
-.allGodsBox {
-    -fx-min-width: 900px;
-    -fx-max-width: 900px;
-    -fx-padding: 10 10 10 10;
-    -fx-spacing: 20;
-    -fx-alignment: CENTER;
-}
-
-.voteInnerBox {
-    -fx-hgap: 20;
-    -fx-vgap: 20;
     -fx-alignment: CENTER;
 }
 
 .menuTitle {
-    -fx-font-family: "Ethnocentric Rg";
-    -fx-font-style: italic;
-    -fx-font-size: 30px;
-    -fx-text-fill: #f3997b;
+    -fx-font-family: "Dalek Pinpoint";
+    -fx-font-weight: bold;
+    -fx-font-size: 90px;
+    -fx-text-fill: #2786D1;
 }
 
-.menuLabel {
-    -fx-font-family: "Exo 2 Black";
-    -fx-font-size: 25px;
-    -fx-text-fill: orange;
-}@font-face {
-    src: url("../fonts/ethnocentric-rg.ttf");
+.menuTitle .text {
+    -fx-effect: dropshadow(gaussian, #000000, 15, 0.2, 0, 0);
+    -fx-stroke-width: 2px;
+    -fx-stroke: #ffffff;
+}
+#skipButton {
+    -fx-font-family: "Dalek Pinpoint";
+    -fx-font-weight: bold;
+    -fx-font-size: 70px;
+    -fx-text-fill: #2786D1;
+}
+#skipButton:hover {
+    -fx-font-size: 80px;
+    -fx-effect: dropshadow(gaussian, #ffffff, 15, 0.2, 0, 0);
 }
 
-@font-face {
-    src: url("../fonts/ethnocentric-rg-it.ttf");
+#skipButton:pressed {
+    -fx-font-size: 70px;
 }
 
-@font-face {
-    src: url("../fonts/Exo2-Black.ttf");
+.phaseBox {
+    -fx-hgap: 50;
 }
 
-@font-face {
-    src: url("../fonts/Exo2-Medium.ttf");
-}
-
-.mainPane {
-//-fx-background-image: url("../img/bg.png");
-    -fx-alignment: CENTER;
-}
-
-.topBox {
-    -fx-padding: 50 0 0 0;
-    -fx-alignment: CENTER;
-}
-
-.centerBox {
-    -fx-max-width: 900px;
-    -fx-spacing: 10;
-    -fx-alignment: CENTER;
-}
-
-.box:hover {
-    -fx-effect: dropshadow(gaussian, #008000, 15, 0.2, 0, 0);
-}
-
-.box:pressed {
-    -fx-scale-y: 0.95;
-    -fx-scale-x: 0.95;
-}
-
-.botBox {
-    -fx-padding: 0 0 50 0;
-    -fx-alignment: CENTER;
-}
-
-.board {
-    -fx-alignment: CENTER;
-}
-
-.player {
-    -fx-font-family: "Exo 2 Black";
-    -fx-font-size: 25px;
-    -fx-text-fill: orange;
-}
-
-.godCard:hover {
-    -fx-effect: dropshadow(gaussian, #f44336, 15, 0.2, 0, 0);
-}
-
-.godCard:pressed {
-    -fx-scale-y: 0.95;
-    -fx-scale-x: 0.95;
-}
-
-.voteHBox {
-    -fx-min-width: 900px;
-    -fx-max-width: 900px;
-    -fx-padding: 10 10 10 10;
-    -fx-spacing: 20;
-    -fx-alignment: CENTER;
-}
-
-.allGodsBox {
-    -fx-min-width: 900px;
-    -fx-max-width: 900px;
-    -fx-padding: 10 10 10 10;
-    -fx-spacing: 20;
-    -fx-alignment: CENTER;
-}
-
-.voteInnerBox {
-    -fx-hgap: 20;
-    -fx-vgap: 20;
-    -fx-alignment: CENTER;
-}
-
-.menuTitle {
-    -fx-font-family: "Ethnocentric Rg";
-    -fx-font-style: italic;
-    -fx-font-size: 30px;
-    -fx-text-fill: #f3997b;
-}
-
-.menuLabel {
-    -fx-font-family: "Exo 2 Black";
-    -fx-font-size: 25px;
-    -fx-text-fill: orange;
+#skipButton .text {
+    -fx-effect: dropshadow(gaussian, #000000, 15, 0.2, 0, 0);
+    -fx-stroke-width: 2px;
+    -fx-stroke: #ffffff;
 }

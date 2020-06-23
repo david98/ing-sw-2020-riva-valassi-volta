@@ -10,6 +10,7 @@ import it.polimi.vovarini.view.gui.GuiManager;
 import it.polimi.vovarini.view.gui.Settings;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
+import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
@@ -35,7 +36,17 @@ public class SpawnWorkerController extends GUIController {
     public void initialize() {
 
         guiManager = GuiManager.getInstance();
+        System.out.println(guiManager.getCurrentScene().getRoot().getStyle());
+        Player[] players = guiManager.getData().getPlayers();
+
+        for(int i = 0; i < players.length; i++) {
+            if (guiManager.getData().getOwner().equals(guiManager.getData().getPlayers()[i])) {
+                board.setStyle("-worker-img: url('/img/workers/" + i +
+                        (sexes.get(0).equals(Sex.Male) ? "M" : "F") + ".png');");
+            }
+        }
         //addImages(guiManager.getData().getPlayers());
+
     }
 
     public void addImages(Player[] players) {
@@ -87,6 +98,12 @@ public class SpawnWorkerController extends GUIController {
         for(int i = 0; i< guiManager.getNumberOfPlayers(); i++) {
             String selector = "#player" + i;
             Label player = (Label) mainPane.lookup(selector);
+
+            if (!sexes.isEmpty() && guiManager.getData().getOwner().equals(guiManager.getData().getPlayers()[i])) {
+                board.setStyle("-worker-img: url('/img/workers/" + i +
+                        (sexes.get(0).equals(Sex.Male) ? "M" : "F") + ".png');");
+            }
+
             if(currentPlayer.equals(guiManager.getData().getPlayers()[i].getNickname())) {
                 player.setStyle("-fx-effect: innershadow(gaussian, #f44336, 15, 0.2, 0, 0);");
             } else {
@@ -99,6 +116,7 @@ public class SpawnWorkerController extends GUIController {
         } else if(!sexes.isEmpty()){
             instruction.setText("Place your " + sexes.get(0).toString() + " worker.");
             guiManager.getClient().raise(new WorkerSelectionEvent(guiManager.getData().getOwner(), sexes.get(0)));
+
         }
     }
 
@@ -111,11 +129,11 @@ public class SpawnWorkerController extends GUIController {
                 Point p = new Point(i, j);
                 if (b.getBox(p).getItems().peek() != null) {
                     String selector = "#button" + i + j;
-                    ImageView button = (ImageView) board.lookup(selector);
+                    ImageView cell = (ImageView) board.lookup(selector);
 
                     for(int k = 0; k < guiManager.getNumberOfPlayers(); k++) {
                         if (guiManager.getData().getPlayers()[k].getWorkers().values().stream().anyMatch(w -> w.equals(b.getBox(p).getItems().peek()))) {
-                            button.setImage(
+                            cell.setImage(
                                     Settings.workersImages[k].get(((Worker) b.getBox(p).getItems().peek()).getSex()));
                         }
                     }

@@ -22,8 +22,13 @@
     -fx-alignment: CENTER;
 }
 
+.box {
+}
+
 .box:hover {
-    -fx-effect: dropshadow(gaussian, #008000, 15, 0.2, 0, 0);
+    -fx-image: -worker-img;
+    -fx-opacity: 0.5;
+    /*-fx-effect: innershadow(gaussian, #000000, 15, 0.2, 0, 0);*/
 }
 
 .box:pressed {
@@ -38,12 +43,24 @@
 
 .board {
     -fx-alignment: CENTER;
+    -worker-img: url("/img/workers/free.png");
 }
 
 .player {
     -fx-font-family: "Romanica";
-    -fx-font-size: 25px;
-    -fx-text-fill: orange;
+    -fx-font-size: 30px;
+    -fx-text-fill: #2786D1;
+    -fx-alignment: center;
+    -fx-text-alignment: center;
+}
+
+.player .text {
+    -fx-stroke-width: 1px;
+    -fx-stroke: #ffffff;
+}
+
+.player.current {
+
 }
 
 .godCard:hover {
