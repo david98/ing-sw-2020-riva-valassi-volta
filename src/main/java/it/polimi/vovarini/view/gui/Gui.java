@@ -1,6 +1,7 @@
 package it.polimi.vovarini.view.gui;
 
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
@@ -46,6 +47,10 @@ public class Gui extends Application {
             }
         });
 
+        stage.setOnCloseRequest((windowEvent) -> {
+                Platform.exit();
+                System.exit(0);
+            });
     }
 
     @Override

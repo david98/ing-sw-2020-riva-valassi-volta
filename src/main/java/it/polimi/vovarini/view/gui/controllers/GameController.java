@@ -49,16 +49,20 @@ public class GameController extends GUIController {
 
         /*Player owner = new Player("davide");
         Player other = new Player("marco");
+        Player other2 = new Player("mattia");
         owner.setGodCard(GodCardFactory.create(GodName.Artemis));
         other.setGodCard(GodCardFactory.create(GodName.Apollo));
+        other2.setGodCard(GodCardFactory.create(GodName.Atlas));
 
         owner.getGodCard().setGameData(guiManager.getData());
         other.getGodCard().setGameData(guiManager.getData());
+        other2.getGodCard().setGameData(guiManager.getData());
 
         guiManager.getData().setOwner(owner);
         guiManager.getData().setCurrentPlayer(owner);
         guiManager.getData().addPlayer(owner);
         guiManager.getData().addPlayer(other);
+        guiManager.getData().addPlayer(other2);
 
         guiManager.getData().setCurrentPhase(Phase.Start);
 
@@ -66,14 +70,14 @@ public class GameController extends GUIController {
         b.place(owner.getWorkers().get(Sex.Male), new Point(0, 0));
         b.place(owner.getWorkers().get(Sex.Female), new Point(4, 0));
         b.place(other.getWorkers().get(Sex.Male), new Point(0, 3));
-        b.place(other.getWorkers().get(Sex.Female), new Point(2, 0));*/
+        b.place(other.getWorkers().get(Sex.Female), new Point(2, 0));
 
 
         for (int i = 0; i < guiManager.getData().getBoard().getSize(); i++) {
             for (int j = 0; j < guiManager.getData().getBoard().getSize(); j++) {
                 allPoints.add(new Point(i, j));
             }
-        }
+        }*/
 
         GuiManager.playBackgroundSound("bgm/match.mp3", true);
 
@@ -389,13 +393,14 @@ public class GameController extends GUIController {
         if(e.getWinningPlayer().equals(guiManager.getData().getOwner())) {
             ImageView victory = new ImageView(Settings.victory);
             popup.getContent().add(victory);
+            GuiManager.playBackgroundSound("bgm/victoryroyale.mp3", true);
         } else {
             ImageView loss = new ImageView(Settings.loss);
             popup.getContent().add(loss);
         }
 
         popup.setAutoHide(true);
-        popup.show(guiManager.getStage());
+        popup.show(guiManager.getCurrentScene().getWindow());
 
         // non puoi andare avanti
         board.setDisable(true);

@@ -36,6 +36,7 @@ public class GuiManager extends View {
     private boolean godSelectionStarted;
     private boolean placeWorkersStarted;
 
+    private GuiEventListener guiEventListener;
     private Thread guiEventListenerThread;
 
     private GuiManager() {
@@ -202,8 +203,8 @@ public class GuiManager extends View {
         client = new GameClient(serverIP, serverPort);
         client.raise(new RegistrationEvent(client.getIPv4Address(), nickname));
         data.setOwner(new Player(nickname));
-
-        guiEventListenerThread = new Thread(new GuiEventListener(client));
+        guiEventListener = new GuiEventListener(client);
+        guiEventListenerThread = new Thread(guiEventListener);
         guiEventListenerThread.start();
     }
 
@@ -236,7 +237,10 @@ public class GuiManager extends View {
     }
 
     public void stopEventListener() {
-        guiEventListenerThread.interrupt();
+        if (guiEventListenerThread != null) {
+            guiEventListener.stop();
+            guiEventListenerThread.interrupt();
+        }
     }
 
     public static <MediaPlayer> void playBackgroundSound(String fileName, boolean looping){
