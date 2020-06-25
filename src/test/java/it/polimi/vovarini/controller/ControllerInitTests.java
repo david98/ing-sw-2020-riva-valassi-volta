@@ -94,14 +94,6 @@ public class ControllerInitTests {
         });
         assertEquals(e.getErrorCode(), e.ERROR_INVALID);
 
-        // invalidNickname: duplicate
-        nickname = "mEnGi_97";
-        RegistrationEvent evtDuplicateNickname = new RegistrationEvent(this, nickname);
-        e = assertThrows(InvalidNicknameException.class, () -> {
-            controller.update(evtDuplicateNickname);
-        });
-        assertEquals(e.getErrorCode(), e.ERROR_DUPLICATE);
-
         nickname = "Valas511";
         evt = new RegistrationEvent(this, nickname);
 
