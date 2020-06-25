@@ -14,7 +14,7 @@
 }
 
 .topBox {
-    -fx-padding: 50 0 0 0;
+    -fx-padding: 10 0 0 0;
     -fx-alignment: CENTER;
 }
 
@@ -27,7 +27,7 @@
 .voteHBox {
     -fx-min-width: 900px;
     -fx-max-width: 900px;
-    -fx-padding: 10 10 10 10;
+    -fx-padding: 0 10 10 10;
     -fx-spacing: 20;
     -fx-alignment: CENTER;
 }
@@ -55,7 +55,7 @@
 
 .menuLabel {
     -fx-font-family: "Romanica";
-    -fx-font-size: 40px;
+    -fx-font-size: 30px;
     -fx-text-fill: #ffffff;
     -fx-font-weight: bold;
 }
@@ -89,13 +89,13 @@
 }
 
 #submit:hover {
-    -fx-background-size: 200;
+    -fx-background-size: 200px;
     -fx-base: transparent;
     -fx-background-color: transparent;
 }
 
 #submit:pressed {
-    -fx-background-size: 180;
+    -fx-background-size: 180px;
     -fx-background-color: transparent;
     -fx-base: transparent;
 }

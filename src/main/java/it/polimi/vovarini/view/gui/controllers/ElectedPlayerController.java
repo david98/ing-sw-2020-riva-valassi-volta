@@ -81,7 +81,7 @@ public class ElectedPlayerController extends GUIController {
     public void initialize() {
         super.initialize();
         bindEvents();
-        //addImages(Arrays.stream(GodName.values()).filter(name -> name != GodName.Nobody).toArray(GodName[]::new));
+        addImages(Arrays.stream(GodName.values()).filter(name -> name != GodName.Nobody).toArray(GodName[]::new));
     }
 
     public void addImages(GodName[] allGods) {
