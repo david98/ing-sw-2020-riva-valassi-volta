@@ -11,27 +11,27 @@ public class Settings {
   public static final HashMap<GodName, Image> godImages = new HashMap<>();
   public static final HashMap<Sex, Image>[] workersImages = new HashMap[3];
   public static final Image[] levelsImages = new Image[4];
-  public static final Image bg = new Image(Settings.class.getResource("/img/bg.png").toExternalForm(), true);
-  public static final Image victory = new Image(Settings.class.getResource("/img/victory.png").toExternalForm(), true);
-  public static final Image loss = new Image(Settings.class.getResource("/img/loss.png").toExternalForm(), true);
+  public static final Image bg = new Image(Settings.class.getClassLoader().getResource("img/bg.png").toExternalForm(), true);
+  public static final Image victory = new Image(Settings.class.getClassLoader().getResource("img/victory.png").toExternalForm(), true);
+  public static final Image loss = new Image(Settings.class.getClassLoader().getResource("img/loss.png").toExternalForm(), true);
 
 
   static {
     for (GodName name: GodName.values()) {
       if (name != GodName.Nobody) {
-        godImages.put(name, new Image(Settings.class.getResource("/img/godcards/" + name.toString() + ".png")
+        godImages.put(name, new Image(Settings.class.getClassLoader().getResource("img/godCards/" + name.toString() + ".png")
                 .toExternalForm(), true));
       }
     }
 
     for (int i = 0; i < 3; i++) {
       workersImages[i] = new HashMap<>();
-      workersImages[i].put(Sex.Male, new Image("/img/workers/" + i + "M.png", true));
-      workersImages[i].put(Sex.Female, new Image("/img/workers/" + i + "F.png", true));
+      workersImages[i].put(Sex.Male, new Image(Settings.class.getClassLoader().getResource("img/workers/" + i + "M.png").toExternalForm(), true));
+      workersImages[i].put(Sex.Female, new Image(Settings.class.getClassLoader().getResource("img/workers/" + i + "F.png").toExternalForm(), true));
     }
 
     for (int i = 0; i < 4; i++) {
-      levelsImages[i] = new Image(Settings.class.getResource("/img/levels/" + (i + 1) + ".png").toExternalForm(), true);
+      levelsImages[i] = new Image(Settings.class.getClassLoader().getResource(("img/levels/" + (i + 1) + ".png")).toExternalForm(), true);
     }
   }
 

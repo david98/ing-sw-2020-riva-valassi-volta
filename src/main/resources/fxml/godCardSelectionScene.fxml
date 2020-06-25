@@ -1,37 +1,34 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.net.*?>
 <?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
-<?import java.net.URL?>
-<?import javafx.scene.image.ImageView?>
 
-<BorderPane xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
-            fx:controller="it.polimi.vovarini.view.gui.controllers.GodCardSelectionController" fx:id="mainPane" styleClass="mainPane">
+<BorderPane fx:id="mainPane" styleClass="mainPane" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.vovarini.view.gui.controllers.GodCardSelectionController">
     <stylesheets>
-        <URL value="@../css/godCardSelectionScene.css"/>
+        <URL value="@../css/godCardSelectionScene.css" />
     </stylesheets>
 
     <top>
-        <VBox styleClass="topBox">
-            <Label text="Choose your godCard:" styleClass="menuTitle"/>
+        <VBox alignment="CENTER" styleClass="topBox">
+            <Label styleClass="menuTitle" text="Choose your godCard:" />
         </VBox>
     </top>
 
     <center>
-        <HBox styleClass="voteHBox">
-            <VBox styleClass="voteBox">
-                <Label fx:id="instruction" styleClass="menuLabel"/>
-                <FlowPane styleClass="voteInnerBox">
-                    <ImageView fitHeight="168" fitWidth="100" fx:id="godCard0" styleClass="godCard"/>
-                    <ImageView fitHeight="168" fitWidth="100" fx:id="godCard1" styleClass="godCard"/>
-                    <ImageView fitHeight="168" fitWidth="100" fx:id="godCard2" styleClass="godCard"/>
-                </FlowPane>
-                <FlowPane styleClass="voteInnerBox">
-                    <Label prefWidth="100" fx:id="label0" styleClass="menuLabel"/>
-                    <Label prefWidth="100" fx:id="label1" styleClass="menuLabel"/>
-                    <Label prefWidth="100" fx:id="label2" styleClass="menuLabel"/>
-                </FlowPane>
-            </VBox>
-        </HBox>
+         <VBox alignment="CENTER" styleClass="allGodsBox">
+             <Label fx:id="instruction" styleClass="prompt" />
+             <FlowPane alignment="CENTER" columnHalignment="CENTER" styleClass="godsPane">
+                 <ImageView fx:id="godCard0" fitWidth="150" preserveRatio="true" styleClass="godCard" />
+                 <ImageView fx:id="godCard1" fitWidth="150" preserveRatio="true" styleClass="godCard" />
+                 <ImageView fx:id="godCard2" fitWidth="150" preserveRatio="true" styleClass="godCard" />
+             </FlowPane>
+             <FlowPane styleClass="labelsPane">
+                 <Label fx:id="label0" prefWidth="150" styleClass="cardLabel" wrapText="true" />
+                 <Label fx:id="label1" prefWidth="150" styleClass="cardLabel" wrapText="true" />
+                 <Label fx:id="label2" prefWidth="150" styleClass="cardLabel" wrapText="true" />
+             </FlowPane>
+         </VBox>
     </center>
 </BorderPane>

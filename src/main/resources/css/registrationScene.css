@@ -1,26 +1,20 @@
 @font-face {
-    src: url("../fonts/ethnocentric-rg.ttf");
+    src: url("../fonts/DalekPinpointBold.ttf");
 }
 
 @font-face {
-    src: url("../fonts/ethnocentric-rg-it.ttf");
-}
-
-@font-face {
-    src: url("../fonts/Exo2-Black.ttf");
-}
-
-@font-face {
-    src: url("../fonts/Exo2-Medium.ttf");
+    src: url("../fonts/Romanica.ttf");
 }
 
 .mainPane {
-//-fx-background-image: url("../img/bg.png");
+    -fx-background-image: url("/img/reg_bg.png");
+    -fx-background-repeat: stretch;
+    -fx-background-size: cover;
     -fx-alignment: CENTER;
 }
 
 .topBox {
-    -fx-padding: 50 0 0 0;
+    -fx-padding: 10 0 0 0;
     -fx-alignment: CENTER;
 }
 
@@ -30,48 +24,15 @@
     -fx-alignment: CENTER;
 }
 
-.box:hover {
-    -fx-effect: dropshadow(gaussian, #008000, 15, 0.2, 0, 0);
-}
-
-.box:pressed {
-    -fx-scale-y: 0.95;
-    -fx-scale-x: 0.95;
-}
-
-.botBox {
-    -fx-padding: 0 0 50 0;
-    -fx-alignment: CENTER;
-}
-
-.board {
-    -fx-alignment: CENTER;
-}
-
-.player {
-    -fx-font-family: "Exo 2 Black";
-    -fx-font-size: 25px;
-    -fx-text-fill: orange;
-}
-
-.godCard:hover {
-    -fx-effect: dropshadow(gaussian, #f44336, 15, 0.2, 0, 0);
-}
-
-.godCard:pressed {
-    -fx-scale-y: 0.95;
-    -fx-scale-x: 0.95;
-}
-
 .voteHBox {
     -fx-min-width: 900px;
     -fx-max-width: 900px;
-    -fx-padding: 10 10 10 10;
+    -fx-padding: 0 10 10 10;
     -fx-spacing: 20;
     -fx-alignment: CENTER;
 }
 
-.voteBox {
+.allGodsBox {
     -fx-min-width: 900px;
     -fx-max-width: 900px;
     -fx-padding: 10 10 10 10;
@@ -86,26 +47,55 @@
 }
 
 .menuTitle {
-    -fx-font-family: "Ethnocentric Rg";
-    -fx-font-style: italic;
-    -fx-font-size: 30px;
-    -fx-text-fill: #f3997b;
+    -fx-font-family: "Dalek Pinpoint";
+    -fx-font-weight: bold;
+    -fx-font-size: 80px;
+    -fx-text-fill: #2786D1;
 }
 
 .menuLabel {
-    -fx-font-family: "Exo 2 Black";
-    -fx-font-size: 25px;
-    -fx-text-fill: orange;
+    -fx-font-family: "Romanica";
+    -fx-font-size: 30px;
+    -fx-text-fill: #ffffff;
+    -fx-font-weight: bold;
+}
+
+.menuLabel .text {
+    -fx-stroke-width: 1px;
+    -fx-stroke: #2786D1;
 }
 
 .menuTextField {
-    -fx-background-color: rgba(136, 188, 231, .5);
-    -fx-border-color: #19110f;
+    -fx-background-color: #2786D1;
+    -fx-border-color: #2786D1;
     -fx-border-width: 2px;
     -fx-border-radius: 1px;
 
-    -fx-font-family: "Exo 2 Medium";
+    -fx-font-family: "Romanica";
     -fx-font-size: 20px;
-    -fx-text-fill: orange;
+    -fx-text-fill: #ffffff;
     -fx-alignment: center;
+}
+
+#submit {
+    -fx-background-image: url("/img/button-play-normal.png");
+    -fx-background-color: transparent;
+    -fx-background-size: 148px;
+    -fx-background-repeat: no-repeat;
+    -fx-background-position: center;
+    -fx-base: transparent;
+    -fx-min-width: 200;
+    -fx-min-height: 250;
+}
+
+#submit:hover {
+    -fx-background-size: 200px;
+    -fx-base: transparent;
+    -fx-background-color: transparent;
+}
+
+#submit:pressed {
+    -fx-background-size: 180px;
+    -fx-background-color: transparent;
+    -fx-base: transparent;
 }

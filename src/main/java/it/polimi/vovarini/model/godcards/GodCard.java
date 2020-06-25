@@ -331,7 +331,6 @@ public class GodCard implements Serializable {
     next = nextPhase.apply(gameData, skipIfPossible);
 
     if(!previous.equals(Phase.Start) && next.equals(Phase.Start)){
-
       resetPlayerInfo(gameData);
       gameData.getCurrentPlayer().getGodCard().movementConstraints.clear();
       gameData.getCurrentPlayer().getGodCard().constructionConstraints.clear();

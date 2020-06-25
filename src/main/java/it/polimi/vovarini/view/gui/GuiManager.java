@@ -6,18 +6,23 @@ import it.polimi.vovarini.model.Player;
 import it.polimi.vovarini.view.View;
 import it.polimi.vovarini.view.ViewData;
 import it.polimi.vovarini.view.gui.controllers.GUIController;
-import it.polimi.vovarini.view.gui.controllers.GodCardSelectionController;
-import it.polimi.vovarini.view.gui.controllers.SpawnWorkerController;
 import it.polimi.vovarini.view.gui.controllers.WaitController;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
+import javafx.scene.media.MediaPlayer;
 import javafx.stage.Stage;
+
+import javafx.scene.media.Media;
+import javafx.util.Duration;
 
 import java.io.IOException;
 
 public class GuiManager extends View {
+
+    private static javafx.scene.media.MediaPlayer currentPlayer;
+
 
     private static GuiManager instance = null;
 
@@ -31,6 +36,7 @@ public class GuiManager extends View {
     private boolean godSelectionStarted;
     private boolean placeWorkersStarted;
 
+    private GuiEventListener guiEventListener;
     private Thread guiEventListenerThread;
 
     private GuiManager() {
@@ -175,11 +181,19 @@ public class GuiManager extends View {
             pane = loader.load();
             currentScene.setRoot(pane);
             this.currentController = loader.getController();
-            stage.setMinWidth(0);
-            stage.setMinHeight(0);
-            stage.sizeToScene();
-            stage.setMinWidth(stage.getWidth());
-            stage.setMinHeight(stage.getHeight());
+            boolean isMaximized = stage.isMaximized();
+            boolean isFullScreen = stage.isFullScreen();
+            if (!isFullScreen && !isMaximized) {
+                stage.setMinWidth(0);
+                stage.setMinHeight(0);
+                stage.sizeToScene();
+                stage.setMinWidth(stage.getWidth());
+                stage.setMinHeight(stage.getHeight());
+            }
+
+            //stage.setMaximized(isMaximized);
+            //stage.setFullScreen(isFullScreen);
+
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -189,8 +203,8 @@ public class GuiManager extends View {
         client = new GameClient(serverIP, serverPort);
         client.raise(new RegistrationEvent(client.getIPv4Address(), nickname));
         data.setOwner(new Player(nickname));
-
-        guiEventListenerThread = new Thread(new GuiEventListener(client));
+        guiEventListener = new GuiEventListener(client);
+        guiEventListenerThread = new Thread(guiEventListener);
         guiEventListenerThread.start();
     }
 
@@ -221,5 +235,39 @@ public class GuiManager extends View {
     public void setStage(Stage stage) {
         this.stage = stage;
     }
+
+    public void stopEventListener() {
+        if (guiEventListenerThread != null) {
+            guiEventListener.stop();
+            guiEventListenerThread.interrupt();
+        }
+    }
+
+    public static <MediaPlayer> void playBackgroundSound(String fileName, boolean looping){
+        if (currentPlayer != null) {
+            stopBackgroundSound();
+        }
+        Media m = new Media(GuiManager.class.getResource("/audio/" + fileName).toExternalForm());
+        System.out.println(GuiManager.class.getResource("/audio/" + fileName).toExternalForm());
+        currentPlayer = new javafx.scene.media.MediaPlayer(m);
+        currentPlayer.setVolume(0.4);
+        currentPlayer.play();
+
+        if (looping) {
+            currentPlayer.setOnEndOfMedia(() -> {
+                    currentPlayer.seek(Duration.ZERO);
+                    currentPlayer.play();
+                });
+        }
+    }
+
+    public static boolean isPlayingBackground() {
+        return currentPlayer != null && currentPlayer.getStatus().equals(MediaPlayer.Status.PLAYING);
+    }
+
+    public static void stopBackgroundSound() {
+        currentPlayer.stop();
+    }
+
 }
 

@@ -6,21 +6,19 @@ import it.polimi.vovarini.model.Player;
 import it.polimi.vovarini.model.Point;
 import it.polimi.vovarini.model.board.Board;
 import it.polimi.vovarini.model.board.items.Item;
+import it.polimi.vovarini.model.board.items.Sex;
 import it.polimi.vovarini.model.board.items.Worker;
+import it.polimi.vovarini.model.godcards.GodCardFactory;
+import it.polimi.vovarini.model.godcards.GodName;
 import it.polimi.vovarini.view.gui.GuiManager;
 import it.polimi.vovarini.view.gui.Settings;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
-import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.PopupControl;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
-import javafx.stage.Modality;
 import javafx.stage.Popup;
-import javafx.stage.PopupWindow;
-import javafx.stage.Stage;
 
 import java.util.Collection;
 import java.util.LinkedList;
@@ -49,11 +47,39 @@ public class GameController extends GUIController {
     public void initialize() {
         guiManager = GuiManager.getInstance();
 
+        /*Player owner = new Player("davide");
+        Player other = new Player("marco");
+        Player other2 = new Player("mattia");
+        owner.setGodCard(GodCardFactory.create(GodName.Artemis));
+        other.setGodCard(GodCardFactory.create(GodName.Apollo));
+        other2.setGodCard(GodCardFactory.create(GodName.Atlas));
+
+        owner.getGodCard().setGameData(guiManager.getData());
+        other.getGodCard().setGameData(guiManager.getData());
+        other2.getGodCard().setGameData(guiManager.getData());
+
+        guiManager.getData().setOwner(owner);
+        guiManager.getData().setCurrentPlayer(owner);
+        guiManager.getData().addPlayer(owner);
+        guiManager.getData().addPlayer(other);
+        guiManager.getData().addPlayer(other2);
+
+        guiManager.getData().setCurrentPhase(Phase.Start);
+
+        Board b = new Board(Board.DEFAULT_SIZE);
+        b.place(owner.getWorkers().get(Sex.Male), new Point(0, 0));
+        b.place(owner.getWorkers().get(Sex.Female), new Point(4, 0));
+        b.place(other.getWorkers().get(Sex.Male), new Point(0, 3));
+        b.place(other.getWorkers().get(Sex.Female), new Point(2, 0));*/
+
+
         for (int i = 0; i < guiManager.getData().getBoard().getSize(); i++) {
             for (int j = 0; j < guiManager.getData().getBoard().getSize(); j++) {
                 allPoints.add(new Point(i, j));
             }
         }
+
+        GuiManager.playBackgroundSound("bgm/match.mp3", true);
 
         bindEvents();
         addImages(guiManager.getData().getPlayers());
@@ -79,7 +105,6 @@ public class GameController extends GUIController {
     }
 
     private void onMouseEntered(Point p) {
-
         if(guiManager.getData().getCurrentPhase().equals(Phase.Start)) {
             Board b = guiManager.getData().getBoard();
             if (guiManager.getData().getOwner().getWorkers()
@@ -102,11 +127,7 @@ public class GameController extends GUIController {
             String selector = "#level" + point.getX() + point.getY();
             Pane level = (Pane) board.lookup(selector);
 
-            if(guiManager.getData().getBoard().getBox(point).getItems().size() == 0) {
-                level.setStyle("-fx-background-color: rgba(255, 0, 0, 0.2)");
-            } else {
-                level.setStyle("-fx-effect: dropshadow(gaussian, #F44336, 15, 0.2, 0, 0);");
-            }
+            level.getStyleClass().add("highlighted");
         }
     }
 
@@ -121,7 +142,7 @@ public class GameController extends GUIController {
         for (Point point: points) {
             String selector = "#level" + point.getX() + point.getY();
             Pane level = (Pane) board.lookup(selector);
-            level.setStyle("");
+            level.getStyleClass().remove("highlighted");
         }
     }
 
@@ -159,13 +180,6 @@ public class GameController extends GUIController {
                 }
             }
         }
-
-        // new BackgroundSize(width, height, widthAsPercentage, heightAsPercentage, contain, cover)
-        BackgroundSize backgroundSize = new BackgroundSize(500, 500, false, false, true, false);
-        // new BackgroundImage(image, repeatX, repeatY, position, size)
-        BackgroundImage backgroundImage = new BackgroundImage(Settings.bg, BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.CENTER, backgroundSize);
-        Background background = new Background(backgroundImage);
-        board.setBackground(background);
 
         updateView();
     }
@@ -266,9 +280,9 @@ public class GameController extends GUIController {
             String selector = "#player" + i;
             Label player = (Label) mainPane.lookup(selector);
             if(guiManager.getData().getCurrentPlayer().equals(guiManager.getData().getPlayers()[i])) {
-                player.setStyle("-fx-effect: dropshadow(gaussian, #f44336, 15, 0.2, 0, 0);");
+                player.getStyleClass().add("current");
             } else {
-                player.setStyle("");
+                player.getStyleClass().remove("current");
             }
         }
 
@@ -379,13 +393,14 @@ public class GameController extends GUIController {
         if(e.getWinningPlayer().equals(guiManager.getData().getOwner())) {
             ImageView victory = new ImageView(Settings.victory);
             popup.getContent().add(victory);
+            GuiManager.playBackgroundSound("bgm/victoryroyale.mp3", true);
         } else {
             ImageView loss = new ImageView(Settings.loss);
             popup.getContent().add(loss);
         }
 
         popup.setAutoHide(true);
-        popup.show(guiManager.getStage());
+        popup.show(guiManager.getCurrentScene().getWindow());
 
         // non puoi andare avanti
         board.setDisable(true);

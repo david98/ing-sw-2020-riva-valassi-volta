@@ -1,37 +1,17 @@
 @font-face {
-    src: url("../fonts/ethnocentric-rg.ttf");
+    src: url("../fonts/DalekPinpointBold.ttf");
 }
 
 @font-face {
-    src: url("../fonts/ethnocentric-rg-it.ttf");
+    src: url("../fonts/Romanica.ttf");
 }
-
-@font-face {
-    src: url("../fonts/Exo2-Black.ttf");
-}
-
-@font-face {
-    src: url("../fonts/Exo2-Medium.ttf");
-}
-
 .mainPane {
-    //-fx-background-image: url("../img/bg.png");
+    -fx-background-image: url("../img/elected_bg.png");
     -fx-alignment: CENTER;
 }
 
 .topBox {
-    -fx-padding: 50 0 0 0;
-    -fx-alignment: CENTER;
-}
-
-.centerBox {
-    -fx-max-width: 900px;
-    -fx-spacing: 10;
-    -fx-alignment: CENTER;
-}
-
-.botBox {
-    -fx-padding: 0 0 50 0;
+    -fx-padding: 10 0 0 0;
     -fx-alignment: CENTER;
 }
 
@@ -44,18 +24,18 @@
     -fx-scale-x: 0.95;
 }
 
-.voteHBox {
+.allGodsBox {
     -fx-min-width: 900px;
-    -fx-max-width: 900px;
-    -fx-padding: 10 10 10 10;
+    -fx-min-height: 300px;
+    -fx-max-height: 400px;
+    -fx-padding: 30 10 10 10;
     -fx-spacing: 20;
     -fx-alignment: CENTER;
 }
 
-.voteBox {
-    -fx-min-width: 900px;
-    -fx-max-width: 900px;
-    -fx-padding: 10 10 10 10;
+.selectionBox {
+    -fx-max-height: 250px;
+    -fx-padding: 50 10 10 10;
     -fx-spacing: 20;
     -fx-alignment: CENTER;
 }
@@ -67,14 +47,50 @@
 }
 
 .menuTitle {
-    -fx-font-family: "Ethnocentric Rg";
-    -fx-font-style: italic;
+    -fx-font-family: "Dalek Pinpoint";
+    -fx-font-weight: bold;
     -fx-font-size: 50px;
-    -fx-text-fill: #f3997b;
+    -fx-text-fill: #2786D1;
 }
 
 .menuLabel {
-    -fx-font-family: "Exo 2 Black";
-    -fx-font-size: 25px;
-    -fx-text-fill: orange;
+    -fx-font-family: "Romanica";
+    -fx-font-size: 40px;
+    -fx-text-fill: #2786D1;
+    -fx-alignment: center;
+    -fx-text-alignment: center;
+}
+
+.menuLabel .text {
+    -fx-stroke-width: 1px;
+    -fx-stroke: #ffffff;
+}
+
+#submit {
+    -fx-background-image: url("/img/btn_blue.png");
+    -fx-background-color: transparent;
+    -fx-background-size: 148px;
+    -fx-background-repeat: no-repeat;
+    -fx-background-position: center;
+    -fx-base: transparent;
+    -fx-min-width: 200;
+    -fx-min-height: 50;
+    -fx-font-size: 15px;
+    -fx-text-fill: #ffffff;
+    -fx-text-alignment: center;
+    -fx-alignment: center;
+}
+
+#submit:hover {
+    -fx-background-size: 200;
+    -fx-base: transparent;
+    -fx-background-color: transparent;
+    -fx-font-size: 20px;
+}
+
+#submit:pressed {
+    -fx-background-image: url("/img/btn_blue_pressed.png");
+    -fx-background-color: transparent;
+    -fx-base: transparent;
+    -fx-font-size: 18px;
 }

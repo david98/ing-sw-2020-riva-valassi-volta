@@ -1,21 +1,13 @@
 @font-face {
-    src: url("../fonts/ethnocentric-rg.ttf");
+    src: url("../fonts/DalekPinpointBold.ttf");
 }
 
 @font-face {
-    src: url("../fonts/ethnocentric-rg-it.ttf");
-}
-
-@font-face {
-    src: url("../fonts/Exo2-Black.ttf");
-}
-
-@font-face {
-    src: url("../fonts/Exo2-Medium.ttf");
+    src: url("../fonts/Romanica.ttf");
 }
 
 .mainPane {
-    //-fx-background-image: url("../img/bg.png");
+    -fx-background-image: url("../img/match_bg.png");
     -fx-alignment: CENTER;
 }
 
@@ -30,8 +22,20 @@
     -fx-alignment: CENTER;
 }
 
+.box {
+}
+
 .box:hover {
-    -fx-effect: dropshadow(gaussian, #008000, 15, 0.2, 0, 0);
+    /*-*/
+}
+
+.freeBox {
+    -fx-background-color: rgba(0, 255, 0, 0.4);
+}
+
+.freeBox:hover {
+    -fx-image: -worker-img;
+    -fx-opacity: 0.5;
 }
 
 .box:pressed {
@@ -46,12 +50,24 @@
 
 .board {
     -fx-alignment: CENTER;
+    -worker-img: url("/img/workers/free.png");
 }
 
 .player {
-    -fx-font-family: "Exo 2 Black";
-    -fx-font-size: 25px;
-    -fx-text-fill: orange;
+    -fx-font-family: "Romanica";
+    -fx-font-size: 30px;
+    -fx-text-fill: #2786D1;
+    -fx-alignment: center;
+    -fx-text-alignment: center;
+}
+
+.player .text {
+    -fx-stroke-width: 1px;
+    -fx-stroke: #ffffff;
+}
+
+.player.current {
+
 }
 
 .godCard:hover {
@@ -71,7 +87,7 @@
     -fx-alignment: CENTER;
 }
 
-.voteBox {
+.allGodsBox {
     -fx-min-width: 900px;
     -fx-max-width: 900px;
     -fx-padding: 10 10 10 10;
@@ -86,14 +102,31 @@
 }
 
 .menuTitle {
-    -fx-font-family: "Ethnocentric Rg";
-    -fx-font-style: italic;
-    -fx-font-size: 30px;
-    -fx-text-fill: #f3997b;
+    -fx-font-family: "Dalek Pinpoint";
+    -fx-font-weight: bold;
+    -fx-font-size: 90px;
+    -fx-text-fill: #2786D1;
+}
+
+.menuTitle .text {
+    -fx-effect: dropshadow(gaussian, #000000, 15, 0.2, 0, 0);
+    -fx-stroke-width: 2px;
+    -fx-stroke: #ffffff;
 }
 
 .menuLabel {
-    -fx-font-family: "Exo 2 Black";
+    -fx-font-family: "Romanica";
     -fx-font-size: 25px;
     -fx-text-fill: orange;
+}
+
+.board {
+    -fx-background-image: url("/img/bg.png");
+    -fx-background-size: contain;
+    -fx-background-repeat: no-repeat;
+    -fx-background-position: center center;
+    -fx-min-width: 500px;
+    -fx-max-width: 500px;
+    -fx-min-height: 500px;
+    -fx-max-height: 500px;
 }

@@ -15,6 +15,9 @@ public class WaitController extends GUIController {
     @FXML
     public void initialize() {
         guiManager = GuiManager.getInstance();
+        if (!GuiManager.isPlayingBackground()) {
+            GuiManager.playBackgroundSound("bgm/reg.mp3", true);
+        }
     }
 
     public void setWaitMessage(String message) {
