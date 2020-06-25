@@ -10,6 +10,7 @@ import it.polimi.vovarini.model.Point;
 import it.polimi.vovarini.model.board.Board;
 import it.polimi.vovarini.model.board.items.Block;
 import it.polimi.vovarini.model.moves.Construction;
+import it.polimi.vovarini.model.moves.Movement;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -94,9 +95,14 @@ public class HephaestusTests {
         } catch (BoxFullException ignored) {
         }
 
+        game.getCurrentPlayer().setWorkerSelected(true);
         game.setCurrentPhase(hephaestus.computeNextPhase(game));
+        assertEquals(Phase.Movement, game.getCurrentPhase());
+        //movimento fittizio altrimenti non mi fa skippare
+        game.getCurrentPlayer().getMovementList().add(new Movement(board, new Point(0,0) , start));
+
         game.setCurrentPhase(hephaestus.computeNextPhase(game));
-        assertEquals(game.getCurrentPhase(), Phase.Construction);
+        assertEquals(Phase.Construction, game.getCurrentPhase());
 
         Construction firstConstruction = new Construction(board, Block.blocks[lTarget], firstTarget);
         assertTrue(hephaestus.validate(hephaestus.computeBuildablePoints(), firstConstruction));

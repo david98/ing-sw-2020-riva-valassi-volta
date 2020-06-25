@@ -8,6 +8,7 @@ import it.polimi.vovarini.model.Point;
 import it.polimi.vovarini.model.board.Board;
 import it.polimi.vovarini.model.board.items.Block;
 import it.polimi.vovarini.model.moves.Construction;
+import it.polimi.vovarini.model.moves.Movement;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -86,7 +87,11 @@ public class DemeterTests {
             board.place(Block.blocks[0], secondTarget);
         }
 
+        game.getCurrentPlayer().setWorkerSelected(true);
         game.setCurrentPhase(demeter.computeNextPhase(game));
+        //movimento fittizio altrimenti non mi fa skippare
+        game.getCurrentPlayer().getMovementList().add(new Movement(board, new Point(0,0) , start));
+
         game.setCurrentPhase(demeter.computeNextPhase(game));
         assertEquals(Phase.Construction, game.getCurrentPhase());
 
