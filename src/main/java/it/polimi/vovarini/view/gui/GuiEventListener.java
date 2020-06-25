@@ -10,7 +10,7 @@ import it.polimi.vovarini.common.network.GameClient;
 public class GuiEventListener implements Runnable {
 
   private boolean running;
-  private GameClient client;
+  private final GameClient client;
 
   public GuiEventListener(GameClient client) {
     running = true;

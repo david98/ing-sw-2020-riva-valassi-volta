@@ -5,10 +5,15 @@ import it.polimi.vovarini.common.network.GameClient;
 import it.polimi.vovarini.model.Player;
 import it.polimi.vovarini.view.View;
 import it.polimi.vovarini.view.ViewData;
+import it.polimi.vovarini.view.gui.controllers.GUIController;
+import it.polimi.vovarini.view.gui.controllers.GodCardSelectionController;
+import it.polimi.vovarini.view.gui.controllers.SpawnWorkerController;
+import it.polimi.vovarini.view.gui.controllers.WaitController;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
+import javafx.stage.Stage;
 
 import java.io.IOException;
 
@@ -18,12 +23,13 @@ public class GuiManager extends View {
 
     private GameClient client;
 
-    private RegistrationController registrationController;
-    private WaitController waitController;
-    private ElectedPlayerController electedPlayerController;
-    private GodCardSelectionController godCardSelectionController;
-    private SpawnWorkerController spawnWorkerController;
-    private GameController gameController;
+    private Stage stage;
+
+    private Scene currentScene;
+    private GUIController currentController;
+
+    private boolean godSelectionStarted;
+    private boolean placeWorkersStarted;
 
     private Thread guiEventListenerThread;
 
@@ -33,7 +39,8 @@ public class GuiManager extends View {
         data = new ViewData();
 
         instance = this;
-
+        godSelectionStarted = false;
+        placeWorkersStarted = false;
     }
 
     public static GuiManager getInstance() {
@@ -46,166 +53,136 @@ public class GuiManager extends View {
     @GameEventListener
     public void handleNewPlayer(NewPlayerEvent e) {
         super.handleNewPlayer(e);
-
-        if(e.getNewPlayer().equals(data.getOwner())) {
-            registrationController.onConnectionResponse();
-        }
-
+        Platform.runLater(() -> currentController.handleNewPlayer(e));
     }
 
     @Override
     @GameEventListener
     public void handleBoardUpdate(BoardUpdateEvent e) {
         data.setBoard(e.getNewBoard());
-        if(gameController == null) {
-            Platform.runLater(() -> spawnWorkerController.boardUpdate());
-        }
+        Platform.runLater(() -> currentController.handleBoardUpdate(e));
     }
 
     @Override
     @GameEventListener
     public void handleCurrentPlayerUpdate(CurrentPlayerChangedEvent e) {
         data.setCurrentPlayer(e.getNewPlayer());
-        // se sei in GameScene, aggiorna il currentPlayer a video
+        Platform.runLater(() -> currentController.handleCurrentPlayerUpdate(e));
     }
 
     @Override
     @GameEventListener
     public void handlePhaseUpdate(PhaseUpdateEvent e) {
         data.setCurrentPhase(e.getNewPhase());
-        //se sei in GameScene, aggiorna currentPhase a video
+        Platform.runLater(() -> currentController.handlePhaseUpdate(e));
     }
 
     @Override
     @GameEventListener
     public void handleGameStart(GameStartEvent e) {
-        startMatch();
+        Platform.runLater(() ->
+                setLayout(Settings.GAME_SCENE_FXML)
+        );
     }
 
     @Override
     @GameEventListener
     public void handleGodSelectionStart(GodSelectionStartEvent e) {
-        Player[] players = e.getPlayers();
-        for (int i = 0; i < players.length; i++){
-            for (Player p: data.getPlayerSet()){
-                if (players[i].equals(p)){
-                    players[i] = p;
-                }
-            }
-        }
-        data.getPlayerSet().clear();
-        for (Player p: players){
-            data.addPlayer(p);
-        }
-        data.setCurrentPlayer(e.getElectedPlayer());
+        super.handleGodSelectionStart(e);
 
         if (e.getElectedPlayer().equals(data.getOwner())) {
-            Platform.runLater(() -> waitController.changeLayout("/fxml/electedPlayerScene.fxml"));
-            Platform.runLater(() -> electedPlayerController.addImages(e.getAllGods()));
+            Platform.runLater(() -> setLayout(Settings.ELECTED_PLAYER_SCENE_PATH));
         } else {
-            Platform.runLater(() -> waitController.waitMessage(e.getElectedPlayer().getNickname()));
+            Platform.runLater(() -> {
+                setLayout(Settings.WAIT_SCENE_FXML);
+                ((WaitController) currentController).setWaitMessage("Waiting for " + e.getElectedPlayer().getNickname() + " to choose which" +
+                        "God Cards will be available...");
+            });
         }
+
+        Platform.runLater(() -> currentController.handleGodSelectionStart(e));
     }
 
     @Override
     @GameEventListener
     public void handleSelectYourCard(SelectYourCardEvent e) {
-        if(godCardSelectionController == null) {
-            Platform.runLater(() -> waitController.changeLayout("/fxml/godCardSelectionScene.fxml"));
-            Platform.runLater(() -> godCardSelectionController.addImages(e.getGodsLeft(), !e.getTargetPlayer().equals(data.getOwner())));
-        } else {
-            Platform.runLater(() -> godCardSelectionController.changeVisibility(e.getGodsLeft(), !e.getTargetPlayer().equals(data.getOwner())));
+        if (!godSelectionStarted) {
+            Platform.runLater(() -> setLayout(Settings.GODCARD_SELECTION_SCENE_PATH));
+            godSelectionStarted = true;
         }
+        Platform.runLater(() -> currentController.handleSelectYourCard(e));
     }
 
     @Override
     @GameEventListener
     public void handleCardAssignment(CardAssignmentEvent e) {
-        for (Player p: data.getPlayerSet()){
-            if (p.equals(e.getTargetPlayer())){
-                e.getAssignedCard().setGameData(data);
-                p.setGodCard(e.getAssignedCard());
-            }
-        }
-        Platform.runLater(() -> godCardSelectionController.showChoice(e.getTargetPlayer(), e.getAssignedCard()));
+        super.handleCardAssignment(e);
+        Platform.runLater(() -> currentController.handleCardAssignment(e));
     }
 
     @Override
     @GameEventListener
     public void handlePlaceYourWorkers(PlaceYourWorkersEvent e) {
-
-        if(spawnWorkerController == null) {
-            Platform.runLater(() -> godCardSelectionController.changeLayout("/fxml/spawnWorkerScene.fxml"));
-            Platform.runLater(() -> spawnWorkerController.addImages(data.getPlayers()));
+        if (!placeWorkersStarted) {
+            Platform.runLater(() -> setLayout(Settings.SPAWN_WORKER_SCENE_PATH));
+            placeWorkersStarted = true;
         }
-
-        Platform.runLater(() -> spawnWorkerController.changeVisibility(!e.getTargetPlayer().equals(data.getOwner()), e.getTargetPlayer().getNickname()));
+        Platform.runLater(() -> currentController.handlePlaceYourWorkers(e));
     }
 
     @Override
     @GameEventListener
     public void handlePlayerInfoUpdate(PlayerInfoUpdateEvent e) {
         super.handlePlayerInfoUpdate(e);
-        //currentScreen.handlePlayerInfoUpdate(e);
+        Platform.runLater(() -> currentController.handlePlayerInfoUpdate(e));
     }
 
     @Override
     @GameEventListener
     public void handleGodCardUpdate(GodCardUpdateEvent e) {
         super.handleGodCardUpdate(e);
-        //currentScreen.handleGodCardUpdate(e);
+        Platform.runLater(() -> currentController.handleGodCardUpdate(e));
     }
 
     @Override
     @GameEventListener
     public void handleVictory(VictoryEvent e) {
+        Platform.runLater(() -> currentController.handleVictory(e));
     }
 
-    /*public void render(){
-        console.clear();
-        console.println(currentScreen.render());
-    }
-
-    public void handleInput() throws IOException{
-        int input = console.getReader().read();
-        Key key = KeycodeToKey.map.get(input);
-        if (key != null) {
-            currentScreen.handleKeyPress(key);
-        }
-    }*/
-
-    public void startMatch() {
-
-        System.out.println("Iniziamo la partita!");
-        //setto scena iniziale
-        //currentScreen = new MatchScreen(data, client);
-        //gameLoop();
+    @Override
+    @GameEventListener
+    public void handleLoss(LossEvent e) {
+        Platform.runLater(() -> currentController.handleLoss(e));
     }
 
     public void gameSetup() {
         javafx.application.Application.launch(Gui.class);
+        Settings.load();
     }
 
     /**
-     * Sets a layout form FXML file and returns the scene controller
+     * Sets a layout from FXML file
      *
-     * @param scene scene where to set the layout
      * @param path  path of the FXML file
-     * @param <T>   type of the scene controller
-     * @return the scene controller
      */
-    static <T> T setLayout(Scene scene, String path) {
+    public void setLayout(String path) {
 
-        FXMLLoader loader = new FXMLLoader(GuiManager.class.getResource(path));
+        FXMLLoader loader = new FXMLLoader();
+        loader.setLocation(GuiManager.class.getResource(path));
         Pane pane;
         try {
             pane = loader.load();
-            scene.setRoot(pane);
+            currentScene.setRoot(pane);
+            this.currentController = loader.getController();
+            stage.setMinWidth(0);
+            stage.setMinHeight(0);
+            stage.sizeToScene();
+            stage.setMinWidth(stage.getWidth());
+            stage.setMinHeight(stage.getHeight());
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-        return loader.getController();
     }
 
     public void createConnection(String nickname, String serverIP, int serverPort) throws IOException {
@@ -217,33 +194,32 @@ public class GuiManager extends View {
         guiEventListenerThread.start();
     }
 
-    public void setRegistrationController(RegistrationController registrationController) {
-        this.registrationController = registrationController;
-    }
-
-    public void setWaitController(WaitController waitController) {
-        this.waitController = waitController;
-    }
-
-    public void setElectedPlayerController(ElectedPlayerController electedPlayerController) {
-        this.electedPlayerController = electedPlayerController;
-    }
-
-    public void setGodCardSelectionController(GodCardSelectionController godCardSelectionController) {
-        this.godCardSelectionController = godCardSelectionController;
-    }
-
-    public void setSpawnWorkerController(SpawnWorkerController spawnWorkerController) {
-        this.spawnWorkerController = spawnWorkerController;
-    }
-
     public ViewData getData() {
         return data;
     }
 
-    public GameClient getClient() { return client; }
+    public GameClient getClient() {
+        return client;
+    }
 
-    public int numerOfPlayers() {
+    public int getNumberOfPlayers() {
         return data.getPlayerSet().size();
     }
+
+    public Scene getCurrentScene() {
+        return currentScene;
+    }
+
+    public void setCurrentScene(Scene scene) {
+        this.currentScene = scene;
+    }
+
+    public Stage getStage() {
+        return stage;
+    }
+
+    public void setStage(Stage stage) {
+        this.stage = stage;
+    }
 }
+

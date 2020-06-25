@@ -1,21 +1,21 @@
-package it.polimi.vovarini.view.gui;
+package it.polimi.vovarini.view.gui.controllers;
 
+import it.polimi.vovarini.common.events.CardAssignmentEvent;
 import it.polimi.vovarini.common.events.CardChoiceEvent;
 import it.polimi.vovarini.common.events.GameEvent;
+import it.polimi.vovarini.common.events.SelectYourCardEvent;
 import it.polimi.vovarini.model.Player;
 import it.polimi.vovarini.model.godcards.GodCard;
 import it.polimi.vovarini.model.godcards.GodName;
+import it.polimi.vovarini.view.gui.GuiManager;
+import it.polimi.vovarini.view.gui.Settings;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.BorderPane;
 
-public class GodCardSelectionController {
-
-    @FXML
-    private BorderPane mainPane;
+public class GodCardSelectionController extends GUIController {
 
     @FXML
     private ImageView godCard0;
@@ -37,23 +37,19 @@ public class GodCardSelectionController {
     public void initialize() {
 
         guiManager = GuiManager.getInstance();
-        guiManager.setGodCardSelectionController(this);
         bindEvents();
     }
 
-    void addImages(GodName[] availableGodCards, boolean disabled) {
+     public void addImages(GodName[] availableGodCards) {
         allGods = availableGodCards;
         String selector;
         for(int i = 0; i < availableGodCards.length; i++) {
 
             selector = "#godCard" + i;
-            Node temp = mainPane.lookup(selector);
+            ImageView temp = (ImageView) mainPane.lookup(selector);
 
-            String url = "url('/img/godcards/" + availableGodCards[i].name() + ".png');";
-            temp.setStyle("-fx-image: " + url);
-            temp.setDisable(disabled);
+            temp.setImage(Settings.godImages.get(availableGodCards[i]));
         }
-        changeVisibility(availableGodCards, disabled);
     }
 
     /**
@@ -78,7 +74,7 @@ public class GodCardSelectionController {
         guiManager.getClient().raise(evt);
     }
 
-    void changeVisibility(GodName[] godsLeft, boolean disabled) {
+    public void changeVisibility(GodName[] godsLeft, boolean disabled) {
 
         godCard0.setDisable(true);
         godCard1.setDisable(true);
@@ -102,7 +98,7 @@ public class GodCardSelectionController {
         }
     }
 
-    void showChoice(Player targetPlayer, GodCard assignedCard) {
+    public void showChoice(Player targetPlayer, GodCard assignedCard) {
         for (int i = 0; i < allGods.length; i++) {
             if (allGods[i].equals(assignedCard.getName())) {
                 String selector = "#label" + i;
@@ -112,7 +108,22 @@ public class GodCardSelectionController {
         }
     }
 
-    void changeLayout(String path) {
-        GuiManager.setLayout(mainPane.getScene(), path);
+    @Override
+    public void handleSelectYourCard(SelectYourCardEvent e) {
+        super.handleSelectYourCard(e);
+
+        // solo al primo SelectYourCardEvent stampo a video le immagini delle carte,
+        // poi disabilito quelle scelte e basta (le img a video restano le stesse)
+        if(e.getGodsLeft().length == guiManager.getNumberOfPlayers()) {
+            addImages(e.getGodsLeft());
+        }
+
+        changeVisibility(e.getGodsLeft(), !e.getTargetPlayer().equals(GuiManager.getInstance().getData().getOwner()));
+    }
+
+    @Override
+    public void handleCardAssignment(CardAssignmentEvent e) {
+        super.handleCardAssignment(e);
+        showChoice(e.getTargetPlayer(), e.getAssignedCard());
     }
 }

@@ -51,7 +51,7 @@ public class GameView extends View {
 
   @GameEventListener
   public void handleBoardUpdate(BoardUpdateEvent e){
-    data.setBoard(e.getNewBoard());
+    super.handleBoardUpdate(e);
     if (currentScreen != null) {
       currentScreen.handleBoardUpdate(e);
     }
@@ -87,19 +87,7 @@ public class GameView extends View {
   @Override
   @GameEventListener
   public void handleGodSelectionStart(GodSelectionStartEvent e) {
-    Player[] players = e.getPlayers();
-    for (int i = 0; i < players.length; i++){
-      for (Player p: data.getPlayerSet()){
-        if (players[i].equals(p)){
-          players[i] = p;
-        }
-      }
-    }
-    data.getPlayerSet().clear();
-    for (Player p: players){
-      data.addPlayer(p);
-    }
-    data.setCurrentPlayer(e.getElectedPlayer());
+    super.handleGodSelectionStart(e);
 
     if (e.getElectedPlayer().equals(data.getOwner())) {
       currentScreen = new ElectedPlayerScreen(data, client, Arrays.asList(e.getAllGods()));
@@ -129,12 +117,7 @@ public class GameView extends View {
   @Override
   @GameEventListener
   public void handleCardAssignment(CardAssignmentEvent e) {
-    for (Player p: data.getPlayerSet()){
-      if (p.equals(e.getTargetPlayer())){
-        e.getAssignedCard().setGameData(data);
-        p.setGodCard(e.getAssignedCard());
-      }
-    }
+    super.handleCardAssignment(e);
   }
 
   @Override
@@ -243,7 +226,7 @@ public class GameView extends View {
         GameEventManager.raise(evt);
       }
       try {
-        //render();
+        render();
         if (data.getOwner().equals(data.getCurrentPlayer())) { // && currentScreen.isHandlesInput()) {
           handleInput();
         } else {

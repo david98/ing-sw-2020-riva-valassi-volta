@@ -113,13 +113,57 @@ public class GodCard implements Serializable {
         return false;
       };
 
+  public static Phase normalNextPhaseFromStart(GameDataAccessor gameData) {
+    if (gameData.getCurrentPlayer().isWorkerSelected()) {
+      return Phase.Movement;
+    } else {
+      return Phase.Start;
+    }
+  }
+
+  public static Phase normalNextPhaseFromMovement(GameDataAccessor gameData) {
+    if (gameData.getCurrentPlayer().getMovementList().isEmpty()) {
+      return Phase.Movement;
+    } else {
+      return Phase.Construction;
+    }
+  }
+
+  public static Phase normalNextPhaseFromConstruction(GameDataAccessor gameData) {
+    if (gameData.getCurrentPlayer().getConstructionList().isEmpty()) {
+      return Phase.Construction;
+    } else {
+      return Phase.End;
+    }
+  }
+
+  public static Phase normalNextPhaseFromEnd(GameDataAccessor gameData) {
+    return Phase.Start;
+  }
+
   /**
    * Lambda function that returns the next phase of the turn following the standard flow
    * @param gameData Instance of gameData currently played by all the players
    * @return the next phase to play, according to the normal flow of the gameData
    */
-  SerializableFunction<GameDataAccessor, Phase> nextPhase =
-          (GameDataAccessor gameData) -> gameData.getCurrentPhase().next();
+  SerializableBiFunction<GameDataAccessor, Boolean, Phase> nextPhase =
+          (GameDataAccessor gameData, Boolean skipIfPossible) -> {
+            switch (gameData.getCurrentPhase()) {
+              case Start -> {
+                return normalNextPhaseFromStart(gameData);
+              }
+              case Movement -> {
+                return normalNextPhaseFromMovement(gameData);
+              }
+              case Construction -> {
+                return normalNextPhaseFromConstruction(gameData);
+              }
+              case End -> {
+                return normalNextPhaseFromEnd(gameData);
+              }
+            }
+            return Phase.Start; //will never be reached
+          };
 
 
   /**
@@ -281,32 +325,12 @@ public class GodCard implements Serializable {
    * @return the phase subsequent to the one currently in place
    */
   public Phase computeNextPhase(GameDataAccessor gameData, boolean skipIfPossible){
-
+    Phase previous = gameData.getCurrentPhase();
     Phase next;
 
-    if (skipIfPossible) {
-      switch (gameData.getCurrentPhase()) {
-        case Movement -> {
-          if (!gameData.getCurrentPlayer().getMovementList().isEmpty()) {
-            next = Phase.Construction;
-          } else {
-            next = nextPhase.apply(gameData);
-          }
-        }
-        case Construction -> {
-          if (!gameData.getCurrentPlayer().getConstructionList().isEmpty()) {
-            next = Phase.End;
-          } else {
-            next = nextPhase.apply(gameData);
-          }
-        }
-        default -> next = nextPhase.apply(gameData);
-      }
-    } else {
-      next = nextPhase.apply(gameData);
-    }
+    next = nextPhase.apply(gameData, skipIfPossible);
 
-    if(next.equals(Phase.Start)){
+    if(!previous.equals(Phase.Start) && next.equals(Phase.Start)){
 
       resetPlayerInfo(gameData);
       gameData.getCurrentPlayer().getGodCard().movementConstraints.clear();

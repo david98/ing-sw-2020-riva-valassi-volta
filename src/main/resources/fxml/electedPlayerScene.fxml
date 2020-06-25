@@ -10,7 +10,7 @@
 <?import javafx.scene.control.Button?>
 
 <BorderPane xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
-            fx:controller="it.polimi.vovarini.view.gui.ElectedPlayerController" fx:id="mainPane" styleClass="mainPane">
+            fx:controller="it.polimi.vovarini.view.gui.controllers.ElectedPlayerController" fx:id="mainPane" styleClass="mainPane">
     <stylesheets>
         <URL value="@../css/electedPlayerScene.css"/>
     </stylesheets>

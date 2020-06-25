@@ -50,7 +50,8 @@ public class Controller implements EventListener {
     for (Player player : game.getPlayers()) {
       if(player == null) break ;
       if (player.getNickname().equalsIgnoreCase(evt.getNickname())) {
-        throw new InvalidNicknameException(InvalidNicknameException.ERROR_DUPLICATE);
+        GameEventManager.raise(new InvalidNicknameEvent(game, evt.getNickname()));
+        return ;
       }
     }
     if (!Player.validateNickname(evt.getNickname())) {
@@ -314,17 +315,6 @@ public class Controller implements EventListener {
 
     Player currentPlayer = game.getCurrentPlayer();
     if (!currentPlayer.equals(evt.getSource())) throw new WrongPlayerException();
-
-    /*
-     * Prometheus can build before moving and this check will fail for him.
-     */
-    if ((game.getCurrentPhase().equals(Phase.Start) && !currentPlayer.isWorkerSelected()) ||
-            (game.getCurrentPhase().equals(Phase.Movement) && currentPlayer.getMovementList().isEmpty()) ||
-            (game.getCurrentPhase().equals(Phase.Construction) && currentPlayer.getConstructionList().isEmpty())){
-      // otherwise clients get stuck waiting for an event
-      GameEventManager.raise(new PhaseUpdateEvent(game, game.getCurrentPhase()));
-      throw new UnskippablePhaseException();
-    }
 
     if (game.getCurrentPhase().equals(Phase.End)){
       game.getCurrentPlayer().setWorkerSelected(false);

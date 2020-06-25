@@ -84,8 +84,7 @@ public class ApolloTests {
         } catch (InvalidPositionException | BoxFullException ignored) {
         }
 
-        game.setCurrentPhase(apollo.computeNextPhase(game));
-        assertEquals(Phase.Movement, game.getCurrentPhase());
+        game.setCurrentPhase(Phase.Movement);
 
         Movement movement = new Movement(board, start, end);
         assertTrue(apollo.validate(apollo.computeReachablePoints(), movement));

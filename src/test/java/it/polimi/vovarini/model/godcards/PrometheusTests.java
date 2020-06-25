@@ -101,6 +101,8 @@ public class PrometheusTests {
             e.printStackTrace();
         }
 
+        game.setCurrentPhase(Phase.Start);
+        game.getCurrentPlayer().setWorkerSelected(true);
         game.setCurrentPhase(prometheus.computeNextPhase(game));
         assertEquals(Phase.Construction, game.getCurrentPhase());
 

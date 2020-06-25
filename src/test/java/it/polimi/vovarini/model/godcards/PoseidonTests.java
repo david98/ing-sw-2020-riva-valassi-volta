@@ -11,6 +11,7 @@ import it.polimi.vovarini.model.board.Board;
 import it.polimi.vovarini.model.board.items.Block;
 import it.polimi.vovarini.model.board.items.Worker;
 import it.polimi.vovarini.model.moves.Construction;
+import it.polimi.vovarini.model.moves.Movement;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -73,8 +74,11 @@ public class PoseidonTests {
         }
 
         assertEquals(game.getCurrentPhase(), Phase.Start);
+        game.getCurrentPlayer().setWorkerSelected(true);
         game.setCurrentPhase(poseidon.computeNextPhase(game));
         assertEquals(game.getCurrentPhase(), Phase.Movement);
+        //movimento fittizio altrimenti non mi fa skippare
+        game.getCurrentPlayer().getMovementList().add(new Movement(board, new Point(0,0) , new Point(1,1)));
         game.setCurrentPhase(poseidon.computeNextPhase(game));
         assertEquals(game.getCurrentPhase(), Phase.Construction);
 
@@ -107,7 +111,7 @@ public class PoseidonTests {
         game.performMove(fourthConstruction);
 
         game.setCurrentPhase(poseidon.computeNextPhase(game));
-        assertEquals(game.getCurrentPhase(), Phase.End);
+        assertEquals(Phase.Start, game.getCurrentPhase());
     }
 
 }
