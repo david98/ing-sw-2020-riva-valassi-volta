@@ -24,7 +24,7 @@ public class Gui extends Application {
 
         GuiManager.getInstance().setStage(stage);
         GuiManager.getInstance().setCurrentScene(stage.getScene());
-        GuiManager.getInstance().setLayout(Settings.SPAWN_WORKER_SCENE_PATH);
+        GuiManager.getInstance().setLayout(Settings.REGISTRATION_SCENE_PATH);
         stage.show();
         stage.setMinWidth(stage.getWidth());
         stage.setMinHeight(stage.getHeight());
