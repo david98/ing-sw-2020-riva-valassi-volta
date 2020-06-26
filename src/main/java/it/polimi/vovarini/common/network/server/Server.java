@@ -1,9 +1,6 @@
 package it.polimi.vovarini.common.network.server;
 
-import it.polimi.vovarini.common.events.AbruptEndEvent;
-import it.polimi.vovarini.common.events.GameEvent;
-import it.polimi.vovarini.common.events.GameEventListener;
-import it.polimi.vovarini.common.events.GameEventManager;
+import it.polimi.vovarini.common.events.*;
 import it.polimi.vovarini.common.exceptions.InvalidNumberOfPlayersException;
 import it.polimi.vovarini.controller.Controller;
 import it.polimi.vovarini.model.Game;
@@ -32,31 +29,38 @@ public class Server implements Runnable{
 
   private int successfulDisconnects = 0;
 
+  private RemoteView[] remoteViews = new RemoteView[Game.MAX_PLAYERS];
+  private int currentlyConnectedClients = 0;
+
+  private boolean acceptingConnections = true;
+
   public static void handleUncaughtExceptions(Thread th, Throwable e) {
     LOGGER.log(Level.SEVERE, "Uncaught exception in thread " + th.toString() + ": " + e.getMessage());
     GameEventManager.raise(new AbruptEndEvent("server"));
     LOGGER.log(Level.SEVERE, "Raised AbruptEndEvent.");
   }
 
-  public Server(int port, int numberOfPlayers) throws IOException{
+  public Server(int port) throws IOException{
     GameEventManager.bindListeners(this);
     serverSocket = new ServerSocket(port);
     pool = Executors.newFixedThreadPool(DEFAULT_MAX_THREADS);
-    init(numberOfPlayers);
   }
 
-  public Server(int port, int numberOfPlayers, int nThreads) throws IOException{
+  public Server(int port, int nThreads) throws IOException{
     GameEventManager.bindListeners(this);
     serverSocket = new ServerSocket(port);
     pool = Executors.newFixedThreadPool(nThreads);
-    init(numberOfPlayers);
   }
 
   private void init(int numberOfPlayers){
     try {
       game = new Game(numberOfPlayers);
       controller = new Controller(game);
-      LOGGER.log(Level.INFO, "Server initialized.");
+      LOGGER.log(Level.INFO, "Game initialized.");
+      acceptingConnections = true;
+      synchronized (this) {
+        notifyAll();
+      }
     } catch (InvalidNumberOfPlayersException e){
       e.printStackTrace();
     }
@@ -66,12 +70,34 @@ public class Server implements Runnable{
     LOGGER.log(Level.INFO, "Server is now listening on port {0}.", serverSocket.getLocalPort());
     try {
       while (!Thread.currentThread().isInterrupted()) {
+        synchronized(this) {
+          while (!acceptingConnections) {
+            wait();
+          }
+        }
         LOGGER.log(Level.FINE, "Waiting for new connection...");
-        pool.execute(new RemoteView(serverSocket.accept()));
-        LOGGER.log(Level.INFO, "A new client connected.");
+        if (game == null && currentlyConnectedClients == 0) {
+          remoteViews[currentlyConnectedClients] = new RemoteView(serverSocket.accept());
+          pool.execute(remoteViews[currentlyConnectedClients]);
+          LOGGER.log(Level.INFO, "First client connected.");
+          GameEventManager.raise(new FirstPlayerEvent("server"));
+          LOGGER.log(Level.INFO, "FirstPlayerEvent raised.");
+          acceptingConnections = false;
+        } else if (currentlyConnectedClients > 0 && game != null && currentlyConnectedClients < game.getInitialNumberOfPlayers()){
+          remoteViews[currentlyConnectedClients] = new RemoteView(serverSocket.accept());
+          pool.execute(remoteViews[currentlyConnectedClients]);
+          LOGGER.log(Level.INFO, "A new client connected.");
+        }
+        currentlyConnectedClients++;
+
+        if (game != null && currentlyConnectedClients >= game.getInitialNumberOfPlayers()) {
+          GameEventManager.raise(new RegistrationStartEvent("server"));
+          acceptingConnections = false;
+        }
       }
-    } catch (IOException ex) {
+    } catch (IOException | InterruptedException ex) {
       pool.shutdown();
+      Thread.currentThread().interrupt();
     }
   }
 
@@ -114,5 +140,13 @@ public class Server implements Runnable{
       LOGGER.log(Level.INFO, "All clients disconnected, quitting...");
       System.exit(0);
     }
+  }
+
+  @GameEventListener
+  public void handleNumberOfPlayersChoice(NumberOfPlayersChoiceEvent e){
+    if (e.getNumberOfPlayers() < Game.MIN_PLAYERS || e.getNumberOfPlayers() > Game.MAX_PLAYERS) {
+      throw new InvalidNumberOfPlayersException();
+    }
+    init(e.getNumberOfPlayers());
   }
 }

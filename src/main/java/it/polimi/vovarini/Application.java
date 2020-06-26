@@ -18,9 +18,6 @@ public class Application implements Callable<Integer> {
   @CommandLine.Parameters(arity = "0..1", index = "0", description = "The server hostname or IP address")
   private String serverIP = "santorini.davide.gdn";
 
-  @CommandLine.Option(names = {"-n", "--number"}, description = "The number of players")
-  private int playersNumber = 2;
-
   @CommandLine.Option(names = {"-p", "--port"}, description = "The port to connect to (or to listen on if running as server")
   private int port = Server.DEFAULT_PORT;
 
@@ -28,8 +25,8 @@ public class Application implements Callable<Integer> {
   private boolean useCLI;
 
 
-  public void launchServer(int port, int numberOfPlayers) throws IOException {
-    Server server = new Server(port, numberOfPlayers);
+  public void launchServer(int port) throws IOException {
+    Server server = new Server(port);
     Thread thread = new Thread(server);
     thread.start();
     try {
@@ -55,7 +52,7 @@ public class Application implements Callable<Integer> {
   @Override
   public Integer call() throws IOException {
     if (serverMode){
-      launchServer(port, playersNumber);
+      launchServer(port);
     } else {
       launchClient(useCLI ? ClientMode.CLI : ClientMode.GUI, serverIP, port);
     }

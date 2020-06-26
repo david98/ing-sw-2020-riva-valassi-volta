@@ -23,6 +23,4 @@ public class WaitController extends GUIController {
     public void setWaitMessage(String message) {
         label.setText(message);
     }
-
-
 }

@@ -151,4 +151,18 @@ public class RemoteView extends View implements ClientConnectionHandler {
     LOGGER.log(Level.INFO, "AbruptEndEvent forwarded to client.");
     serverEvents.add(e);
   }
+
+  @Override
+  @GameEventListener
+  public void handleFirstPlayer(FirstPlayerEvent e) {
+    LOGGER.log(Level.INFO, "FirstPlayerEvent forwarded to client.");
+    serverEvents.add(e);
+  }
+
+  @Override
+  @GameEventListener
+  public void handleRegistrationStart(RegistrationStartEvent e) {
+    LOGGER.log(Level.INFO, "RegistrationStartEvent forwarded to client.");
+    serverEvents.add(e);
+  }
 }

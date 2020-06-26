@@ -85,4 +85,14 @@ public class GUIController implements EventsForViewListener {
   public void handleAbruptEnd(AbruptEndEvent e) {
 
   }
+
+  @Override
+  public void handleFirstPlayer(FirstPlayerEvent e) {
+
+  }
+
+  @Override
+  public void handleRegistrationStart(RegistrationStartEvent e) {
+
+  }
 }
