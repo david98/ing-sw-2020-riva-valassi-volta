@@ -177,6 +177,16 @@ public class GuiManager extends View {
         });
     }
 
+    @Override
+    public void handleFirstPlayer(FirstPlayerEvent e) {
+
+    }
+
+    @Override
+    public void handleRegistrationStart(RegistrationStartEvent e) {
+
+    }
+
     public void gameSetup() {
         javafx.application.Application.launch(Gui.class);
         Settings.load();

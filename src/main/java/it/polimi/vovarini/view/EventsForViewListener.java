@@ -30,4 +30,8 @@ public interface EventsForViewListener {
   void handleLoss(LossEvent e);
 
   void handleAbruptEnd(AbruptEndEvent e);
+
+  void handleFirstPlayer(FirstPlayerEvent e);
+
+  void handleRegistrationStart(RegistrationStartEvent e);
 }
