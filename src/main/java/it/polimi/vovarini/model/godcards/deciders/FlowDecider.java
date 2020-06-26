@@ -63,7 +63,7 @@ public class FlowDecider extends Decider {
                             currentPlayerGodCard.getConstructionConstraints().add(BuildabilityDecider::denyPerimeterSpace);
                             GameEventManager.raise(new GodCardUpdateEvent(gameData, currentPlayerGodCard, gameData.getCurrentPlayer()));
                             break;
-                        case Poseidon:
+                        /*case Poseidon:
                             try {
                                 Point otherWorkerPosition = gameData.getBoard().getItemPosition(gameData.getCurrentPlayer().getOtherWorker());
                                 int otherWorkerLevel = gameData.getBoard().getBox(otherWorkerPosition).getLevel();
@@ -85,7 +85,7 @@ public class FlowDecider extends Decider {
                             } catch (ItemNotFoundException ignored) {
                                 System.err.println("This really should never happen...");
                             }
-                            break;
+                            break;*/
                         default:
                             break;
                     }
@@ -93,12 +93,12 @@ public class FlowDecider extends Decider {
                 } else if(gameData.getCurrentPlayer().getConstructionList().size() > 1 &&
                         gameData.getCurrentPlayer().getConstructionList().size() < 4) {
                     switch (currentPlayerGodCard.getName()) {
-                        case Poseidon:
+                        /*case Poseidon:
                             if (skipIfPossible ||
                                     gameData.getCurrentPlayer().getGodCard().computeReachablePoints().isEmpty()) {
                                 return Phase.End;
                             }
-                            return Phase.Construction;
+                            return Phase.Construction;*/
                         default:
                             return gameData.getCurrentPhase().next();
                     }
@@ -240,7 +240,7 @@ public class FlowDecider extends Decider {
                                     GameEventManager.raise(new GodCardUpdateEvent(gameData, otherPlayer.getGodCard(), otherPlayer));
                                 }
 
-                                case Poseidon -> {
+                                case Limus -> {
                                     otherPlayer.getGodCard().getConstructionConstraints().clear();
                                     GameEventManager.raise(new GodCardUpdateEvent(gameData, otherPlayer.getGodCard(), otherPlayer));
                                 }
@@ -272,7 +272,7 @@ public class FlowDecider extends Decider {
                 for (Player otherPlayer : gameData.getPlayers()) {
                     if (!otherPlayer.equals(gameData.getCurrentPlayer())) {
                         switch (gameData.getCurrentPlayer().getGodCard().getName()) {
-                            case Poseidon -> {
+                            case Limus -> {
                                 otherPlayer.getGodCard().getConstructionConstraints().add(BuildabilityDecider::mustBuildDomes);
                                 GameEventManager.raise(new GodCardUpdateEvent(gameData, otherPlayer.getGodCard(), otherPlayer));
                             }

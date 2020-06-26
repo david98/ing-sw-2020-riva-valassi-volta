@@ -46,17 +46,14 @@ public class GodCardFactory {
         case Hestia -> {
           return createHestia();
         }
-        /*case Limus -> {
+        case Limus -> {
           return createLimus();
-        }*/
+        }
         case Minotaur -> {
           return createMinotaur();
         }
         case Pan -> {
           return createPan();
-        }
-        case Poseidon -> {
-          return createPoseidon();
         }
         case Prometheus -> {
           return createPrometheus();
@@ -189,16 +186,6 @@ public class GodCardFactory {
     hephy.nextPhase = FlowDecider::extendsConstruction;
     return hephy;
   }
-
-    /**
-     * This method injects a generic GodCard with all the Behaviors modified by the card Poseidon
-     * @return an instance of a GodCard in the mold of Santorini's Poseidon card
-     */
-    private static GodCard createPoseidon(){
-      GodCard poseidon = new GodCard(GodName.Poseidon);
-      poseidon.nextPhase =  FlowDecider::applyMalus;
-      return poseidon;
-    }
 
     /**
      * This method injects a generic GodCard with all the Behaviors modified by the card Triton

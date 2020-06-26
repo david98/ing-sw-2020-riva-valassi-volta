@@ -12,7 +12,6 @@ public enum GodName {
   Limus,
   Minotaur,
   Pan,
-  Poseidon,
   Prometheus,
   Triton,
   Zeus,
