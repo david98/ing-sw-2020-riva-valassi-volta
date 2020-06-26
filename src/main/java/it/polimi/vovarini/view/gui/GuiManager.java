@@ -10,6 +10,8 @@ import it.polimi.vovarini.view.gui.controllers.WaitController;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 import javafx.scene.layout.Pane;
 import javafx.scene.media.MediaPlayer;
 import javafx.stage.Stage;
@@ -160,6 +162,19 @@ public class GuiManager extends View {
     @GameEventListener
     public void handleLoss(LossEvent e) {
         Platform.runLater(() -> currentController.handleLoss(e));
+    }
+
+    @Override
+    @GameEventListener
+    public void handleAbruptEnd(AbruptEndEvent e) {
+        Platform.runLater(() -> {
+            Alert alert = new Alert(Alert.AlertType.ERROR, "A player disconnected. Quitting.", ButtonType.OK);
+
+            alert.showAndWait();
+
+            Platform.exit();
+            System.exit(0);
+        });
     }
 
     public void gameSetup() {

@@ -80,4 +80,9 @@ public class GUIController implements EventsForViewListener {
   public void handleLoss(LossEvent e) {
 
   }
+
+  @Override
+  public void handleAbruptEnd(AbruptEndEvent e) {
+
+  }
 }
