@@ -57,6 +57,7 @@ public class Controller implements EventListener {
 
     if (!Player.validateNickname(evt.getNickname())) {
       GameEventManager.raise(new InvalidNicknameEvent(game, InvalidNicknameEvent.ERROR_INVALID, evt.getNickname()));
+      throw new InvalidNicknameException(InvalidNicknameException.ERROR_INVALID);
     }
 
     try {
