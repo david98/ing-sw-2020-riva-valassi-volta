@@ -97,6 +97,7 @@ public class Server implements Runnable{
       }
     } catch (IOException | InterruptedException ex) {
       pool.shutdown();
+      Thread.currentThread().interrupt();
     }
   }
 
