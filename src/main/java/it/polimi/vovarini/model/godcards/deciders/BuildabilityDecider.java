@@ -7,6 +7,7 @@ import it.polimi.vovarini.model.Player;
 import it.polimi.vovarini.model.Point;
 import it.polimi.vovarini.model.board.Board;
 import it.polimi.vovarini.model.board.items.Block;
+import it.polimi.vovarini.model.board.items.Worker;
 import it.polimi.vovarini.model.godcards.GodName;
 
 /**
@@ -97,23 +98,25 @@ public class BuildabilityDecider extends Decider {
         return false;
     }
 
-    public static boolean mustBuildDomes(GameDataAccessor gameData, Point target){
+    public static boolean mustBuildDomes(GameDataAccessor gameData, Point target) {
         Player limusPlayer = null;
-        for (Player player : gameData.getPlayers()){
-            if (player.getGodCard().getName().equals(GodName.Limus)) limusPlayer = player;
+
+        for(Player player : gameData.getPlayers()){
+            if(player.getGodCard().getName().equals(GodName.Limus)) limusPlayer = player;
         }
 
-        if (limusPlayer == null) return true;
-
-        for(Point candidate : gameData.getBoard().getAdjacentPositions(target)){
-            if(gameData.getBoard().getItems(candidate).peek().canBeRemoved()){
-                if(gameData.getBoard().getItems(candidate).peek().equals(limusPlayer.getCurrentWorker()) || gameData.getBoard().getItems(candidate).peek().equals(limusPlayer.getOtherWorker())){
-                    if(gameData.getBoard().getItems(target).peek().canBeRemoved()) return false;
-                    else return gameData.getBoard().getItems(target).peek().equals(new Block (3));
+        for (Point candidate : gameData.getBoard().getAdjacentPositions(target)){
+            if(gameData.getBoard().getItems(candidate).peek() != null){
+                if(gameData.getBoard().getItems(candidate).peek().canBeRemoved()){
+                    Worker candidateWorker = (Worker) gameData.getBoard().getItems(candidate).peek();
+                    if (candidateWorker.getOwner().equals(limusPlayer)){
+                        if(gameData.getBoard().getItems(target).peek() == null) return false;
+                        else if(gameData.getBoard().getItems(target).peek().canBeRemoved()) return false;
+                        else return gameData.getBoard().getItems(target).peek().equals(new Block(3));
+                    }
                 }
             }
         }
-
         return false;
     }
 
