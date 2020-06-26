@@ -40,13 +40,13 @@ public class Server implements Runnable{
     LOGGER.log(Level.SEVERE, "Raised AbruptEndEvent.");
   }
 
-  public Server(int port, int numberOfPlayers) throws IOException{
+  public Server(int port) throws IOException{
     GameEventManager.bindListeners(this);
     serverSocket = new ServerSocket(port);
     pool = Executors.newFixedThreadPool(DEFAULT_MAX_THREADS);
   }
 
-  public Server(int port, int numberOfPlayers, int nThreads) throws IOException{
+  public Server(int port, int nThreads) throws IOException{
     GameEventManager.bindListeners(this);
     serverSocket = new ServerSocket(port);
     pool = Executors.newFixedThreadPool(nThreads);
