@@ -4,6 +4,9 @@ import it.polimi.vovarini.model.Point;
 import it.polimi.vovarini.model.board.Board;
 import it.polimi.vovarini.model.board.items.Block;
 
+/**
+ * This class represents an undo of a Construction move
+ */
 public class Destruction extends Move {
 
   private Block block;

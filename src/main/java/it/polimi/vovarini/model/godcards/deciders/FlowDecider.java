@@ -239,6 +239,11 @@ public class FlowDecider extends Decider {
                                     otherPlayer.getGodCard().getMovementConstraints().clear();
                                     GameEventManager.raise(new GodCardUpdateEvent(gameData, otherPlayer.getGodCard(), otherPlayer));
                                 }
+
+                                case Limus -> {
+                                    otherPlayer.getGodCard().getConstructionConstraints().clear();
+                                    GameEventManager.raise(new GodCardUpdateEvent(gameData, otherPlayer.getGodCard(), otherPlayer));
+                                }
                             }
                         }
                     }
@@ -264,6 +269,16 @@ public class FlowDecider extends Decider {
                 return GodCard.normalNextPhaseFromConstruction(gameData);
             }
             case End -> {
+                for (Player otherPlayer : gameData.getPlayers()) {
+                    if (!otherPlayer.equals(gameData.getCurrentPlayer())) {
+                        switch (gameData.getCurrentPlayer().getGodCard().getName()) {
+                            case Limus -> {
+                                otherPlayer.getGodCard().getConstructionConstraints().add(BuildabilityDecider::mustBuildDomes);
+                                GameEventManager.raise(new GodCardUpdateEvent(gameData, otherPlayer.getGodCard(), otherPlayer));
+                            }
+                        }
+                    }
+                }
                 return Phase.Start;
             }
         }

@@ -9,6 +9,7 @@ public enum GodName {
   Hephaestus,
   Hera,
   Hestia,
+  Limus,
   Minotaur,
   Pan,
   Poseidon,

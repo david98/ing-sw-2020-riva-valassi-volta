@@ -6,6 +6,9 @@ import it.polimi.vovarini.model.Point;
 import it.polimi.vovarini.model.board.Board;
 import it.polimi.vovarini.model.board.items.Item;
 
+/**
+ * This class represents a general Movement, a move where the player can decide to shift the position of his worker in a different cell
+ */
 public class Movement extends Move {
 
   private final Point start;

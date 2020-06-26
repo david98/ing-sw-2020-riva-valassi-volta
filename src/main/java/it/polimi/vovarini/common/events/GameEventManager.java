@@ -8,6 +8,13 @@ import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+/**
+ * Manager to bind listeners and raise events when necessary
+ *
+ * @author Davide Volta
+ *
+ * @version 0.1
+ */
 public class GameEventManager {
 
   private static final Logger LOGGER = Logger.getLogger( GameEventManager.class.getName() );

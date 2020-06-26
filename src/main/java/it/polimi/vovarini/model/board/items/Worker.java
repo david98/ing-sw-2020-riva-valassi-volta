@@ -4,6 +4,9 @@ import it.polimi.vovarini.model.Player;
 
 import java.util.Arrays;
 
+/**
+ * This class represents a Worker
+ */
 public class Worker extends Item {
   private final Sex sex;
   private final Player owner;

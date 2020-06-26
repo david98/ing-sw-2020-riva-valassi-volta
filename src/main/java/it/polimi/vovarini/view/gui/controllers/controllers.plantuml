@@ -1,0 +1,206 @@
+@startuml
+
+title __CONTROLLERS's Class Diagram__\n
+
+  namespace it.polimi.vovarini {
+    namespace view {
+      namespace gui {
+        namespace controllers {
+          class it.polimi.vovarini.view.gui.controllers.ElectedPlayerController {
+              - godCard0 : ImageView
+              - godCard1 : ImageView
+              - godCard10 : ImageView
+              - godCard11 : ImageView
+              - godCard12 : ImageView
+              - godCard13 : ImageView
+              - godCard2 : ImageView
+              - godCard3 : ImageView
+              - godCard4 : ImageView
+              - godCard5 : ImageView
+              - godCard6 : ImageView
+              - godCard7 : ImageView
+              - godCard8 : ImageView
+              - godCard9 : ImageView
+              - selectedCards : List<GodName>
+              - selectedGodCard1 : ImageView
+              - selectedGodCard2 : ImageView
+              - selectedGodCard3 : ImageView
+              - submit : Button
+              + addImages()
+              + handleGodSelectionStart()
+              + initialize()
+              - bindEvents()
+              - onCardButtonClick()
+              - submit()
+          }
+        }
+      }
+    }
+  }
+  
+
+  namespace it.polimi.vovarini {
+    namespace view {
+      namespace gui {
+        namespace controllers {
+          class it.polimi.vovarini.view.gui.controllers.GUIController {
+              # mainPane : BorderPane
+              + handleBoardUpdate()
+              + handleCardAssignment()
+              + handleCurrentPlayerUpdate()
+              + handleGameStart()
+              + handleGodCardUpdate()
+              + handleGodSelectionStart()
+              + handleLoss()
+              + handleNewPlayer()
+              + handlePhaseUpdate()
+              + handlePlaceYourWorkers()
+              + handlePlayerInfoUpdate()
+              + handleSelectYourCard()
+              + handleVictory()
+              + initialize()
+          }
+        }
+      }
+    }
+  }
+  
+
+  namespace it.polimi.vovarini {
+    namespace view {
+      namespace gui {
+        namespace controllers {
+          class it.polimi.vovarini.view.gui.controllers.GameController {
+              {static} - allPoints : List<Point>
+              - board : GridPane
+              - currentPhase : Label
+              - instruction : Label
+              - skipButton : Label
+              + addImages()
+              + handleBoardUpdate()
+              + handleLoss()
+              + handlePhaseUpdate()
+              + handleVictory()
+              + initialize()
+              + onGridClick()
+              + updateView()
+              - bindEvents()
+              - deHighlightPoints()
+              - gameAction()
+              - highlightPoints()
+              - onMouseEntered()
+              - onMouseExited()
+              - skipPhase()
+          }
+        }
+      }
+    }
+  }
+  
+
+  namespace it.polimi.vovarini {
+    namespace view {
+      namespace gui {
+        namespace controllers {
+          class it.polimi.vovarini.view.gui.controllers.GodCardSelectionController {
+              - allGods : GodName[]
+              - godCard0 : ImageView
+              - godCard1 : ImageView
+              - godCard2 : ImageView
+              - instruction : Label
+              + addImages()
+              + changeVisibility()
+              + handleCardAssignment()
+              + handleSelectYourCard()
+              + initialize()
+              + showChoice()
+              - bindEvents()
+              - onCardButtonClick()
+          }
+        }
+      }
+    }
+  }
+  
+
+  namespace it.polimi.vovarini {
+    namespace view {
+      namespace gui {
+        namespace controllers {
+          class it.polimi.vovarini.view.gui.controllers.RegistrationController {
+              - addressField : TextField
+              - error : Label
+              - nicknameField : TextField
+              - portField : TextField
+              - submit : Button
+              + handleNewPlayer()
+              + initialize()
+              ~ onInvalidNickname()
+              - onButtonClick()
+          }
+        }
+      }
+    }
+  }
+  
+
+  namespace it.polimi.vovarini {
+    namespace view {
+      namespace gui {
+        namespace controllers {
+          class it.polimi.vovarini.view.gui.controllers.SpawnWorkerController {
+              - board : GridPane
+              - instruction : Label
+              - sexes : List<Sex>
+              + addImages()
+              + handleBoardUpdate()
+              + handleCurrentPlayerUpdate()
+              + handlePlaceYourWorkers()
+              + initialize()
+              + onGridClick()
+              + updateView()
+              - spawnWorker()
+          }
+        }
+      }
+    }
+  }
+  
+
+  namespace it.polimi.vovarini {
+    namespace view {
+      namespace gui {
+        namespace controllers {
+          class it.polimi.vovarini.view.gui.controllers.WaitController {
+              - label : Label
+              + initialize()
+              + setWaitMessage()
+          }
+        }
+      }
+    }
+  }
+  
+
+  it.polimi.vovarini.view.gui.controllers.ElectedPlayerController -up-|> it.polimi.vovarini.view.gui.controllers.GUIController
+  it.polimi.vovarini.view.gui.controllers.GUIController .up.|> it.polimi.vovarini.view.EventsForViewListener
+  it.polimi.vovarini.view.gui.controllers.GameController -up-|> it.polimi.vovarini.view.gui.controllers.GUIController
+  it.polimi.vovarini.view.gui.controllers.GameController o-- it.polimi.vovarini.view.gui.GuiManager : guiManager
+  it.polimi.vovarini.view.gui.controllers.GodCardSelectionController -up-|> it.polimi.vovarini.view.gui.controllers.GUIController
+  it.polimi.vovarini.view.gui.controllers.GodCardSelectionController o-- it.polimi.vovarini.view.gui.GuiManager : guiManager
+  it.polimi.vovarini.view.gui.controllers.RegistrationController -up-|> it.polimi.vovarini.view.gui.controllers.GUIController
+  it.polimi.vovarini.view.gui.controllers.RegistrationController o-- it.polimi.vovarini.view.gui.GuiManager : guiManager
+  it.polimi.vovarini.view.gui.controllers.SpawnWorkerController -up-|> it.polimi.vovarini.view.gui.controllers.GUIController
+  it.polimi.vovarini.view.gui.controllers.SpawnWorkerController o-- it.polimi.vovarini.view.gui.GuiManager : guiManager
+  it.polimi.vovarini.view.gui.controllers.WaitController -up-|> it.polimi.vovarini.view.gui.controllers.GUIController
+  it.polimi.vovarini.view.gui.controllers.WaitController o-- it.polimi.vovarini.view.gui.GuiManager : guiManager
+
+
+right footer
+
+
+PlantUML diagram generated by SketchIt! (https://bitbucket.org/pmesmeur/sketch.it)
+For more information about this tool, please contact philippe.mesmeur@gmail.com
+endfooter
+
+@enduml

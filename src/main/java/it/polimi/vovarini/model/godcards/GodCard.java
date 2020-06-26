@@ -43,7 +43,7 @@ public class GodCard implements Serializable {
   }
 
   /**
-   * Initialization of tall the Collections containing the different Lambda functions to evaluate
+   * Initialization of all the Collections containing the different Lambda functions to evaluate
    */
   private void initCollections(){
     movementConditions = new HashSet<>();

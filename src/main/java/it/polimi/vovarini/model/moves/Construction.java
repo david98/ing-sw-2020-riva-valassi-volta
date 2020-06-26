@@ -5,6 +5,9 @@ import it.polimi.vovarini.model.board.Board;
 import it.polimi.vovarini.model.board.items.Block;
 import it.polimi.vovarini.model.board.items.Item;
 
+/**
+ * This class represents a general construction move, where the players decides to build a block on a cell of the board
+ */
 public class Construction extends Move {
 
   private Block block;

@@ -8,6 +8,9 @@ import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.NoSuchElementException;
 
+/**
+ * This class represents a single box, or cell, of the {@link it.polimi.vovarini.model.board.Board}
+ */
 public class Box implements Serializable {
 
   public static final int MAX_ITEMS = 4;

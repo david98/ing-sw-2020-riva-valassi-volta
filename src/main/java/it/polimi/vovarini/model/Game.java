@@ -13,6 +13,9 @@ import it.polimi.vovarini.model.moves.Movement;
 import java.io.Serializable;
 import java.util.*;
 
+/**
+ * This class represents the game currently played, with all the data necessary to handle it
+ */
 public class Game implements Serializable, GameDataAccessor {
 
   public static final int MIN_PLAYERS = 2;

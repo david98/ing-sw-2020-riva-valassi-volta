@@ -46,6 +46,9 @@ public class GodCardFactory {
         case Hestia -> {
           return createHestia();
         }
+        case Limus -> {
+          return createLimus();
+        }
         case Minotaur -> {
           return createMinotaur();
         }
@@ -138,6 +141,12 @@ public class GodCardFactory {
       GodCard hestia = new GodCard(GodName.Hestia);
       hestia.nextPhase = FlowDecider::extendsConstruction;
       return hestia;
+    }
+
+    private static GodCard createLimus(){
+      GodCard limus = new GodCard(GodName.Limus);
+      limus.nextPhase = FlowDecider::applyMalus;
+      return limus;
     }
 
     /**
