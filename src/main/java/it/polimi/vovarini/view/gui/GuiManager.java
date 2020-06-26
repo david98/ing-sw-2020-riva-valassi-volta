@@ -58,6 +58,12 @@ public class GuiManager extends View {
 
     @Override
     @GameEventListener
+    public void handleInvalidNickname(InvalidNicknameEvent e) {
+        Platform.runLater(() -> currentController.handleInvalidNickname(e));
+    }
+
+    @Override
+    @GameEventListener
     public void handleNewPlayer(NewPlayerEvent e) {
         super.handleNewPlayer(e);
         Platform.runLater(() -> currentController.handleNewPlayer(e));

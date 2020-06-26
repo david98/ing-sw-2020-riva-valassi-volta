@@ -165,4 +165,10 @@ public class RemoteView extends View implements ClientConnectionHandler {
     LOGGER.log(Level.INFO, "RegistrationStartEvent forwarded to client.");
     serverEvents.add(e);
   }
+
+  @Override
+  @GameEventListener
+  public void handleInvalidNickname(InvalidNicknameEvent e) {
+    serverEvents.add(e);
+  }
 }

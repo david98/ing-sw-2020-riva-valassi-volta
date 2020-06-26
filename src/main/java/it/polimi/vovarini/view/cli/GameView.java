@@ -11,6 +11,7 @@ import it.polimi.vovarini.view.cli.console.FullScreenConsole;
 import it.polimi.vovarini.view.cli.input.Key;
 import it.polimi.vovarini.view.cli.input.KeycodeToKey;
 import it.polimi.vovarini.view.cli.screens.*;
+import it.polimi.vovarini.view.gui.Settings;
 
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
@@ -214,6 +215,19 @@ public class GameView extends View {
         GameEventManager.raise(evtFromServer);
       } catch (InterruptedException ex){
         Thread.currentThread().interrupt();
+      }
+    }
+  }
+
+  @Override
+  @GameEventListener
+  public void handleInvalidNickname(InvalidNicknameEvent e) {
+
+    if(data.getOwner() != null && e.getNickname().equals(data.getOwner().getNickname())) {
+      if(e.getErrorCode() == 0) {
+        //stampare messaggio d'errore Settings.DUPLICATE_NICKNAME
+      } else {
+        //stampare messaggio d'errore Settings.INVALID_NICKNAME
       }
     }
   }
