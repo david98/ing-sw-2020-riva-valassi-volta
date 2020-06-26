@@ -101,4 +101,24 @@ public abstract class Screen implements Renderable, EventsForViewListener, KeyPr
   public void handleLoss(LossEvent e) {
   
   }
+
+  @Override
+  public void handleAbruptEnd(AbruptEndEvent e) {
+
+  }
+
+  @Override
+  public void handleFirstPlayer(FirstPlayerEvent e) {
+
+  }
+
+  @Override
+  public void handleRegistrationStart(RegistrationStartEvent e) {
+
+  }
+
+  @Override
+  public void handleInvalidNickname(InvalidNicknameEvent e) {
+
+  }
 }

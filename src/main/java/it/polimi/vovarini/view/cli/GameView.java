@@ -2,6 +2,7 @@ package it.polimi.vovarini.view.cli;
 
 import it.polimi.vovarini.common.events.*;
 import it.polimi.vovarini.common.network.GameClient;
+import it.polimi.vovarini.model.Game;
 import it.polimi.vovarini.model.Player;
 import it.polimi.vovarini.view.View;
 import it.polimi.vovarini.view.ViewData;
@@ -10,6 +11,7 @@ import it.polimi.vovarini.view.cli.console.FullScreenConsole;
 import it.polimi.vovarini.view.cli.input.Key;
 import it.polimi.vovarini.view.cli.input.KeycodeToKey;
 import it.polimi.vovarini.view.cli.screens.*;
+import it.polimi.vovarini.view.gui.Settings;
 
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
@@ -171,6 +173,65 @@ public class GameView extends View {
     }
   }
 
+  @Override
+  @GameEventListener
+  public void handleAbruptEnd(AbruptEndEvent e) {
+    currentScreen = new WaitScreen(data, client,"A player disconnected. It's gane over for everyone.");
+  }
+
+  @Override
+  @GameEventListener
+  public void handleFirstPlayer(FirstPlayerEvent e) {
+    Scanner sc = console.getScanner();
+    int numberOfPlayers;
+    do {
+      System.out.print("You're the first! Choose between 2 or 3 players mode: ");
+      numberOfPlayers = sc.nextInt();
+    } while (numberOfPlayers < Game.MIN_PLAYERS || numberOfPlayers > Game.MAX_PLAYERS);
+    client.raise(new NumberOfPlayersChoiceEvent("firstPlayer", numberOfPlayers));
+    System.out.println("Now waiting for all other players to connect...");
+    waitForEvent();
+  }
+
+  @Override
+  @GameEventListener
+  public void handleRegistrationStart(RegistrationStartEvent e) {
+    System.out.println("Registrations are open!");
+    Scanner sc = console.getScanner();
+    String nickname;
+    System.out.print("Type your nickname: ");
+    nickname = sc.next();
+    while ((nickname == null) || !nickname.matches("[A-Za-z0-9_]{4,16}$")){
+      System.out.print("Invalid nickname, type a new one: ");
+      nickname = sc.next();
+    }
+    client.raise(new RegistrationEvent(client.getIPv4Address(), nickname));
+    data.setOwner(new Player(nickname));
+    System.out.println("Now waiting for other players...");
+    console.enterRawMode();
+    while (running) {
+      try {
+        GameEvent evtFromServer = client.getServerEvents().take();
+        GameEventManager.raise(evtFromServer);
+      } catch (InterruptedException ex){
+        Thread.currentThread().interrupt();
+      }
+    }
+  }
+
+  @Override
+  @GameEventListener
+  public void handleInvalidNickname(InvalidNicknameEvent e) {
+
+    if(data.getOwner() != null && e.getNickname().equals(data.getOwner().getNickname())) {
+      if(e.getErrorCode() == 0) {
+        //stampare messaggio d'errore Settings.DUPLICATE_NICKNAME
+      } else {
+        //stampare messaggio d'errore Settings.INVALID_NICKNAME
+      }
+    }
+  }
+
   public void render(){
     if (currentScreen.isNeedsRender()) {
       console.clear();
@@ -193,27 +254,8 @@ public class GameView extends View {
 
   public void gameSetup(){
     // ask for nickname
-    Scanner sc = console.getScanner();
     console.clear();
-    String nickname;
-    System.out.print("Type your nickname: ");
-    nickname = sc.next();
-    while ((nickname == null) || !nickname.matches("[A-Za-z0-9_]{4,16}$")){
-      System.out.print("Invalid nickname, type a new one: ");
-      nickname = sc.next();
-    }
-    client.raise(new RegistrationEvent(client.getIPv4Address(), nickname));
-    data.setOwner(new Player(nickname));
-    System.out.println("Now waiting for other players...");
-    console.enterRawMode();
-    while (running) {
-      try {
-        GameEvent evtFromServer = client.getServerEvents().take();
-        GameEventManager.raise(evtFromServer);
-      } catch (InterruptedException e){
-        Thread.currentThread().interrupt();
-      }
-    }
+    waitForEvent();
   }
 
   public void gameLoop(){

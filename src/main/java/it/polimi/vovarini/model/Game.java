@@ -21,6 +21,8 @@ public class Game implements Serializable, GameDataAccessor {
   public static final int MIN_PLAYERS = 2;
   public static final int MAX_PLAYERS = 3;
 
+  private int initialNumberOfPlayers;
+
   private Player[] players;
   private int currentPlayerIndex;
 
@@ -41,6 +43,8 @@ public class Game implements Serializable, GameDataAccessor {
     if (numberOfPlayers < MIN_PLAYERS || numberOfPlayers > MAX_PLAYERS) {
       throw new InvalidNumberOfPlayersException();
     }
+
+    initialNumberOfPlayers = numberOfPlayers;
 
     players = new Player[numberOfPlayers];
     availableGodCards = new GodName[numberOfPlayers];
@@ -284,4 +288,8 @@ public class Game implements Serializable, GameDataAccessor {
   }
 
   public boolean isAvailableCardsAlreadySet() { return Arrays.stream(availableGodCards).noneMatch(Objects::isNull); }
+
+  public int getInitialNumberOfPlayers() {
+    return initialNumberOfPlayers;
+  }
 }

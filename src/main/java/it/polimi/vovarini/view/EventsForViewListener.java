@@ -28,4 +28,12 @@ public interface EventsForViewListener {
   void handleVictory(VictoryEvent e);
 
   void handleLoss(LossEvent e);
+
+  void handleAbruptEnd(AbruptEndEvent e);
+
+  void handleFirstPlayer(FirstPlayerEvent e);
+
+  void handleRegistrationStart(RegistrationStartEvent e);
+
+  void handleInvalidNickname(InvalidNicknameEvent e);
 }

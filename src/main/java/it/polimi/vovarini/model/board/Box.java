@@ -1,7 +1,10 @@
 package it.polimi.vovarini.model.board;
 
 import it.polimi.vovarini.common.exceptions.BoxFullException;
+import it.polimi.vovarini.model.board.items.Block;
 import it.polimi.vovarini.model.board.items.Item;
+import it.polimi.vovarini.model.board.items.Sex;
+import it.polimi.vovarini.model.board.items.Worker;
 
 import java.io.Serializable;
 import java.util.ArrayDeque;
@@ -56,8 +59,10 @@ public class Box implements Serializable {
       return 0;
     } else if (items.peek().canBeRemoved()) {
       return items.size() - 1;
-    } else {
+    } else if (new Worker(Sex.Male, null).canBePlacedOn(items.peek())){ //trick
       return items.size();
+    } else {
+      return Block.MAX_LEVEL;
     }
   }
 

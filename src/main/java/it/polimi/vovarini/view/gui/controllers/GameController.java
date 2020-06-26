@@ -5,17 +5,20 @@ import it.polimi.vovarini.model.Phase;
 import it.polimi.vovarini.model.Player;
 import it.polimi.vovarini.model.Point;
 import it.polimi.vovarini.model.board.Board;
+import it.polimi.vovarini.model.board.items.Block;
 import it.polimi.vovarini.model.board.items.Item;
 import it.polimi.vovarini.model.board.items.Sex;
 import it.polimi.vovarini.model.board.items.Worker;
 import it.polimi.vovarini.model.godcards.GodCardFactory;
 import it.polimi.vovarini.model.godcards.GodName;
+import it.polimi.vovarini.model.moves.Construction;
 import it.polimi.vovarini.view.gui.GuiManager;
 import it.polimi.vovarini.view.gui.Settings;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.stage.Popup;
@@ -191,11 +194,11 @@ public class GameController extends GUIController {
 
         Integer x = GridPane.getColumnIndex(clickedNode);
         Integer y = GridPane.getRowIndex(clickedNode);
-
-        gameAction(new Point(x,y));
+        boolean dome = event.getButton().equals(MouseButton.SECONDARY);
+        gameAction(new Point(x,y), dome);
     }
 
-    private void gameAction(Point p) {
+    private void gameAction(Point p, boolean dome) {
         Board b = guiManager.getData().getBoard();
 
         switch (guiManager.getData().getCurrentPhase()) {
@@ -220,8 +223,11 @@ public class GameController extends GUIController {
             case Construction -> {
                 List<Point> buildablePoints = guiManager.getData().getOwner().getGodCard().computeBuildablePoints();
                 if(buildablePoints.contains(p)) {
-                    int levelToBuild = b.getBox(p).getLevel() + 1;
-                    guiManager.getClient().raise(new BuildEvent(guiManager.getData().getOwner(), p, levelToBuild));
+                    int levelToBuild = dome ? Block.MAX_LEVEL : (b.getBox(p).getLevel() + 1);
+                    Construction temp = new Construction(b, Block.blocks[levelToBuild - 1], p);
+                    if (guiManager.getData().getOwner().getGodCard().validate(buildablePoints, temp)) {
+                        guiManager.getClient().raise(new BuildEvent(guiManager.getData().getOwner(), p, levelToBuild));
+                    }
                     // aggiungere costruzione automatica prima della risposta del server
                 }
             }

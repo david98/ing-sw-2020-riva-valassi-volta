@@ -2,7 +2,6 @@ package it.polimi.vovarini.view.gui;
 
 import it.polimi.vovarini.common.events.*;
 import it.polimi.vovarini.common.network.GameClient;
-import it.polimi.vovarini.model.Player;
 import it.polimi.vovarini.view.View;
 import it.polimi.vovarini.view.ViewData;
 import it.polimi.vovarini.view.gui.controllers.GUIController;
@@ -10,6 +9,8 @@ import it.polimi.vovarini.view.gui.controllers.WaitController;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 import javafx.scene.layout.Pane;
 import javafx.scene.media.MediaPlayer;
 import javafx.stage.Stage;
@@ -57,6 +58,12 @@ public class GuiManager extends View {
 
     @Override
     @GameEventListener
+    public void handleInvalidNickname(InvalidNicknameEvent e) {
+        Platform.runLater(() -> currentController.handleInvalidNickname(e));
+    }
+
+    @Override
+    @GameEventListener
     public void handleNewPlayer(NewPlayerEvent e) {
         super.handleNewPlayer(e);
         Platform.runLater(() -> currentController.handleNewPlayer(e));
@@ -97,7 +104,7 @@ public class GuiManager extends View {
         super.handleGodSelectionStart(e);
 
         if (e.getElectedPlayer().equals(data.getOwner())) {
-            Platform.runLater(() -> setLayout(Settings.ELECTED_PLAYER_SCENE_PATH));
+            Platform.runLater(() -> setLayout(Settings.ELECTED_PLAYER_SCENE_FXML));
         } else {
             Platform.runLater(() -> {
                 setLayout(Settings.WAIT_SCENE_FXML);
@@ -113,7 +120,7 @@ public class GuiManager extends View {
     @GameEventListener
     public void handleSelectYourCard(SelectYourCardEvent e) {
         if (!godSelectionStarted) {
-            Platform.runLater(() -> setLayout(Settings.GODCARD_SELECTION_SCENE_PATH));
+            Platform.runLater(() -> setLayout(Settings.GOD_CARD_SELECTION_SCENE_FXML));
             godSelectionStarted = true;
         }
         Platform.runLater(() -> currentController.handleSelectYourCard(e));
@@ -130,7 +137,7 @@ public class GuiManager extends View {
     @GameEventListener
     public void handlePlaceYourWorkers(PlaceYourWorkersEvent e) {
         if (!placeWorkersStarted) {
-            Platform.runLater(() -> setLayout(Settings.SPAWN_WORKER_SCENE_PATH));
+            Platform.runLater(() -> setLayout(Settings.SPAWN_WORKER_SCENE_FXML));
             placeWorkersStarted = true;
         }
         Platform.runLater(() -> currentController.handlePlaceYourWorkers(e));
@@ -160,6 +167,33 @@ public class GuiManager extends View {
     @GameEventListener
     public void handleLoss(LossEvent e) {
         Platform.runLater(() -> currentController.handleLoss(e));
+    }
+
+    @Override
+    @GameEventListener
+    public void handleAbruptEnd(AbruptEndEvent e) {
+        Platform.runLater(() -> {
+            Alert alert = new Alert(Alert.AlertType.ERROR, "A player disconnected. Quitting.", ButtonType.OK);
+
+            alert.showAndWait();
+
+            Platform.exit();
+            System.exit(0);
+        });
+    }
+
+    @Override
+    @GameEventListener
+    public void handleFirstPlayer(FirstPlayerEvent e) {
+        Platform.runLater(() -> currentController.handleFirstPlayer(e));
+    }
+
+    @Override
+    @GameEventListener
+    public void handleRegistrationStart(RegistrationStartEvent e) {
+        Platform.runLater(() -> {
+            setLayout(Settings.REGISTRATION_SCENE_FXML);
+        });
     }
 
     public void gameSetup() {
@@ -199,10 +233,8 @@ public class GuiManager extends View {
         }
     }
 
-    public void createConnection(String nickname, String serverIP, int serverPort) throws IOException {
+    public void createConnection(String serverIP, int serverPort) throws IOException {
         client = new GameClient(serverIP, serverPort);
-        client.raise(new RegistrationEvent(client.getIPv4Address(), nickname));
-        data.setOwner(new Player(nickname));
         guiEventListener = new GuiEventListener(client);
         guiEventListenerThread = new Thread(guiEventListener);
         guiEventListenerThread.start();
@@ -234,6 +266,10 @@ public class GuiManager extends View {
 
     public void setStage(Stage stage) {
         this.stage = stage;
+    }
+
+    public GUIController getCurrentController() {
+        return currentController;
     }
 
     public void stopEventListener() {

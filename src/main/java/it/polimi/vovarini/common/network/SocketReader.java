@@ -4,6 +4,7 @@ import java.io.EOFException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.net.Socket;
+import java.net.SocketException;
 import java.util.concurrent.BlockingQueue;
 
 public class SocketReader<T> implements Runnable{
@@ -31,9 +32,10 @@ public class SocketReader<T> implements Runnable{
         }
       } catch (ClassNotFoundException e){
         e.printStackTrace();
-      } catch (EOFException | InterruptedException e){
+      } catch (InterruptedException e){
         Thread.currentThread().interrupt();
-      } catch (IOException ignored){
+      } catch (IOException e){
+        throw new RuntimeException(e);
       }
     }
   }
