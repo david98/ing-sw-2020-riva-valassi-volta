@@ -1,8 +1,6 @@
 package it.polimi.vovarini.view.gui.controllers;
 
-import it.polimi.vovarini.common.events.FirstPlayerEvent;
-import it.polimi.vovarini.common.events.NumberOfPlayersChoiceEvent;
-import it.polimi.vovarini.common.events.RegistrationEvent;
+import it.polimi.vovarini.common.events.*;
 import it.polimi.vovarini.model.Game;
 import it.polimi.vovarini.model.Player;
 import it.polimi.vovarini.view.gui.GuiManager;
@@ -48,15 +46,37 @@ public class RegistrationController extends GUIController {
       String nickname = nicknameField.getText();
 
       if ((nickname == null) || !nickname.matches("[A-Za-z0-9_]{4,16}$")) {
-        error.setText("Invalid nickname, type a new one.");
+        error.setText(Settings.INVALID_NICKNAME);
       } else {
         error.setText("");
         submit.setDisable(true);
 
         guiManager.getData().setOwner(new Player(nickname));
         guiManager.getClient().raise(new RegistrationEvent("player", nickname));
-        guiManager.setLayout(Settings.WAIT_SCENE_FXML);
-        ((WaitController)guiManager.getCurrentController()).setWaitMessage("Waiting for all players to register...");
       }
+    }
+
+    @Override
+    public void handleInvalidNickname(InvalidNicknameEvent e) {
+        super.handleInvalidNickname(e);
+
+        if(guiManager.getData().getOwner() != null && e.getNickname().equals(guiManager.getData().getOwner().getNickname())) {
+            if(e.getErrorCode() == 0) {
+                error.setText(Settings.DUPLICATE_NICKNAME);
+            } else {
+                error.setText(Settings.INVALID_NICKNAME);
+            }
+
+            submit.setDisable(false);
+        }
+    }
+
+    @Override
+    public void handleNewPlayer(NewPlayerEvent e) {
+        super.handleNewPlayer(e);
+        if(e.getNewPlayer().equals(guiManager.getData().getOwner())) {
+            guiManager.setLayout(Settings.WAIT_SCENE_FXML);
+            ((WaitController)guiManager.getCurrentController()).setWaitMessage("Waiting for all players to register...");
+        }
     }
 }

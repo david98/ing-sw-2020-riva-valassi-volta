@@ -95,4 +95,9 @@ public class GUIController implements EventsForViewListener {
   public void handleRegistrationStart(RegistrationStartEvent e) {
 
   }
+
+  @Override
+  public void handleInvalidNickname(InvalidNicknameEvent e) {
+
+  }
 }

@@ -34,4 +34,6 @@ public interface EventsForViewListener {
   void handleFirstPlayer(FirstPlayerEvent e);
 
   void handleRegistrationStart(RegistrationStartEvent e);
+
+  void handleInvalidNickname(InvalidNicknameEvent e);
 }

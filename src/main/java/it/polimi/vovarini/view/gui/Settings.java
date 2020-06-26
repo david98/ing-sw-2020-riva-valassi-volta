@@ -43,6 +43,9 @@ public class Settings {
   public static final String WAIT_SCENE_FXML = "/fxml/waitScene.fxml";
   public static final String GAME_SCENE_FXML = "/fxml/gameScene.fxml";
 
+  public static final String DUPLICATE_NICKNAME = "Nickname already exists, type a new one";
+  public static final String INVALID_NICKNAME = "Invalid nickname, type a new one";
+
   public static void load() {
     // needed to load images
     for (var img: godImages.values()) {
