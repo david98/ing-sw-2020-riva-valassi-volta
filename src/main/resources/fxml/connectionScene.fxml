@@ -9,14 +9,14 @@
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.Button?>
 <BorderPane xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
-            fx:controller="it.polimi.vovarini.view.gui.controllers.RegistrationController" fx:id="mainPane" styleClass="mainPane">
+            fx:controller="it.polimi.vovarini.view.gui.controllers.ConnectionController" fx:id="mainPane" styleClass="mainPane">
     <stylesheets>
-        <URL value="@../css/registrationScene.css"/>
+        <URL value="@../css/connectionScene.css"/>
     </stylesheets>
 
     <top>
         <VBox styleClass="topBox">
-            <Label text="Registrations are open!" styleClass="menuTitle"/>
+            <Label text="Welcome to Santorini" styleClass="menuTitle"/>
         </VBox>
     </top>
 
@@ -26,8 +26,11 @@
 
                 <Label fx:id="error" styleClass="menuLabel"/>
 
-                <Label text="Enter your nickname:" styleClass="menuLabel"/>
-                <TextField fx:id="nicknameField" text="" styleClass="menuTextField"/>
+                <Label text="Enter server address:" styleClass="menuLabel"/>
+                <TextField fx:id="addressField" text="localhost" styleClass="menuTextField"/>
+
+                <Label text="Enter server port:" styleClass="menuLabel"/>
+                <TextField fx:id="portField" text="6666" styleClass="menuTextField"/>
 
                 <Button fx:id="submit" onAction="#onButtonClick">
                 </Button>
