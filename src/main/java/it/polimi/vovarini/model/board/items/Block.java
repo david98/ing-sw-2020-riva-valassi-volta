@@ -4,6 +4,14 @@ import it.polimi.vovarini.common.exceptions.InvalidLevelException;
 
 import java.util.stream.IntStream;
 
+/**
+ * This class represents a block you can place on the {@link it.polimi.vovarini.model.board.Board} due to a {@link it.polimi.vovarini.model.moves.Construction}
+ * move.
+ *
+ * @author Davide Volta
+ * @author Marco Riva
+ * @author Mattia Valassi
+ */
 public class Block extends Item {
 
   public static final int MIN_LEVEL = 1;
@@ -40,6 +48,11 @@ public class Block extends Item {
     return level;
   }
 
+  /**
+   * This method checks if an item can be placed on top of a block.
+   * @param item is the item object you want to place on the block referenced by this method
+   * @return true if the item can be placed on top of the block, false otherwise
+   */
   @Override
   public boolean canBePlacedOn(Item item) {
     if (item == null){

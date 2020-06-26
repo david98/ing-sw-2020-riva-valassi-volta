@@ -16,6 +16,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * This class represents a single player involved in a game
+ */
 public class Player implements Serializable {
 
   private final EnumMap<Sex, Worker> workers;

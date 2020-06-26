@@ -5,6 +5,9 @@ import it.polimi.vovarini.model.board.Board;
 import java.io.Serializable;
 import java.util.Random;
 
+/**
+ * This class represents a generic point in the board, representing a {@link it.polimi.vovarini.model.board.Box} with coordinates
+ */
 public class Point implements Serializable {
   private final int x;
 

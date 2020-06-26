@@ -4,6 +4,10 @@ import it.polimi.vovarini.model.Player;
 
 /**
  * Represents that the player object has been updated.
+ *
+ * @author Davide Volta
+ *
+ * @version 0.1
  */
 public class PlayerInfoUpdateEvent extends GameEvent {
 

@@ -5,7 +5,7 @@ import it.polimi.vovarini.model.Player;
 
 /**
  * Represents that a registration was successful
- * and a new Player was added to the game.
+ * and a new {@link it.polimi.vovarini.model.Player} was added to the game.
  *
  * @author Davide Volta
  */

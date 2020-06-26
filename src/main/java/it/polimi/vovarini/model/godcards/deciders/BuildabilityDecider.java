@@ -7,6 +7,8 @@ import it.polimi.vovarini.model.Player;
 import it.polimi.vovarini.model.Point;
 import it.polimi.vovarini.model.board.Board;
 import it.polimi.vovarini.model.board.items.Block;
+import it.polimi.vovarini.model.board.items.Worker;
+import it.polimi.vovarini.model.godcards.GodName;
 
 /**
  * BuildabilityDecider is an extension of Decider. It decides what boxes the player can build upon
@@ -94,6 +96,26 @@ public class BuildabilityDecider extends Decider {
         }
 
         return false;
+    }
+
+    public static boolean mustBuildDomes(GameDataAccessor gameData, Point target) {
+        Player limusPlayer = null;
+
+        for(Player player : gameData.getPlayers()){
+            if(player.getGodCard().getName().equals(GodName.Limus)) limusPlayer = player;
+        }
+
+        for (Point candidate : gameData.getBoard().getAdjacentPositions(target)){
+            if(gameData.getBoard().getItems(candidate).peek() != null){
+                if(gameData.getBoard().getItems(candidate).peek().canBeRemoved()){
+                    Worker candidateWorker = (Worker) gameData.getBoard().getItems(candidate).peek();
+                    if (candidateWorker.getOwner().equals(limusPlayer)){
+                        return gameData.getBoard().getBox(target).getLevel() == Block.MAX_LEVEL - 1;
+                    }
+                }
+            }
+        }
+        return true;
     }
 
 

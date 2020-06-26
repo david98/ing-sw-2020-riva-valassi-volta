@@ -15,6 +15,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * This class represents the board where the game is played
+ */
 public class Board implements Serializable {
 
   public static final int DEFAULT_SIZE = 5;
