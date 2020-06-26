@@ -28,7 +28,7 @@ public class SocketWriter<T> implements Runnable{
         out.writeObject(obj);
         out.flush();
       } catch (IOException e){
-        e.printStackTrace();
+        throw new RuntimeException(e);
       } catch (InterruptedException ignored){
         Thread.currentThread().interrupt();
       }

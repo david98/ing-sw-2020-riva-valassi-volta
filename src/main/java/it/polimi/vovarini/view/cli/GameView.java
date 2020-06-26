@@ -171,6 +171,12 @@ public class GameView extends View {
     }
   }
 
+  @Override
+  @GameEventListener
+  public void handleAbruptEnd(AbruptEndEvent e) {
+    currentScreen = new WaitScreen(data, client,"A player disconnected. It's gane over for everyone.");
+  }
+
   public void render(){
     if (currentScreen.isNeedsRender()) {
       console.clear();

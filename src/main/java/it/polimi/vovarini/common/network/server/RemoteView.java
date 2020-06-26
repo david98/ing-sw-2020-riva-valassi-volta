@@ -12,8 +12,12 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class RemoteView extends View implements ClientConnectionHandler {
+
+  private static final Logger LOGGER = Logger.getLogger( Server.class.getName() );
 
   private final BlockingQueue<GameEvent> clientEvents;
   private final BlockingQueue<GameEvent> serverEvents;
@@ -29,8 +33,11 @@ public class RemoteView extends View implements ClientConnectionHandler {
     clientEvents = new LinkedBlockingQueue<>();
     serverEvents = new LinkedBlockingQueue<>();
 
-    pool = Executors.newFixedThreadPool(2);
-
+    pool = Executors.newFixedThreadPool(2, runnable -> {
+      Thread t = Executors.defaultThreadFactory().newThread(runnable);
+      t.setUncaughtExceptionHandler(Server::handleUncaughtExceptions);
+      return t;
+    });
     pool.execute(new SocketWriter<>(clientSocket, serverEvents, GameEvent.class));
     pool.execute(new SocketReader<>(clientSocket, clientEvents, GameEvent.class));
   }
@@ -137,4 +144,11 @@ public class RemoteView extends View implements ClientConnectionHandler {
   @Override
   @GameEventListener
   public void handleLoss(LossEvent e) { serverEvents.add(e); }
+
+  @Override
+  @GameEventListener
+  public void handleAbruptEnd(AbruptEndEvent e) {
+    LOGGER.log(Level.INFO, "AbruptEndEvent forwarded to client.");
+    serverEvents.add(e);
+  }
 }
