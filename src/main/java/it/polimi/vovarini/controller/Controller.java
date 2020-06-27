@@ -45,11 +45,10 @@ public class Controller implements EventListener {
   /**
    *
    * @param evt is the RegistrationEvent the view generates when a player wants to log into the game
-   * @throws InvalidNicknameException if the nickname is not validated (length, special characters...) or if is already in use inside the current played game
    * @throws InvalidNumberOfPlayersException if another player wants to log into the game, but the game already has all its players
    */
   @GameEventListener
-  public void update(RegistrationEvent evt) throws InvalidNicknameException {
+  public void update(RegistrationEvent evt) {
     for (Player player : game.getPlayers()) {
       if(player == null) break ;
       if (player.getNickname().equalsIgnoreCase(evt.getNickname())) {
@@ -60,7 +59,7 @@ public class Controller implements EventListener {
 
     if (!Player.validateNickname(evt.getNickname())) {
       GameEventManager.raise(new InvalidNicknameEvent(game, InvalidNicknameEvent.ERROR_INVALID, evt.getNickname()));
-      throw new InvalidNicknameException(InvalidNicknameException.ERROR_INVALID);
+      return ;
     }
 
     try {
