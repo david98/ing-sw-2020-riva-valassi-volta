@@ -211,8 +211,10 @@ public class GameController extends GUIController {
                     guiManager.getData().getCurrentPlayer().setCurrentSex(selectedWorker.getSex());
                     guiManager.getData().setSelectedWorker(selectedWorker);
                     //guiManager.getData().setCurrentStart(p);
-                    guiManager.getClient().raise(new WorkerSelectionEvent(guiManager.getData().getOwner(),
-                            guiManager.getData().getSelectedWorker().getSex()));
+                    if (!guiManager.getData().getOwner().getGodCard().computeReachablePoints().isEmpty()) {
+                        guiManager.getClient().raise(new WorkerSelectionEvent(guiManager.getData().getOwner(),
+                                guiManager.getData().getSelectedWorker().getSex()));
+                    }
                 }
             }
             case Movement -> {
