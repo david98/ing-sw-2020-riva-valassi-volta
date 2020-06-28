@@ -41,7 +41,7 @@ Il progetto copre i seguenti requisiti tra quelli specificati come richiesti (ba
 * Client multi-istanziabile con CLI e GUI (sviluppata via JavaFX) selezionabili comodamente dal giocatore
 * Completamente coperte le istruzioni per l'avvio della partita
 
-### Funzionalità Aggiuntivr
+### Funzionalità Aggiuntive
 
 * Divinità Avanzate: sono state implementate le 5 divinità aggiuntive Hera, Hestia, Limus, Triton, Zeus
 
