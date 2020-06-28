@@ -13,7 +13,6 @@
 
     <top>
         <VBox styleClass="topBox">
-            <Label fx:id="instruction" styleClass="menuTitle" text="Match in progress" />
         </VBox>
     </top>
 
@@ -100,20 +99,25 @@
         </GridPane>
     </center>
 
+    <right>
+        <Label fx:id="instruction" styleClass="menuLabel" text="Match in progress" />
+    </right>
+
     <bottom>
         <HBox styleClass="playersBox">
             <Label fx:id="player0" styleClass="player" wrapText="true" />
-            <ImageView fx:id="godCard0" fitHeight="168.0" fitWidth="100.0" />
+            <ImageView fx:id="godCard0" fitHeight="168.0" fitWidth="100.0" styleClass="godCard" />
             <Label fx:id="player1" styleClass="player" wrapText="true" />
-            <ImageView fx:id="godCard1" fitHeight="168.0" fitWidth="100.0" />
+            <ImageView fx:id="godCard1" fitHeight="168.0" fitWidth="100.0" styleClass="godCard" />
             <Label fx:id="player2" styleClass="player" wrapText="true" />
-            <ImageView fx:id="godCard2" fitHeight="168.0" fitWidth="100.0" />
-         <HBox styleClass="phaseBox">
+            <ImageView fx:id="godCard2" fitHeight="168.0" fitWidth="100.0" styleClass="godCard" />
+         <VBox styleClass="phaseBox">
             <children>
-                  <Label fx:id="currentPhase" styleClass="player" />
-                  <Label fx:id="skipButton" alignment="BOTTOM_RIGHT" contentDisplay="RIGHT" text="SKIP" />
+                  <Label fx:id="currentPhase" styleClass="phase" />
+                  <Button fx:id="skipButton" onAction="#onSkipButtonClick">
+                  </Button>
             </children>
-         </HBox>
+         </VBox>
         </HBox>
     </bottom>
 

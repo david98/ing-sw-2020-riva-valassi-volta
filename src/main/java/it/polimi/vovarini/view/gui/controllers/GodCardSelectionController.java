@@ -93,7 +93,7 @@ public class GodCardSelectionController extends GUIController {
         }
 
         if(disabled) {
-            instruction.setText("Wait for " + guiManager.getData().getCurrentPlayer().getNickname() + " choice");
+            instruction.setText("Wait for " + guiManager.getData().getCurrentPlayer().getNickname() + "'s choice...");
         } else {
             instruction.setText("It's your turn, choose your card!");
         }

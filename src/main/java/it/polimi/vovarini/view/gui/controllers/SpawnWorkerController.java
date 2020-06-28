@@ -104,6 +104,8 @@ public class SpawnWorkerController extends GUIController {
         for(int i = 0; i< guiManager.getNumberOfPlayers(); i++) {
             String selector = "#player" + i;
             Label player = (Label) mainPane.lookup(selector);
+            selector = "#godCard" + i;
+            ImageView card = (ImageView) mainPane.lookup(selector);
 
             if (!sexes.isEmpty() && guiManager.getData().getOwner().equals(guiManager.getData().getPlayers()[i])) {
                 board.setStyle("-worker-img: url('/img/workers/" + i +
@@ -111,9 +113,11 @@ public class SpawnWorkerController extends GUIController {
             }
 
             if(guiManager.getData().getCurrentPlayer().equals(guiManager.getData().getPlayers()[i])) {
-                player.setStyle("-fx-effect: innershadow(gaussian, #f44336, 15, 0.2, 0, 0);");
+                player.getStyleClass().add("current");
+                card.getStyleClass().add("current");
             } else {
-                player.setStyle("");
+                player.getStyleClass().removeAll("current");
+                card.getStyleClass().removeAll("current");
             }
         }
 

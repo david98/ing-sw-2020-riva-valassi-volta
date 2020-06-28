@@ -53,6 +53,11 @@
     -fx-text-fill: #2786D1;
 }
 
+.menuTitle .text {
+    -fx-stroke-width: 1px;
+    -fx-stroke: #ffffff;
+}
+
 .menuLabel {
     -fx-font-family: "Romanica";
     -fx-font-size: 30px;

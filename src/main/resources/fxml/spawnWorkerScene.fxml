@@ -12,9 +12,7 @@
     </stylesheets>
 
     <top>
-        <VBox styleClass="topBox">
-            <Label fx:id="instruction" styleClass="menuTitle" text="GameScene" />
-        </VBox>
+
     </top>
 
     <center>
@@ -68,14 +66,18 @@
        </GridPane>
    </center>
 
+    <right>
+        <Label fx:id="instruction" styleClass="menuLabel" text="Lorem ipsum dolor sit amet" />
+    </right>
+
    <bottom>
       <HBox styleClass="voteHBox">
-            <Label fx:id="player0" styleClass="player" />
-            <ImageView fx:id="godCard0" fitHeight="168.0" fitWidth="100.0" />
-            <Label fx:id="player1" styleClass="player" />
-            <ImageView fx:id="godCard1" fitHeight="168.0" fitWidth="100.0" />
-            <Label fx:id="player2" styleClass="player" />
-            <ImageView fx:id="godCard2" fitHeight="168.0" fitWidth="100.0" />
+        <Label fx:id="player0" styleClass="player" />
+        <ImageView fx:id="godCard0" styleClass="godCard" fitHeight="168.0" fitWidth="100.0" />
+        <Label fx:id="player1" styleClass="player" />
+        <ImageView fx:id="godCard1" styleClass="godCard" fitHeight="168.0" fitWidth="100.0" />
+        <Label fx:id="player2" styleClass="player" />
+        <ImageView fx:id="godCard2" styleClass="godCard" fitHeight="168.0" fitWidth="100.0" />
       </HBox>
    </bottom>
 

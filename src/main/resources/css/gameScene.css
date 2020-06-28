@@ -59,14 +59,21 @@
 
 .player {
     -fx-font-family: "Romanica";
-    -fx-font-size: 40px;
+    -fx-font-size: 30px;
     -fx-text-fill: #2786D1;
-    -fx-alignment: center;
-    -fx-text-alignment: center;
+    -fx-effect: innershadow(gaussian, #000000, 1, 0.2, 0, 0);
 }
 
 .player.current {
     -fx-font-size: 50px;
+    -fx-effect: dropshadow(gaussian, #ffffff, 15, 0.2, 0, 0);
+}
+
+.godCard {
+    -fx-effect: innershadow(gaussian, #000000, 200, 0.2, 0, 0);
+}
+
+.godCard.current {
     -fx-effect: dropshadow(gaussian, #ffffff, 15, 0.2, 0, 0);
 }
 
@@ -76,7 +83,7 @@
 }
 
 .playersBox {
-    -fx-min-width: 1500px;
+    -fx-min-width: 1000px;
     -fx-max-width: 1500px;
     -fx-padding: 10 10 10 10;
     -fx-spacing: 20;
@@ -118,4 +125,54 @@
     -fx-effect: dropshadow(gaussian, #000000, 15, 0.2, 0, 0);
     -fx-stroke-width: 2px;
     -fx-stroke: #ffffff;
+}
+
+.menuLabel {
+    -fx-font-family: "Romanica";
+    -fx-font-size: 40px;
+    -fx-text-fill: #2786D1;
+}
+
+.menuLabel .text {
+    -fx-stroke-width: 1px;
+    -fx-stroke: #ffffff;
+}
+
+#instruction {
+    -fx-padding: 0 20 0 0;
+}
+
+.phase {
+    -fx-padding: 0 20 0 0;
+    -fx-font-family: "Romanica";
+    -fx-font-size: 20px;
+    -fx-text-fill: #2786D1;
+}
+
+.phase .text {
+    -fx-stroke-width: 1px;
+    -fx-stroke: #ffffff;
+}
+
+#skipButton {
+    -fx-scale-x: -1;
+    -fx-background-image: url("/img/btn_back.png");
+    -fx-background-color: transparent;
+    -fx-background-size: 90px;
+    -fx-background-repeat: no-repeat;
+    -fx-background-position: center;
+    -fx-base: transparent;
+    -fx-min-width: 100;
+    -fx-min-height: 100;
+}
+
+#skipButton:hover {
+    -fx-base: transparent;
+    -fx-background-color: transparent;
+}
+
+#skipButton:pressed {
+    -fx-background-image: url("/img/btn_back_pressed.png");
+    -fx-background-color: transparent;
+    -fx-base: transparent;
 }

@@ -16,6 +16,7 @@ import it.polimi.vovarini.view.gui.GuiManager;
 import it.polimi.vovarini.view.gui.Settings;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
@@ -23,6 +24,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.stage.Popup;
 
+import java.awt.event.ActionEvent;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
@@ -39,7 +41,7 @@ public class GameController extends GUIController {
     private Label currentPhase;
 
     @FXML
-    private Label skipButton;
+    private Button skipButton;
 
     private GuiManager guiManager;
 
@@ -145,7 +147,7 @@ public class GameController extends GUIController {
         for (Point point: points) {
             String selector = "#level" + point.getX() + point.getY();
             Pane level = (Pane) board.lookup(selector);
-            level.getStyleClass().remove("highlighted");
+            level.getStyleClass().removeAll("highlighted");
         }
     }
 
@@ -238,7 +240,7 @@ public class GameController extends GUIController {
     public void updateView() {
 
         // aggiorno a video currentPhase
-        currentPhase.setText(guiManager.getData().getCurrentPhase().name().toUpperCase());
+        currentPhase.setText("Current phase: " + guiManager.getData().getCurrentPhase().name().toUpperCase());
 
         Board b = guiManager.getData().getBoard();
         List<Point> reachablePoints = guiManager.getData().getOwner().getGodCard().computeReachablePoints();
@@ -285,18 +287,27 @@ public class GameController extends GUIController {
         for(int i = 0; i< guiManager.getNumberOfPlayers(); i++) {
             String selector = "#player" + i;
             Label player = (Label) mainPane.lookup(selector);
+            selector = "#godCard" + i;
+            ImageView card = (ImageView) mainPane.lookup(selector);
             if(guiManager.getData().getCurrentPlayer().equals(guiManager.getData().getPlayers()[i])) {
                 player.getStyleClass().add("current");
+                card.getStyleClass().add("current");
             } else {
-                player.getStyleClass().remove("current");
+                player.getStyleClass().removeAll("current");
+                card.getStyleClass().removeAll("current");
+
             }
         }
 
         // aggiorno a video il messaggio in alto
         if(!guiManager.getData().getOwner().equals(guiManager.getData().getCurrentPlayer())) {
             instruction.setText("It's " + guiManager.getData().getCurrentPlayer().getNickname() + "'s turn");
+            skipButton.setDisable(true);
+            board.setDisable(true);
         } else {
             instruction.setText("It's your turn!");
+            skipButton.setDisable(false);
+            board.setDisable(false);
         }
     }
 
@@ -410,5 +421,8 @@ public class GameController extends GUIController {
 
         // non puoi andare avanti
         board.setDisable(true);
+    }
+
+    public void onSkipButtonClick(javafx.event.ActionEvent actionEvent) {
     }
 }
