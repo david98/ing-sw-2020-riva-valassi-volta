@@ -9,10 +9,7 @@ import it.polimi.vovarini.view.gui.Settings;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.ChoiceDialog;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 
 import java.io.IOException;
@@ -66,7 +63,8 @@ public class ConnectionController extends GUIController {
             try {
                 guiManager.createConnection(serverIP, Integer.parseInt(serverPort));
             } catch (IOException e) {
-                e.printStackTrace();
+                error.setText("Server unreachable or game not initialized yet.");
+                submit.setDisable(false);
             }
         }
     }
