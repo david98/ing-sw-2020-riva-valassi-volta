@@ -150,6 +150,7 @@ public class ElectedPlayerController extends GUIController {
                     break;
                 case 2:
                     selectedGodCard3.setStyle("");
+                    selectedGodCard3.setImage(null);
                     break;
             }
             return;
