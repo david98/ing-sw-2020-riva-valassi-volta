@@ -34,35 +34,35 @@
             </rowConstraints>
 
             <children>
-                <Pane fx:id="level00" disable="true" maxHeight="100.0" maxWidth="100.0" minHeight="100.0" minWidth="100.0" styleClass="box" GridPane.columnIndex="0" GridPane.rowIndex="0" />
-                <Pane fx:id="level10" disable="true" maxHeight="100.0" maxWidth="100.0" minHeight="100.0" minWidth="100.0" styleClass="box" GridPane.columnIndex="1" GridPane.rowIndex="0" />
-                <Pane fx:id="level20" disable="true" maxHeight="100.0" maxWidth="100.0" minHeight="100.0" minWidth="100.0" styleClass="box" GridPane.columnIndex="2" GridPane.rowIndex="0" />
-                <Pane fx:id="level30" disable="true" maxHeight="100.0" maxWidth="100.0" minHeight="100.0" minWidth="100.0" styleClass="box" GridPane.columnIndex="3" GridPane.rowIndex="0" />
-                <Pane fx:id="level40" disable="true" maxHeight="100.0" maxWidth="100.0" minHeight="100.0" minWidth="100.0" styleClass="box" GridPane.columnIndex="4" GridPane.rowIndex="0" />
+                <Pane fx:id="level00" disable="true" maxHeight="100.0" maxWidth="100.0" minHeight="100.0" minWidth="100.0" styleClass="level" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+                <Pane fx:id="level10" disable="true" maxHeight="100.0" maxWidth="100.0" minHeight="100.0" minWidth="100.0" styleClass="level" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+                <Pane fx:id="level20" disable="true" maxHeight="100.0" maxWidth="100.0" minHeight="100.0" minWidth="100.0" styleClass="level" GridPane.columnIndex="2" GridPane.rowIndex="0" />
+                <Pane fx:id="level30" disable="true" maxHeight="100.0" maxWidth="100.0" minHeight="100.0" minWidth="100.0" styleClass="level" GridPane.columnIndex="3" GridPane.rowIndex="0" />
+                <Pane fx:id="level40" disable="true" maxHeight="100.0" maxWidth="100.0" minHeight="100.0" minWidth="100.0" styleClass="level" GridPane.columnIndex="4" GridPane.rowIndex="0" />
 
-                <Pane fx:id="level01" disable="true" maxHeight="100.0" maxWidth="100.0" minHeight="100.0" minWidth="100.0" styleClass="box" GridPane.columnIndex="0" GridPane.rowIndex="1" />
-                <Pane fx:id="level11" disable="true" maxHeight="100.0" maxWidth="100.0" minHeight="100.0" minWidth="100.0" styleClass="box" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                <Pane fx:id="level21" disable="true" maxHeight="100.0" maxWidth="100.0" minHeight="100.0" minWidth="100.0" styleClass="box" GridPane.columnIndex="2" GridPane.rowIndex="1" />
-                <Pane fx:id="level31" disable="true" maxHeight="100.0" maxWidth="100.0" minHeight="100.0" minWidth="100.0" styleClass="box" GridPane.columnIndex="3" GridPane.rowIndex="1" />
-                <Pane fx:id="level41" disable="true" maxHeight="100.0" maxWidth="100.0" minHeight="100.0" minWidth="100.0" styleClass="box" GridPane.columnIndex="4" GridPane.rowIndex="1" />
+                <Pane fx:id="level01" disable="true" maxHeight="100.0" maxWidth="100.0" minHeight="100.0" minWidth="100.0" styleClass="level" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+                <Pane fx:id="level11" disable="true" maxHeight="100.0" maxWidth="100.0" minHeight="100.0" minWidth="100.0" styleClass="level" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                <Pane fx:id="level21" disable="true" maxHeight="100.0" maxWidth="100.0" minHeight="100.0" minWidth="100.0" styleClass="level" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+                <Pane fx:id="level31" disable="true" maxHeight="100.0" maxWidth="100.0" minHeight="100.0" minWidth="100.0" styleClass="level" GridPane.columnIndex="3" GridPane.rowIndex="1" />
+                <Pane fx:id="level41" disable="true" maxHeight="100.0" maxWidth="100.0" minHeight="100.0" minWidth="100.0" styleClass="level" GridPane.columnIndex="4" GridPane.rowIndex="1" />
 
-                <Pane fx:id="level02" disable="true" maxHeight="100.0" maxWidth="100.0" minHeight="100.0" minWidth="100.0" styleClass="box" GridPane.columnIndex="0" GridPane.rowIndex="2" />
-                <Pane fx:id="level12" disable="true" maxHeight="100.0" maxWidth="100.0" minHeight="100.0" minWidth="100.0" styleClass="box" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                <Pane fx:id="level22" disable="true" maxHeight="100.0" maxWidth="100.0" minHeight="100.0" minWidth="100.0" styleClass="box" GridPane.columnIndex="2" GridPane.rowIndex="2" />
-                <Pane fx:id="level32" disable="true" maxHeight="100.0" maxWidth="100.0" minHeight="100.0" minWidth="100.0" styleClass="box" GridPane.columnIndex="3" GridPane.rowIndex="2" />
-                <Pane fx:id="level42" disable="true" maxHeight="100.0" maxWidth="100.0" minHeight="100.0" minWidth="100.0" styleClass="box" GridPane.columnIndex="4" GridPane.rowIndex="2" />
+                <Pane fx:id="level02" disable="true" maxHeight="100.0" maxWidth="100.0" minHeight="100.0" minWidth="100.0" styleClass="level" GridPane.columnIndex="0" GridPane.rowIndex="2" />
+                <Pane fx:id="level12" disable="true" maxHeight="100.0" maxWidth="100.0" minHeight="100.0" minWidth="100.0" styleClass="level" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                <Pane fx:id="level22" disable="true" maxHeight="100.0" maxWidth="100.0" minHeight="100.0" minWidth="100.0" styleClass="level" GridPane.columnIndex="2" GridPane.rowIndex="2" />
+                <Pane fx:id="level32" disable="true" maxHeight="100.0" maxWidth="100.0" minHeight="100.0" minWidth="100.0" styleClass="level" GridPane.columnIndex="3" GridPane.rowIndex="2" />
+                <Pane fx:id="level42" disable="true" maxHeight="100.0" maxWidth="100.0" minHeight="100.0" minWidth="100.0" styleClass="level" GridPane.columnIndex="4" GridPane.rowIndex="2" />
 
-                <Pane fx:id="level03" disable="true" maxHeight="100.0" maxWidth="100.0" minHeight="100.0" minWidth="100.0" styleClass="box" GridPane.columnIndex="0" GridPane.rowIndex="3" />
-                <Pane fx:id="level13" disable="true" maxHeight="100.0" maxWidth="100.0" minHeight="100.0" minWidth="100.0" styleClass="box" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-                <Pane fx:id="level23" disable="true" maxHeight="100.0" maxWidth="100.0" minHeight="100.0" minWidth="100.0" styleClass="box" GridPane.columnIndex="2" GridPane.rowIndex="3" />
-                <Pane fx:id="level33" disable="true" maxHeight="100.0" maxWidth="100.0" minHeight="100.0" minWidth="100.0" styleClass="box" GridPane.columnIndex="3" GridPane.rowIndex="3" />
-                <Pane fx:id="level43" disable="true" maxHeight="100.0" maxWidth="100.0" minHeight="100.0" minWidth="100.0" styleClass="box" GridPane.columnIndex="4" GridPane.rowIndex="3" />
+                <Pane fx:id="level03" disable="true" maxHeight="100.0" maxWidth="100.0" minHeight="100.0" minWidth="100.0" styleClass="level" GridPane.columnIndex="0" GridPane.rowIndex="3" />
+                <Pane fx:id="level13" disable="true" maxHeight="100.0" maxWidth="100.0" minHeight="100.0" minWidth="100.0" styleClass="level" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                <Pane fx:id="level23" disable="true" maxHeight="100.0" maxWidth="100.0" minHeight="100.0" minWidth="100.0" styleClass="level" GridPane.columnIndex="2" GridPane.rowIndex="3" />
+                <Pane fx:id="level33" disable="true" maxHeight="100.0" maxWidth="100.0" minHeight="100.0" minWidth="100.0" styleClass="level" GridPane.columnIndex="3" GridPane.rowIndex="3" />
+                <Pane fx:id="level43" disable="true" maxHeight="100.0" maxWidth="100.0" minHeight="100.0" minWidth="100.0" styleClass="level" GridPane.columnIndex="4" GridPane.rowIndex="3" />
 
-                <Pane fx:id="level04" disable="true" maxHeight="100.0" maxWidth="100.0" minHeight="100.0" minWidth="100.0" styleClass="box" GridPane.columnIndex="0" GridPane.rowIndex="4" />
-                <Pane fx:id="level14" disable="true" maxHeight="100.0" maxWidth="100.0" minHeight="100.0" minWidth="100.0" styleClass="box" GridPane.columnIndex="1" GridPane.rowIndex="4" />
-                <Pane fx:id="level24" disable="true" maxHeight="100.0" maxWidth="100.0" minHeight="100.0" minWidth="100.0" styleClass="box" GridPane.columnIndex="2" GridPane.rowIndex="4" />
-                <Pane fx:id="level34" disable="true" maxHeight="100.0" maxWidth="100.0" minHeight="100.0" minWidth="100.0" styleClass="box" GridPane.columnIndex="3" GridPane.rowIndex="4" />
-                <Pane fx:id="level44" disable="true" maxHeight="100.0" maxWidth="100.0" minHeight="100.0" minWidth="100.0" styleClass="box" GridPane.columnIndex="4" GridPane.rowIndex="4" />
+                <Pane fx:id="level04" disable="true" maxHeight="100.0" maxWidth="100.0" minHeight="100.0" minWidth="100.0" styleClass="level" GridPane.columnIndex="0" GridPane.rowIndex="4" />
+                <Pane fx:id="level14" disable="true" maxHeight="100.0" maxWidth="100.0" minHeight="100.0" minWidth="100.0" styleClass="level" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                <Pane fx:id="level24" disable="true" maxHeight="100.0" maxWidth="100.0" minHeight="100.0" minWidth="100.0" styleClass="level" GridPane.columnIndex="2" GridPane.rowIndex="4" />
+                <Pane fx:id="level34" disable="true" maxHeight="100.0" maxWidth="100.0" minHeight="100.0" minWidth="100.0" styleClass="level" GridPane.columnIndex="3" GridPane.rowIndex="4" />
+                <Pane fx:id="level44" disable="true" maxHeight="100.0" maxWidth="100.0" minHeight="100.0" minWidth="100.0" styleClass="level" GridPane.columnIndex="4" GridPane.rowIndex="4" />
             </children>
 
             <children>

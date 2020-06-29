@@ -35,9 +35,13 @@
     -fx-scale-x: 0.95;
 }
 
-.box.highlighted {
-    -fx-background-color: rgba(255, 0, 0, 0.2);
-    -fx-effect: dropshadow(gaussian, #F44336, 15, 0.2, 0, 0);
+.level.highlighted-empty {
+    -fx-background-color: rgba(255, 255, 255, 0.4);
+}
+
+.level.highlighted {
+    /*-fx-background-color: rgba(255, 0, 0, 0.2);*/
+    -fx-effect: innershadow(gaussian, #ffffff, 200, 0.2, 0, 0);
 }
 
 .botBox {

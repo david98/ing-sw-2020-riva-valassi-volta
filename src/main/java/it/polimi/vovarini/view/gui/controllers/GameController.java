@@ -55,8 +55,8 @@ public class GameController extends GUIController {
         /*Player owner = new Player("davide");
         Player other = new Player("marco");
         Player other2 = new Player("mattia");
-        owner.setGodCard(GodCardFactory.create(GodName.Artemis));
-        other.setGodCard(GodCardFactory.create(GodName.Apollo));
+        owner.setGodCard(GodCardFactory.create(GodName.Apollo));
+        other.setGodCard(GodCardFactory.create(GodName.Artemis));
         other2.setGodCard(GodCardFactory.create(GodName.Atlas));
 
         owner.getGodCard().setGameData(guiManager.getData());
@@ -75,7 +75,9 @@ public class GameController extends GUIController {
         b.place(owner.getWorkers().get(Sex.Male), new Point(0, 0));
         b.place(owner.getWorkers().get(Sex.Female), new Point(4, 0));
         b.place(other.getWorkers().get(Sex.Male), new Point(0, 3));
-        b.place(other.getWorkers().get(Sex.Female), new Point(2, 0));*/
+        b.place(other.getWorkers().get(Sex.Female), new Point(2, 0));
+        b.place(other2.getWorkers().get(Sex.Male), new Point(0, 1));
+        b.place(Block.blocks[0], new Point(1, 1));*/
 
 
         for (int i = 0; i < guiManager.getData().getBoard().getSize(); i++) {
@@ -106,7 +108,6 @@ public class GameController extends GUIController {
                 button.addEventHandler(MouseEvent.MOUSE_EXITED, event -> onMouseExited());
             }
         }
-        skipButton.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> skipPhase());
     }
 
     private void onMouseEntered(Point p) {
@@ -132,7 +133,11 @@ public class GameController extends GUIController {
             String selector = "#level" + point.getX() + point.getY();
             Pane level = (Pane) board.lookup(selector);
 
-            level.getStyleClass().add("highlighted");
+            if (guiManager.getData().getBoard().getBox(point).getLevel() == 0) {
+                level.getStyleClass().add("highlighted-empty");
+            } else {
+                level.getStyleClass().add("highlighted");
+            }
         }
     }
 
@@ -148,6 +153,7 @@ public class GameController extends GUIController {
             String selector = "#level" + point.getX() + point.getY();
             Pane level = (Pane) board.lookup(selector);
             level.getStyleClass().removeAll("highlighted");
+            level.getStyleClass().removeAll("highlighted-empty");
         }
     }
 
@@ -206,7 +212,11 @@ public class GameController extends GUIController {
         switch (guiManager.getData().getCurrentPhase()) {
             case Start -> {
                 Worker selectedWorker = (Worker) b.getBox(p).getItems().peek();
-                if (selectedWorker != null) {
+                if (selectedWorker != null &&
+                        guiManager.getData().getOwner().getWorkers()
+                                .values()
+                                .stream()
+                                .anyMatch(w -> w.equals(selectedWorker))) {
                     //guiManager.getData().getOwner().setCurrentSex(selectedWorker.getSex());
                     guiManager.getData().getCurrentPlayer().setCurrentSex(selectedWorker.getSex());
                     guiManager.getData().setSelectedWorker(selectedWorker);
@@ -397,6 +407,7 @@ public class GameController extends GUIController {
 
             // non puoi andare avanti
             board.setDisable(true);
+            skipButton.setDisable(true);
         } else {
             // Devo notificare oppure tolgo le pedine e bon?
             System.out.println("Lozio " + e.getLosingPlayer().getNickname() + " ha perso");
@@ -423,8 +434,10 @@ public class GameController extends GUIController {
 
         // non puoi andare avanti
         board.setDisable(true);
+        skipButton.setDisable(true);
     }
 
     public void onSkipButtonClick(javafx.event.ActionEvent actionEvent) {
+        skipPhase();
     }
 }
