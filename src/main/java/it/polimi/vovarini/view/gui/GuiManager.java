@@ -24,10 +24,7 @@ public class GuiManager extends View {
 
     private static javafx.scene.media.MediaPlayer currentPlayer;
 
-
     private static GuiManager instance = null;
-
-    private GameClient client;
 
     private Stage stage;
 
@@ -185,6 +182,7 @@ public class GuiManager extends View {
     @Override
     @GameEventListener
     public void handleFirstPlayer(FirstPlayerEvent e) {
+        super.handleFirstPlayer(e);
         Platform.runLater(() -> currentController.handleFirstPlayer(e));
     }
 
