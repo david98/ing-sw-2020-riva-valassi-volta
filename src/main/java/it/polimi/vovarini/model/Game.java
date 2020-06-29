@@ -178,6 +178,7 @@ public class Game implements Serializable, GameDataAccessor {
 
   public void nextPlayer() {
     currentPlayerIndex = (currentPlayerIndex + 1) % players.length;
+    getCurrentPlayer().setWorkerSelected(false);
     GameEventManager.raise(new CurrentPlayerChangedEvent(this, players[currentPlayerIndex]));
   }
 
