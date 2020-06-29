@@ -242,6 +242,8 @@ public class Game implements Serializable, GameDataAccessor {
       } else {
         nextPlayer();
         currentPlayer.setHasLost(true);
+        currentPhase = Phase.Start;
+        GameEventManager.raise(new PhaseUpdateEvent(this, phase));
       }
     } else {
       currentPlayer.setHasLost(false);

@@ -211,19 +211,20 @@ public class GameController extends GUIController {
 
         switch (guiManager.getData().getCurrentPhase()) {
             case Start -> {
-                Worker selectedWorker = (Worker) b.getBox(p).getItems().peek();
-                if (selectedWorker != null &&
-                        guiManager.getData().getOwner().getWorkers()
-                                .values()
-                                .stream()
-                                .anyMatch(w -> w.equals(selectedWorker))) {
-                    //guiManager.getData().getOwner().setCurrentSex(selectedWorker.getSex());
-                    guiManager.getData().getCurrentPlayer().setCurrentSex(selectedWorker.getSex());
-                    guiManager.getData().setSelectedWorker(selectedWorker);
-                    //guiManager.getData().setCurrentStart(p);
-                    if (!guiManager.getData().getOwner().getGodCard().computeReachablePoints().isEmpty()) {
-                        guiManager.getClient().raise(new WorkerSelectionEvent(guiManager.getData().getOwner(),
-                                guiManager.getData().getSelectedWorker().getSex()));
+                if(guiManager.getData().getBoard().getItems(p).peek() != null && guiManager.getData().getBoard().getItems(p).peek().canBeRemoved()) {
+                    Worker selectedWorker = (Worker) b.getBox(p).getItems().peek();
+                    if (guiManager.getData().getOwner().getWorkers()
+                                    .values()
+                                    .stream()
+                                    .anyMatch(w -> w.equals(selectedWorker))) {
+                        //guiManager.getData().getOwner().setCurrentSex(selectedWorker.getSex());
+                        guiManager.getData().getCurrentPlayer().setCurrentSex(selectedWorker.getSex());
+                        guiManager.getData().setSelectedWorker(selectedWorker);
+                        //guiManager.getData().setCurrentStart(p);
+                        if (!guiManager.getData().getOwner().getGodCard().computeReachablePoints().isEmpty()) {
+                            guiManager.getClient().raise(new WorkerSelectionEvent(guiManager.getData().getOwner(),
+                                    guiManager.getData().getSelectedWorker().getSex()));
+                        }
                     }
                 }
             }
@@ -409,8 +410,11 @@ public class GameController extends GUIController {
             board.setDisable(true);
             skipButton.setDisable(true);
         } else {
-            // Devo notificare oppure tolgo le pedine e bon?
-            System.out.println("Lozio " + e.getLosingPlayer().getNickname() + " ha perso");
+            Label loss = new Label(e.getLosingPlayer().getNickname() + " has lost!");
+            loss.getStyleClass().add("loss");
+            popup.getContent().add(loss);
+            popup.setAutoHide(true);
+            popup.show(guiManager.getStage());
         }
 
     }
