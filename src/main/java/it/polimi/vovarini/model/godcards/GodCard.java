@@ -60,12 +60,7 @@ public class GodCard implements Serializable {
     winningConditions.add(isMovementWinning);
   }
 
-  /**
-   * Lambda function presenting the base Behavior for Reachability. Gets injected dynamically by code in the Reachability class
-   * @param gameData Instance of gameData currently played by all the players
-   * @param point Candidate to be a Movement destination
-   * @return if the candidate point can be reached returns true, false otherwise
-   */
+
   SerializableBiFunction<GameDataAccessor, Point, Boolean> isPointReachable =
       (GameDataAccessor gameData, Point point) -> {
         try {
@@ -88,12 +83,7 @@ public class GodCard implements Serializable {
         return false;
       };
 
-  /**
-   * Lambda function presenting the base Behavior for Buildability. Gets injected dynamically by code in the Buildability class
-   * @param gameData Instance of gameData currently played by all the players
-   * @param point Candidate to be a Construction destination
-   * @return if the candidate point can be built upon returns true, false otherwise
-   */
+
   SerializableBiFunction<GameDataAccessor, Point, Boolean> isPointBuildable =
       (GameDataAccessor gameData, Point point) -> {
         try {
@@ -141,11 +131,7 @@ public class GodCard implements Serializable {
     return Phase.Start;
   }
 
-  /**
-   * Lambda function that returns the next phase of the turn following the standard flow
-   * @param gameData Instance of gameData currently played by all the players
-   * @return the next phase to play, according to the normal flow of the gameData
-   */
+
   SerializableBiFunction<GameDataAccessor, Boolean, Phase> nextPhase =
           (GameDataAccessor gameData, Boolean skipIfPossible) -> {
             switch (gameData.getCurrentPhase()) {
@@ -166,12 +152,7 @@ public class GodCard implements Serializable {
           };
 
 
-  /**
-   * Lambda function presenting the base Behavior for consequences, regarding the Movements
-   * @param gameData Instance of gameData currently played by all the players
-   * @param movement is the movement move the player wants to perform, which is already been validated
-   * @return list of moves to execute
-   */
+
   SerializableBiFunction<GameDataAccessor, Movement, List<Movement>> listMovementEffects =
           (GameDataAccessor gameData, Movement movement) -> {
             List<Movement> movementList = new LinkedList<>();
@@ -179,12 +160,7 @@ public class GodCard implements Serializable {
             return movementList;
           };
 
-  /**
-   * Lambda function presenting the base Behavior for consequences, regarding the Constructions
-   * @param gameData Instance of gameData currently played by all the players
-   * @param construction is the construction move the player wants to perform, which is already been validated
-   * @return list of moves to execute
-   */
+
   SerializableBiFunction<GameDataAccessor, Construction, List<Construction>> listConstructionEffects =
           (GameDataAccessor gameData, Construction construction) -> {
             List<Construction> constructionList = new LinkedList<>();
@@ -192,21 +168,11 @@ public class GodCard implements Serializable {
             return constructionList;
           };
 
-  /**
-   * Lambda function with base validation of movements
-   * @param list is the list of points computed by the pre-move method {@link #computeReachablePoints()} ()}
-   * @param movement is the movement move the player wants to perform
-   * @return if the move that the player wants to perform is valid returns true, false otherwise
-   */
+
   SerializableBiFunction<List<Point>, Movement, Boolean> validateMovement =
           (List<Point> list, Movement movement) -> list.contains(movement.getEnd());
 
-  /**
-   * Lambda function with base validation of constructions
-   * @param list is the list of points computed by the pre-move method {@link #computeBuildablePoints()}
-   * @param construction is the construction move the player wants to perform
-   * @return if the move that the player wants to perform is valid returns true, false otherwise
-   */
+
   SerializableBiFunction<List<Point>, Construction, Boolean> validateConstruction =
           (List<Point> list, Construction construction) -> {
               Block b = construction.getBlock();
@@ -216,12 +182,7 @@ public class GodCard implements Serializable {
                           b.canBePlacedOn(s.peek());
           };
 
-  /**
-   * Predicate for checking if a player has won with the Movement he wants to perform (applied before the movement itself)
-   * @param movement The Movement move the player wants to execute.
-   * @return A predicate always return true or false. It will return true if the movement leads to victory after execution, false otherwise
-   * A Forced movement always return false (the system itself must not make a player win)
-   */
+
   SerializablePredicate<Movement> isMovementWinning =
       (Movement movement) -> {
         int endLevel = movement.getBoard().getBox(movement.getEnd()).getLevel();
@@ -233,12 +194,7 @@ public class GodCard implements Serializable {
         return currentLevel < Block.WIN_LEVEL;
       };
 
-  /**
-   * Lambda function with base constraint of movements
-   * @param gameData Instance of gameData currently played by all the players
-   * @param point is the destination of movement selected by the current player
-   * @return if the move that the player wants to perform is valid returns true, false otherwise
-   */
+
   SerializableBiFunction<GameDataAccessor, Point, Boolean> constraintMovement =
           (GameDataAccessor gameData, Point p) -> true;
 
@@ -315,6 +271,11 @@ public class GodCard implements Serializable {
     return buildablePoints;
   }
 
+  /**
+   * Method to compute the next phase you should go to
+   * @param gameData is the gameData all players are currently playing
+   * @return the phase subsequent to the one currently in place
+   */
   public Phase computeNextPhase(GameDataAccessor gameData) {
     return computeNextPhase(gameData, false);
   }
