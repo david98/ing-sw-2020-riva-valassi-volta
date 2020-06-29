@@ -409,13 +409,9 @@ public class GameController extends GUIController {
             // non puoi andare avanti
             board.setDisable(true);
             skipButton.setDisable(true);
-        } else {
-            Label loss = new Label(e.getLosingPlayer().getNickname() + " has lost!");
-            loss.getStyleClass().add("loss");
-            popup.getContent().add(loss);
-            popup.setAutoHide(true);
-            popup.show(guiManager.getStage());
         }
+
+        //colorare di rosso il giocatore che ha perso
 
     }
 
