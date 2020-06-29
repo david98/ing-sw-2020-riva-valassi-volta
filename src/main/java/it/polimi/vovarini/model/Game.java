@@ -234,20 +234,20 @@ public class Game implements Serializable, GameDataAccessor {
   public void setCurrentPhase(Phase phase){
     this.currentPhase = phase;
     GameEventManager.raise(new PhaseUpdateEvent(this, phase));
-    Player currentPlayer = getCurrentPlayer();
+    Player lastPlayer = getCurrentPlayer();
     boolean lost = currentPlayerHasLost();
     if (lost) {
-      removePlayer(currentPlayer);
+      removePlayer(lastPlayer);
       if (players.length <= 1) {
         GameEventManager.raise(new VictoryEvent(this, players[0]));
       } else {
         nextPlayer();
-        currentPlayer.setHasLost(true);
+        lastPlayer.setHasLost(true);
         currentPhase = Phase.Start;
-        GameEventManager.raise(new PhaseUpdateEvent(this, phase));
+        GameEventManager.raise(new PhaseUpdateEvent(this, currentPhase));
       }
     } else {
-      currentPlayer.setHasLost(false);
+      lastPlayer.setHasLost(false);
     }
 
   }
