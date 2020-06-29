@@ -63,27 +63,9 @@ public class ConnectionController extends GUIController {
             try {
                 guiManager.createConnection(serverIP, Integer.parseInt(serverPort));
             } catch (IOException e) {
-                error.setText("Server unreachable or game not initialized yet.");
+                error.setText("Server unreachable or first player still choosing size.");
                 submit.setDisable(false);
             }
         }
-    }
-
-
-    @Override
-    public void handleFirstPlayer(FirstPlayerEvent e) {
-        super.handleFirstPlayer(e);
-        // items for the dialog
-        String nPlayers[] = IntStream.range(Game.MIN_PLAYERS, Game.MAX_PLAYERS + 1).mapToObj(i -> "" + i).toArray(String[]::new);
-
-        // create a choice dialog
-        ChoiceDialog<String> d = new ChoiceDialog<>(nPlayers[0], nPlayers);
-        d.setTitle("Game size choice");
-        d.setHeaderText("Game size choice");
-        d.setContentText("Choose the number of players for this game");
-        d.showAndWait();
-        guiManager.getClient().raise(new NumberOfPlayersChoiceEvent("firstPlayer", Integer.parseInt(d.getSelectedItem())));
-        guiManager.setLayout(Settings.WAIT_SCENE_FXML);
-        ((WaitController)guiManager.getCurrentController()).setWaitMessage("Waiting for other players to connect...");
     }
 }

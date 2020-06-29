@@ -238,6 +238,8 @@ public class GuiManager extends View {
         guiEventListener = new GuiEventListener(client);
         guiEventListenerThread = new Thread(guiEventListener);
         guiEventListenerThread.start();
+        setLayout(Settings.WAIT_SCENE_FXML);
+        ((WaitController)getCurrentController()).setWaitMessage("Waiting for game to start...");
     }
 
     public ViewData getData() {

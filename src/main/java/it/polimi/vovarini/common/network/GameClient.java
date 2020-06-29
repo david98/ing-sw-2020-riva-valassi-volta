@@ -20,6 +20,7 @@ public class GameClient {
 
   public GameClient(String ip, int port) throws IOException {
     socket = new Socket(ip, port);
+    socket.setSoTimeout(200);
     System.out.println("Connected to " + ip + ":" + port + ".");
 
     clientEvents = new LinkedBlockingQueue<>();
