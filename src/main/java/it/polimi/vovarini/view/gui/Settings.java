@@ -21,18 +21,18 @@ public class Settings {
           "Apollo: When moving, you can exchange your worker with one of an opponent, if adjacent.",
           "Artemis: You can move once more, but you cannot get back to the box you just left.\nPress SKIP if you do not wish to use the power.",
           "Athena: If in your last turn you moved up a level, your opponents won't be able to until their next turn.",
-          "Atlas: You can build a dome on top of any block (with a right click). With a left click, you build following the standard rules.",
+          "Atlas: You can build a dome on top of any block (with a right click).\nWith a left click, you build following the standard rules.",
           "Demeter: You can build once more, but you cannot build on the same box you just built upon. \nPress SKIP if you do not wish to use the power.",
           "Hephaestus: You can build an additional block (not a dome) on the same box.\nPress SKIP if you do not wish to use the power.",
           "Hera: Your opponents cannot win if they move from level 2 to level 3 while in a box in the perimeter.",
           "Hestia: You can build once more on every box, excluding the ones on the perimeter.\nPress SKIP if you do not wish to use the power.",
           "Limus: Your opponent's workers cannot build in boxes adjacent to yours, unless if they build a dome to complete a tower.",
-          "Minotaur: Puoi forzare una pedina avversaria adiacente a spostarsi in una direzione libera, prendendo il suo posto. L'avversario è obbligato a spostarsi, indipendentemente dal livello.",
-          "Pan: Puoi vincere anche scendendo di due o più livelli.",
-          "Prometheus: Puoi costruire sia prima che dopo esserti mosso, a patto che tu non salga di livello.\nPremi SKIP se non vuoi utilizzare il potere (effettuerai il normale turno di gioco).",
-          "Triton: Ogni volta che il tuo lavoratore si trova su una casella perimetrale, può spostarsi di nuovo indipendentemente dal livello.\nPremi SKIP se vuoi smettere di utilizzare il potere.",
-          "Zeus: Il tuo lavoratore può costruire nella casella al di sotto di sé, aumentandone il livello.\nPremi SKIP se non vuoi utilizzare il potere.",
-          "Nobody: I tuoi lavoratori sono noiosi, punto."
+          "Minotaur: You can force an adjacent worker owned by an opponent to move in a free direction.\nYou then take its place with your worker.\nThe opponent must move, independently from the level value.",
+          "Pan: You can win also moving down two or more levels.",
+          "Prometheus: You can build before and after moving, but only if you do not move up.\nPress SKIP if you do not wish to use the power (You will play a turn with standard rules).",
+          "Triton: Anytime one of your workers finds itself on a perimeter box, it can move again independently from the level.\nPress SKIP if you wish to stop using the power.",
+          "Zeus: Your workers can build under themselves, upping the level of their box by one.\nPress SKIP if you do not wish to use the power.",
+          "Nobody: Your workers are BOOOORING!"
 
   };
 
