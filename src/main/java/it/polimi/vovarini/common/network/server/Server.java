@@ -7,6 +7,7 @@ import it.polimi.vovarini.model.Game;
 
 import java.io.IOException;
 import java.net.ServerSocket;
+import java.net.Socket;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -32,8 +33,6 @@ public class Server implements Runnable{
   private RemoteView[] remoteViews = new RemoteView[Game.MAX_PLAYERS];
   private int currentlyConnectedClients = 0;
 
-  private boolean acceptingConnections = true;
-
   public static void handleUncaughtExceptions(Thread th, Throwable e) {
     LOGGER.log(Level.SEVERE, "Uncaught exception in thread " + th.toString() + ": " + e.getMessage());
     GameEventManager.raise(new AbruptEndEvent("server"));
@@ -57,10 +56,6 @@ public class Server implements Runnable{
       game = new Game(numberOfPlayers);
       controller = new Controller(game);
       LOGGER.log(Level.INFO, "Game initialized.");
-      acceptingConnections = true;
-      synchronized (this) {
-        notifyAll();
-      }
     } catch (InvalidNumberOfPlayersException e){
       e.printStackTrace();
     }
@@ -68,51 +63,37 @@ public class Server implements Runnable{
 
   public void run(){
     LOGGER.log(Level.INFO, "Server is now listening on port {0}.", serverSocket.getLocalPort());
-    try {
-      while (!Thread.currentThread().isInterrupted()) {
-        synchronized(this) {
-          while (!acceptingConnections) {
-            wait();
-          }
-        }
-        LOGGER.log(Level.FINE, "Waiting for new connection...");
-        acceptNewClient();
-        if (game != null && currentlyConnectedClients >= game.getInitialNumberOfPlayers()) {
-          GameEventManager.raise(new RegistrationStartEvent("server"));
-          acceptingConnections = false;
-        }
+    while (!Thread.currentThread().isInterrupted()) {
+      LOGGER.log(Level.FINE, "Waiting for new connection...");
+      acceptNewClient();
+      if (game != null && currentlyConnectedClients >= game.getInitialNumberOfPlayers()) {
+        GameEventManager.raise(new RegistrationStartEvent("server"));
       }
-    } catch (InterruptedException ex) {
-      shutdownAndAwaitTermination();
     }
   }
 
   private void acceptNewClient() {
-    if (game == null && currentlyConnectedClients == 0) {
-      try {
-        remoteViews[currentlyConnectedClients] = new RemoteView(serverSocket.accept());
+    try {
+      Socket clientSocket = serverSocket.accept();
+
+      if (game == null && currentlyConnectedClients <= 0) {
+        remoteViews[currentlyConnectedClients] = new RemoteView(clientSocket);
         pool.execute(remoteViews[currentlyConnectedClients]);
         LOGGER.log(Level.INFO, "First client connected.");
         GameEventManager.raise(new FirstPlayerEvent("server"));
         LOGGER.log(Level.INFO, "FirstPlayerEvent raised.");
-        acceptingConnections = false;
         currentlyConnectedClients++;
-      } catch (IOException ignored) {
-      }
-    } else if (currentlyConnectedClients > 0 && game != null && currentlyConnectedClients < game.getInitialNumberOfPlayers()){
-      try {
-        remoteViews[currentlyConnectedClients] = new RemoteView(serverSocket.accept());
+      } else if (currentlyConnectedClients > 0 && game != null && currentlyConnectedClients < game.getInitialNumberOfPlayers()){
+        remoteViews[currentlyConnectedClients] = new RemoteView(clientSocket);
         pool.execute(remoteViews[currentlyConnectedClients]);
         LOGGER.log(Level.INFO, "A new client connected.");
         currentlyConnectedClients++;
-      } catch (IOException ignored) {
+      } else {
+        clientSocket.close();
+        LOGGER.log(Level.INFO, "Connection refused.");
+      }
+    } catch (IOException ignored) {
 
-      }
-    } else {
-      try {
-        serverSocket.accept().close();
-      } catch (IOException ignored) {
-      }
     }
   }
 
