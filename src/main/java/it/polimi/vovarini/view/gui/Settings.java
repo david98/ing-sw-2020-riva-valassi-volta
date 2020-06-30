@@ -57,8 +57,10 @@ public class Settings {
 
     GodName[] godNames = Arrays.stream(GodName.values()).filter(name -> name != GodName.Nobody).toArray(GodName[]::new);
 
-    for(int i = 0; i < godNames.length; i++) {
-        descriptions.put(godNames[i], powers[i]);
+    int k = 0;
+    for(GodName godName : GodName.values()){
+      descriptions.put(godName, powers[k]);
+      k++;
     }
 
   }
@@ -73,6 +75,8 @@ public class Settings {
 
   public static final String DUPLICATE_NICKNAME = "Nickname already exists, type a new one";
   public static final String INVALID_NICKNAME = "Invalid nickname, type a new one";
+
+
 
   public static void load() {
     // needed to load images
