@@ -41,11 +41,18 @@ public class Construction extends Move {
     target = point;
   }
 
+  /**
+   * Creates a reverse Destruction moves undoing the effects of the Construction move
+   * @return a Destruction Move with the exact reverse effect of the Construction move
+   */
   @Override
   public Move reverse() {
     return new Destruction(board, block, target, forced);
   }
 
+  /**
+   * This method plainly executes in a physical way the Construction on the board
+   */
   @Override
   public void execute() {
     Item targetItem = board.getBox(target).getItems().peek();
@@ -59,10 +66,18 @@ public class Construction extends Move {
     }
   }
 
+  /**
+   * Getter method for the block of the Construction move
+   * @return the block you want to build with the Construction
+   */
   public Block getBlock() {
     return block;
   }
 
+  /**
+   * Getter method for the coordinates of the Box you want to build upon
+   * @return a Point representing the coordinates of the Box you want to build upon
+   */
   public Point getTarget() {
     return target;
   }
