@@ -4,46 +4,53 @@ import it.polimi.vovarini.common.events.*;
 import it.polimi.vovarini.common.network.GameClient;
 import it.polimi.vovarini.model.Player;
 
+/**
+ * This class represents an abstract View and handles
+ * generic View behavior, such as updating the Board,
+ * updating the current player, etc.
+ *
+ * @author Davide Volta
+ */
 public abstract class View implements EventsForViewListener {
 
   protected GameClient client;
 
   protected ViewData data;
 
-  public View(){
+  public View() {
     GameEventManager.bindListeners(this);
     data = new ViewData();
   }
 
   @Override
-  public void handleNewPlayer(NewPlayerEvent e) {
+  public void handle(NewPlayerEvent e) {
     client.setSocketTimeout(0);
-    if (data.getOwner().equals(e.getNewPlayer())){
+    if (data.getOwner().equals(e.getNewPlayer())) {
       data.setOwner(e.getNewPlayer());
     }
     data.addPlayer(e.getNewPlayer());
   }
 
   @Override
-  public void handlePlayerInfoUpdate(PlayerInfoUpdateEvent e) {
+  public void handle(PlayerInfoUpdateEvent e) {
     if (e.getTargetPlayer().getGodCard() != null) {
       e.getTargetPlayer().getGodCard().setGameData(data);
     }
-    if (data.getOwner().equals(e.getTargetPlayer())){
+    if (data.getOwner().equals(e.getTargetPlayer())) {
       data.setOwner(e.getTargetPlayer());
     }
-    if (data.getCurrentPlayer().equals(e.getTargetPlayer())){
+    if (data.getCurrentPlayer().equals(e.getTargetPlayer())) {
       data.setCurrentPlayer(e.getTargetPlayer());
     }
-    for (int i = 0; i < data.getPlayers().length; i++){
-      if (data.getPlayers()[i].equals(e.getTargetPlayer())){
+    for (int i = 0; i < data.getPlayers().length; i++) {
+      if (data.getPlayers()[i].equals(e.getTargetPlayer())) {
         data.getPlayers()[i] = e.getTargetPlayer();
       }
     }
   }
 
   @Override
-  public void handleGodCardUpdate(GodCardUpdateEvent e) {
+  public void handle(GodCardUpdateEvent e) {
     e.getUpdatedCard().setGameData(data);
     if (data.getOwner().equals(e.getOwner())) {
       data.getOwner().setGodCard(e.getUpdatedCard());
@@ -51,55 +58,55 @@ public abstract class View implements EventsForViewListener {
     if (data.getCurrentPlayer().equals(e.getOwner())) {
       data.getCurrentPlayer().setGodCard(e.getUpdatedCard());
     }
-    for (int i = 0; i < data.getPlayers().length; i++){
-      if (data.getPlayers()[i].equals(e.getOwner())){
+    for (int i = 0; i < data.getPlayers().length; i++) {
+      if (data.getPlayers()[i].equals(e.getOwner())) {
         data.getPlayers()[i].setGodCard(e.getUpdatedCard());
       }
     }
   }
 
   @Override
-  public void handleLoss(LossEvent e) {
+  public void handle(LossEvent e) {
     data.removePlayer(e.getLosingPlayer());
   }
 
   @Override
-  public void handleCardAssignment(CardAssignmentEvent e) {
-    for (Player p: data.getPlayerSet()){
-      if (p.equals(e.getTargetPlayer())){
+  public void handle(CardAssignmentEvent e) {
+    for (Player p : data.getPlayerSet()) {
+      if (p.equals(e.getTargetPlayer())) {
         e.getAssignedCard().setGameData(data);
         p.setGodCard(e.getAssignedCard());
       }
     }
-    if(data.getOwner().equals(e.getTargetPlayer())) {
+    if (data.getOwner().equals(e.getTargetPlayer())) {
       data.getOwner().setGodCard(e.getAssignedCard());
     }
   }
 
   @Override
-  public void handleBoardUpdate(BoardUpdateEvent e) {
+  public void handle(BoardUpdateEvent e) {
     data.setBoard(e.getNewBoard());
   }
 
   @Override
-  public void handleGodSelectionStart(GodSelectionStartEvent e) {
+  public void handle(GodSelectionStartEvent e) {
     Player[] players = e.getPlayers();
-    for (int i = 0; i < players.length; i++){
-      for (Player p: data.getPlayerSet()){
-        if (players[i].equals(p)){
+    for (int i = 0; i < players.length; i++) {
+      for (Player p : data.getPlayerSet()) {
+        if (players[i].equals(p)) {
           players[i] = p;
         }
       }
     }
     data.getPlayerSet().clear();
-    for (Player p: players){
+    for (Player p : players) {
       data.addPlayer(p);
     }
     data.setCurrentPlayer(e.getElectedPlayer());
   }
 
   @Override
-  public void handleFirstPlayer(FirstPlayerEvent e) {
+  public void handle(FirstPlayerEvent e) {
     client.setSocketTimeout(0);
   }
 }

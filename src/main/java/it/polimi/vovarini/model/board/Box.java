@@ -20,14 +20,28 @@ public class Box implements Serializable {
 
   private final Deque<Item> items;
 
+  /**
+   * Creates an empty box.
+   */
   public Box() {
     items = new ArrayDeque<>();
   }
 
+  /**
+   * Creates a box which is a clone of b.
+   *
+   * @param b The box to be cloned.
+   */
   public Box(Box b) {
     items = new ArrayDeque<>(b.items);
   }
 
+  /**
+   * Places item on top of this box, if possible.
+   *
+   * @param item The item to be placed.
+   * @throws BoxFullException If this box is full.
+   */
   public void place(Item item) throws BoxFullException {
     if (items.size() >= MAX_ITEMS) {
       throw new BoxFullException();
@@ -39,6 +53,11 @@ public class Box implements Serializable {
     return new ArrayDeque<>(items);
   }
 
+  /**
+   * Removes and returns the item on top of this box.
+   *
+   * @return The removed item, or null if the box was empty.
+   */
   public Item removeTopmost() {
     try {
       return items.pop();
@@ -47,6 +66,11 @@ public class Box implements Serializable {
     }
   }
 
+  /**
+   * Computes the level of this box, ignoring workers.
+   *
+   * @return The level of this box.
+   */
   public int getLevel() {
     /* Here we assume that if the Block below a Worker is, say,
      * a level 3 block, then below it you have a level 2 block
@@ -59,16 +83,16 @@ public class Box implements Serializable {
       return 0;
     } else if (items.peek().canBeRemoved()) {
       return items.size() - 1;
-    } else if (new Worker(Sex.Male, null).canBePlacedOn(items.peek())){ //trick
+    } else if (new Worker(Sex.Male, null).canBePlacedOn(items.peek())) { //trick
       return items.size();
     } else {
       return Block.MAX_LEVEL;
     }
   }
 
-  public String toString(){
+  public String toString() {
     StringBuilder rep = new StringBuilder();
-    for (Item item: items){
+    for (Item item : items) {
       rep.append(item.toString()).append(" - ");
     }
     return rep.toString();

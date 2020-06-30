@@ -7,18 +7,23 @@ import it.polimi.vovarini.model.Game;
 
 import java.io.IOException;
 import java.net.ServerSocket;
+import java.net.Socket;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class Server implements Runnable{
+/**
+ * This is the game server, which is meant to be run as a thread.
+ *
+ * @author Davide Volta
+ */
+public class Server implements Runnable {
 
   private Game game;
   private Controller controller;
 
-  private static final Logger LOGGER = Logger.getLogger( Server.class.getName() );
+  private static final Logger LOGGER = Logger.getLogger(Server.class.getName());
 
   public static final int DEFAULT_PORT = 6666;
   public static final int DEFAULT_MAX_THREADS = 4;
@@ -32,95 +37,96 @@ public class Server implements Runnable{
   private RemoteView[] remoteViews = new RemoteView[Game.MAX_PLAYERS];
   private int currentlyConnectedClients = 0;
 
-  private boolean acceptingConnections = true;
-
+  /**
+   * This method handles an uncaught exception inside a thread and raises
+   * a {@link AbruptEndEvent}.
+   *
+   * @param th The thread in which the exception first originated.
+   * @param e  The exception as a {@link Throwable}.
+   */
   public static void handleUncaughtExceptions(Thread th, Throwable e) {
     LOGGER.log(Level.SEVERE, "Uncaught exception in thread " + th.toString() + ": " + e.getMessage());
     GameEventManager.raise(new AbruptEndEvent("server"));
     LOGGER.log(Level.SEVERE, "Raised AbruptEndEvent.");
   }
 
-  public Server(int port) throws IOException{
+  /**
+   * Constructs a server listening on the specified port.
+   *
+   * @param port The port to listen on.
+   * @throws IOException If a ServerSocket can't be allocated.
+   */
+  public Server(int port) throws IOException {
     GameEventManager.bindListeners(this);
     serverSocket = new ServerSocket(port);
     pool = Executors.newFixedThreadPool(DEFAULT_MAX_THREADS);
   }
 
-  public Server(int port, int nThreads) throws IOException{
+  /**
+   * Constructs a server listening on the specified port,
+   * which will run at most nThreads {@link RemoteView}.
+   *
+   * @param port     The port to listen on.
+   * @param nThreads The maximum number of concurrent {@link RemoteView}.
+   * @throws IOException If a ServerSocket can't be allocated.
+   */
+  public Server(int port, int nThreads) throws IOException {
     GameEventManager.bindListeners(this);
     serverSocket = new ServerSocket(port);
     pool = Executors.newFixedThreadPool(nThreads);
   }
 
-  private void init(int numberOfPlayers){
+  private void init(int numberOfPlayers) {
     try {
       game = new Game(numberOfPlayers);
       controller = new Controller(game);
       LOGGER.log(Level.INFO, "Game initialized.");
-      acceptingConnections = true;
-      synchronized (this) {
-        notifyAll();
-      }
-    } catch (InvalidNumberOfPlayersException e){
+    } catch (InvalidNumberOfPlayersException e) {
       e.printStackTrace();
     }
   }
 
-  public void run(){
+  public void run() {
     LOGGER.log(Level.INFO, "Server is now listening on port {0}.", serverSocket.getLocalPort());
-    try {
-      while (!Thread.currentThread().isInterrupted()) {
-        synchronized(this) {
-          while (!acceptingConnections) {
-            wait();
-          }
-        }
-        LOGGER.log(Level.FINE, "Waiting for new connection...");
-        if (game == null && currentlyConnectedClients == 0) {
-          remoteViews[currentlyConnectedClients] = new RemoteView(serverSocket.accept());
-          pool.execute(remoteViews[currentlyConnectedClients]);
-          LOGGER.log(Level.INFO, "First client connected.");
-          GameEventManager.raise(new FirstPlayerEvent("server"));
-          LOGGER.log(Level.INFO, "FirstPlayerEvent raised.");
-          acceptingConnections = false;
-        } else if (currentlyConnectedClients > 0 && game != null && currentlyConnectedClients < game.getInitialNumberOfPlayers()){
-          remoteViews[currentlyConnectedClients] = new RemoteView(serverSocket.accept());
-          pool.execute(remoteViews[currentlyConnectedClients]);
-          LOGGER.log(Level.INFO, "A new client connected.");
-        }
-        currentlyConnectedClients++;
-
-        if (game != null && currentlyConnectedClients >= game.getInitialNumberOfPlayers()) {
-          GameEventManager.raise(new RegistrationStartEvent("server"));
-          acceptingConnections = false;
-        }
+    while (!Thread.currentThread().isInterrupted()) {
+      LOGGER.log(Level.FINE, "Waiting for new connection...");
+      acceptNewClient();
+      if (game != null && currentlyConnectedClients >= game.getInitialNumberOfPlayers()) {
+        GameEventManager.raise(new RegistrationStartEvent("server"));
       }
-    } catch (IOException | InterruptedException ex) {
-      pool.shutdown();
-      Thread.currentThread().interrupt();
     }
   }
 
+  private void acceptNewClient() {
+    try {
+      Socket clientSocket = serverSocket.accept();
+
+      if (game == null && currentlyConnectedClients <= 0) {
+        remoteViews[currentlyConnectedClients] = new RemoteView(clientSocket);
+        pool.execute(remoteViews[currentlyConnectedClients]);
+        LOGGER.log(Level.INFO, "First client connected.");
+        GameEventManager.raise(new FirstPlayerEvent("server"));
+        LOGGER.log(Level.INFO, "FirstPlayerEvent raised.");
+        currentlyConnectedClients++;
+      } else if (currentlyConnectedClients > 0 && game != null && currentlyConnectedClients < game.getInitialNumberOfPlayers()) {
+        remoteViews[currentlyConnectedClients] = new RemoteView(clientSocket);
+        pool.execute(remoteViews[currentlyConnectedClients]);
+        LOGGER.log(Level.INFO, "A new client connected.");
+        currentlyConnectedClients++;
+      } else {
+        clientSocket.close();
+        LOGGER.log(Level.INFO, "Connection refused.");
+      }
+    } catch (IOException ignored) {
+
+    }
+  }
+
+  /**
+   * Instantly kills all running remote views.
+   */
   public void kill() {
     pool.shutdownNow();
-  }
-
-  public void shutdownAndAwaitTermination() {
-    pool.shutdown(); // Disable new tasks from being submitted
-    try {
-      // Wait a while for existing tasks to terminate
-      if (!pool.awaitTermination(60, TimeUnit.SECONDS)) {
-        pool.shutdownNow(); // Cancel currently executing tasks
-        // Wait a while for tasks to respond to being cancelled
-        if (!pool.awaitTermination(60, TimeUnit.SECONDS))
-          System.err.println("Pool did not terminate");
-      }
-    } catch (InterruptedException ie) {
-      // (Re-)Cancel if current thread also interrupted
-      pool.shutdownNow();
-      // Preserve interrupt status
-      Thread.currentThread().interrupt();
-    }
   }
 
   public Game getGame() {
@@ -131,8 +137,13 @@ public class Server implements Runnable{
     return controller;
   }
 
+  /**
+   * Handles an abrupt end.
+   *
+   * @param e An AbruptEndEvent.
+   */
   @GameEventListener
-  public void handleAbruptEnd(AbruptEndEvent e) {
+  public void handle(AbruptEndEvent e) {
     successfulDisconnects += 1;
     LOGGER.log(Level.SEVERE, "Server received AbruptEndEvent. Currently disconnected clients: " +
             successfulDisconnects);
@@ -142,8 +153,14 @@ public class Server implements Runnable{
     }
   }
 
+  /**
+   * Handles the event raised by the first player
+   * when they have chosen the number of players.
+   *
+   * @param e
+   */
   @GameEventListener
-  public void handleNumberOfPlayersChoice(NumberOfPlayersChoiceEvent e){
+  public void handle(NumberOfPlayersChoiceEvent e) {
     if (e.getNumberOfPlayers() < Game.MIN_PLAYERS || e.getNumberOfPlayers() > Game.MAX_PLAYERS) {
       throw new InvalidNumberOfPlayersException();
     }

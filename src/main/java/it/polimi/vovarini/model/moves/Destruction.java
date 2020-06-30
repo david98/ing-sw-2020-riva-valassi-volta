@@ -5,7 +5,7 @@ import it.polimi.vovarini.model.board.Board;
 import it.polimi.vovarini.model.board.items.Block;
 
 /**
- * This class represents an undo of a Construction move
+ * This class represents an undo of a Construction move.
  */
 public class Destruction extends Move {
 
@@ -30,10 +30,15 @@ public class Destruction extends Move {
   }
 
   @Override
-  public void execute() {}
+  public void execute() {
+  }
 
-  public Block getBlock() { return block; }
+  public Block getBlock() {
+    return block;
+  }
 
-  public Point getTarget() { return target; }
+  public Point getTarget() {
+    return target;
+  }
 
 }

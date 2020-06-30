@@ -15,7 +15,7 @@ public class MultiChoiceList<T> extends CLIElement {
   private final Set<T> selectedOptions;
   private final int maxChoices;
 
-  public MultiChoiceList(List<T> options, int maxChoices){
+  public MultiChoiceList(List<T> options, int maxChoices) {
     this.options = options;
     this.maxChoices = maxChoices;
 
@@ -27,25 +27,25 @@ public class MultiChoiceList<T> extends CLIElement {
     return new HashSet<>(selectedOptions);
   }
 
-  public void moveUp(){
+  public void moveUp() {
     currentOptionIndex--;
-    if (currentOptionIndex < 0){
+    if (currentOptionIndex < 0) {
       currentOptionIndex = options.size() - 1;
     }
   }
 
-  public void moveDown(){
+  public void moveDown() {
     currentOptionIndex++;
-    if (currentOptionIndex >= options.size()){
+    if (currentOptionIndex >= options.size()) {
       currentOptionIndex = 0;
     }
   }
 
-  public void select(){
+  public void select() {
     T current = options.get(currentOptionIndex);
-    if (selectedOptions.contains(current)){
+    if (selectedOptions.contains(current)) {
       selectedOptions.remove(current);
-    } else if (selectedOptions.size() < maxChoices){
+    } else if (selectedOptions.size() < maxChoices) {
       selectedOptions.add(current);
     }
   }
@@ -54,18 +54,18 @@ public class MultiChoiceList<T> extends CLIElement {
   public String render() {
     StringBuilder content = new StringBuilder();
 
-    for (T option: options){
+    for (T option : options) {
       String line = options.get(currentOptionIndex).equals(option) ?
               Color.Black.fgWrap(Color.White.bgWrap(option.toString())) : option.toString();
       content.append(selectedOptions.contains(option) ?
-                    TextStyle.bold(line) : line)
+              TextStyle.bold(line) : line)
               .append("\n");
     }
 
     return content.toString();
   }
 
-  public boolean maxSelected(){
+  public boolean maxSelected() {
     return selectedOptions.size() >= maxChoices;
   }
 }

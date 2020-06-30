@@ -42,13 +42,13 @@ public class SpectScreen extends Screen {
   }
 
   @Override
-  public void handleBoardUpdate(BoardUpdateEvent e) {
+  public void handle(BoardUpdateEvent e) {
     boardElement.setBoard(e.getNewBoard());
     needsRender = true;
   }
 
   @Override
-  public void handleCurrentPlayerUpdate(CurrentPlayerChangedEvent e) {
+  public void handle(CurrentPlayerChangedEvent e) {
     playerList.setCurrentPlayer(e.getNewPlayer());
     message.setContent("");
 

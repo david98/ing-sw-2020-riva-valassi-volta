@@ -10,15 +10,14 @@ import it.polimi.vovarini.model.Phase;
  * @version 0.1
  * @since 0.1
  */
-public class PhaseUpdateEvent extends GameEvent{
+public class PhaseUpdateEvent extends GameEvent {
   private Phase newPhase;
 
   /**
-   *
-   * @param source The event source, it should be a {@link it.polimi.vovarini.model.Game} object.
+   * @param source   The event source, it should be a {@link it.polimi.vovarini.model.Game} object.
    * @param newPhase The new current phase.
    */
-  public PhaseUpdateEvent(Object source, Phase newPhase){
+  public PhaseUpdateEvent(Object source, Phase newPhase) {
     super(source);
     this.newPhase = newPhase;
   }

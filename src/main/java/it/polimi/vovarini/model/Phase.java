@@ -9,7 +9,6 @@ public enum Phase {
   private static Phase[] vals = values();
 
 
-
   public Phase next() {
     return vals[(this.ordinal() + 1) % vals.length];
   }

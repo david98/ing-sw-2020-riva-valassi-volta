@@ -1,3 +1,4 @@
 package it.polimi.vovarini.common.exceptions;
 
-public class AvailableCardsAlreadySetException extends RuntimeException {}
+public class AvailableCardsAlreadySetException extends RuntimeException {
+}

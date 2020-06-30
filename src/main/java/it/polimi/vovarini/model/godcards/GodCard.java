@@ -35,6 +35,7 @@ public class GodCard implements Serializable {
 
   /**
    * Constructor method of GodCard class without game assignment (if the card is created before starting the game)
+   *
    * @param name Name of the Card I want to create, must be a value of the GodName enumeration
    */
   GodCard(GodName name) {
@@ -45,7 +46,7 @@ public class GodCard implements Serializable {
   /**
    * Initialization of all the Collections containing the different Lambda functions to evaluate
    */
-  private void initCollections(){
+  private void initCollections() {
     movementConditions = new HashSet<>();
     movementConstraints = new HashSet<>();
 
@@ -62,46 +63,46 @@ public class GodCard implements Serializable {
 
 
   SerializableBiFunction<GameDataAccessor, Point, Boolean> isPointReachable =
-      (GameDataAccessor gameData, Point point) -> {
-        try {
-          Worker currentWorker = gameData.getCurrentPlayer().getCurrentWorker();
-          Point currentWorkerPosition = gameData.getBoard().getItemPosition(currentWorker);
-          if (!point.isAdjacent(currentWorkerPosition)) {
+          (GameDataAccessor gameData, Point point) -> {
+            try {
+              Worker currentWorker = gameData.getCurrentPlayer().getCurrentWorker();
+              Point currentWorkerPosition = gameData.getBoard().getItemPosition(currentWorker);
+              if (!point.isAdjacent(currentWorkerPosition)) {
+                return false;
+              }
+
+              Box destinationBox = gameData.getBoard().getBox(point);
+              var destinationItems = destinationBox.getItems();
+              int destinationLevel = destinationBox.getLevel();
+              int currentWorkerLevel = gameData.getBoard().getBox(currentWorkerPosition).getLevel();
+              return (destinationLevel - currentWorkerLevel <= 1)
+                      && currentWorker.canBePlacedOn(destinationItems.peek());
+
+            } catch (ItemNotFoundException ignored) {
+              System.err.println("This really should never happen...");
+            }
             return false;
-          }
-
-          Box destinationBox = gameData.getBoard().getBox(point);
-          var destinationItems = destinationBox.getItems();
-          int destinationLevel = destinationBox.getLevel();
-          int currentWorkerLevel = gameData.getBoard().getBox(currentWorkerPosition).getLevel();
-          return (destinationLevel - currentWorkerLevel <= 1)
-              && currentWorker.canBePlacedOn(destinationItems.peek());
-
-        } catch (ItemNotFoundException ignored) {
-          System.err.println("This really should never happen...");
-        }
-        return false;
-      };
+          };
 
 
   SerializableBiFunction<GameDataAccessor, Point, Boolean> isPointBuildable =
-      (GameDataAccessor gameData, Point point) -> {
-        try {
-          Worker currentWorker = gameData.getCurrentPlayer().getCurrentWorker();
-          Point currentWorkerPosition = gameData.getBoard().getItemPosition(currentWorker);
-          if (!point.isAdjacent(currentWorkerPosition)) {
+          (GameDataAccessor gameData, Point point) -> {
+            try {
+              Worker currentWorker = gameData.getCurrentPlayer().getCurrentWorker();
+              Point currentWorkerPosition = gameData.getBoard().getItemPosition(currentWorker);
+              if (!point.isAdjacent(currentWorkerPosition)) {
+                return false;
+              }
+
+              var destinationItems = gameData.getBoard().getBox(point).getItems();
+              return Arrays.stream(Block.blocks)
+                      .anyMatch(block -> block.canBePlacedOn(destinationItems.peek()));
+
+            } catch (ItemNotFoundException | InvalidPositionException e) {
+              System.err.println("This really should never happen...");
+            }
             return false;
-          }
-
-          var destinationItems = gameData.getBoard().getItems(point);
-          return Arrays.stream(Block.blocks)
-              .anyMatch(block -> block.canBePlacedOn(destinationItems.peek()));
-
-        } catch (ItemNotFoundException | InvalidPositionException e) {
-          System.err.println("This really should never happen...");
-        }
-        return false;
-      };
+          };
 
   public static Phase normalNextPhaseFromStart(GameDataAccessor gameData) {
     if (gameData.getCurrentPlayer().isWorkerSelected()) {
@@ -152,7 +153,6 @@ public class GodCard implements Serializable {
           };
 
 
-
   SerializableBiFunction<GameDataAccessor, Movement, List<Movement>> listMovementEffects =
           (GameDataAccessor gameData, Movement movement) -> {
             List<Movement> movementList = new LinkedList<>();
@@ -175,24 +175,24 @@ public class GodCard implements Serializable {
 
   SerializableBiFunction<List<Point>, Construction, Boolean> validateConstruction =
           (List<Point> list, Construction construction) -> {
-              Block b = construction.getBlock();
-              Point t = construction.getTarget();
-              var s = gameData.getBoard().getBox(t).getItems();
-              return list.contains(construction.getTarget()) &&
-                          b.canBePlacedOn(s.peek());
+            Block b = construction.getBlock();
+            Point t = construction.getTarget();
+            var s = gameData.getBoard().getBox(t).getItems();
+            return list.contains(construction.getTarget()) &&
+                    b.canBePlacedOn(s.peek());
           };
 
 
   SerializablePredicate<Movement> isMovementWinning =
-      (Movement movement) -> {
-        int endLevel = movement.getBoard().getBox(movement.getEnd()).getLevel();
-        if (endLevel != Block.WIN_LEVEL) {
-          return false;
-        }
-        int currentLevel = movement.getBoard().getBox(movement.getStart()).getLevel();
+          (Movement movement) -> {
+            int endLevel = movement.getBoard().getBox(movement.getEnd()).getLevel();
+            if (endLevel != Block.WIN_LEVEL) {
+              return false;
+            }
+            int currentLevel = movement.getBoard().getBox(movement.getStart()).getLevel();
 
-        return currentLevel < Block.WIN_LEVEL;
-      };
+            return currentLevel < Block.WIN_LEVEL;
+          };
 
 
   SerializableBiFunction<GameDataAccessor, Point, Boolean> constraintMovement =
@@ -209,9 +209,10 @@ public class GodCard implements Serializable {
 
   /**
    * Function that computes a list of all the points where moving is possible
+   *
    * @return a list of points that the player can reach from his currentWorker position
    */
-  public List<Point> computeReachablePoints()   {
+  public List<Point> computeReachablePoints() {
     List<Point> reachablePoints = new LinkedList<>();
 
     try {
@@ -223,10 +224,10 @@ public class GodCard implements Serializable {
       List<Point> candidatePositions = board.getAdjacentPositions(workerPosition);
 
       reachablePoints =
-          candidatePositions.stream()
-              .filter(p -> movementConditions.stream().anyMatch(cond -> cond.apply(gameData, p)))
-                  .filter(p -> movementConstraints.stream().allMatch(cond -> cond.apply(gameData, p)))
-              .collect(Collectors.toList());
+              candidatePositions.stream()
+                      .filter(p -> movementConditions.stream().anyMatch(cond -> cond.apply(gameData, p)))
+                      .filter(p -> movementConstraints.stream().allMatch(cond -> cond.apply(gameData, p)))
+                      .collect(Collectors.toList());
     } catch (ItemNotFoundException ignored) {
     }
 
@@ -235,6 +236,7 @@ public class GodCard implements Serializable {
 
   /**
    * Function that computes if a player has won thanks to a valid movement he wants to perform
+   *
    * @param movement is the movement move that the player wants to perform
    * @return true if the movement allows the player to win, false otherwise
    */
@@ -245,9 +247,10 @@ public class GodCard implements Serializable {
 
   /**
    * Function that computes a list of all the points where building a block, independently by the level, is possible
+   *
    * @return a list of points that the player can build upon from his currentWorker position
    */
-  public List<Point> computeBuildablePoints()   {
+  public List<Point> computeBuildablePoints() {
     List<Point> buildablePoints = new LinkedList<>();
 
     try {
@@ -260,19 +263,20 @@ public class GodCard implements Serializable {
       candidatePositions.add(workerPosition);
 
       buildablePoints =
-          candidatePositions.stream()
-                .filter(p -> constructionConditions.stream().anyMatch(cond -> cond.apply(gameData, p)))
-                .filter(p -> constructionConstraints.stream().allMatch(cond -> cond.apply(gameData, p)))
-                .collect(Collectors.toList());
+              candidatePositions.stream()
+                      .filter(p -> constructionConditions.stream().anyMatch(cond -> cond.apply(gameData, p)))
+                      .filter(p -> constructionConstraints.stream().allMatch(cond -> cond.apply(gameData, p)))
+                      .collect(Collectors.toList());
 
     } catch (ItemNotFoundException ignored) {
     }
-    
+
     return buildablePoints;
   }
 
   /**
    * Method to compute the next phase you should go to
+   *
    * @param gameData is the gameData all players are currently playing
    * @return the phase subsequent to the one currently in place
    */
@@ -281,17 +285,20 @@ public class GodCard implements Serializable {
   }
 
   /**
-   * Function that computes the next phase of the current player's turn
-   * @param gameData is the gameData all players are currently playing
+   * Computes the next phase based on the current game state.
+   *
+   * @param gameData An accessor for data pertaining to the game.
+   * @param skipIfPossible If the player wants to skip an optional phase even though
+   *                       they could perform a move.
    * @return the phase subsequent to the one currently in place
    */
-  public Phase computeNextPhase(GameDataAccessor gameData, boolean skipIfPossible){
+  public Phase computeNextPhase(GameDataAccessor gameData, boolean skipIfPossible) {
     Phase previous = gameData.getCurrentPhase();
     Phase next;
 
     next = nextPhase.apply(gameData, skipIfPossible);
 
-    if(!previous.equals(Phase.Start) && next.equals(Phase.Start)){
+    if (!previous.equals(Phase.Start) && next.equals(Phase.Start)) {
       resetPlayerInfo(gameData);
       gameData.getCurrentPlayer().getGodCard().movementConstraints.clear();
       gameData.getCurrentPlayer().getGodCard().constructionConstraints.clear();
@@ -304,9 +311,10 @@ public class GodCard implements Serializable {
 
   /**
    * This method resets the tracking info of the Player
+   *
    * @param gameData is the gameData all players are currently playing
    */
-  private void resetPlayerInfo(GameDataAccessor gameData){
+  private void resetPlayerInfo(GameDataAccessor gameData) {
     gameData.getCurrentPlayer().setWorkerSelected(false);
     gameData.getCurrentPlayer().getMovementList().clear();
     gameData.getCurrentPlayer().getConstructionList().clear();
@@ -317,19 +325,19 @@ public class GodCard implements Serializable {
     return listMovementEffects.apply(this.gameData, movement);
   }
 
-  public List<Construction> consequences(Construction construction, GameDataAccessor gameData){
+  public List<Construction> consequences(Construction construction, GameDataAccessor gameData) {
     return listConstructionEffects.apply(gameData, construction);
   }
 
-  public boolean validate(List<Point> list, Movement movement){
+  public boolean validate(List<Point> list, Movement movement) {
     return validateMovement.apply(list, movement);
   }
 
-  public boolean validate(List<Point> list, Construction construction){
+  public boolean validate(List<Point> list, Construction construction) {
     return validateConstruction.apply(list, construction);
   }
 
-  public GodName getName(){
+  public GodName getName() {
     return name;
   }
 

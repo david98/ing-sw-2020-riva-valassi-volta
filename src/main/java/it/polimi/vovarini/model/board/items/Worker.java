@@ -5,18 +5,29 @@ import it.polimi.vovarini.model.Player;
 import java.util.Arrays;
 
 /**
- * This class represents a Worker
+ * This class represents a worker.
  */
 public class Worker extends Item {
   private final Sex sex;
   private final Player owner;
 
+  /**
+   * Creates a worker with the given sex and owner.
+   *
+   * @param sex   The sex of the worker.
+   * @param owner The owner of the worker.
+   */
   public Worker(Sex sex, Player owner) {
     this.sex = sex;
     this.owner = owner;
   }
 
-  public Worker(Worker worker){
+  /**
+   * Creates a worker which is a clone of another worker.
+   *
+   * @param worker The worker to be cloned.
+   */
+  public Worker(Worker worker) {
     sex = worker.sex;
     owner = worker.owner;
   }
@@ -25,7 +36,9 @@ public class Worker extends Item {
     return sex;
   }
 
-  public Player getOwner() { return owner; }
+  public Player getOwner() {
+    return owner;
+  }
 
   @Override
   public boolean canBePlacedOn(Item item) {
@@ -49,7 +62,7 @@ public class Worker extends Item {
 
   @Override
   public int hashCode() {
-    return Arrays.hashCode(new Object[] {
+    return Arrays.hashCode(new Object[]{
             owner,
             sex
     });

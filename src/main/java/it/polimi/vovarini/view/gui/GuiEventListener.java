@@ -13,7 +13,7 @@ import java.util.logging.Logger;
  */
 public class GuiEventListener implements Runnable {
 
-  private static final Logger LOGGER = Logger.getLogger( Server.class.getName() );
+  private static final Logger LOGGER = Logger.getLogger(Server.class.getName());
 
   private boolean running;
   private final GameClient client;
@@ -34,7 +34,7 @@ public class GuiEventListener implements Runnable {
         GameEvent evtFromServer = client.getServerEvents().take();
         LOGGER.log(Level.INFO, "Received event: " + evtFromServer.toString());
         GameEventManager.raise(evtFromServer);
-      } catch (InterruptedException e){
+      } catch (InterruptedException e) {
         Thread.currentThread().interrupt();
         running = false;
       }

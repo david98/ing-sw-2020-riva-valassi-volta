@@ -4,7 +4,6 @@ import it.polimi.vovarini.model.board.items.Sex;
 import it.polimi.vovarini.model.godcards.GodName;
 import javafx.scene.image.Image;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -22,7 +21,7 @@ public class Settings {
           Map.entry(GodName.Artemis, "Artemis: You can move once more, but you cannot get back to the box you just left.\nPress SKIP if you do not wish to use the power."),
           Map.entry(GodName.Athena, "Athena: If in your last turn you moved up a level, your opponents won't be able to until their next turn."),
           Map.entry(GodName.Atlas, "Atlas: You can build a dome on top of any block (with a right click).\nWith a left click, you build following the standard rules."),
-          Map.entry(GodName.Demeter,"Demeter: You can build once more, but you cannot build on the same box you just built upon. \nPress SKIP if you do not wish to use the power."),
+          Map.entry(GodName.Demeter, "Demeter: You can build once more, but you cannot build on the same box you just built upon. \nPress SKIP if you do not wish to use the power."),
           Map.entry(GodName.Hephaestus, "Hephaestus: You can build an additional block (not a dome) on the same box.\nPress SKIP if you do not wish to use the power."), Map.entry(GodName.Hera, "Hera: Your opponents cannot win if they move from level 2 to level 3 while in a box in the perimeter."),
           Map.entry(GodName.Hestia, "Hestia: You can build once more on every box, excluding the ones on the perimeter.\nPress SKIP if you do not wish to use the power."),
           Map.entry(GodName.Limus, "Limus: Your opponent's workers cannot build in boxes adjacent to yours, unless if they build a dome to complete a tower."),
@@ -35,7 +34,7 @@ public class Settings {
   );
 
   static {
-    for (GodName name: GodName.values()) {
+    for (GodName name : GodName.values()) {
       if (name != GodName.Nobody) {
         godImages.put(name, new Image(Settings.class.getClassLoader().getResource("img/godCards/" + name.toString() + ".png")
                 .toExternalForm(), true));
@@ -66,19 +65,18 @@ public class Settings {
   public static final String INVALID_NICKNAME = "Invalid nickname, type a new one";
 
 
-
   public static void load() {
     // needed to load images
-    for (var img: godImages.values()) {
+    for (var img : godImages.values()) {
       img.toString();
     }
 
-    for (var img: workersImages) {
+    for (var img : workersImages) {
       img.get(Sex.Male).toString();
       img.get(Sex.Female).toString();
     }
 
-    for (var lvlImg: levelsImages) {
+    for (var lvlImg : levelsImages) {
       lvlImg.toString();
     }
 

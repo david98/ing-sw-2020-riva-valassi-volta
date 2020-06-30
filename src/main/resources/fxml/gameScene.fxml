@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.net.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
-
-<BorderPane fx:id="mainPane" styleClass="mainPane" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.vovarini.view.gui.controllers.GameController">
+<?import java.net.URL?>
+<BorderPane fx:id="mainPane" styleClass="mainPane" xmlns="http://javafx.com/javafx/10.0.2-internal"
+            xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.vovarini.view.gui.controllers.GameController">
 
     <stylesheets>
-        <URL value="@../css/gameScene.css" />
+        <URL value="@../css/gameScene.css"/>
     </stylesheets>
 
     <top>
@@ -17,107 +17,158 @@
     </top>
 
     <center>
-        <GridPane fx:id="board" gridLinesVisible="true" onMouseClicked="#onGridClick" prefHeight="500.0" prefWidth="500.0" styleClass="board">
+        <GridPane fx:id="board" gridLinesVisible="true" onMouseClicked="#onGridClick" prefHeight="500.0"
+                  prefWidth="500.0" styleClass="board">
             <columnConstraints>
-                <ColumnConstraints minWidth="100.0" prefWidth="100.0" />
-                <ColumnConstraints minWidth="100.0" prefWidth="100.0" />
-                <ColumnConstraints minWidth="100.0" prefWidth="100.0" />
-                <ColumnConstraints minWidth="100.0" prefWidth="100.0" />
-                <ColumnConstraints minWidth="100.0" prefWidth="100.0" />
+                <ColumnConstraints minWidth="100.0" prefWidth="100.0"/>
+                <ColumnConstraints minWidth="100.0" prefWidth="100.0"/>
+                <ColumnConstraints minWidth="100.0" prefWidth="100.0"/>
+                <ColumnConstraints minWidth="100.0" prefWidth="100.0"/>
+                <ColumnConstraints minWidth="100.0" prefWidth="100.0"/>
             </columnConstraints>
             <rowConstraints>
-                <RowConstraints minHeight="100.0" prefHeight="100.0" />
-                <RowConstraints minHeight="100.0" prefHeight="100.0" />
-                <RowConstraints minHeight="100.0" prefHeight="100.0" />
-                <RowConstraints minHeight="100.0" prefHeight="100.0" />
-                <RowConstraints minHeight="100.0" prefHeight="100.0" />
+                <RowConstraints minHeight="100.0" prefHeight="100.0"/>
+                <RowConstraints minHeight="100.0" prefHeight="100.0"/>
+                <RowConstraints minHeight="100.0" prefHeight="100.0"/>
+                <RowConstraints minHeight="100.0" prefHeight="100.0"/>
+                <RowConstraints minHeight="100.0" prefHeight="100.0"/>
             </rowConstraints>
 
             <children>
-                <Pane fx:id="level00" disable="true" maxHeight="100.0" maxWidth="100.0" minHeight="100.0" minWidth="100.0" styleClass="level" GridPane.columnIndex="0" GridPane.rowIndex="0" />
-                <Pane fx:id="level10" disable="true" maxHeight="100.0" maxWidth="100.0" minHeight="100.0" minWidth="100.0" styleClass="level" GridPane.columnIndex="1" GridPane.rowIndex="0" />
-                <Pane fx:id="level20" disable="true" maxHeight="100.0" maxWidth="100.0" minHeight="100.0" minWidth="100.0" styleClass="level" GridPane.columnIndex="2" GridPane.rowIndex="0" />
-                <Pane fx:id="level30" disable="true" maxHeight="100.0" maxWidth="100.0" minHeight="100.0" minWidth="100.0" styleClass="level" GridPane.columnIndex="3" GridPane.rowIndex="0" />
-                <Pane fx:id="level40" disable="true" maxHeight="100.0" maxWidth="100.0" minHeight="100.0" minWidth="100.0" styleClass="level" GridPane.columnIndex="4" GridPane.rowIndex="0" />
+                <Pane fx:id="level00" disable="true" maxHeight="100.0" maxWidth="100.0" minHeight="100.0"
+                      minWidth="100.0" styleClass="level" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+                <Pane fx:id="level10" disable="true" maxHeight="100.0" maxWidth="100.0" minHeight="100.0"
+                      minWidth="100.0" styleClass="level" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+                <Pane fx:id="level20" disable="true" maxHeight="100.0" maxWidth="100.0" minHeight="100.0"
+                      minWidth="100.0" styleClass="level" GridPane.columnIndex="2" GridPane.rowIndex="0"/>
+                <Pane fx:id="level30" disable="true" maxHeight="100.0" maxWidth="100.0" minHeight="100.0"
+                      minWidth="100.0" styleClass="level" GridPane.columnIndex="3" GridPane.rowIndex="0"/>
+                <Pane fx:id="level40" disable="true" maxHeight="100.0" maxWidth="100.0" minHeight="100.0"
+                      minWidth="100.0" styleClass="level" GridPane.columnIndex="4" GridPane.rowIndex="0"/>
 
-                <Pane fx:id="level01" disable="true" maxHeight="100.0" maxWidth="100.0" minHeight="100.0" minWidth="100.0" styleClass="level" GridPane.columnIndex="0" GridPane.rowIndex="1" />
-                <Pane fx:id="level11" disable="true" maxHeight="100.0" maxWidth="100.0" minHeight="100.0" minWidth="100.0" styleClass="level" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                <Pane fx:id="level21" disable="true" maxHeight="100.0" maxWidth="100.0" minHeight="100.0" minWidth="100.0" styleClass="level" GridPane.columnIndex="2" GridPane.rowIndex="1" />
-                <Pane fx:id="level31" disable="true" maxHeight="100.0" maxWidth="100.0" minHeight="100.0" minWidth="100.0" styleClass="level" GridPane.columnIndex="3" GridPane.rowIndex="1" />
-                <Pane fx:id="level41" disable="true" maxHeight="100.0" maxWidth="100.0" minHeight="100.0" minWidth="100.0" styleClass="level" GridPane.columnIndex="4" GridPane.rowIndex="1" />
+                <Pane fx:id="level01" disable="true" maxHeight="100.0" maxWidth="100.0" minHeight="100.0"
+                      minWidth="100.0" styleClass="level" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+                <Pane fx:id="level11" disable="true" maxHeight="100.0" maxWidth="100.0" minHeight="100.0"
+                      minWidth="100.0" styleClass="level" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+                <Pane fx:id="level21" disable="true" maxHeight="100.0" maxWidth="100.0" minHeight="100.0"
+                      minWidth="100.0" styleClass="level" GridPane.columnIndex="2" GridPane.rowIndex="1"/>
+                <Pane fx:id="level31" disable="true" maxHeight="100.0" maxWidth="100.0" minHeight="100.0"
+                      minWidth="100.0" styleClass="level" GridPane.columnIndex="3" GridPane.rowIndex="1"/>
+                <Pane fx:id="level41" disable="true" maxHeight="100.0" maxWidth="100.0" minHeight="100.0"
+                      minWidth="100.0" styleClass="level" GridPane.columnIndex="4" GridPane.rowIndex="1"/>
 
-                <Pane fx:id="level02" disable="true" maxHeight="100.0" maxWidth="100.0" minHeight="100.0" minWidth="100.0" styleClass="level" GridPane.columnIndex="0" GridPane.rowIndex="2" />
-                <Pane fx:id="level12" disable="true" maxHeight="100.0" maxWidth="100.0" minHeight="100.0" minWidth="100.0" styleClass="level" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                <Pane fx:id="level22" disable="true" maxHeight="100.0" maxWidth="100.0" minHeight="100.0" minWidth="100.0" styleClass="level" GridPane.columnIndex="2" GridPane.rowIndex="2" />
-                <Pane fx:id="level32" disable="true" maxHeight="100.0" maxWidth="100.0" minHeight="100.0" minWidth="100.0" styleClass="level" GridPane.columnIndex="3" GridPane.rowIndex="2" />
-                <Pane fx:id="level42" disable="true" maxHeight="100.0" maxWidth="100.0" minHeight="100.0" minWidth="100.0" styleClass="level" GridPane.columnIndex="4" GridPane.rowIndex="2" />
+                <Pane fx:id="level02" disable="true" maxHeight="100.0" maxWidth="100.0" minHeight="100.0"
+                      minWidth="100.0" styleClass="level" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+                <Pane fx:id="level12" disable="true" maxHeight="100.0" maxWidth="100.0" minHeight="100.0"
+                      minWidth="100.0" styleClass="level" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+                <Pane fx:id="level22" disable="true" maxHeight="100.0" maxWidth="100.0" minHeight="100.0"
+                      minWidth="100.0" styleClass="level" GridPane.columnIndex="2" GridPane.rowIndex="2"/>
+                <Pane fx:id="level32" disable="true" maxHeight="100.0" maxWidth="100.0" minHeight="100.0"
+                      minWidth="100.0" styleClass="level" GridPane.columnIndex="3" GridPane.rowIndex="2"/>
+                <Pane fx:id="level42" disable="true" maxHeight="100.0" maxWidth="100.0" minHeight="100.0"
+                      minWidth="100.0" styleClass="level" GridPane.columnIndex="4" GridPane.rowIndex="2"/>
 
-                <Pane fx:id="level03" disable="true" maxHeight="100.0" maxWidth="100.0" minHeight="100.0" minWidth="100.0" styleClass="level" GridPane.columnIndex="0" GridPane.rowIndex="3" />
-                <Pane fx:id="level13" disable="true" maxHeight="100.0" maxWidth="100.0" minHeight="100.0" minWidth="100.0" styleClass="level" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-                <Pane fx:id="level23" disable="true" maxHeight="100.0" maxWidth="100.0" minHeight="100.0" minWidth="100.0" styleClass="level" GridPane.columnIndex="2" GridPane.rowIndex="3" />
-                <Pane fx:id="level33" disable="true" maxHeight="100.0" maxWidth="100.0" minHeight="100.0" minWidth="100.0" styleClass="level" GridPane.columnIndex="3" GridPane.rowIndex="3" />
-                <Pane fx:id="level43" disable="true" maxHeight="100.0" maxWidth="100.0" minHeight="100.0" minWidth="100.0" styleClass="level" GridPane.columnIndex="4" GridPane.rowIndex="3" />
+                <Pane fx:id="level03" disable="true" maxHeight="100.0" maxWidth="100.0" minHeight="100.0"
+                      minWidth="100.0" styleClass="level" GridPane.columnIndex="0" GridPane.rowIndex="3"/>
+                <Pane fx:id="level13" disable="true" maxHeight="100.0" maxWidth="100.0" minHeight="100.0"
+                      minWidth="100.0" styleClass="level" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
+                <Pane fx:id="level23" disable="true" maxHeight="100.0" maxWidth="100.0" minHeight="100.0"
+                      minWidth="100.0" styleClass="level" GridPane.columnIndex="2" GridPane.rowIndex="3"/>
+                <Pane fx:id="level33" disable="true" maxHeight="100.0" maxWidth="100.0" minHeight="100.0"
+                      minWidth="100.0" styleClass="level" GridPane.columnIndex="3" GridPane.rowIndex="3"/>
+                <Pane fx:id="level43" disable="true" maxHeight="100.0" maxWidth="100.0" minHeight="100.0"
+                      minWidth="100.0" styleClass="level" GridPane.columnIndex="4" GridPane.rowIndex="3"/>
 
-                <Pane fx:id="level04" disable="true" maxHeight="100.0" maxWidth="100.0" minHeight="100.0" minWidth="100.0" styleClass="level" GridPane.columnIndex="0" GridPane.rowIndex="4" />
-                <Pane fx:id="level14" disable="true" maxHeight="100.0" maxWidth="100.0" minHeight="100.0" minWidth="100.0" styleClass="level" GridPane.columnIndex="1" GridPane.rowIndex="4" />
-                <Pane fx:id="level24" disable="true" maxHeight="100.0" maxWidth="100.0" minHeight="100.0" minWidth="100.0" styleClass="level" GridPane.columnIndex="2" GridPane.rowIndex="4" />
-                <Pane fx:id="level34" disable="true" maxHeight="100.0" maxWidth="100.0" minHeight="100.0" minWidth="100.0" styleClass="level" GridPane.columnIndex="3" GridPane.rowIndex="4" />
-                <Pane fx:id="level44" disable="true" maxHeight="100.0" maxWidth="100.0" minHeight="100.0" minWidth="100.0" styleClass="level" GridPane.columnIndex="4" GridPane.rowIndex="4" />
+                <Pane fx:id="level04" disable="true" maxHeight="100.0" maxWidth="100.0" minHeight="100.0"
+                      minWidth="100.0" styleClass="level" GridPane.columnIndex="0" GridPane.rowIndex="4"/>
+                <Pane fx:id="level14" disable="true" maxHeight="100.0" maxWidth="100.0" minHeight="100.0"
+                      minWidth="100.0" styleClass="level" GridPane.columnIndex="1" GridPane.rowIndex="4"/>
+                <Pane fx:id="level24" disable="true" maxHeight="100.0" maxWidth="100.0" minHeight="100.0"
+                      minWidth="100.0" styleClass="level" GridPane.columnIndex="2" GridPane.rowIndex="4"/>
+                <Pane fx:id="level34" disable="true" maxHeight="100.0" maxWidth="100.0" minHeight="100.0"
+                      minWidth="100.0" styleClass="level" GridPane.columnIndex="3" GridPane.rowIndex="4"/>
+                <Pane fx:id="level44" disable="true" maxHeight="100.0" maxWidth="100.0" minHeight="100.0"
+                      minWidth="100.0" styleClass="level" GridPane.columnIndex="4" GridPane.rowIndex="4"/>
             </children>
 
             <children>
-                <ImageView fx:id="button00" fitHeight="100.0" fitWidth="100.0" pickOnBounds="true" styleClass="box" GridPane.columnIndex="0" GridPane.rowIndex="0" />
-                <ImageView fx:id="button10" fitHeight="100.0" fitWidth="100.0" pickOnBounds="true" styleClass="box" GridPane.columnIndex="1" GridPane.rowIndex="0" />
-                <ImageView fx:id="button20" fitHeight="100.0" fitWidth="100.0" pickOnBounds="true" styleClass="box" GridPane.columnIndex="2" GridPane.rowIndex="0" />
-                <ImageView fx:id="button30" fitHeight="100.0" fitWidth="100.0" pickOnBounds="true" styleClass="box" GridPane.columnIndex="3" GridPane.rowIndex="0" />
-                <ImageView fx:id="button40" fitHeight="100.0" fitWidth="100.0" pickOnBounds="true" styleClass="box" GridPane.columnIndex="4" GridPane.rowIndex="0" />
+                <ImageView fx:id="button00" fitHeight="100.0" fitWidth="100.0" pickOnBounds="true" styleClass="box"
+                           GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+                <ImageView fx:id="button10" fitHeight="100.0" fitWidth="100.0" pickOnBounds="true" styleClass="box"
+                           GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+                <ImageView fx:id="button20" fitHeight="100.0" fitWidth="100.0" pickOnBounds="true" styleClass="box"
+                           GridPane.columnIndex="2" GridPane.rowIndex="0"/>
+                <ImageView fx:id="button30" fitHeight="100.0" fitWidth="100.0" pickOnBounds="true" styleClass="box"
+                           GridPane.columnIndex="3" GridPane.rowIndex="0"/>
+                <ImageView fx:id="button40" fitHeight="100.0" fitWidth="100.0" pickOnBounds="true" styleClass="box"
+                           GridPane.columnIndex="4" GridPane.rowIndex="0"/>
 
-                <ImageView fx:id="button01" fitHeight="100.0" fitWidth="100.0" pickOnBounds="true" styleClass="box" GridPane.columnIndex="0" GridPane.rowIndex="1" />
-                <ImageView fx:id="button11" fitHeight="100.0" fitWidth="100.0" pickOnBounds="true" styleClass="box" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                <ImageView fx:id="button21" fitHeight="100.0" fitWidth="100.0" pickOnBounds="true" styleClass="box" GridPane.columnIndex="2" GridPane.rowIndex="1" />
-                <ImageView fx:id="button31" fitHeight="100.0" fitWidth="100.0" pickOnBounds="true" styleClass="box" GridPane.columnIndex="3" GridPane.rowIndex="1" />
-                <ImageView fx:id="button41" fitHeight="100.0" fitWidth="100.0" pickOnBounds="true" styleClass="box" GridPane.columnIndex="4" GridPane.rowIndex="1" />
+                <ImageView fx:id="button01" fitHeight="100.0" fitWidth="100.0" pickOnBounds="true" styleClass="box"
+                           GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+                <ImageView fx:id="button11" fitHeight="100.0" fitWidth="100.0" pickOnBounds="true" styleClass="box"
+                           GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+                <ImageView fx:id="button21" fitHeight="100.0" fitWidth="100.0" pickOnBounds="true" styleClass="box"
+                           GridPane.columnIndex="2" GridPane.rowIndex="1"/>
+                <ImageView fx:id="button31" fitHeight="100.0" fitWidth="100.0" pickOnBounds="true" styleClass="box"
+                           GridPane.columnIndex="3" GridPane.rowIndex="1"/>
+                <ImageView fx:id="button41" fitHeight="100.0" fitWidth="100.0" pickOnBounds="true" styleClass="box"
+                           GridPane.columnIndex="4" GridPane.rowIndex="1"/>
 
-                <ImageView fx:id="button02" fitHeight="100.0" fitWidth="100.0" pickOnBounds="true" styleClass="box" GridPane.columnIndex="0" GridPane.rowIndex="2" />
-                <ImageView fx:id="button12" fitHeight="100.0" fitWidth="100.0" pickOnBounds="true" styleClass="box" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                <ImageView fx:id="button22" fitHeight="100.0" fitWidth="100.0" pickOnBounds="true" styleClass="box" GridPane.columnIndex="2" GridPane.rowIndex="2" />
-                <ImageView fx:id="button32" fitHeight="100.0" fitWidth="100.0" pickOnBounds="true" styleClass="box" GridPane.columnIndex="3" GridPane.rowIndex="2" />
-                <ImageView fx:id="button42" fitHeight="100.0" fitWidth="100.0" pickOnBounds="true" styleClass="box" GridPane.columnIndex="4" GridPane.rowIndex="2" />
+                <ImageView fx:id="button02" fitHeight="100.0" fitWidth="100.0" pickOnBounds="true" styleClass="box"
+                           GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+                <ImageView fx:id="button12" fitHeight="100.0" fitWidth="100.0" pickOnBounds="true" styleClass="box"
+                           GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+                <ImageView fx:id="button22" fitHeight="100.0" fitWidth="100.0" pickOnBounds="true" styleClass="box"
+                           GridPane.columnIndex="2" GridPane.rowIndex="2"/>
+                <ImageView fx:id="button32" fitHeight="100.0" fitWidth="100.0" pickOnBounds="true" styleClass="box"
+                           GridPane.columnIndex="3" GridPane.rowIndex="2"/>
+                <ImageView fx:id="button42" fitHeight="100.0" fitWidth="100.0" pickOnBounds="true" styleClass="box"
+                           GridPane.columnIndex="4" GridPane.rowIndex="2"/>
 
-                <ImageView fx:id="button03" fitHeight="100.0" fitWidth="100.0" pickOnBounds="true" styleClass="box" GridPane.columnIndex="0" GridPane.rowIndex="3" />
-                <ImageView fx:id="button13" fitHeight="100.0" fitWidth="100.0" pickOnBounds="true" styleClass="box" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-                <ImageView fx:id="button23" fitHeight="100.0" fitWidth="100.0" pickOnBounds="true" styleClass="box" GridPane.columnIndex="2" GridPane.rowIndex="3" />
-                <ImageView fx:id="button33" fitHeight="100.0" fitWidth="100.0" pickOnBounds="true" styleClass="box" GridPane.columnIndex="3" GridPane.rowIndex="3" />
-                <ImageView fx:id="button43" fitHeight="100.0" fitWidth="100.0" pickOnBounds="true" styleClass="box" GridPane.columnIndex="4" GridPane.rowIndex="3" />
+                <ImageView fx:id="button03" fitHeight="100.0" fitWidth="100.0" pickOnBounds="true" styleClass="box"
+                           GridPane.columnIndex="0" GridPane.rowIndex="3"/>
+                <ImageView fx:id="button13" fitHeight="100.0" fitWidth="100.0" pickOnBounds="true" styleClass="box"
+                           GridPane.columnIndex="1" GridPane.rowIndex="3"/>
+                <ImageView fx:id="button23" fitHeight="100.0" fitWidth="100.0" pickOnBounds="true" styleClass="box"
+                           GridPane.columnIndex="2" GridPane.rowIndex="3"/>
+                <ImageView fx:id="button33" fitHeight="100.0" fitWidth="100.0" pickOnBounds="true" styleClass="box"
+                           GridPane.columnIndex="3" GridPane.rowIndex="3"/>
+                <ImageView fx:id="button43" fitHeight="100.0" fitWidth="100.0" pickOnBounds="true" styleClass="box"
+                           GridPane.columnIndex="4" GridPane.rowIndex="3"/>
 
-                <ImageView fx:id="button04" fitHeight="100.0" fitWidth="100.0" pickOnBounds="true" styleClass="box" GridPane.columnIndex="0" GridPane.rowIndex="4" />
-                <ImageView fx:id="button14" fitHeight="100.0" fitWidth="100.0" pickOnBounds="true" styleClass="box" GridPane.columnIndex="1" GridPane.rowIndex="4" />
-                <ImageView fx:id="button24" fitHeight="100.0" fitWidth="100.0" pickOnBounds="true" styleClass="box" GridPane.columnIndex="2" GridPane.rowIndex="4" />
-                <ImageView fx:id="button34" fitHeight="100.0" fitWidth="100.0" pickOnBounds="true" styleClass="box" GridPane.columnIndex="3" GridPane.rowIndex="4" />
-                <ImageView fx:id="button44" fitHeight="100.0" fitWidth="100.0" pickOnBounds="true" styleClass="box" GridPane.columnIndex="4" GridPane.rowIndex="4" />
+                <ImageView fx:id="button04" fitHeight="100.0" fitWidth="100.0" pickOnBounds="true" styleClass="box"
+                           GridPane.columnIndex="0" GridPane.rowIndex="4"/>
+                <ImageView fx:id="button14" fitHeight="100.0" fitWidth="100.0" pickOnBounds="true" styleClass="box"
+                           GridPane.columnIndex="1" GridPane.rowIndex="4"/>
+                <ImageView fx:id="button24" fitHeight="100.0" fitWidth="100.0" pickOnBounds="true" styleClass="box"
+                           GridPane.columnIndex="2" GridPane.rowIndex="4"/>
+                <ImageView fx:id="button34" fitHeight="100.0" fitWidth="100.0" pickOnBounds="true" styleClass="box"
+                           GridPane.columnIndex="3" GridPane.rowIndex="4"/>
+                <ImageView fx:id="button44" fitHeight="100.0" fitWidth="100.0" pickOnBounds="true" styleClass="box"
+                           GridPane.columnIndex="4" GridPane.rowIndex="4"/>
             </children>
         </GridPane>
     </center>
 
     <right>
-        <Label fx:id="instruction" styleClass="menuLabel" text="Match in progress" />
+        <Label fx:id="instruction" styleClass="menuLabel" text="Match in progress"/>
     </right>
 
     <bottom>
         <HBox styleClass="playersBox">
-            <Label fx:id="player0" styleClass="player" wrapText="true" />
-            <ImageView fx:id="godCard0" fitHeight="168.0" fitWidth="100.0" styleClass="godCard" />
-            <Label fx:id="player1" styleClass="player" wrapText="true" />
-            <ImageView fx:id="godCard1" fitHeight="168.0" fitWidth="100.0" styleClass="godCard" />
-            <Label fx:id="player2" styleClass="player" wrapText="true" />
-            <ImageView fx:id="godCard2" fitHeight="168.0" fitWidth="100.0" styleClass="godCard" />
-         <VBox styleClass="phaseBox">
-            <children>
-                  <Label fx:id="currentPhase" styleClass="phase" />
-                  <Button fx:id="skipButton" onAction="#onSkipButtonClick">
-                  </Button>
-            </children>
-         </VBox>
+            <Label fx:id="player0" styleClass="player" wrapText="true"/>
+            <ImageView fx:id="godCard0" fitHeight="168.0" fitWidth="100.0" styleClass="godCard"/>
+            <Label fx:id="player1" styleClass="player" wrapText="true"/>
+            <ImageView fx:id="godCard1" fitHeight="168.0" fitWidth="100.0" styleClass="godCard"/>
+            <Label fx:id="player2" styleClass="player" wrapText="true"/>
+            <ImageView fx:id="godCard2" fitHeight="168.0" fitWidth="100.0" styleClass="godCard"/>
+            <VBox styleClass="phaseBox">
+                <children>
+                    <Label fx:id="currentPhase" styleClass="phase"/>
+                    <Button fx:id="skipButton" onAction="#onSkipButtonClick">
+                    </Button>
+                </children>
+            </VBox>
         </HBox>
     </bottom>
 

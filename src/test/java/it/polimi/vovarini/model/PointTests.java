@@ -1,8 +1,5 @@
 package it.polimi.vovarini.model;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 import it.polimi.vovarini.model.board.Board;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -11,8 +8,10 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import java.util.LinkedList;
-import java.util.List;
 import java.util.stream.Stream;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class PointTests {
 
@@ -36,7 +35,7 @@ class PointTests {
     assertEquals(3, point.getY());
 
     Point point2 = new Point(point);
-    assertEquals(point,point2);
+    assertEquals(point, point2);
 
   }
 
@@ -52,8 +51,8 @@ class PointTests {
   @Test
   @DisplayName("Test if a Point is adjacent to another one")
   void pointAdjacent() {
-    Point point1 = new Point(1,1);
-    Point point2 = new Point(0,0);
+    Point point1 = new Point(1, 1);
+    Point point2 = new Point(0, 0);
 
     assertTrue(point1.isAdjacent(point2));
   }

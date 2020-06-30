@@ -14,7 +14,7 @@ public class PlaceYourWorkersEvent extends GameEvent {
 
   private final Player targetPlayer;
 
-  public PlaceYourWorkersEvent(Object source, Player targetPlayer){
+  public PlaceYourWorkersEvent(Object source, Player targetPlayer) {
     super(source);
     this.targetPlayer = targetPlayer;
   }

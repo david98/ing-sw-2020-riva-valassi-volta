@@ -22,12 +22,11 @@ public class FullScreenConsole implements Console {
   public FullScreenConsole() throws IOException {
     printedLineCount = 0;
 
-    if(System.getProperty("os.name").startsWith("Windows"))
-    {
+    if (System.getProperty("os.name").startsWith("Windows")) {
       // Set output mode to handle virtual terminal sequences
       Function GetStdHandleFunc = Function.getFunction("kernel32", "GetStdHandle");
       WinDef.DWORD STD_OUTPUT_HANDLE = new WinDef.DWORD(-11);
-      WinNT.HANDLE hOut = (WinNT.HANDLE)GetStdHandleFunc.invoke(WinNT.HANDLE.class, new Object[]{STD_OUTPUT_HANDLE});
+      WinNT.HANDLE hOut = (WinNT.HANDLE) GetStdHandleFunc.invoke(WinNT.HANDLE.class, new Object[]{STD_OUTPUT_HANDLE});
 
       WinDef.DWORDByReference p_dwMode = new WinDef.DWORDByReference(new WinDef.DWORD(0));
       Function GetConsoleModeFunc = Function.getFunction("kernel32", "GetConsoleMode");
@@ -35,7 +34,7 @@ public class FullScreenConsole implements Console {
 
       int ENABLE_VIRTUAL_TERMINAL_PROCESSING = 4;
       WinDef.DWORD dwMode = p_dwMode.getValue();
-      dwMode.setValue((dwMode.intValue() | ENABLE_VIRTUAL_TERMINAL_PROCESSING) &~ENABLE_LINE_INPUT);
+      dwMode.setValue((dwMode.intValue() | ENABLE_VIRTUAL_TERMINAL_PROCESSING) & ~ENABLE_LINE_INPUT);
       Function SetConsoleModeFunc = Function.getFunction("kernel32", "SetConsoleMode");
       SetConsoleModeFunc.invoke(WinDef.BOOL.class, new Object[]{hOut, dwMode});
     }

@@ -52,7 +52,7 @@ public class BoardElement extends CLIElement {
                         markedColor.fgWrap(renderBox(box, cur.equals(cursorLocation))) :
                         renderBox(box, cur.equals(cursorLocation))
         );
-        boardRep.append(marked ? markedColor.fgWrap("|") :"|");
+        boardRep.append(marked ? markedColor.fgWrap("|") : "|");
       }
       boardRep.append("\n");
     }
@@ -61,25 +61,21 @@ public class BoardElement extends CLIElement {
     return boardRep.toString();
   }
 
-  public void moveCursor(Direction direction){
+  public void moveCursor(Direction direction) {
     int newX = cursorLocation.getX();
     int newY = cursorLocation.getY();
     switch (direction) {
-      case Up ->
-        newY = Utils.clamp(cursorLocation.getY() - 1, 0, Board.DEFAULT_SIZE);
-      case Down ->
-        newY = Utils.clamp(cursorLocation.getY() + 1, 0, Board.DEFAULT_SIZE);
-      case Left ->
-        newX = Utils.clamp(cursorLocation.getX() - 1, 0, Board.DEFAULT_SIZE);
-      case Right ->
-        newX = Utils.clamp(cursorLocation.getX() + 1, 0, Board.DEFAULT_SIZE);
+      case Up -> newY = Utils.clamp(cursorLocation.getY() - 1, 0, Board.DEFAULT_SIZE);
+      case Down -> newY = Utils.clamp(cursorLocation.getY() + 1, 0, Board.DEFAULT_SIZE);
+      case Left -> newX = Utils.clamp(cursorLocation.getX() - 1, 0, Board.DEFAULT_SIZE);
+      case Right -> newX = Utils.clamp(cursorLocation.getX() + 1, 0, Board.DEFAULT_SIZE);
     }
     if (cursorLocation.getX() != newX || cursorLocation.getY() != newY) {
       cursorLocation = new Point(newX, newY);
     }
   }
 
-  private String renderBox(Box box, boolean hasCursor){
+  private String renderBox(Box box, boolean hasCursor) {
     var items = box.getItems();
 
     if (items.peek() != null && items.peek().canBeRemoved()) {
@@ -90,7 +86,7 @@ public class BoardElement extends CLIElement {
         return renderItem(items.pop())
                 + (hasCursor ? Color.White.bgWrap(renderItem(topMostItem)) : renderItem(topMostItem));
       }
-    } else if (!items.isEmpty()){
+    } else if (!items.isEmpty()) {
       return renderItem(items.pop()) + (hasCursor ? Color.White.bgWrap(" ") : " ");
     }
 
@@ -123,11 +119,11 @@ public class BoardElement extends CLIElement {
     return new Point(cursorLocation);
   }
 
-  public void markPoints(Collection<Point> points){
+  public void markPoints(Collection<Point> points) {
     markedPoints.addAll(points);
   }
 
-  public void resetMarkedPoints(){
+  public void resetMarkedPoints() {
     markedPoints.clear();
   }
 

@@ -1,12 +1,17 @@
 package it.polimi.vovarini.view.gui.controllers;
 
 import it.polimi.vovarini.common.events.*;
+import it.polimi.vovarini.common.network.server.Server;
 import it.polimi.vovarini.view.EventsForViewListener;
-import it.polimi.vovarini.view.gui.GuiManager;
 import javafx.fxml.FXML;
 import javafx.scene.layout.BorderPane;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 public class GUIController implements EventsForViewListener {
+
+  protected static final Logger LOGGER = Logger.getLogger(Server.class.getName());
 
   @FXML
   protected BorderPane mainPane;
@@ -16,88 +21,92 @@ public class GUIController implements EventsForViewListener {
     /* altre eventuali inizializzazioni */
   }
 
-  @Override
-  public void handleBoardUpdate(BoardUpdateEvent e) {
-
+  private void methodNotImplemented() {
+    LOGGER.log(Level.FINE, "This method hasn\'t been overridden by this controller");
   }
 
   @Override
-  public void handleCurrentPlayerUpdate(CurrentPlayerChangedEvent e) {
-
+  public void handle(BoardUpdateEvent e) {
+    methodNotImplemented();
   }
 
   @Override
-  public void handlePhaseUpdate(PhaseUpdateEvent e) {
-
+  public void handle(CurrentPlayerChangedEvent e) {
+    methodNotImplemented();
   }
 
   @Override
-  public void handleGameStart(GameStartEvent e) {
-
+  public void handle(PhaseUpdateEvent e) {
+    methodNotImplemented();
   }
 
   @Override
-  public void handleNewPlayer(NewPlayerEvent e) {
-
+  public void handle(GameStartEvent e) {
+    methodNotImplemented();
   }
 
   @Override
-  public void handleGodSelectionStart(GodSelectionStartEvent e) {
-
+  public void handle(NewPlayerEvent e) {
+    methodNotImplemented();
   }
 
   @Override
-  public void handleSelectYourCard(SelectYourCardEvent e) {
-
+  public void handle(GodSelectionStartEvent e) {
+    methodNotImplemented();
   }
 
   @Override
-  public void handleCardAssignment(CardAssignmentEvent e) {
-
+  public void handle(SelectYourCardEvent e) {
+    methodNotImplemented();
   }
 
   @Override
-  public void handlePlaceYourWorkers(PlaceYourWorkersEvent e) {
-
+  public void handle(CardAssignmentEvent e) {
+    methodNotImplemented();
   }
 
   @Override
-  public void handlePlayerInfoUpdate(PlayerInfoUpdateEvent e) {
-
+  public void handle(PlaceYourWorkersEvent e) {
+    methodNotImplemented();
   }
 
   @Override
-  public void handleGodCardUpdate(GodCardUpdateEvent e) {
-
+  public void handle(PlayerInfoUpdateEvent e) {
+    methodNotImplemented();
   }
 
   @Override
-  public void handleVictory(VictoryEvent e) {
-
+  public void handle(GodCardUpdateEvent e) {
+    methodNotImplemented();
   }
 
   @Override
-  public void handleLoss(LossEvent e) {
-
+  public void handle(VictoryEvent e) {
+    methodNotImplemented();
   }
 
   @Override
-  public void handleAbruptEnd(AbruptEndEvent e) {
-
+  public void handle(LossEvent e) {
+    methodNotImplemented();
   }
 
   @Override
-  public void handleFirstPlayer(FirstPlayerEvent e) {
-
+  public void handle(AbruptEndEvent e) {
+    methodNotImplemented();
   }
 
   @Override
-  public void handleRegistrationStart(RegistrationStartEvent e) {
-
+  public void handle(FirstPlayerEvent e) {
+    methodNotImplemented();
   }
 
   @Override
-  public void handleInvalidNickname(InvalidNicknameEvent e) {
+  public void handle(RegistrationStartEvent e) {
+    methodNotImplemented();
+  }
 
+  @Override
+  public void handle(InvalidNicknameEvent e) {
+    methodNotImplemented();
   }
 }

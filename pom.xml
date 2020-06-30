@@ -154,6 +154,7 @@
                     </execution>
                 </executions>
                 <configuration>
+                    <finalName>santorini</finalName>
                     <archive>
                         <manifest>
                             <mainClass>it.polimi.vovarini.Application</mainClass>

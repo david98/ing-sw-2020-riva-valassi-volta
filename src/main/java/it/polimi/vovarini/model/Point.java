@@ -57,7 +57,7 @@ public class Point implements Serializable {
     return x * 17 + y;
   }
 
-  public static Point random(int xBound, int yBound){
+  public static Point random(int xBound, int yBound) {
     return new Point(random.nextInt(xBound), random.nextInt(yBound));
   }
 

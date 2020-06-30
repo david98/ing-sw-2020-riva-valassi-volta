@@ -11,13 +11,15 @@ import it.polimi.vovarini.model.Player;
  */
 public class VictoryEvent extends GameEvent {
 
-    private final Player winningPlayer;
+  private final Player winningPlayer;
 
 
-    public VictoryEvent(Object source, Player winningPlayer) {
-        super(source);
-        this.winningPlayer = winningPlayer;
-    }
+  public VictoryEvent(Object source, Player winningPlayer) {
+    super(source);
+    this.winningPlayer = winningPlayer;
+  }
 
-    public Player getWinningPlayer() { return winningPlayer; }
+  public Player getWinningPlayer() {
+    return winningPlayer;
+  }
 }

@@ -21,13 +21,12 @@ public class GodSelectionStartEvent extends GameEvent {
   private final GodName[] allGods;
 
   /**
-   *
    * @param source
-   * @param players An array containing all players that have registered.
+   * @param players       An array containing all players that have registered.
    * @param electedPlayer The player who will choose what cards will be available.
-   * @param allGods The names of the gods from which the elected player can choose.
+   * @param allGods       The names of the gods from which the elected player can choose.
    */
-  public GodSelectionStartEvent(Object source, Player[] players, Player electedPlayer, GodName[] allGods){
+  public GodSelectionStartEvent(Object source, Player[] players, Player electedPlayer, GodName[] allGods) {
     super(source);
     this.players = Arrays.stream(players).map(Player::new).toArray(Player[]::new); //clone
     this.electedPlayer = electedPlayer;

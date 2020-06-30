@@ -30,7 +30,7 @@ public class ViewData implements Serializable, GameDataAccessor {
 
   private final Random random;
 
-  public ViewData(){
+  public ViewData() {
     currentPhase = Phase.Start;
     board = new Board(Board.DEFAULT_SIZE);
     players = new LinkedHashSet<>();
@@ -87,7 +87,7 @@ public class ViewData implements Serializable, GameDataAccessor {
     playersColors.put(player, color);
   }
 
-  public void addPlayer(Player player){
+  public void addPlayer(Player player) {
     addPlayer(player, new Color(random.nextInt(255),
             random.nextInt(255),
             random.nextInt(255)));

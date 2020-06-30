@@ -10,18 +10,18 @@ import java.util.Random;
 public class CriticPointsParameterResolver implements ParameterResolver {
 
   public static Point[] VALID_POINTS = {
-    new Point(0, 0),
-    new Point(0, 2),
-    new Point(0, 4),
-    new Point(1, 1),
-    new Point(2, 4),
-    new Point(3, 2),
-    new Point(4, 4)
+          new Point(0, 0),
+          new Point(0, 2),
+          new Point(0, 4),
+          new Point(1, 1),
+          new Point(2, 4),
+          new Point(3, 2),
+          new Point(4, 4)
   };
 
   @Override
   public boolean supportsParameter(ParameterContext context, ExtensionContext extension)
-      throws ParameterResolutionException {
+          throws ParameterResolutionException {
     boolean ret = false;
     if (context.getParameter().getType().equals(Point.class)) {
       ret = true;
@@ -31,7 +31,7 @@ public class CriticPointsParameterResolver implements ParameterResolver {
 
   @Override
   public Object resolveParameter(ParameterContext context, ExtensionContext extension)
-      throws ParameterResolutionException {
+          throws ParameterResolutionException {
     Object ret = null;
     if (context.getParameter().getType().equals(Point.class)) {
       ret = VALID_POINTS[new Random().nextInt(VALID_POINTS.length)];

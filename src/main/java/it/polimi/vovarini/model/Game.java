@@ -14,7 +14,7 @@ import java.io.Serializable;
 import java.util.*;
 
 /**
- * This class represents the game currently played, with all the data necessary to handle it
+ * This class represents a Santorini game.
  */
 public class Game implements Serializable, GameDataAccessor {
 
@@ -39,6 +39,13 @@ public class Game implements Serializable, GameDataAccessor {
 
   private final Random random;
 
+  /**
+   * Creates a Game with the given number of players.
+   *
+   * @param numberOfPlayers How many players should be allowed into this game.
+   * @throws InvalidNumberOfPlayersException If numberOfPlayers is less than {@value MIN_PLAYERS} or
+   *                                         greater then {@value MAX_PLAYERS}.
+   */
   public Game(int numberOfPlayers) throws InvalidNumberOfPlayersException {
     if (numberOfPlayers < MIN_PLAYERS || numberOfPlayers > MAX_PLAYERS) {
       throw new InvalidNumberOfPlayersException();
@@ -68,11 +75,12 @@ public class Game implements Serializable, GameDataAccessor {
   }
 
   /**
-   * This method adds a new player into the game with the nickname already
-   * validated through {@link Player#validateNickname(String)}
+   * This method adds a new player with the given nickname to this game,
+   * then raises a {@link NewPlayerEvent}.
+   * No validity check on nickname is performed.
    *
    * @param nickname the name of the player to be added
-   * @throws InvalidNumberOfPlayersException if there is already the maximum number of players
+   * @throws InvalidNumberOfPlayersException if this game is full.
    */
   public void addPlayer(String nickname) {
 
@@ -91,16 +99,23 @@ public class Game implements Serializable, GameDataAccessor {
     }
   }
 
+  /**
+   * This method chooses a random player as the new current player.
+   */
   public void drawElectedPlayer() {
     currentPlayerIndex = random.nextInt(players.length);
   }
 
-  // se è rimasta solo una carta, la assegna, altrimenti chiede al prossimo giocatore la carta che vuole (tra quelle rimaste)
+  /**
+   * Rotates the current player to the next one, then it either raises a {@link SelectYourCardEvent}
+   * if they still have to choose a god card or a {@link PlaceYourWorkersEvent} if the worker
+   * placement phase can start.
+   */
   public void setupGodCards() {
 
     nextPlayer();
 
-    if(availableGodCards.length == 1) {
+    if (availableGodCards.length == 1) {
       GodCard lastGodCard = GodCardFactory.create(availableGodCards[0]);
       lastGodCard.setGameData(this);
       getCurrentPlayer().setGodCard(lastGodCard);
@@ -116,6 +131,13 @@ public class Game implements Serializable, GameDataAccessor {
     }
   }
 
+  /**
+   * Executes the given movement on this game, raising a {@link PlayerInfoUpdateEvent} to add the move
+   * to the list on the {@link Player} class.
+   *
+   * If this move leads to a win for the current player, this method also raises a {@link VictoryEvent}.
+   * @param move The movement to be performed.
+   */
   public void performMove(Movement move) {
 
     undoneMoves.clear();
@@ -125,7 +147,7 @@ public class Game implements Serializable, GameDataAccessor {
     boolean isMovementWinning = getCurrentPlayer().getGodCard().isMovementWinning(move);
 
 
-    for(Movement executableMove : getCurrentPlayer().getGodCard().consequences(move, this)) {
+    for (Movement executableMove : getCurrentPlayer().getGodCard().consequences(move, this)) {
       Movement temp = new Movement(board, executableMove.getStart(), executableMove.getEnd());
       temp.execute();
       //executableMove.execute();
@@ -133,20 +155,26 @@ public class Game implements Serializable, GameDataAccessor {
       //Questo non è possibile
     }
 
-    if(isMovementWinning) {
+    if (isMovementWinning) {
       GameEventManager.raise(new VictoryEvent(this, getCurrentPlayer()));
     }
 
   }
 
-  public void performMove(Construction move){
+  /**
+   * Executes the given construction on this game, raising a {@link PlayerInfoUpdateEvent} to add the move
+   * to the list on the {@link Player} class.
+   *
+   * @param move The construction move to be performed.
+   */
+  public void performMove(Construction move) {
 
     undoneMoves.clear();
     moves.push(move);
     getCurrentPlayer().getConstructionList().add(move);
     GameEventManager.raise(new PlayerInfoUpdateEvent(this, getCurrentPlayer()));
 
-    for(Move executableMove : getCurrentPlayer().getGodCard().consequences(move, this)){
+    for (Move executableMove : getCurrentPlayer().getGodCard().consequences(move, this)) {
       executableMove.execute();
     }
 
@@ -156,7 +184,7 @@ public class Game implements Serializable, GameDataAccessor {
     return currentPhase;
   }
 
-  public void setPlayers(Player[] players){
+  public void setPlayers(Player[] players) {
     this.players = players;
   }
 
@@ -176,6 +204,9 @@ public class Game implements Serializable, GameDataAccessor {
     this.availableGodCards = availableGodCards;
   }
 
+  /**
+   * Rotates the current player to the next one, then raises a {@link CurrentPlayerChangedEvent}.
+   */
   public void nextPlayer() {
     currentPlayerIndex = (currentPlayerIndex + 1) % players.length;
     getCurrentPlayer().setWorkerSelected(false);
@@ -210,11 +241,11 @@ public class Game implements Serializable, GameDataAccessor {
   private void removePlayer(Player p) {
     Player[] newPlayersArray = new Player[players.length - 1];
     int k = 0;
-    for (int i = 0; i < board.getSize(); i++){
-      for (int j = 0; j < board.getSize(); j++){
+    for (int i = 0; i < board.getSize(); i++) {
+      for (int j = 0; j < board.getSize(); j++) {
         Point cur = new Point(i, j);
-        if (p.getWorkers().containsValue(board.getItems(cur).peek())) {
-          board.remove(cur);
+        if (p.getWorkers().containsValue(board.getBox(cur).getItems().peek())) {
+          board.getBox(cur).removeTopmost();
         }
       }
     }
@@ -231,9 +262,18 @@ public class Game implements Serializable, GameDataAccessor {
     players = newPlayersArray;
   }
 
-  public void setCurrentPhase(Phase phase){
+  /**
+   * Sets the current phase to the given one, then raises a {@link PhaseUpdateEvent}.
+   *
+   * If the current player can't perform any move in the new phase, if only one other player is left,
+   * it raises a {@link VictoryEvent}, otherwise it uses {@link Player#setHasLost(boolean)} to
+   * signal the player loss.
+   *
+   * @param phase The desired new phase.
+   */
+  public void setCurrentPhase(Phase phase) {
     this.currentPhase = phase;
-    GameEventManager.raise(new PhaseUpdateEvent(this, phase));
+    GameEventManager.raise(new PhaseUpdateEvent(this, currentPhase));
     Player lastPlayer = getCurrentPlayer();
     boolean lost = currentPlayerHasLost();
     if (lost) {
@@ -263,19 +303,12 @@ public class Game implements Serializable, GameDataAccessor {
     }
   }
 
-  public void redoMove() {
-    try {
-      Move move = undoneMoves.pop().reverse();
-      moves.push(move);
-      move.execute();
-    } catch (EmptyStackException ignored) {
-
-    }
-  }
-
-  public void start(){
+  /**
+   * Starts the game and raises a {@link GameStartEvent}.
+   */
+  public void start() {
     setupComplete = true;
-    for (Player p: players){
+    for (Player p : players) {
       p.setWorkerSelected(false);
     }
     setCurrentPhase(Phase.Start);
@@ -286,11 +319,13 @@ public class Game implements Serializable, GameDataAccessor {
     return setupComplete;
   }
 
-  public boolean isFull(){
+  public boolean isFull() {
     return Arrays.stream(players).noneMatch(Objects::isNull);
   }
 
-  public boolean isAvailableCardsAlreadySet() { return Arrays.stream(availableGodCards).noneMatch(Objects::isNull); }
+  public boolean isAvailableCardsAlreadySet() {
+    return Arrays.stream(availableGodCards).noneMatch(Objects::isNull);
+  }
 
   public int getInitialNumberOfPlayers() {
     return initialNumberOfPlayers;
