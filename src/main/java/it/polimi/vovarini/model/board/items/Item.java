@@ -16,7 +16,8 @@ public abstract class Item implements Serializable {
   }
 
   /**
-   * @return Whether this item can be removed once it has been placed.
+   * This method checks if an Item can be removes once it has been placed
+   * @return true if the Item can be removed, false otherwise
    */
   public boolean canBeRemoved() {
     return false;
