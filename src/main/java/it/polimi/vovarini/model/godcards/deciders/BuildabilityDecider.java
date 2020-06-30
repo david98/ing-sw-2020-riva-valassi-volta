@@ -87,7 +87,7 @@ public class BuildabilityDecider extends Decider {
    *
    * @param gameData is the gameData all players are currently playing
    * @param target   is the box, represented by his point coordinates, where I want to build
-   * @return true if the chosen target is the current worker position and target's level < 3, false otherwise
+   * @return true if the chosen target is the current worker position and target's level is less than 3, false otherwise
    * @author Marco Riva
    */
   public static boolean buildUnderMyself(GameDataAccessor gameData, Point target) {
