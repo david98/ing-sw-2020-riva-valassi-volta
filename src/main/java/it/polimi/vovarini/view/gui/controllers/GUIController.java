@@ -22,7 +22,7 @@ public class GUIController implements EventsForViewListener {
   }
 
   private void methodNotImplemented() {
-    LOGGER.log(Level.FINE, "This method hasn't been overridden by this controller");
+    LOGGER.log(Level.FINE, "This method hasn\'t been overridden by this controller");
   }
 
   @Override

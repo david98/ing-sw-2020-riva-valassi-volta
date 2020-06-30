@@ -39,7 +39,7 @@ public abstract class Screen implements Renderable, EventsForViewListener, KeyPr
   }
 
   private void methodNotImplemented() {
-    LOGGER.log(Level.FINE, "This method hasn't been overridden by this controller");
+    LOGGER.log(Level.FINE, "This method hasn\'t been overridden by this controller");
   }
 
   @Override
