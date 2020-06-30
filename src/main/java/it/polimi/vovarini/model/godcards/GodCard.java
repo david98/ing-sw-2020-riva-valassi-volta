@@ -104,6 +104,11 @@ public class GodCard implements Serializable {
             return false;
           };
 
+  /**
+   * Computes the normal flow of the game from Phase.Start
+   * @param gameData is the Data of the game all players are currently playing
+   * @return Phase.Movement if the player selected one of his workers, Phase.Start if he did not
+   */
   public static Phase normalNextPhaseFromStart(GameDataAccessor gameData) {
     if (gameData.getCurrentPlayer().isWorkerSelected()) {
       return Phase.Movement;
@@ -112,6 +117,11 @@ public class GodCard implements Serializable {
     }
   }
 
+  /**
+   * Computes the normal flow of the game from Phase.Movement
+   * @param gameData is the Data of the game all players are currently playing
+   * @return Phase.Construction if the player's movementList is not empty, Phase.Movement otherwise
+   */
   public static Phase normalNextPhaseFromMovement(GameDataAccessor gameData) {
     if (gameData.getCurrentPlayer().getMovementList().isEmpty()) {
       return Phase.Movement;
@@ -120,6 +130,11 @@ public class GodCard implements Serializable {
     }
   }
 
+  /**
+   * Computes the normal flow of the game from Phase.Construction
+   * @param gameData is the Data of the game all players are currently playing
+   * @return Phase.End if the player's constructionList is not empty, Phase.Construction otherwise
+   */
   public static Phase normalNextPhaseFromConstruction(GameDataAccessor gameData) {
     if (gameData.getCurrentPlayer().getConstructionList().isEmpty()) {
       return Phase.Construction;
@@ -128,6 +143,11 @@ public class GodCard implements Serializable {
     }
   }
 
+  /**
+   * Computes the normal flow of the game from Phase.End
+   * @param gameData is the Data of the game all players are currently playing
+   * @return Phase.Start
+   */
   public static Phase normalNextPhaseFromEnd(GameDataAccessor gameData) {
     return Phase.Start;
   }
@@ -321,30 +341,65 @@ public class GodCard implements Serializable {
     gameData.getCurrentPlayer().setBoardStatus(gameData.getBoard());
   }
 
+  /**
+   * This method computes the consequences of a specific action of a GodCard regarding movement
+   * @param movement is the Movement move the GodCard's owner wants to perform
+   * @param gameData is the Data of the game all players are currently playing
+   * @return a list of Movements to perform sequentially to grant the correct application of the GodCard's own effect
+   */
   public List<Movement> consequences(Movement movement, GameDataAccessor gameData) {
     return listMovementEffects.apply(this.gameData, movement);
   }
-
+  /**
+   * This method computes the consequences of a specific action of a GodCard regarding construction
+   * @param construction is the Movement move the GodCard's owner wants to perform
+   * @param gameData is the Data of the game all players are currently playing
+   * @return a list of Constructions to perform sequentially to grant the correct application of the GodCard's own effect
+   */
   public List<Construction> consequences(Construction construction, GameDataAccessor gameData) {
     return listConstructionEffects.apply(gameData, construction);
   }
 
+  /**
+   * This method computes if a Movement move is valid when compared to the rules of the game
+   * @param list is a list of all the Reachable points the worker performing the movement can reach
+   * @param movement is the Movement move the player wants to perform
+   * @return true if the move is valid, false otherwise
+   */
   public boolean validate(List<Point> list, Movement movement) {
     return validateMovement.apply(list, movement);
   }
 
+  /**
+   * This method computes if a Construction move is valid when compared to the rules of the game
+   * @param list is a list of all the Buildable points the worker performing the construction can reach
+   * @param construction is the Construction move the player wants to perform
+   * @return true if the move is valid, false otherwise
+   */
   public boolean validate(List<Point> list, Construction construction) {
     return validateConstruction.apply(list, construction);
   }
 
+  /**
+   * Getter method for the GodCard's name
+   * @return the name of the GodCard (one of the values of the GodName enumeration)
+   */
   public GodName getName() {
     return name;
   }
 
+  /**
+   * Setter method for the GodCard's gameData
+   * @param gameData is the Data of the game I want to set as focus for the GodCard
+   */
   public void setGameData(GameDataAccessor gameData) {
     this.gameData = gameData;
   }
 
+  /**
+   * hashCode method for a GodCard
+   * @return an hashCode representing the GodCard
+   */
   @Override
   public int hashCode() {
     return name.hashCode();
@@ -366,22 +421,42 @@ public class GodCard implements Serializable {
     }
   }
 
+  /**
+   * Method that returns a Set containing all the MovementConditions injected by GodCards
+   * @return a Set containing all the MovementConditions injected by GodCards
+   */
   public Set<SerializableBiFunction<GameDataAccessor, Point, Boolean>> getMovementConditions() {
     return movementConditions;
   }
 
+  /**
+   * Method that returns a Set containing all the MovementConstraints injected by GodCards
+   * @return a Set containing all the MovementConstraints injected by GodCards
+   */
   public Set<SerializableBiFunction<GameDataAccessor, Point, Boolean>> getMovementConstraints() {
     return movementConstraints;
   }
 
+  /**
+   * Method that returns a Set containing all the ConstructionConditions injected by GodCards
+   * @return a Set containing all the ConstructionConditions injected by GodCards
+   */
   public Set<SerializableBiFunction<GameDataAccessor, Point, Boolean>> getConstructionConditions() {
     return constructionConditions;
   }
 
+  /**
+   * Method that returns a Set containing all the ConstructionConstraints injected by GodCards
+   * @return a Set containing all the ConstructionConstraints injected by GodCards
+   */
   public Set<SerializableBiFunction<GameDataAccessor, Point, Boolean>> getConstructionConstraints() {
     return constructionConstraints;
   }
 
+  /**
+   * Method that returns a Set containing all the WinningConditions injected by GodCards
+   * @return a Set containing all the WinningConditions injected by GodCards
+   */
   public Set<SerializablePredicate<Movement>> getWinningConditions() {
     return winningConditions;
   }
