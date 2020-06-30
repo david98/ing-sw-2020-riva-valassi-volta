@@ -38,18 +38,36 @@ public class Server implements Runnable{
   private RemoteView[] remoteViews = new RemoteView[Game.MAX_PLAYERS];
   private int currentlyConnectedClients = 0;
 
+  /**
+   * This method handles an uncaught exception inside a thread and raises
+   * a {@link AbruptEndEvent}.
+   * @param th The thread in which the exception first originated.
+   * @param e The exception as a {@link Throwable}.
+   */
   public static void handleUncaughtExceptions(Thread th, Throwable e) {
     LOGGER.log(Level.SEVERE, "Uncaught exception in thread " + th.toString() + ": " + e.getMessage());
     GameEventManager.raise(new AbruptEndEvent("server"));
     LOGGER.log(Level.SEVERE, "Raised AbruptEndEvent.");
   }
 
+  /**
+   * Constructs a server listening on the specified port.
+   * @param port The port to listen on.
+   * @throws IOException If a ServerSocket can't be allocated.
+   */
   public Server(int port) throws IOException{
     GameEventManager.bindListeners(this);
     serverSocket = new ServerSocket(port);
     pool = Executors.newFixedThreadPool(DEFAULT_MAX_THREADS);
   }
 
+  /**
+   * Constructs a server listening on the specified port,
+   * which will run at most nThreads {@link RemoteView}.
+   * @param port The port to listen on.
+   * @param nThreads The maximum number of concurrent {@link RemoteView}.
+   * @throws IOException If a ServerSocket can't be allocated.
+   */
   public Server(int port, int nThreads) throws IOException{
     GameEventManager.bindListeners(this);
     serverSocket = new ServerSocket(port);
@@ -102,26 +120,11 @@ public class Server implements Runnable{
     }
   }
 
+  /**
+   * Instantly kills all running remote views.
+   */
   public void kill() {
     pool.shutdownNow();
-  }
-
-  public void shutdownAndAwaitTermination() {
-    pool.shutdown(); // Disable new tasks from being submitted
-    try {
-      // Wait a while for existing tasks to terminate
-      if (!pool.awaitTermination(60, TimeUnit.SECONDS)) {
-        pool.shutdownNow(); // Cancel currently executing tasks
-        // Wait a while for tasks to respond to being cancelled
-        if (!pool.awaitTermination(60, TimeUnit.SECONDS))
-          System.err.println("Pool did not terminate");
-      }
-    } catch (InterruptedException ie) {
-      // (Re-)Cancel if current thread also interrupted
-      pool.shutdownNow();
-      // Preserve interrupt status
-      Thread.currentThread().interrupt();
-    }
   }
 
   public Game getGame() {
@@ -132,8 +135,12 @@ public class Server implements Runnable{
     return controller;
   }
 
+  /**
+   * Handles an abrupt end.
+   * @param e An AbruptEndEvent.
+   */
   @GameEventListener
-  public void handleAbruptEnd(AbruptEndEvent e) {
+  public void handle(AbruptEndEvent e) {
     successfulDisconnects += 1;
     LOGGER.log(Level.SEVERE, "Server received AbruptEndEvent. Currently disconnected clients: " +
             successfulDisconnects);
@@ -143,8 +150,13 @@ public class Server implements Runnable{
     }
   }
 
+  /**
+   * Handles the event raised by the first player
+   * when they have chosen the number of players.
+   * @param e
+   */
   @GameEventListener
-  public void handleNumberOfPlayersChoice(NumberOfPlayersChoiceEvent e){
+  public void handle(NumberOfPlayersChoiceEvent e){
     if (e.getNumberOfPlayers() < Game.MIN_PLAYERS || e.getNumberOfPlayers() > Game.MAX_PLAYERS) {
       throw new InvalidNumberOfPlayersException();
     }

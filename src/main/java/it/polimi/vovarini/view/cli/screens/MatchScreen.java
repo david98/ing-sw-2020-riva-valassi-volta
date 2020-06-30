@@ -130,7 +130,7 @@ public class MatchScreen extends Screen {
       if (boardElement.getCursorLocation().equals(data.getCurrentStart())) {
         deSelect();
       } else {
-        Item item = data.getBoard().getItems(boardElement.getCursorLocation()).peek();
+        Item item = data.getBoard().getBox(boardElement.getCursorLocation()).getItems().peek();
 
         if (data.getOwner().getWorkers().values().stream().anyMatch(w -> w.equals(item))) {
           data.getOwner().setCurrentSex(((Worker) item).getSex());
@@ -203,13 +203,13 @@ public class MatchScreen extends Screen {
   }
 
   @Override
-  public void handleBoardUpdate(BoardUpdateEvent e) {
+  public void handle(BoardUpdateEvent e) {
     boardElement.setBoard(e.getNewBoard());
     needsRender = true;
   }
 
   @Override
-  public void handleCurrentPlayerUpdate(CurrentPlayerChangedEvent e) {
+  public void handle(CurrentPlayerChangedEvent e) {
     playerList.setCurrentPlayer(e.getNewPlayer());
     message.setContent("");
     phasePrompt.setCurrentPhase(Phase.Start);
@@ -222,7 +222,7 @@ public class MatchScreen extends Screen {
   }
 
   @Override
-  public void handlePhaseUpdate(PhaseUpdateEvent e) {
+  public void handle(PhaseUpdateEvent e) {
     handlesInput = true;
     phasePrompt.setCurrentPhase(e.getNewPhase());
     message.setContent("");

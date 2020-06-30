@@ -5,17 +5,26 @@ import it.polimi.vovarini.model.Player;
 import java.util.Arrays;
 
 /**
- * This class represents a Worker
+ * This class represents a worker.
  */
 public class Worker extends Item {
   private final Sex sex;
   private final Player owner;
 
+  /**
+   * Creates a worker with the given sex and owner.
+   * @param sex The sex of the worker.
+   * @param owner The owner of the worker.
+   */
   public Worker(Sex sex, Player owner) {
     this.sex = sex;
     this.owner = owner;
   }
 
+  /**
+   * Creates a worker which is a clone of another worker.
+   * @param worker The worker to be cloned.
+   */
   public Worker(Worker worker){
     sex = worker.sex;
     owner = worker.owner;

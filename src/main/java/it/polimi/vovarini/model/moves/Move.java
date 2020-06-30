@@ -5,7 +5,7 @@ import it.polimi.vovarini.model.board.Board;
 import java.io.Serializable;
 
 /**
- * This class represents any kind of move performable by a player inside the game
+ * This class represents a generic move performed during the game.
  */
 public abstract class Move implements Serializable {
   protected Board board;
@@ -16,8 +16,14 @@ public abstract class Move implements Serializable {
     this.forced = forced;
   }
 
+  /**
+   * @return A move which, if executed, would rollback the results of this move.
+   */
   public abstract Move reverse();
 
+  /**
+   * Executes this move.
+   */
   public abstract void execute();
 
   public boolean isForced() {

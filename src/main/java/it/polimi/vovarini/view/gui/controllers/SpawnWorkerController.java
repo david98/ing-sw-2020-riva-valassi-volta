@@ -1,19 +1,16 @@
 package it.polimi.vovarini.view.gui.controllers;
 
 import it.polimi.vovarini.common.events.*;
-import it.polimi.vovarini.model.Phase;
 import it.polimi.vovarini.model.Player;
 import it.polimi.vovarini.model.Point;
 import it.polimi.vovarini.model.board.Board;
 import it.polimi.vovarini.model.board.items.Sex;
 import it.polimi.vovarini.model.board.items.Worker;
-import it.polimi.vovarini.model.godcards.GodCardFactory;
 import it.polimi.vovarini.model.godcards.GodName;
 import it.polimi.vovarini.view.gui.GuiManager;
 import it.polimi.vovarini.view.gui.Settings;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
-import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.ImageView;
@@ -146,7 +143,7 @@ public class SpawnWorkerController extends GUIController {
     }
 
     @Override
-    public void handleBoardUpdate(BoardUpdateEvent e) {
+    public void handle(BoardUpdateEvent e) {
         Board b = guiManager.getData().getBoard();
 
         for (int i = 0; i < b.getSize(); i++) {
@@ -172,13 +169,13 @@ public class SpawnWorkerController extends GUIController {
     }
 
     @Override
-    public void handlePlaceYourWorkers(PlaceYourWorkersEvent e) {
-        super.handlePlaceYourWorkers(e);
+    public void handle(PlaceYourWorkersEvent e) {
+        super.handle(e);
         updateView();
     }
 
     @Override
-    public void handleCurrentPlayerUpdate(CurrentPlayerChangedEvent e) {
-        super.handleCurrentPlayerUpdate(e);
+    public void handle(CurrentPlayerChangedEvent e) {
+        super.handle(e);
     }
 }

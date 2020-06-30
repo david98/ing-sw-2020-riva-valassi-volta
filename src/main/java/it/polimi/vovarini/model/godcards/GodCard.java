@@ -93,7 +93,7 @@ public class GodCard implements Serializable {
             return false;
           }
 
-          var destinationItems = gameData.getBoard().getItems(point);
+          var destinationItems = gameData.getBoard().getBox(point).getItems();
           return Arrays.stream(Block.blocks)
               .anyMatch(block -> block.canBePlacedOn(destinationItems.peek()));
 

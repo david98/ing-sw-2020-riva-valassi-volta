@@ -55,41 +55,41 @@ public class GuiManager extends View {
 
     @Override
     @GameEventListener
-    public void handleInvalidNickname(InvalidNicknameEvent e) {
-        Platform.runLater(() -> currentController.handleInvalidNickname(e));
+    public void handle(InvalidNicknameEvent e) {
+        Platform.runLater(() -> currentController.handle(e));
     }
 
     @Override
     @GameEventListener
-    public void handleNewPlayer(NewPlayerEvent e) {
-        super.handleNewPlayer(e);
-        Platform.runLater(() -> currentController.handleNewPlayer(e));
+    public void handle(NewPlayerEvent e) {
+        super.handle(e);
+        Platform.runLater(() -> currentController.handle(e));
     }
 
     @Override
     @GameEventListener
-    public void handleBoardUpdate(BoardUpdateEvent e) {
+    public void handle(BoardUpdateEvent e) {
         data.setBoard(e.getNewBoard());
-        Platform.runLater(() -> currentController.handleBoardUpdate(e));
+        Platform.runLater(() -> currentController.handle(e));
     }
 
     @Override
     @GameEventListener
-    public void handleCurrentPlayerUpdate(CurrentPlayerChangedEvent e) {
+    public void handle(CurrentPlayerChangedEvent e) {
         data.setCurrentPlayer(e.getNewPlayer());
-        Platform.runLater(() -> currentController.handleCurrentPlayerUpdate(e));
+        Platform.runLater(() -> currentController.handle(e));
     }
 
     @Override
     @GameEventListener
-    public void handlePhaseUpdate(PhaseUpdateEvent e) {
+    public void handle(PhaseUpdateEvent e) {
         data.setCurrentPhase(e.getNewPhase());
-        Platform.runLater(() -> currentController.handlePhaseUpdate(e));
+        Platform.runLater(() -> currentController.handle(e));
     }
 
     @Override
     @GameEventListener
-    public void handleGameStart(GameStartEvent e) {
+    public void handle(GameStartEvent e) {
         Platform.runLater(() ->
                 setLayout(Settings.GAME_SCENE_FXML)
         );
@@ -97,8 +97,8 @@ public class GuiManager extends View {
 
     @Override
     @GameEventListener
-    public void handleGodSelectionStart(GodSelectionStartEvent e) {
-        super.handleGodSelectionStart(e);
+    public void handle(GodSelectionStartEvent e) {
+        super.handle(e);
 
         if (e.getElectedPlayer().equals(data.getOwner())) {
             Platform.runLater(() -> setLayout(Settings.ELECTED_PLAYER_SCENE_FXML));
@@ -110,65 +110,65 @@ public class GuiManager extends View {
             });
         }
 
-        Platform.runLater(() -> currentController.handleGodSelectionStart(e));
+        Platform.runLater(() -> currentController.handle(e));
     }
 
     @Override
     @GameEventListener
-    public void handleSelectYourCard(SelectYourCardEvent e) {
+    public void handle(SelectYourCardEvent e) {
         if (!godSelectionStarted) {
             Platform.runLater(() -> setLayout(Settings.GOD_CARD_SELECTION_SCENE_FXML));
             godSelectionStarted = true;
         }
-        Platform.runLater(() -> currentController.handleSelectYourCard(e));
+        Platform.runLater(() -> currentController.handle(e));
     }
 
     @Override
     @GameEventListener
-    public void handleCardAssignment(CardAssignmentEvent e) {
-        super.handleCardAssignment(e);
-        Platform.runLater(() -> currentController.handleCardAssignment(e));
+    public void handle(CardAssignmentEvent e) {
+        super.handle(e);
+        Platform.runLater(() -> currentController.handle(e));
     }
 
     @Override
     @GameEventListener
-    public void handlePlaceYourWorkers(PlaceYourWorkersEvent e) {
+    public void handle(PlaceYourWorkersEvent e) {
         if (!placeWorkersStarted) {
             Platform.runLater(() -> setLayout(Settings.SPAWN_WORKER_SCENE_FXML));
             placeWorkersStarted = true;
         }
-        Platform.runLater(() -> currentController.handlePlaceYourWorkers(e));
+        Platform.runLater(() -> currentController.handle(e));
     }
 
     @Override
     @GameEventListener
-    public void handlePlayerInfoUpdate(PlayerInfoUpdateEvent e) {
-        super.handlePlayerInfoUpdate(e);
-        Platform.runLater(() -> currentController.handlePlayerInfoUpdate(e));
+    public void handle(PlayerInfoUpdateEvent e) {
+        super.handle(e);
+        Platform.runLater(() -> currentController.handle(e));
     }
 
     @Override
     @GameEventListener
-    public void handleGodCardUpdate(GodCardUpdateEvent e) {
-        super.handleGodCardUpdate(e);
-        Platform.runLater(() -> currentController.handleGodCardUpdate(e));
+    public void handle(GodCardUpdateEvent e) {
+        super.handle(e);
+        Platform.runLater(() -> currentController.handle(e));
     }
 
     @Override
     @GameEventListener
-    public void handleVictory(VictoryEvent e) {
-        Platform.runLater(() -> currentController.handleVictory(e));
+    public void handle(VictoryEvent e) {
+        Platform.runLater(() -> currentController.handle(e));
     }
 
     @Override
     @GameEventListener
-    public void handleLoss(LossEvent e) {
-        Platform.runLater(() -> currentController.handleLoss(e));
+    public void handle(LossEvent e) {
+        Platform.runLater(() -> currentController.handle(e));
     }
 
     @Override
     @GameEventListener
-    public void handleAbruptEnd(AbruptEndEvent e) {
+    public void handle(AbruptEndEvent e) {
         Platform.runLater(() -> {
             Alert alert = new Alert(Alert.AlertType.ERROR, "A player disconnected. Quitting.", ButtonType.OK);
 
@@ -181,14 +181,14 @@ public class GuiManager extends View {
 
     @Override
     @GameEventListener
-    public void handleFirstPlayer(FirstPlayerEvent e) {
-        super.handleFirstPlayer(e);
-        Platform.runLater(() -> currentController.handleFirstPlayer(e));
+    public void handle(FirstPlayerEvent e) {
+        super.handle(e);
+        Platform.runLater(() -> currentController.handle(e));
     }
 
     @Override
     @GameEventListener
-    public void handleRegistrationStart(RegistrationStartEvent e) {
+    public void handle(RegistrationStartEvent e) {
         Platform.runLater(() -> {
             setLayout(Settings.REGISTRATION_SCENE_FXML);
         });

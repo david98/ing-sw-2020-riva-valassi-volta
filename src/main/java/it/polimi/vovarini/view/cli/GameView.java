@@ -11,7 +11,6 @@ import it.polimi.vovarini.view.cli.console.FullScreenConsole;
 import it.polimi.vovarini.view.cli.input.Key;
 import it.polimi.vovarini.view.cli.input.KeycodeToKey;
 import it.polimi.vovarini.view.cli.screens.*;
-import it.polimi.vovarini.view.gui.Settings;
 
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
@@ -52,44 +51,44 @@ public class GameView extends View {
 
 
   @GameEventListener
-  public void handleBoardUpdate(BoardUpdateEvent e){
-    super.handleBoardUpdate(e);
+  public void handle(BoardUpdateEvent e){
+    super.handle(e);
     if (currentScreen != null) {
-      currentScreen.handleBoardUpdate(e);
+      currentScreen.handle(e);
     }
   }
 
   @GameEventListener
-  public void handleCurrentPlayerUpdate(CurrentPlayerChangedEvent e){
+  public void handle(CurrentPlayerChangedEvent e){
     data.setCurrentPlayer(e.getNewPlayer());
     if (currentScreen != null) {
-      currentScreen.handleCurrentPlayerUpdate(e);
+      currentScreen.handle(e);
     }
   }
 
   @GameEventListener
-  public void handlePhaseUpdate(PhaseUpdateEvent e){
+  public void handle(PhaseUpdateEvent e){
     data.setCurrentPhase(e.getNewPhase());
     if (currentScreen != null) {
-      currentScreen.handlePhaseUpdate(e);
+      currentScreen.handle(e);
     }
   }
 
   @GameEventListener
-  public void handleGameStart(GameStartEvent e){
+  public void handle(GameStartEvent e){
     startMatch();
   }
 
   @Override
   @GameEventListener
-  public void handleNewPlayer(NewPlayerEvent e) {
-    super.handleNewPlayer(e);
+  public void handle(NewPlayerEvent e) {
+    super.handle(e);
   }
 
   @Override
   @GameEventListener
-  public void handleGodSelectionStart(GodSelectionStartEvent e) {
-    super.handleGodSelectionStart(e);
+  public void handle(GodSelectionStartEvent e) {
+    super.handle(e);
 
     if (e.getElectedPlayer().equals(data.getOwner())) {
       currentScreen = new ElectedPlayerScreen(data, client, Arrays.asList(e.getAllGods()));
@@ -104,7 +103,7 @@ public class GameView extends View {
 
   @Override
   @GameEventListener
-  public void handleSelectYourCard(SelectYourCardEvent e) {
+  public void handle(SelectYourCardEvent e) {
     if (e.getTargetPlayer().equals(data.getOwner())){
       currentScreen = new GodCardSelectionScreen(data, client, Arrays.asList(e.getGodsLeft()));
       gameLoop();
@@ -118,13 +117,13 @@ public class GameView extends View {
 
   @Override
   @GameEventListener
-  public void handleCardAssignment(CardAssignmentEvent e) {
-    super.handleCardAssignment(e);
+  public void handle(CardAssignmentEvent e) {
+    super.handle(e);
   }
 
   @Override
   @GameEventListener
-  public void handlePlaceYourWorkers(PlaceYourWorkersEvent e) {
+  public void handle(PlaceYourWorkersEvent e) {
     if (e.getTargetPlayer().equals(data.getOwner())){
       currentScreen = new SpawnWorkersScreen(data, client);
       gameLoop();
@@ -140,21 +139,21 @@ public class GameView extends View {
 
   @Override
   @GameEventListener
-  public void handlePlayerInfoUpdate(PlayerInfoUpdateEvent e) {
-    super.handlePlayerInfoUpdate(e);
-    currentScreen.handlePlayerInfoUpdate(e);
+  public void handle(PlayerInfoUpdateEvent e) {
+    super.handle(e);
+    currentScreen.handle(e);
   }
 
   @Override
   @GameEventListener
-  public void handleGodCardUpdate(GodCardUpdateEvent e) {
-    super.handleGodCardUpdate(e);
-    currentScreen.handleGodCardUpdate(e);
+  public void handle(GodCardUpdateEvent e) {
+    super.handle(e);
+    currentScreen.handle(e);
   }
 
   @Override
   @GameEventListener
-  public void handleVictory(VictoryEvent e) {
+  public void handle(VictoryEvent e) {
     if (e.getWinningPlayer().equals(data.getOwner())) {
       currentScreen = new WaitScreen(data, client, "VICTORY ROYALE!");
       playAudio("/audio/bgm/victory.wav", true);
@@ -166,8 +165,8 @@ public class GameView extends View {
 
   @Override
   @GameEventListener
-  public void handleLoss(LossEvent e) {
-    super.handleLoss(e);
+  public void handle(LossEvent e) {
+    super.handle(e);
     if (e.getLosingPlayer().equals(data.getOwner())) {
       currentScreen = new SpectScreen(data, client);
     }
@@ -175,13 +174,13 @@ public class GameView extends View {
 
   @Override
   @GameEventListener
-  public void handleAbruptEnd(AbruptEndEvent e) {
+  public void handle(AbruptEndEvent e) {
     currentScreen = new WaitScreen(data, client,"A player disconnected. It's gane over for everyone.");
   }
 
   @Override
   @GameEventListener
-  public void handleFirstPlayer(FirstPlayerEvent e) {
+  public void handle(FirstPlayerEvent e) {
     Scanner sc = console.getScanner();
     int numberOfPlayers;
     do {
@@ -195,7 +194,7 @@ public class GameView extends View {
 
   @Override
   @GameEventListener
-  public void handleRegistrationStart(RegistrationStartEvent e) {
+  public void handle(RegistrationStartEvent e) {
     System.out.println("Registrations are open!");
     Scanner sc = console.getScanner();
     String nickname;
@@ -221,7 +220,7 @@ public class GameView extends View {
 
   @Override
   @GameEventListener
-  public void handleInvalidNickname(InvalidNicknameEvent e) {
+  public void handle(InvalidNicknameEvent e) {
 
     if(data.getOwner() != null && e.getNickname().equals(data.getOwner().getNickname())) {
       if(e.getErrorCode() == 0) {

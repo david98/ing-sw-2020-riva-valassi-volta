@@ -1,20 +1,15 @@
 package it.polimi.vovarini.view.gui.controllers;
 
 import it.polimi.vovarini.common.events.*;
-import it.polimi.vovarini.model.Game;
 import it.polimi.vovarini.model.Player;
 import it.polimi.vovarini.view.gui.GuiManager;
 import it.polimi.vovarini.view.gui.Settings;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
-import javafx.scene.control.ChoiceDialog;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
-
-import java.io.IOException;
-import java.util.stream.IntStream;
 
 public class RegistrationController extends GUIController {
 
@@ -57,8 +52,8 @@ public class RegistrationController extends GUIController {
     }
 
     @Override
-    public void handleInvalidNickname(InvalidNicknameEvent e) {
-        super.handleInvalidNickname(e);
+    public void handle(InvalidNicknameEvent e) {
+        super.handle(e);
 
         if(guiManager.getData().getOwner() != null && e.getNickname().equals(guiManager.getData().getOwner().getNickname())) {
             if(e.getErrorCode() == 0) {
@@ -72,8 +67,8 @@ public class RegistrationController extends GUIController {
     }
 
     @Override
-    public void handleNewPlayer(NewPlayerEvent e) {
-        super.handleNewPlayer(e);
+    public void handle(NewPlayerEvent e) {
+        super.handle(e);
         if(e.getNewPlayer().equals(guiManager.getData().getOwner())) {
             guiManager.setLayout(Settings.WAIT_SCENE_FXML);
             ((WaitController)guiManager.getCurrentController()).setWaitMessage("Waiting for all players to register...");

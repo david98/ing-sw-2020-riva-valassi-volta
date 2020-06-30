@@ -40,7 +40,7 @@ public class SpawnWorkersScreen extends Screen {
             .boxed()
             .flatMap(x -> IntStream.range(0, data.getBoard().getSize())
                     .mapToObj(y -> new Point(x, y)))
-            .filter(p -> data.getBoard().getItems(p).isEmpty())
+            .filter(p -> data.getBoard().getBox(p).getItems().isEmpty())
             .collect(Collectors.toList());
     boardElement.markPoints(freePoints);
     needsRender = true;
@@ -61,7 +61,7 @@ public class SpawnWorkersScreen extends Screen {
   }
 
   @Override
-  public void handleBoardUpdate(BoardUpdateEvent e) {
+  public void handle(BoardUpdateEvent e) {
     boardElement.setBoard(e.getNewBoard());
     if (!sexes.isEmpty()){
       client.raise(new WorkerSelectionEvent(data.getOwner(), sexes.get(0)));

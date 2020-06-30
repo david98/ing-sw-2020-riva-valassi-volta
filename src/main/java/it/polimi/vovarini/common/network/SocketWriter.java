@@ -1,11 +1,18 @@
 package it.polimi.vovarini.common.network;
 
 import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
 import java.util.concurrent.BlockingQueue;
 
+/**
+ * This class asynchronously writes objects retrieved from a queue to a socket.
+ * @param <T> The class of the objects to be written to the socket.
+ *
+ * @author Davide Volta
+ */
 public class SocketWriter<T> implements Runnable{
   private final Socket socket;
 
@@ -13,13 +20,16 @@ public class SocketWriter<T> implements Runnable{
 
   private final BlockingQueue<T> objectsToBeWritten;
 
-  private final Class<T> objClass;
-
-  public SocketWriter(Socket socket, BlockingQueue<T> objectsToBeWritten, Class<T> objClass) throws IOException {
+  /**
+   * Constructs a writer reading from objectsToBeWritten and writing to the socket.
+   * @param socket The active socket to write objects to.
+   * @param objectsToBeWritten A queue from which objects will be read.
+   * @throws IOException If an {@link ObjectOutputStream} can't be created.
+   */
+  public SocketWriter(Socket socket, BlockingQueue<T> objectsToBeWritten) throws IOException {
     this.socket = socket;
     out = new ObjectOutputStream(socket.getOutputStream());
     this.objectsToBeWritten = objectsToBeWritten;
-    this.objClass = objClass;
   }
 
   public void run(){

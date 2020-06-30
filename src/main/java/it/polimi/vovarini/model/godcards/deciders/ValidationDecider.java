@@ -24,7 +24,7 @@ public class ValidationDecider extends Decider {
      * @author Mattia Valassi, Marco Riva
      */
     public static boolean allowDome(List<Point> list, Construction construction) {
-        Item targetTopmostItem = construction.getBoard().getItems(construction.getTarget()).peek();
+        Item targetTopmostItem = construction.getBoard().getBox(construction.getTarget()).getItems().peek();
         return list.contains(construction.getTarget()) &&
                 (construction.getBlock().canBePlacedOn(targetTopmostItem)
                         || (construction.getBlock().getLevel() == Block.MAX_LEVEL));

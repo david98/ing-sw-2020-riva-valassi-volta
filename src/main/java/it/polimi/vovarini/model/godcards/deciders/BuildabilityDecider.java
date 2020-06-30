@@ -106,9 +106,9 @@ public class BuildabilityDecider extends Decider {
         }
 
         for (Point candidate : gameData.getBoard().getAdjacentPositions(target)){
-            if(gameData.getBoard().getItems(candidate).peek() != null){
-                if(gameData.getBoard().getItems(candidate).peek().canBeRemoved()){
-                    Worker candidateWorker = (Worker) gameData.getBoard().getItems(candidate).peek();
+            if(gameData.getBoard().getBox(candidate).getItems().peek() != null){
+                if(gameData.getBoard().getBox(candidate).getItems().peek().canBeRemoved()){
+                    Worker candidateWorker = (Worker) gameData.getBoard().getBox(candidate).getItems().peek();
                     if (candidateWorker.getOwner().equals(limusPlayer)){
                         return gameData.getBoard().getBox(target).getLevel() == Block.MAX_LEVEL - 1;
                     }

@@ -4,6 +4,13 @@ import it.polimi.vovarini.common.events.*;
 import it.polimi.vovarini.common.network.GameClient;
 import it.polimi.vovarini.model.Player;
 
+/**
+ * This class represents an abstract View and handles
+ * generic View behavior, such as updating the Board,
+ * updating the current player, etc.
+ *
+ * @author Davide Volta
+ */
 public abstract class View implements EventsForViewListener {
 
   protected GameClient client;
@@ -16,7 +23,7 @@ public abstract class View implements EventsForViewListener {
   }
 
   @Override
-  public void handleNewPlayer(NewPlayerEvent e) {
+  public void handle(NewPlayerEvent e) {
     client.setSocketTimeout(0);
     if (data.getOwner().equals(e.getNewPlayer())){
       data.setOwner(e.getNewPlayer());
@@ -25,7 +32,7 @@ public abstract class View implements EventsForViewListener {
   }
 
   @Override
-  public void handlePlayerInfoUpdate(PlayerInfoUpdateEvent e) {
+  public void handle(PlayerInfoUpdateEvent e) {
     if (e.getTargetPlayer().getGodCard() != null) {
       e.getTargetPlayer().getGodCard().setGameData(data);
     }
@@ -43,7 +50,7 @@ public abstract class View implements EventsForViewListener {
   }
 
   @Override
-  public void handleGodCardUpdate(GodCardUpdateEvent e) {
+  public void handle(GodCardUpdateEvent e) {
     e.getUpdatedCard().setGameData(data);
     if (data.getOwner().equals(e.getOwner())) {
       data.getOwner().setGodCard(e.getUpdatedCard());
@@ -59,12 +66,12 @@ public abstract class View implements EventsForViewListener {
   }
 
   @Override
-  public void handleLoss(LossEvent e) {
+  public void handle(LossEvent e) {
     data.removePlayer(e.getLosingPlayer());
   }
 
   @Override
-  public void handleCardAssignment(CardAssignmentEvent e) {
+  public void handle(CardAssignmentEvent e) {
     for (Player p: data.getPlayerSet()){
       if (p.equals(e.getTargetPlayer())){
         e.getAssignedCard().setGameData(data);
@@ -77,12 +84,12 @@ public abstract class View implements EventsForViewListener {
   }
 
   @Override
-  public void handleBoardUpdate(BoardUpdateEvent e) {
+  public void handle(BoardUpdateEvent e) {
     data.setBoard(e.getNewBoard());
   }
 
   @Override
-  public void handleGodSelectionStart(GodSelectionStartEvent e) {
+  public void handle(GodSelectionStartEvent e) {
     Player[] players = e.getPlayers();
     for (int i = 0; i < players.length; i++){
       for (Player p: data.getPlayerSet()){
@@ -99,7 +106,7 @@ public abstract class View implements EventsForViewListener {
   }
 
   @Override
-  public void handleFirstPlayer(FirstPlayerEvent e) {
+  public void handle(FirstPlayerEvent e) {
     client.setSocketTimeout(0);
   }
 }

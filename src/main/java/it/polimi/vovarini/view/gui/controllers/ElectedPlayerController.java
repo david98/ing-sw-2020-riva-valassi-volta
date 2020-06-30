@@ -4,14 +4,11 @@ import it.polimi.vovarini.common.events.AvailableCardsEvent;
 import it.polimi.vovarini.common.events.GameEvent;
 import it.polimi.vovarini.common.events.GodSelectionStartEvent;
 import it.polimi.vovarini.model.godcards.GodName;
-import it.polimi.vovarini.view.gui.Gui;
 import it.polimi.vovarini.view.gui.GuiManager;
 import it.polimi.vovarini.view.gui.Settings;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.Node;
 import javafx.scene.control.Button;
-import javafx.scene.control.Label;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -217,8 +214,8 @@ public class ElectedPlayerController extends GUIController {
     }
 
     @Override
-    public void handleGodSelectionStart(GodSelectionStartEvent e) {
-        super.handleGodSelectionStart(e);
+    public void handle(GodSelectionStartEvent e) {
+        super.handle(e);
         addImages(e.getAllGods());
     }
 }

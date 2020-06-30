@@ -14,7 +14,8 @@ import java.io.Serializable;
 import java.util.*;
 
 /**
- * This class represents the game currently played, with all the data necessary to handle it
+ * This class represents a Santorini game.
+ *
  */
 public class Game implements Serializable, GameDataAccessor {
 
@@ -39,6 +40,13 @@ public class Game implements Serializable, GameDataAccessor {
 
   private final Random random;
 
+  /**
+   * Creates a Game with the given number of players.
+   *
+   * @param numberOfPlayers How many players should be allowed into this game.
+   * @throws InvalidNumberOfPlayersException If numberOfPlayers is less than {@value MIN_PLAYERS} or
+   *                                          greater then {@value MAX_PLAYERS}.
+   */
   public Game(int numberOfPlayers) throws InvalidNumberOfPlayersException {
     if (numberOfPlayers < MIN_PLAYERS || numberOfPlayers > MAX_PLAYERS) {
       throw new InvalidNumberOfPlayersException();
@@ -68,11 +76,12 @@ public class Game implements Serializable, GameDataAccessor {
   }
 
   /**
-   * This method adds a new player into the game with the nickname already
-   * validated through {@link Player#validateNickname(String)}
+   * This method adds a new player with the given nickname to this game,
+   * then raises a {@link NewPlayerEvent}.
+   * No validity check on nickname is performed.
    *
    * @param nickname the name of the player to be added
-   * @throws InvalidNumberOfPlayersException if there is already the maximum number of players
+   * @throws InvalidNumberOfPlayersException if this game is full.
    */
   public void addPlayer(String nickname) {
 
@@ -91,6 +100,9 @@ public class Game implements Serializable, GameDataAccessor {
     }
   }
 
+  /**
+   * This method chooses a random player as the new current player.
+   */
   public void drawElectedPlayer() {
     currentPlayerIndex = random.nextInt(players.length);
   }
@@ -213,8 +225,8 @@ public class Game implements Serializable, GameDataAccessor {
     for (int i = 0; i < board.getSize(); i++){
       for (int j = 0; j < board.getSize(); j++){
         Point cur = new Point(i, j);
-        if (p.getWorkers().containsValue(board.getItems(cur).peek())) {
-          board.remove(cur);
+        if (p.getWorkers().containsValue(board.getBox(cur).getItems().peek())) {
+          board.getBox(cur).removeTopmost();
         }
       }
     }

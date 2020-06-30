@@ -230,7 +230,7 @@ public class GameController extends GUIController {
 
         switch (guiManager.getData().getCurrentPhase()) {
             case Start -> {
-                if(guiManager.getData().getBoard().getItems(p).peek() != null && guiManager.getData().getBoard().getItems(p).peek().canBeRemoved()) {
+                if(guiManager.getData().getBoard().getBox(p).getItems().peek() != null && guiManager.getData().getBoard().getBox(p).getItems().peek().canBeRemoved()) {
                     Worker selectedWorker = (Worker) b.getBox(p).getItems().peek();
                     if (guiManager.getData().getOwner().getWorkers()
                                     .values()
@@ -344,7 +344,7 @@ public class GameController extends GUIController {
     }
 
     @Override
-    public void handleBoardUpdate(BoardUpdateEvent e) {
+    public void handle(BoardUpdateEvent e) {
         Board b = guiManager.getData().getBoard();
         Point p;
         String selector;
@@ -403,8 +403,8 @@ public class GameController extends GUIController {
     }
 
     @Override
-    public void handlePhaseUpdate(PhaseUpdateEvent e) {
-        super.handlePhaseUpdate(e);
+    public void handle(PhaseUpdateEvent e) {
+        super.handle(e);
         updateView();
         //skip automatico
         if(e.getNewPhase().equals(Phase.End)) {
@@ -415,8 +415,8 @@ public class GameController extends GUIController {
     }
 
     @Override
-    public void handleLoss(LossEvent e) {
-        super.handleLoss(e);
+    public void handle(LossEvent e) {
+        super.handle(e);
 
         Popup popup = new Popup();
         if(e.getLosingPlayer().equals(guiManager.getData().getOwner())) {
@@ -435,8 +435,8 @@ public class GameController extends GUIController {
     }
 
     @Override
-    public void handleVictory(VictoryEvent e) {
-        super.handleVictory(e);
+    public void handle(VictoryEvent e) {
+        super.handle(e);
 
         Popup popup = new Popup();
         if(e.getWinningPlayer().equals(guiManager.getData().getOwner())) {

@@ -192,8 +192,8 @@ public class Controller implements EventListener {
       throw new WorkerAlreadySpawnedException();
 
     } catch (ItemNotFoundException e) {
-      Item targetItem = game.getBoard().getItems(target).peek();
-      if (targetItem != null && !currentWorker.canBePlacedOn(game.getBoard().getItems(target).peek())){
+      Item targetItem = game.getBoard().getBox(target).getItems().peek();
+      if (targetItem != null && !currentWorker.canBePlacedOn(game.getBoard().getBox(target).getItems().peek())){
         // Worker sopra altro worker
         throw new OverwrittenWorkerException();
       } else {

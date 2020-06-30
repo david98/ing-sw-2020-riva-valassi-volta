@@ -32,8 +32,8 @@ public class WaitController extends GUIController {
     }
 
     @Override
-    public void handleFirstPlayer(FirstPlayerEvent e) {
-        super.handleFirstPlayer(e);
+    public void handle(FirstPlayerEvent e) {
+        super.handle(e);
         // items for the dialog
         String nPlayers[] = IntStream.range(Game.MIN_PLAYERS, Game.MAX_PLAYERS + 1).mapToObj(i -> "" + i).toArray(String[]::new);
 

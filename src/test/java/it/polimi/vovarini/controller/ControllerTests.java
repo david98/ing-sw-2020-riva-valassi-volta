@@ -356,7 +356,7 @@ public class ControllerTests {
     }
 
 
-    assertEquals(game.getBoard().getItems(target).peek(), Block.blocks[level - 1]);
+    assertEquals(game.getBoard().getBox(target).getItems().peek(), Block.blocks[level - 1]);
 
 
     assertFalse(game.getCurrentPlayer().getConstructionList().isEmpty());

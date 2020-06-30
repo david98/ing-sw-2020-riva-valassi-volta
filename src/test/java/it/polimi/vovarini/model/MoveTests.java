@@ -79,7 +79,7 @@ public class MoveTests {
       Movement movement = new Movement(board, start, end);
       movement.execute();
       assertEquals(board.getItemPosition(workers.get(Sex.Male)), end);
-      assertTrue(board.getItems(start).isEmpty());
+      assertTrue(board.getBox(start).getItems().isEmpty());
     } catch (BoxFullException | ItemNotFoundException ignored) {
 
     }

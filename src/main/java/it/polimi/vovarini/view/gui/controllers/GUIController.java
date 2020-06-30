@@ -17,87 +17,87 @@ public class GUIController implements EventsForViewListener {
   }
 
   @Override
-  public void handleBoardUpdate(BoardUpdateEvent e) {
+  public void handle(BoardUpdateEvent e) {
 
   }
 
   @Override
-  public void handleCurrentPlayerUpdate(CurrentPlayerChangedEvent e) {
+  public void handle(CurrentPlayerChangedEvent e) {
 
   }
 
   @Override
-  public void handlePhaseUpdate(PhaseUpdateEvent e) {
+  public void handle(PhaseUpdateEvent e) {
 
   }
 
   @Override
-  public void handleGameStart(GameStartEvent e) {
+  public void handle(GameStartEvent e) {
 
   }
 
   @Override
-  public void handleNewPlayer(NewPlayerEvent e) {
+  public void handle(NewPlayerEvent e) {
 
   }
 
   @Override
-  public void handleGodSelectionStart(GodSelectionStartEvent e) {
+  public void handle(GodSelectionStartEvent e) {
 
   }
 
   @Override
-  public void handleSelectYourCard(SelectYourCardEvent e) {
+  public void handle(SelectYourCardEvent e) {
 
   }
 
   @Override
-  public void handleCardAssignment(CardAssignmentEvent e) {
+  public void handle(CardAssignmentEvent e) {
 
   }
 
   @Override
-  public void handlePlaceYourWorkers(PlaceYourWorkersEvent e) {
+  public void handle(PlaceYourWorkersEvent e) {
 
   }
 
   @Override
-  public void handlePlayerInfoUpdate(PlayerInfoUpdateEvent e) {
+  public void handle(PlayerInfoUpdateEvent e) {
 
   }
 
   @Override
-  public void handleGodCardUpdate(GodCardUpdateEvent e) {
+  public void handle(GodCardUpdateEvent e) {
 
   }
 
   @Override
-  public void handleVictory(VictoryEvent e) {
+  public void handle(VictoryEvent e) {
 
   }
 
   @Override
-  public void handleLoss(LossEvent e) {
+  public void handle(LossEvent e) {
 
   }
 
   @Override
-  public void handleAbruptEnd(AbruptEndEvent e) {
+  public void handle(AbruptEndEvent e) {
 
   }
 
   @Override
-  public void handleFirstPlayer(FirstPlayerEvent e) {
+  public void handle(FirstPlayerEvent e) {
 
   }
 
   @Override
-  public void handleRegistrationStart(RegistrationStartEvent e) {
+  public void handle(RegistrationStartEvent e) {
 
   }
 
   @Override
-  public void handleInvalidNickname(InvalidNicknameEvent e) {
+  public void handle(InvalidNicknameEvent e) {
 
   }
 }

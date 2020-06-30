@@ -8,6 +8,12 @@ import java.net.SocketException;
 import java.net.SocketTimeoutException;
 import java.util.concurrent.BlockingQueue;
 
+/**
+ * This class fills a queue asynchronously with objects of class T retrieved from a socket.
+ * @param <T> The class of the objects to be read from the socket.
+ *
+ * @author Davide Volta
+ */
 public class SocketReader<T> implements Runnable{
   private final Socket socket;
 
@@ -17,6 +23,13 @@ public class SocketReader<T> implements Runnable{
 
   private final Class<T> objClass;
 
+  /**
+   * Constructs a reader reading objects from the given socket.
+   * @param socket The active socket to read from.
+   * @param retrievedObjects A queue where the objects will be written to.
+   * @param objClass Needed to programmatically cast objects through reflection.
+   * @throws IOException If an {@link ObjectInputStream} can't be created.
+   */
   public SocketReader(Socket socket, BlockingQueue<T> retrievedObjects, Class<T> objClass) throws IOException {
     this.socket = socket;
     in = new ObjectInputStream(socket.getInputStream());

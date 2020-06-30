@@ -6,7 +6,6 @@ import it.polimi.vovarini.common.events.GameEvent;
 import it.polimi.vovarini.common.events.SelectYourCardEvent;
 import it.polimi.vovarini.model.Player;
 import it.polimi.vovarini.model.godcards.GodCard;
-import it.polimi.vovarini.model.godcards.GodCardFactory;
 import it.polimi.vovarini.model.godcards.GodName;
 import it.polimi.vovarini.view.gui.GuiManager;
 import it.polimi.vovarini.view.gui.Settings;
@@ -124,8 +123,8 @@ public class GodCardSelectionController extends GUIController {
     }
 
     @Override
-    public void handleSelectYourCard(SelectYourCardEvent e) {
-        super.handleSelectYourCard(e);
+    public void handle(SelectYourCardEvent e) {
+        super.handle(e);
 
         // solo al primo SelectYourCardEvent stampo a video le immagini delle carte,
         // poi disabilito quelle scelte e basta (le img a video restano le stesse)
@@ -137,8 +136,8 @@ public class GodCardSelectionController extends GUIController {
     }
 
     @Override
-    public void handleCardAssignment(CardAssignmentEvent e) {
-        super.handleCardAssignment(e);
+    public void handle(CardAssignmentEvent e) {
+        super.handle(e);
         showChoice(e.getTargetPlayer(), e.getAssignedCard());
     }
 }
