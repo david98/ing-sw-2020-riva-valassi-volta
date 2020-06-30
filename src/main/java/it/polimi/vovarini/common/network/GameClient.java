@@ -4,6 +4,7 @@ import it.polimi.vovarini.common.events.GameEvent;
 
 import java.io.IOException;
 import java.net.Socket;
+import java.net.SocketException;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -20,6 +21,7 @@ public class GameClient {
 
   public GameClient(String ip, int port) throws IOException {
     socket = new Socket(ip, port);
+    socket.setSoTimeout(1000);
     System.out.println("Connected to " + ip + ":" + port + ".");
 
     clientEvents = new LinkedBlockingQueue<>();
@@ -40,5 +42,21 @@ public class GameClient {
 
   public String getIPv4Address(){
     return socket.getLocalAddress().getHostAddress();
+  }
+
+  public void setSocketTimeout(int milliseconds) {
+    try {
+      socket.setSoTimeout(milliseconds);
+    } catch (SocketException e) {
+      e.printStackTrace();
+    }
+  }
+
+  public int getSocketTimeout() {
+    try {
+      return socket.getSoTimeout();
+    } catch (SocketException e) {
+      return -1;
+    }
   }
 }

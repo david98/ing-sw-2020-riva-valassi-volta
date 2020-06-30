@@ -3,6 +3,7 @@ package it.polimi.vovarini.common.network;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.net.SocketTimeoutException;
 import java.util.concurrent.BlockingQueue;
 
 public class SocketWriter<T> implements Runnable{
@@ -27,6 +28,7 @@ public class SocketWriter<T> implements Runnable{
         T obj = objectsToBeWritten.take();
         out.writeObject(obj);
         out.flush();
+      } catch (SocketTimeoutException ignored){
       } catch (IOException e){
         throw new RuntimeException(e);
       } catch (InterruptedException ignored){

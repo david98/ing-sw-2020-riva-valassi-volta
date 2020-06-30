@@ -29,7 +29,7 @@ public class Gui extends Application {
         stage.setMinWidth(stage.getWidth());
         stage.setMinHeight(stage.getHeight());
         stage.setTitle("Santorini");
-        stage.setFullScreen(true);
+        //stage.setFullScreen(true);
 
         stage.maximizedProperty().addListener((obs, wasMaximized, willBeMaximized) -> {
             if (wasMaximized && !willBeMaximized) {

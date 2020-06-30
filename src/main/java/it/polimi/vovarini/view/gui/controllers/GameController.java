@@ -7,22 +7,23 @@ import it.polimi.vovarini.model.Point;
 import it.polimi.vovarini.model.board.Board;
 import it.polimi.vovarini.model.board.items.Block;
 import it.polimi.vovarini.model.board.items.Item;
-import it.polimi.vovarini.model.board.items.Sex;
 import it.polimi.vovarini.model.board.items.Worker;
-import it.polimi.vovarini.model.godcards.GodCardFactory;
 import it.polimi.vovarini.model.godcards.GodName;
 import it.polimi.vovarini.model.moves.Construction;
 import it.polimi.vovarini.view.gui.GuiManager;
 import it.polimi.vovarini.view.gui.Settings;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.Tooltip;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.stage.Popup;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
@@ -38,8 +39,17 @@ public class GameController extends GUIController {
     @FXML
     private Label currentPhase;
 
+   @FXML
+   private ImageView godCard0;
+
     @FXML
-    private Label skipButton;
+    private ImageView godCard1;
+
+    @FXML
+    private ImageView godCard2;
+
+    @FXML
+    private Button skipButton;
 
     private GuiManager guiManager;
 
@@ -53,8 +63,8 @@ public class GameController extends GUIController {
         /*Player owner = new Player("davide");
         Player other = new Player("marco");
         Player other2 = new Player("mattia");
-        owner.setGodCard(GodCardFactory.create(GodName.Artemis));
-        other.setGodCard(GodCardFactory.create(GodName.Apollo));
+        owner.setGodCard(GodCardFactory.create(GodName.Apollo));
+        other.setGodCard(GodCardFactory.create(GodName.Artemis));
         other2.setGodCard(GodCardFactory.create(GodName.Atlas));
 
         owner.getGodCard().setGameData(guiManager.getData());
@@ -73,7 +83,9 @@ public class GameController extends GUIController {
         b.place(owner.getWorkers().get(Sex.Male), new Point(0, 0));
         b.place(owner.getWorkers().get(Sex.Female), new Point(4, 0));
         b.place(other.getWorkers().get(Sex.Male), new Point(0, 3));
-        b.place(other.getWorkers().get(Sex.Female), new Point(2, 0));*/
+        b.place(other.getWorkers().get(Sex.Female), new Point(2, 0));
+        b.place(other2.getWorkers().get(Sex.Male), new Point(0, 1));
+        b.place(Block.blocks[0], new Point(1, 1));*/
 
 
         for (int i = 0; i < guiManager.getData().getBoard().getSize(); i++) {
@@ -104,7 +116,10 @@ public class GameController extends GUIController {
                 button.addEventHandler(MouseEvent.MOUSE_EXITED, event -> onMouseExited());
             }
         }
-        skipButton.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> skipPhase());
+
+        godCard0.addEventHandler(MouseEvent.MOUSE_ENTERED, event -> onGodCardEntered(godCard0, 0));
+        godCard1.addEventHandler(MouseEvent.MOUSE_ENTERED, event -> onGodCardEntered(godCard1, 1));
+        godCard2.addEventHandler(MouseEvent.MOUSE_ENTERED, event -> onGodCardEntered(godCard2, 2));
     }
 
     private void onMouseEntered(Point p) {
@@ -122,6 +137,13 @@ public class GameController extends GUIController {
         }
     }
 
+    private void onGodCardEntered(ImageView godCard, int i) {
+        GodName[] godNames = Arrays.stream(GodName.values()).filter(name -> name != GodName.Nobody).toArray(GodName[]::new);
+        Tooltip tooltip = new Tooltip();
+        tooltip.setText(Settings.descriptions.get(godNames[i]));
+        Tooltip.install(godCard, tooltip);
+    }
+
     private void highlightPoints(Collection<Point> points) {
 
 
@@ -130,7 +152,11 @@ public class GameController extends GUIController {
             String selector = "#level" + point.getX() + point.getY();
             Pane level = (Pane) board.lookup(selector);
 
-            level.getStyleClass().add("highlighted");
+            if (guiManager.getData().getBoard().getBox(point).getLevel() == 0) {
+                level.getStyleClass().add("highlighted-empty");
+            } else {
+                level.getStyleClass().add("highlighted");
+            }
         }
     }
 
@@ -145,7 +171,8 @@ public class GameController extends GUIController {
         for (Point point: points) {
             String selector = "#level" + point.getX() + point.getY();
             Pane level = (Pane) board.lookup(selector);
-            level.getStyleClass().remove("highlighted");
+            level.getStyleClass().removeAll("highlighted");
+            level.getStyleClass().removeAll("highlighted-empty");
         }
     }
 
@@ -203,14 +230,21 @@ public class GameController extends GUIController {
 
         switch (guiManager.getData().getCurrentPhase()) {
             case Start -> {
-                Worker selectedWorker = (Worker) b.getBox(p).getItems().peek();
-                if (selectedWorker != null) {
-                    //guiManager.getData().getOwner().setCurrentSex(selectedWorker.getSex());
-                    guiManager.getData().getCurrentPlayer().setCurrentSex(selectedWorker.getSex());
-                    guiManager.getData().setSelectedWorker(selectedWorker);
-                    //guiManager.getData().setCurrentStart(p);
-                    guiManager.getClient().raise(new WorkerSelectionEvent(guiManager.getData().getOwner(),
-                            guiManager.getData().getSelectedWorker().getSex()));
+                if(guiManager.getData().getBoard().getItems(p).peek() != null && guiManager.getData().getBoard().getItems(p).peek().canBeRemoved()) {
+                    Worker selectedWorker = (Worker) b.getBox(p).getItems().peek();
+                    if (guiManager.getData().getOwner().getWorkers()
+                                    .values()
+                                    .stream()
+                                    .anyMatch(w -> w.equals(selectedWorker))) {
+                        //guiManager.getData().getOwner().setCurrentSex(selectedWorker.getSex());
+                        guiManager.getData().getCurrentPlayer().setCurrentSex(selectedWorker.getSex());
+                        guiManager.getData().setSelectedWorker(selectedWorker);
+                        //guiManager.getData().setCurrentStart(p);
+                        if (!guiManager.getData().getOwner().getGodCard().computeReachablePoints().isEmpty()) {
+                            guiManager.getClient().raise(new WorkerSelectionEvent(guiManager.getData().getOwner(),
+                                    guiManager.getData().getSelectedWorker().getSex()));
+                        }
+                    }
                 }
             }
             case Movement -> {
@@ -238,7 +272,7 @@ public class GameController extends GUIController {
     public void updateView() {
 
         // aggiorno a video currentPhase
-        currentPhase.setText(guiManager.getData().getCurrentPhase().name().toUpperCase());
+        currentPhase.setText("Current phase: " + guiManager.getData().getCurrentPhase().name().toUpperCase());
 
         Board b = guiManager.getData().getBoard();
         List<Point> reachablePoints = guiManager.getData().getOwner().getGodCard().computeReachablePoints();
@@ -285,18 +319,27 @@ public class GameController extends GUIController {
         for(int i = 0; i< guiManager.getNumberOfPlayers(); i++) {
             String selector = "#player" + i;
             Label player = (Label) mainPane.lookup(selector);
+            selector = "#godCard" + i;
+            ImageView card = (ImageView) mainPane.lookup(selector);
             if(guiManager.getData().getCurrentPlayer().equals(guiManager.getData().getPlayers()[i])) {
                 player.getStyleClass().add("current");
+                card.getStyleClass().add("current");
             } else {
-                player.getStyleClass().remove("current");
+                player.getStyleClass().removeAll("current");
+                card.getStyleClass().removeAll("current");
+
             }
         }
 
         // aggiorno a video il messaggio in alto
         if(!guiManager.getData().getOwner().equals(guiManager.getData().getCurrentPlayer())) {
             instruction.setText("It's " + guiManager.getData().getCurrentPlayer().getNickname() + "'s turn");
+            skipButton.setDisable(true);
+            board.setDisable(true);
         } else {
             instruction.setText("It's your turn!");
+            skipButton.setDisable(false);
+            board.setDisable(false);
         }
     }
 
@@ -384,10 +427,10 @@ public class GameController extends GUIController {
 
             // non puoi andare avanti
             board.setDisable(true);
-        } else {
-            // Devo notificare oppure tolgo le pedine e bon?
-            System.out.println("Lozio " + e.getLosingPlayer().getNickname() + " ha perso");
+            skipButton.setDisable(true);
         }
+
+        //colorare di rosso il giocatore che ha perso
 
     }
 
@@ -410,5 +453,10 @@ public class GameController extends GUIController {
 
         // non puoi andare avanti
         board.setDisable(true);
+        skipButton.setDisable(true);
+    }
+
+    public void onSkipButtonClick(javafx.event.ActionEvent actionEvent) {
+        skipPhase();
     }
 }

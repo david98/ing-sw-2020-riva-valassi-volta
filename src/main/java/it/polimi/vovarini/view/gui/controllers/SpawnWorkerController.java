@@ -15,6 +15,7 @@ import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
+import javafx.scene.control.Tooltip;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
@@ -30,6 +31,15 @@ public class SpawnWorkerController extends GUIController {
 
     @FXML
     private Label instruction;
+
+    @FXML
+    private ImageView godCard0;
+
+    @FXML
+    private ImageView godCard1;
+
+    @FXML
+    private ImageView godCard2;
 
     private GuiManager guiManager;
 
@@ -48,9 +58,22 @@ public class SpawnWorkerController extends GUIController {
                         (sexes.get(0).equals(Sex.Male) ? "M" : "F") + ".png');");
             }
         }
-
+        bindEvents();
         addImages(guiManager.getData().getPlayers());
 
+    }
+
+    public void bindEvents() {
+        godCard0.addEventHandler(MouseEvent.MOUSE_ENTERED, event -> onGodCardEntered(godCard0, 0));
+        godCard1.addEventHandler(MouseEvent.MOUSE_ENTERED, event -> onGodCardEntered(godCard1, 1));
+        godCard2.addEventHandler(MouseEvent.MOUSE_ENTERED, event -> onGodCardEntered(godCard2, 2));
+    }
+
+    private void onGodCardEntered(ImageView godCard, int i) {
+        GodName[] godNames = Arrays.stream(GodName.values()).filter(name -> name != GodName.Nobody).toArray(GodName[]::new);
+        Tooltip tooltip = new Tooltip();
+        tooltip.setText(Settings.descriptions.get(godNames[i]));
+        Tooltip.install(godCard, tooltip);
     }
 
     public void addImages(Player[] players) {
@@ -65,11 +88,6 @@ public class SpawnWorkerController extends GUIController {
 
             godCard.setImage(Settings.godImages.get(players[i].getGodCard().getName()));
         }
-
-        /*BackgroundSize backgroundSize = new BackgroundSize(500, 500, false, false, true, false);
-        BackgroundImage backgroundImage = new BackgroundImage(Settings.bg, BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.CENTER, backgroundSize);
-        Background background = new Background(backgroundImage);
-        board.setBackground(background);*/
     }
 
     @FXML
@@ -80,8 +98,6 @@ public class SpawnWorkerController extends GUIController {
         Integer y = GridPane.getRowIndex(clickedNode);
 
         Point p = new Point(x,y);
-
-        System.out.println(p.toString());
 
         // piazzo il worker solo se il box è libero
         if (guiManager.getData().getBoard().getBox(p).getItems().peek() == null) {
@@ -104,6 +120,8 @@ public class SpawnWorkerController extends GUIController {
         for(int i = 0; i< guiManager.getNumberOfPlayers(); i++) {
             String selector = "#player" + i;
             Label player = (Label) mainPane.lookup(selector);
+            selector = "#godCard" + i;
+            ImageView card = (ImageView) mainPane.lookup(selector);
 
             if (!sexes.isEmpty() && guiManager.getData().getOwner().equals(guiManager.getData().getPlayers()[i])) {
                 board.setStyle("-worker-img: url('/img/workers/" + i +
@@ -111,9 +129,11 @@ public class SpawnWorkerController extends GUIController {
             }
 
             if(guiManager.getData().getCurrentPlayer().equals(guiManager.getData().getPlayers()[i])) {
-                player.setStyle("-fx-effect: innershadow(gaussian, #f44336, 15, 0.2, 0, 0);");
+                player.getStyleClass().add("current");
+                card.getStyleClass().add("current");
             } else {
-                player.setStyle("");
+                player.getStyleClass().removeAll("current");
+                card.getStyleClass().removeAll("current");
             }
         }
 

@@ -1,7 +1,6 @@
 package it.polimi.vovarini.controller;
 
 import it.polimi.vovarini.common.events.RegistrationEvent;
-import it.polimi.vovarini.common.exceptions.InvalidNicknameException;
 import it.polimi.vovarini.common.exceptions.InvalidNumberOfPlayersException;
 import it.polimi.vovarini.model.Game;
 import org.junit.jupiter.api.BeforeEach;
@@ -44,64 +43,49 @@ public class ControllerInitTests {
         String nickname = "Mengi_97";
         RegistrationEvent evt = new RegistrationEvent(this, nickname);
 
-        try {
-            controller.update(evt);
-        } catch (InvalidNicknameException ignored) {
-        } catch (InvalidNumberOfPlayersException ignored) {
-        }
+        controller.update(evt);
 
         assertEquals(game.getPlayers()[0].getNickname(), nickname);
-
-        InvalidNicknameException e;
 
         // invalidNickname: null nickname
         nickname = null;
         RegistrationEvent evtNullNickname = new RegistrationEvent(this, nickname);
-        e = assertThrows(InvalidNicknameException.class, () -> {
-            controller.update(evtNullNickname);
-        });
-        assertEquals(e.getErrorCode(), e.ERROR_INVALID);
+        controller.update(evtNullNickname);
+
+        assertNull(game.getPlayers()[1]);
 
         // invalidNickname: length < 4
         nickname = "o_o";
         RegistrationEvent evtInvalidLength = new RegistrationEvent(this, nickname);
-        e = assertThrows(InvalidNicknameException.class, () -> {
-            controller.update(evtInvalidLength);
-        });
-        assertEquals(e.getErrorCode(), e.ERROR_INVALID);
+        controller.update(evtInvalidLength);
+
+        assertNull(game.getPlayers()[1]);
 
         // invalidNickname: length > 16
         nickname = "0123456789ABCDEF_ZZZZ";
         RegistrationEvent evtInvalidLength2 = new RegistrationEvent(this, nickname);
-        e = assertThrows(InvalidNicknameException.class, () -> {
-            controller.update(evtInvalidLength2);
-        });
-        assertEquals(e.getErrorCode(), e.ERROR_INVALID);
+        controller.update(evtInvalidLength2);
+
+        assertNull(game.getPlayers()[1]);
 
         // invalidNickname: special character
         nickname = "Mengi-97";
         RegistrationEvent evtInvalidNickname = new RegistrationEvent(this, nickname);
-        e = assertThrows(InvalidNicknameException.class, () -> {
-            controller.update(evtInvalidNickname);
-        });
-        assertEquals(e.getErrorCode(), e.ERROR_INVALID);
+        controller.update(evtInvalidNickname);
+
+        assertNull(game.getPlayers()[1]);
 
         // invalidNickname: blank character
         nickname = "Mengi 97";
         RegistrationEvent evtInvalidNickname2 = new RegistrationEvent(this, nickname);
-        e = assertThrows(InvalidNicknameException.class, () -> {
-            controller.update(evtInvalidNickname2);
-        });
-        assertEquals(e.getErrorCode(), e.ERROR_INVALID);
+        controller.update(evtInvalidNickname2);
+
+        assertNull(game.getPlayers()[1]);
 
         nickname = "Valas511";
         evt = new RegistrationEvent(this, nickname);
 
-        try {
-            controller.update(evt);
-        } catch (InvalidNicknameException ignored) {
-        } catch (InvalidNumberOfPlayersException ignored) {
-        }
+        controller.update(evt);
 
         assertEquals(game.getPlayers()[1].getNickname(), nickname);
 

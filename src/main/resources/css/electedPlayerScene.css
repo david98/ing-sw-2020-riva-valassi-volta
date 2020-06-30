@@ -16,7 +16,8 @@
 }
 
 .godCard:hover {
-    -fx-effect: dropshadow(gaussian, #F44336, 15, 0.2, 0, 0);
+    -fx-effect: dropshadow(gaussian, #f44336, 15, 0.2, 0, 0);
+    -fx-tooltip-visible: true;
 }
 
 .godCard:pressed {
@@ -51,6 +52,11 @@
     -fx-font-weight: bold;
     -fx-font-size: 50px;
     -fx-text-fill: #2786D1;
+}
+
+.menuTitle .text {
+    -fx-stroke-width: 1px;
+    -fx-stroke: #ffffff;
 }
 
 .menuLabel {

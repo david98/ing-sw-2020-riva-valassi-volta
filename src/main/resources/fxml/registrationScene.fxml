@@ -16,7 +16,7 @@
 
     <top>
         <VBox styleClass="topBox">
-            <Label text="Registrations are open!" styleClass="menuTitle"/>
+            <Label text="Registration" styleClass="menuTitle"/>
         </VBox>
     </top>
 

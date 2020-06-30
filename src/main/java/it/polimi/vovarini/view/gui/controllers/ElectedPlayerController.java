@@ -11,6 +11,8 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
@@ -115,6 +117,21 @@ public class ElectedPlayerController extends GUIController {
         godCard11.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> onCardButtonClick(godCard11, 11));
         godCard12.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> onCardButtonClick(godCard12, 12));
         godCard13.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> onCardButtonClick(godCard13, 13));
+
+        godCard0.addEventHandler(MouseEvent.MOUSE_ENTERED, event -> onMouseEntered(godCard0, 0));
+        godCard1.addEventHandler(MouseEvent.MOUSE_ENTERED, event -> onMouseEntered(godCard1, 1));
+        godCard2.addEventHandler(MouseEvent.MOUSE_ENTERED, event -> onMouseEntered(godCard2, 2));
+        godCard3.addEventHandler(MouseEvent.MOUSE_ENTERED, event -> onMouseEntered(godCard3, 3));
+        godCard4.addEventHandler(MouseEvent.MOUSE_ENTERED, event -> onMouseEntered(godCard4, 4));
+        godCard5.addEventHandler(MouseEvent.MOUSE_ENTERED, event -> onMouseEntered(godCard5, 5));
+        godCard6.addEventHandler(MouseEvent.MOUSE_ENTERED, event -> onMouseEntered(godCard6, 6));
+        godCard7.addEventHandler(MouseEvent.MOUSE_ENTERED, event -> onMouseEntered(godCard7, 7));
+        godCard8.addEventHandler(MouseEvent.MOUSE_ENTERED, event -> onMouseEntered(godCard8, 8));
+        godCard9.addEventHandler(MouseEvent.MOUSE_ENTERED, event -> onMouseEntered(godCard9, 9));
+        godCard10.addEventHandler(MouseEvent.MOUSE_ENTERED, event -> onMouseEntered(godCard10, 10));
+        godCard11.addEventHandler(MouseEvent.MOUSE_ENTERED, event -> onMouseEntered(godCard11, 11));
+        godCard12.addEventHandler(MouseEvent.MOUSE_ENTERED, event -> onMouseEntered(godCard12, 12));
+        godCard13.addEventHandler(MouseEvent.MOUSE_ENTERED, event -> onMouseEntered(godCard13, 13));
     }
 
     private void onCardButtonClick(ImageView godCard, int i) {
@@ -150,6 +167,7 @@ public class ElectedPlayerController extends GUIController {
                     break;
                 case 2:
                     selectedGodCard3.setStyle("");
+                    selectedGodCard3.setImage(null);
                     break;
             }
             return;
@@ -178,6 +196,13 @@ public class ElectedPlayerController extends GUIController {
             default:
                 break;
         }
+    }
+
+    private void onMouseEntered(ImageView godCard, int i) {
+        GodName[] godNames = Arrays.stream(GodName.values()).filter(name -> name != GodName.Nobody).toArray(GodName[]::new);
+        Tooltip tooltip = new Tooltip();
+        tooltip.setText(Settings.descriptions.get(godNames[i]));
+        Tooltip.install(godCard, tooltip);
     }
 
     @FXML

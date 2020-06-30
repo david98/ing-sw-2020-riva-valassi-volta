@@ -24,10 +24,7 @@ public class GuiManager extends View {
 
     private static javafx.scene.media.MediaPlayer currentPlayer;
 
-
     private static GuiManager instance = null;
-
-    private GameClient client;
 
     private Stage stage;
 
@@ -185,6 +182,7 @@ public class GuiManager extends View {
     @Override
     @GameEventListener
     public void handleFirstPlayer(FirstPlayerEvent e) {
+        super.handleFirstPlayer(e);
         Platform.runLater(() -> currentController.handleFirstPlayer(e));
     }
 
@@ -238,6 +236,8 @@ public class GuiManager extends View {
         guiEventListener = new GuiEventListener(client);
         guiEventListenerThread = new Thread(guiEventListener);
         guiEventListenerThread.start();
+        setLayout(Settings.WAIT_SCENE_FXML);
+        ((WaitController)getCurrentController()).setWaitMessage("Waiting for game to start...");
     }
 
     public ViewData getData() {
@@ -287,12 +287,12 @@ public class GuiManager extends View {
         System.out.println(GuiManager.class.getResource("/audio/" + fileName).toExternalForm());
         currentPlayer = new javafx.scene.media.MediaPlayer(m);
         currentPlayer.setVolume(0.4);
-        currentPlayer.play();
+        //currentPlayer.play();
 
         if (looping) {
             currentPlayer.setOnEndOfMedia(() -> {
                     currentPlayer.seek(Duration.ZERO);
-                    currentPlayer.play();
+                    //currentPlayer.play();
                 });
         }
     }
