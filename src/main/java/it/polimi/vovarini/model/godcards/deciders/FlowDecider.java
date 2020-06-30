@@ -52,17 +52,25 @@ public class FlowDecider extends Decider {
                 if(gameData.getCurrentPlayer().getConstructionList().size() == 1){
                     switch (currentPlayerGodCard.getName()){
                         case Demeter:
+                            if (gameData.getCurrentPlayer().getGodCard().computeBuildablePoints().size() < 2) return Phase.End;
                             currentPlayerGodCard.getConstructionConstraints().add(BuildabilityDecider::denyPreviousTarget);
                             GameEventManager.raise(new GodCardUpdateEvent(gameData, currentPlayerGodCard, gameData.getCurrentPlayer()));
                             break;
                         case Hephaestus:
+                            if(gameData.getCurrentPlayer().getConstructionList().get(0).getBlock().getLevel() == Block.MAX_LEVEL) return Phase.End;
                             currentPlayerGodCard.getConstructionConstraints().add(BuildabilityDecider::buildOnSameTarget);
                             GameEventManager.raise(new GodCardUpdateEvent(gameData, currentPlayerGodCard, gameData.getCurrentPlayer()));
                             break;
                         case Hestia:
-                            currentPlayerGodCard.getConstructionConstraints().add(BuildabilityDecider::denyPerimeterSpace);
-                            GameEventManager.raise(new GodCardUpdateEvent(gameData, currentPlayerGodCard, gameData.getCurrentPlayer()));
-                            break;
+                            for (Point candidate : gameData.getCurrentPlayer().getGodCard().computeBuildablePoints())
+                            {
+                                if(!candidate.isPerimeterSpace()){
+                                    currentPlayerGodCard.getConstructionConstraints().add(BuildabilityDecider::denyPerimeterSpace);
+                                    GameEventManager.raise(new GodCardUpdateEvent(gameData, currentPlayerGodCard, gameData.getCurrentPlayer()));
+                                    break;
+                                }
+                            }
+                            return Phase.End;
                         /*case Poseidon:
                             try {
                                 Point otherWorkerPosition = gameData.getBoard().getItemPosition(gameData.getCurrentPlayer().getOtherWorker());
@@ -136,7 +144,7 @@ public class FlowDecider extends Decider {
 
                 switch (currentPlayerGodCard.getName()) {
                     case Triton:
-                        if (gameData.getCurrentPlayer().getMovementList().get(size - 1).getEnd().isPerimeterSpace()) {
+                        if (gameData.getCurrentPlayer().getMovementList().get(size - 1).getEnd().isPerimeterSpace() && !gameData.getCurrentPlayer().getGodCard().computeReachablePoints().isEmpty()) {
                             return Phase.Movement;
                         } else if (gameData.getCurrentPlayer().getMovementList().isEmpty()){
                             return Phase.Movement;
