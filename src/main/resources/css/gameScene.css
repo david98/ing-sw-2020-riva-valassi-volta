@@ -81,9 +81,17 @@
     -fx-effect: dropshadow(gaussian, #ffffff, 15, 0.2, 0, 0);
 }
 
+.godCard.wasted {
+    -fx-effect: innershadow(gaussian, #ff0000, 200, 0.1, 0, 0);
+}
+
 .player .text {
     -fx-stroke-width: 1px;
     -fx-stroke: #ffffff;
+}
+
+.player.wasted {
+    -fx-effect: innershadow(gaussian, #FF0000, 200, 0.8, 0, 0);
 }
 
 .playersBox {

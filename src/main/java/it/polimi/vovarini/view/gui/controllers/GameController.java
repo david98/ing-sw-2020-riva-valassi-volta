@@ -7,7 +7,9 @@ import it.polimi.vovarini.model.Point;
 import it.polimi.vovarini.model.board.Board;
 import it.polimi.vovarini.model.board.items.Block;
 import it.polimi.vovarini.model.board.items.Item;
+import it.polimi.vovarini.model.board.items.Sex;
 import it.polimi.vovarini.model.board.items.Worker;
+import it.polimi.vovarini.model.godcards.GodCardFactory;
 import it.polimi.vovarini.model.godcards.GodName;
 import it.polimi.vovarini.model.moves.Construction;
 import it.polimi.vovarini.view.gui.GuiManager;
@@ -39,14 +41,23 @@ public class GameController extends GUIController {
     @FXML
     private Label currentPhase;
 
-   @FXML
-   private ImageView godCard0;
+    @FXML
+    private ImageView godCard0;
 
     @FXML
     private ImageView godCard1;
 
     @FXML
     private ImageView godCard2;
+
+    @FXML
+    private Label player0;
+
+    @FXML
+    private Label player1;
+
+    @FXML
+    private Label player2;
 
     @FXML
     private Button skipButton;
@@ -145,7 +156,6 @@ public class GameController extends GUIController {
     }
 
     private void highlightPoints(Collection<Point> points) {
-
 
         for (Point point: points) {
 
@@ -430,8 +440,16 @@ public class GameController extends GUIController {
             skipButton.setDisable(true);
         }
 
-        //colorare di rosso il giocatore che ha perso
-
+        if(e.getLosingPlayer().getNickname().equals(player0.getText())) {
+            godCard0.getStyleClass().add("wasted");
+            player0.getStyleClass().add("wasted");
+        } else if(e.getLosingPlayer().getNickname().equals(player1.getText())) {
+            godCard1.getStyleClass().add("wasted");
+            player1.getStyleClass().add("wasted");
+        } else {
+            godCard2.getStyleClass().add("wasted");
+            player2.getStyleClass().add("wasted");
+        }
     }
 
     @Override
