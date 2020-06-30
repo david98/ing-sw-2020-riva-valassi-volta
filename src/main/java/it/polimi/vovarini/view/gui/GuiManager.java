@@ -287,12 +287,12 @@ public class GuiManager extends View {
         System.out.println(GuiManager.class.getResource("/audio/" + fileName).toExternalForm());
         currentPlayer = new javafx.scene.media.MediaPlayer(m);
         currentPlayer.setVolume(0.4);
-        currentPlayer.play();
+        //currentPlayer.play();
 
         if (looping) {
             currentPlayer.setOnEndOfMedia(() -> {
                     currentPlayer.seek(Duration.ZERO);
-                    currentPlayer.play();
+                    //currentPlayer.play();
                 });
         }
     }
