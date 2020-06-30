@@ -13,6 +13,11 @@ public class CardChoiceEvent extends GameEvent {
 
   private final GodName selectedGod;
 
+  /**
+   * Builds a CardChoiceEvent
+   * @param source is the source object of the event
+   * @param selectedGod is the GodCard that hqs been selected
+   */
   public CardChoiceEvent(Object source, GodName selectedGod) {
     super(source);
     this.selectedGod = selectedGod;

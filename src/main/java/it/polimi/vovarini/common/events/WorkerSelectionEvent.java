@@ -15,6 +15,11 @@ public class WorkerSelectionEvent extends GameEvent {
 
   private final Sex sex;
 
+  /**
+   * Builds a WorkerSelectionEvent
+   * @param source is the source object of the event
+   * @param sex is the sex identifying the worker I want to select
+   */
   public WorkerSelectionEvent(Object source, Sex sex) {
     super(source);
     this.sex = sex;

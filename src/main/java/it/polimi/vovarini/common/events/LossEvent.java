@@ -12,7 +12,11 @@ public class LossEvent extends GameEvent {
 
   private final Player losingPlayer;
 
-
+  /**
+   * Builds a LossEvent
+   * @param source  is the source object of the event
+   * @param losingPlayer The Player who has lost and triggers the event with his loss
+   */
   public LossEvent(Object source, Player losingPlayer) {
     super(source);
     this.losingPlayer = losingPlayer;

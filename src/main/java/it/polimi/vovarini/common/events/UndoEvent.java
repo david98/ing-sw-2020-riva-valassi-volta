@@ -11,6 +11,10 @@ package it.polimi.vovarini.common.events;
  */
 public class UndoEvent extends GameEvent {
 
+  /**
+   * Builds an UndoEvent
+   * @param source is the source object of the event
+   */
   public UndoEvent(Object source) {
     super(source);
   }
