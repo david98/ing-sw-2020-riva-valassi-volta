@@ -57,10 +57,19 @@ public class Block extends Item {
     level = b.level;
   }
 
+  /**
+   * Getter method for accessing the level of a block
+   * @return the value of the level possessed by the block
+   */
   public int getLevel() {
     return level;
   }
 
+  /**
+   * This method checks if another item can be placed on top of the block
+   * @param item The item which this object would be placed on.
+   * @return true if the item can be placed on the block, false otherwise
+   */
   @Override
   public boolean canBePlacedOn(Item item) {
     if (item == null) {
@@ -73,16 +82,29 @@ public class Block extends Item {
     }
   }
 
+  /**
+   * ToString method for Block object
+   * @return a string describing the Block object
+   */
   @Override
   public String toString() {
     return "" + level;
   }
 
+  /**
+   * hashCode method for Block object
+   * @return an hashCode corresponding to the Block object
+   */
   @Override
   public int hashCode() {
     return level;
   }
 
+  /**
+   * equals method for the Block objects
+   * @param obj is another object to compare with the Block
+   * @return true if obj is an instance of Block and obj's level is the same as the block's, otherwise returns false
+   */
   @Override
   public boolean equals(Object obj) {
     if (obj instanceof Block) {
