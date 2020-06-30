@@ -49,6 +49,10 @@ public class Box implements Serializable {
     items.push(item);
   }
 
+  /**
+   * Getter method for the items contained in a box
+   * @return a collection of the Items contained in the Box
+   */
   public Deque<Item> getItems() {
     return new ArrayDeque<>(items);
   }
@@ -90,6 +94,10 @@ public class Box implements Serializable {
     }
   }
 
+  /**
+   * ToString method for the class Box
+   * @return a string representing an instance of Box
+   */
   public String toString() {
     StringBuilder rep = new StringBuilder();
     for (Item item : items) {
