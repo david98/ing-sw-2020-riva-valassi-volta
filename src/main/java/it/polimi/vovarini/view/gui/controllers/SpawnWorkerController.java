@@ -15,6 +15,7 @@ import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
+import javafx.scene.control.Tooltip;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
@@ -30,6 +31,15 @@ public class SpawnWorkerController extends GUIController {
 
     @FXML
     private Label instruction;
+
+    @FXML
+    private ImageView godCard0;
+
+    @FXML
+    private ImageView godCard1;
+
+    @FXML
+    private ImageView godCard2;
 
     private GuiManager guiManager;
 
@@ -48,9 +58,22 @@ public class SpawnWorkerController extends GUIController {
                         (sexes.get(0).equals(Sex.Male) ? "M" : "F") + ".png');");
             }
         }
-
+        bindEvents();
         addImages(guiManager.getData().getPlayers());
 
+    }
+
+    public void bindEvents() {
+        godCard0.addEventHandler(MouseEvent.MOUSE_ENTERED, event -> onGodCardEntered(godCard0, 0));
+        godCard1.addEventHandler(MouseEvent.MOUSE_ENTERED, event -> onGodCardEntered(godCard1, 1));
+        godCard2.addEventHandler(MouseEvent.MOUSE_ENTERED, event -> onGodCardEntered(godCard2, 2));
+    }
+
+    private void onGodCardEntered(ImageView godCard, int i) {
+        GodName[] godNames = Arrays.stream(GodName.values()).filter(name -> name != GodName.Nobody).toArray(GodName[]::new);
+        Tooltip tooltip = new Tooltip();
+        tooltip.setText(Settings.descriptions.get(godNames[i]));
+        Tooltip.install(godCard, tooltip);
     }
 
     public void addImages(Player[] players) {
