@@ -71,6 +71,9 @@ public abstract class View implements EventsForViewListener {
         p.setGodCard(e.getAssignedCard());
       }
     }
+    if(data.getOwner().equals(e.getTargetPlayer())) {
+      data.getOwner().setGodCard(e.getAssignedCard());
+    }
   }
 
   @Override

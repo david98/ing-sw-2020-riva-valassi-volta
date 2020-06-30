@@ -4,6 +4,7 @@ import it.polimi.vovarini.model.board.items.Sex;
 import it.polimi.vovarini.model.godcards.GodName;
 import javafx.scene.image.Image;
 
+import java.util.Arrays;
 import java.util.HashMap;
 
 public class Settings {
@@ -53,6 +54,13 @@ public class Settings {
     for (int i = 0; i < 4; i++) {
       levelsImages[i] = new Image(Settings.class.getClassLoader().getResource(("img/levels/" + (i + 1) + ".png")).toExternalForm(), true);
     }
+
+    GodName[] godNames = Arrays.stream(GodName.values()).filter(name -> name != GodName.Nobody).toArray(GodName[]::new);
+
+    for(int i = 0; i < godNames.length; i++) {
+        descriptions.put(godNames[i], powers[i]);
+    }
+
   }
 
   public static final String ELECTED_PLAYER_SCENE_FXML = "/fxml/electedPlayerScene.fxml";
