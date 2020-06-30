@@ -132,21 +132,6 @@ public class ElectedPlayerController extends GUIController {
         godCard11.addEventHandler(MouseEvent.MOUSE_ENTERED, event -> onMouseEntered(godCard11, 11));
         godCard12.addEventHandler(MouseEvent.MOUSE_ENTERED, event -> onMouseEntered(godCard12, 12));
         godCard13.addEventHandler(MouseEvent.MOUSE_ENTERED, event -> onMouseEntered(godCard13, 13));
-
-        godCard0.addEventHandler(MouseEvent.MOUSE_EXITED, event -> onMouseExited());
-        godCard1.addEventHandler(MouseEvent.MOUSE_EXITED, event -> onMouseExited());
-        godCard2.addEventHandler(MouseEvent.MOUSE_EXITED, event -> onMouseExited());
-        godCard3.addEventHandler(MouseEvent.MOUSE_EXITED, event -> onMouseExited());
-        godCard4.addEventHandler(MouseEvent.MOUSE_EXITED, event -> onMouseExited());
-        godCard5.addEventHandler(MouseEvent.MOUSE_EXITED, event -> onMouseExited());
-        godCard6.addEventHandler(MouseEvent.MOUSE_EXITED, event -> onMouseExited());
-        godCard7.addEventHandler(MouseEvent.MOUSE_EXITED, event -> onMouseExited());
-        godCard8.addEventHandler(MouseEvent.MOUSE_EXITED, event -> onMouseExited());
-        godCard9.addEventHandler(MouseEvent.MOUSE_EXITED, event -> onMouseExited());
-        godCard10.addEventHandler(MouseEvent.MOUSE_EXITED, event -> onMouseExited());
-        godCard11.addEventHandler(MouseEvent.MOUSE_EXITED, event -> onMouseExited());
-        godCard12.addEventHandler(MouseEvent.MOUSE_EXITED, event -> onMouseExited());
-        godCard13.addEventHandler(MouseEvent.MOUSE_EXITED, event -> onMouseExited());
     }
 
     private void onCardButtonClick(ImageView godCard, int i) {
@@ -217,12 +202,7 @@ public class ElectedPlayerController extends GUIController {
         GodName[] godNames = Arrays.stream(GodName.values()).filter(name -> name != GodName.Nobody).toArray(GodName[]::new);
         Tooltip tooltip = new Tooltip();
         tooltip.setText(Settings.descriptions.get(godNames[i]));
-
         Tooltip.install(godCard, tooltip);
-
-    }
-
-    private void onMouseExited() {
     }
 
     @FXML
