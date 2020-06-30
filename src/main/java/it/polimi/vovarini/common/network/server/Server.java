@@ -19,12 +19,12 @@ import java.util.logging.Logger;
  *
  * @author Davide Volta
  */
-public class Server implements Runnable{
+public class Server implements Runnable {
 
   private Game game;
   private Controller controller;
 
-  private static final Logger LOGGER = Logger.getLogger( Server.class.getName() );
+  private static final Logger LOGGER = Logger.getLogger(Server.class.getName());
 
   public static final int DEFAULT_PORT = 6666;
   public static final int DEFAULT_MAX_THREADS = 4;
@@ -41,8 +41,9 @@ public class Server implements Runnable{
   /**
    * This method handles an uncaught exception inside a thread and raises
    * a {@link AbruptEndEvent}.
+   *
    * @param th The thread in which the exception first originated.
-   * @param e The exception as a {@link Throwable}.
+   * @param e  The exception as a {@link Throwable}.
    */
   public static void handleUncaughtExceptions(Thread th, Throwable e) {
     LOGGER.log(Level.SEVERE, "Uncaught exception in thread " + th.toString() + ": " + e.getMessage());
@@ -52,10 +53,11 @@ public class Server implements Runnable{
 
   /**
    * Constructs a server listening on the specified port.
+   *
    * @param port The port to listen on.
    * @throws IOException If a ServerSocket can't be allocated.
    */
-  public Server(int port) throws IOException{
+  public Server(int port) throws IOException {
     GameEventManager.bindListeners(this);
     serverSocket = new ServerSocket(port);
     pool = Executors.newFixedThreadPool(DEFAULT_MAX_THREADS);
@@ -64,27 +66,28 @@ public class Server implements Runnable{
   /**
    * Constructs a server listening on the specified port,
    * which will run at most nThreads {@link RemoteView}.
-   * @param port The port to listen on.
+   *
+   * @param port     The port to listen on.
    * @param nThreads The maximum number of concurrent {@link RemoteView}.
    * @throws IOException If a ServerSocket can't be allocated.
    */
-  public Server(int port, int nThreads) throws IOException{
+  public Server(int port, int nThreads) throws IOException {
     GameEventManager.bindListeners(this);
     serverSocket = new ServerSocket(port);
     pool = Executors.newFixedThreadPool(nThreads);
   }
 
-  private void init(int numberOfPlayers){
+  private void init(int numberOfPlayers) {
     try {
       game = new Game(numberOfPlayers);
       controller = new Controller(game);
       LOGGER.log(Level.INFO, "Game initialized.");
-    } catch (InvalidNumberOfPlayersException e){
+    } catch (InvalidNumberOfPlayersException e) {
       e.printStackTrace();
     }
   }
 
-  public void run(){
+  public void run() {
     LOGGER.log(Level.INFO, "Server is now listening on port {0}.", serverSocket.getLocalPort());
     while (!Thread.currentThread().isInterrupted()) {
       LOGGER.log(Level.FINE, "Waiting for new connection...");
@@ -106,7 +109,7 @@ public class Server implements Runnable{
         GameEventManager.raise(new FirstPlayerEvent("server"));
         LOGGER.log(Level.INFO, "FirstPlayerEvent raised.");
         currentlyConnectedClients++;
-      } else if (currentlyConnectedClients > 0 && game != null && currentlyConnectedClients < game.getInitialNumberOfPlayers()){
+      } else if (currentlyConnectedClients > 0 && game != null && currentlyConnectedClients < game.getInitialNumberOfPlayers()) {
         remoteViews[currentlyConnectedClients] = new RemoteView(clientSocket);
         pool.execute(remoteViews[currentlyConnectedClients]);
         LOGGER.log(Level.INFO, "A new client connected.");
@@ -137,6 +140,7 @@ public class Server implements Runnable{
 
   /**
    * Handles an abrupt end.
+   *
    * @param e An AbruptEndEvent.
    */
   @GameEventListener
@@ -153,10 +157,11 @@ public class Server implements Runnable{
   /**
    * Handles the event raised by the first player
    * when they have chosen the number of players.
+   *
    * @param e
    */
   @GameEventListener
-  public void handle(NumberOfPlayersChoiceEvent e){
+  public void handle(NumberOfPlayersChoiceEvent e) {
     if (e.getNumberOfPlayers() < Game.MIN_PLAYERS || e.getNumberOfPlayers() > Game.MAX_PLAYERS) {
       throw new InvalidNumberOfPlayersException();
     }

@@ -12,24 +12,24 @@ import it.polimi.vovarini.model.godcards.GodCardFactory;
  */
 public class GodCardUpdateEvent extends GameEvent {
 
-    private final GodCard updatedCard;
-    private final Player owner;
-    /**
-     *
-     * @param source The event source (it should be a {@link it.polimi.vovarini.model.Game} object.
-     * @param owner The player who owns the modified godCard.
-     */
-    public GodCardUpdateEvent(Object source, GodCard updatedCard, Player owner){
-        super(source);
-        this.updatedCard = GodCardFactory.clone(updatedCard);
-        this.owner = owner;
-    }
+  private final GodCard updatedCard;
+  private final Player owner;
 
-    public GodCard getUpdatedCard() {
-        return updatedCard;
-    }
+  /**
+   * @param source The event source (it should be a {@link it.polimi.vovarini.model.Game} object.
+   * @param owner  The player who owns the modified godCard.
+   */
+  public GodCardUpdateEvent(Object source, GodCard updatedCard, Player owner) {
+    super(source);
+    this.updatedCard = GodCardFactory.clone(updatedCard);
+    this.owner = owner;
+  }
 
-    public Player getOwner() {
-        return owner;
-    }
+  public GodCard getUpdatedCard() {
+    return updatedCard;
+  }
+
+  public Player getOwner() {
+    return owner;
+  }
 }

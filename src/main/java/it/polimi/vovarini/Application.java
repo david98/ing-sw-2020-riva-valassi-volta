@@ -31,7 +31,7 @@ public class Application implements Callable<Integer> {
     thread.start();
     try {
       Thread.currentThread().join();
-    } catch (InterruptedException e){
+    } catch (InterruptedException e) {
       Thread.currentThread().interrupt();
     }
   }
@@ -51,7 +51,7 @@ public class Application implements Callable<Integer> {
 
   @Override
   public Integer call() throws IOException {
-    if (serverMode){
+    if (serverMode) {
       launchServer(port);
     } else {
       launchClient(useCLI ? ClientMode.CLI : ClientMode.GUI, serverIP, port);
@@ -59,7 +59,7 @@ public class Application implements Callable<Integer> {
     return 0;
   }
 
-  public static void main(String[] args){
+  public static void main(String[] args) {
     int exitCode = new CommandLine(new Application()).execute(args);
     System.exit(exitCode);
   }

@@ -23,7 +23,7 @@ import java.util.logging.Logger;
  */
 public class RemoteView extends View implements Runnable {
 
-  private static final Logger LOGGER = Logger.getLogger( Server.class.getName() );
+  private static final Logger LOGGER = Logger.getLogger(Server.class.getName());
 
   private final BlockingQueue<GameEvent> clientEvents;
   private final BlockingQueue<GameEvent> serverEvents;
@@ -34,6 +34,7 @@ public class RemoteView extends View implements Runnable {
 
   /**
    * Constructs a RemoteView for the given client.
+   *
    * @param clientSocket An active socket connected with the client.
    * @throws IOException If I/O streams can't be created.
    */
@@ -55,14 +56,14 @@ public class RemoteView extends View implements Runnable {
 
   @Override
   public void run() {
-    while (!Thread.currentThread().isInterrupted()){
+    while (!Thread.currentThread().isInterrupted()) {
       try {
         GameEvent evt = clientEvents.take();
         if (evt instanceof RegistrationEvent) { // oh yeah instanceof
           handleRegistrationEvent((RegistrationEvent) evt);
         }
         GameEventManager.raise(evt);
-      } catch (InterruptedException ignored){
+      } catch (InterruptedException ignored) {
         Thread.currentThread().interrupt();
       }
     }
@@ -92,7 +93,7 @@ public class RemoteView extends View implements Runnable {
   @Override
   @GameEventListener
   public void handle(GameStartEvent e) {
-    for (Player p: e.getPlayers()){
+    for (Player p : e.getPlayers()) {
       data.addPlayer(p);
     }
     serverEvents.add(e);
@@ -146,7 +147,7 @@ public class RemoteView extends View implements Runnable {
 
   /**
    * Handles the RegistrationEvent which has been raised by the client.
-   * 
+   *
    * @param e A RegistrationEvent.
    */
   public void handleRegistrationEvent(RegistrationEvent e) {
@@ -155,11 +156,15 @@ public class RemoteView extends View implements Runnable {
 
   @Override
   @GameEventListener
-  public void handle(VictoryEvent e) { serverEvents.add(e); }
+  public void handle(VictoryEvent e) {
+    serverEvents.add(e);
+  }
 
   @Override
   @GameEventListener
-  public void handle(LossEvent e) { serverEvents.add(e); }
+  public void handle(LossEvent e) {
+    serverEvents.add(e);
+  }
 
   @Override
   @GameEventListener

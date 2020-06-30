@@ -79,7 +79,7 @@ public class BoxTests {
 
   @Test
   @DisplayName("Test that toString works as expected")
-  void toStringTest(){
+  void toStringTest() {
     Box aBox = new Box();
 
     Block block = new Block(Block.MIN_LEVEL);

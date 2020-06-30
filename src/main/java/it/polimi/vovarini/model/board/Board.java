@@ -27,6 +27,7 @@ public class Board implements Serializable {
 
   /**
    * Creates a square board of the given size.
+   *
    * @param size The size of the board.
    */
   public Board(int size) {
@@ -41,9 +42,10 @@ public class Board implements Serializable {
 
   /**
    * Creates a board which is a clone of b.
+   *
    * @param b The board to be cloned.
    */
-  public Board(Board b){
+  public Board(Board b) {
     size = b.size;
     boxes = new Box[size][size];
     for (int i = 0; i < size; i++) {
@@ -55,6 +57,7 @@ public class Board implements Serializable {
 
   /**
    * Checks if p is within the board.
+   *
    * @param p The point to check.
    * @return Whether p is within the board.
    */
@@ -65,6 +68,7 @@ public class Board implements Serializable {
   /**
    * Computes and returns a list of all points within the board
    * that are adjacent to p (d(point, p) <= 1).
+   *
    * @param p The base point.
    * @return A list containing all points adjacent to p.
    */
@@ -87,9 +91,10 @@ public class Board implements Serializable {
 
   /**
    * Places item on the board at position p, if possible.
+   *
    * @param item The item to be placed on the board.
-   * @param p Where the item should be placed.
-   * @throws InvalidPositionException If p is outside of the board.
+   * @param p    Where the item should be placed.
+   * @throws InvalidPositionException                              If p is outside of the board.
    * @throws it.polimi.vovarini.common.exceptions.BoxFullException If the box at position p is full.
    */
   public void place(Item item, Point p) {
@@ -103,6 +108,7 @@ public class Board implements Serializable {
 
   /**
    * Returns the item position after searching on top of all the boxes.
+   *
    * @param item The item to search for.
    * @return Where the first occurrence of item was found.
    * @throws ItemNotFoundException If item was not found.
@@ -110,8 +116,7 @@ public class Board implements Serializable {
   public Point getItemPosition(Item item) {
     for (int i = 0; i < boxes.length; i++) {
       for (int j = 0; j < boxes.length; j++) {
-        if (Objects.equals(boxes[j][i].getItems().peek(), item))
-        {
+        if (Objects.equals(boxes[j][i].getItems().peek(), item)) {
           return new Point(i, j);
         }
       }

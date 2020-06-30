@@ -99,7 +99,7 @@ public abstract class Screen implements Renderable, EventsForViewListener, KeyPr
 
   @Override
   public void handle(LossEvent e) {
-  
+
   }
 
   @Override

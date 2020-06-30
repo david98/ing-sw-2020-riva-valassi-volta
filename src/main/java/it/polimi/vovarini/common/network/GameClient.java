@@ -25,7 +25,8 @@ public class GameClient {
 
   /**
    * Creates a client which connects to the given IP address and port.
-   * @param ip The server IPV4 address.
+   *
+   * @param ip   The server IPV4 address.
    * @param port The server port.
    * @throws IOException If an error occurs during the socket creation.
    */
@@ -44,6 +45,7 @@ public class GameClient {
 
   /**
    * Sends an event to the server.
+   *
    * @param evt The event to send.
    */
   public void raise(GameEvent evt) {
@@ -51,14 +53,13 @@ public class GameClient {
   }
 
   /**
-   *
    * @return A queue containing events received from the server.
    */
   public BlockingQueue<GameEvent> getServerEvents() {
     return serverEvents;
   }
 
-  public String getIPv4Address(){
+  public String getIPv4Address() {
     return socket.getLocalAddress().getHostAddress();
   }
 

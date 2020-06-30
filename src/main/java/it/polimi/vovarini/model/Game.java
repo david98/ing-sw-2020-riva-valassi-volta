@@ -15,7 +15,6 @@ import java.util.*;
 
 /**
  * This class represents a Santorini game.
- *
  */
 public class Game implements Serializable, GameDataAccessor {
 
@@ -45,7 +44,7 @@ public class Game implements Serializable, GameDataAccessor {
    *
    * @param numberOfPlayers How many players should be allowed into this game.
    * @throws InvalidNumberOfPlayersException If numberOfPlayers is less than {@value MIN_PLAYERS} or
-   *                                          greater then {@value MAX_PLAYERS}.
+   *                                         greater then {@value MAX_PLAYERS}.
    */
   public Game(int numberOfPlayers) throws InvalidNumberOfPlayersException {
     if (numberOfPlayers < MIN_PLAYERS || numberOfPlayers > MAX_PLAYERS) {
@@ -112,7 +111,7 @@ public class Game implements Serializable, GameDataAccessor {
 
     nextPlayer();
 
-    if(availableGodCards.length == 1) {
+    if (availableGodCards.length == 1) {
       GodCard lastGodCard = GodCardFactory.create(availableGodCards[0]);
       lastGodCard.setGameData(this);
       getCurrentPlayer().setGodCard(lastGodCard);
@@ -137,7 +136,7 @@ public class Game implements Serializable, GameDataAccessor {
     boolean isMovementWinning = getCurrentPlayer().getGodCard().isMovementWinning(move);
 
 
-    for(Movement executableMove : getCurrentPlayer().getGodCard().consequences(move, this)) {
+    for (Movement executableMove : getCurrentPlayer().getGodCard().consequences(move, this)) {
       Movement temp = new Movement(board, executableMove.getStart(), executableMove.getEnd());
       temp.execute();
       //executableMove.execute();
@@ -145,20 +144,20 @@ public class Game implements Serializable, GameDataAccessor {
       //Questo non è possibile
     }
 
-    if(isMovementWinning) {
+    if (isMovementWinning) {
       GameEventManager.raise(new VictoryEvent(this, getCurrentPlayer()));
     }
 
   }
 
-  public void performMove(Construction move){
+  public void performMove(Construction move) {
 
     undoneMoves.clear();
     moves.push(move);
     getCurrentPlayer().getConstructionList().add(move);
     GameEventManager.raise(new PlayerInfoUpdateEvent(this, getCurrentPlayer()));
 
-    for(Move executableMove : getCurrentPlayer().getGodCard().consequences(move, this)){
+    for (Move executableMove : getCurrentPlayer().getGodCard().consequences(move, this)) {
       executableMove.execute();
     }
 
@@ -168,7 +167,7 @@ public class Game implements Serializable, GameDataAccessor {
     return currentPhase;
   }
 
-  public void setPlayers(Player[] players){
+  public void setPlayers(Player[] players) {
     this.players = players;
   }
 
@@ -222,8 +221,8 @@ public class Game implements Serializable, GameDataAccessor {
   private void removePlayer(Player p) {
     Player[] newPlayersArray = new Player[players.length - 1];
     int k = 0;
-    for (int i = 0; i < board.getSize(); i++){
-      for (int j = 0; j < board.getSize(); j++){
+    for (int i = 0; i < board.getSize(); i++) {
+      for (int j = 0; j < board.getSize(); j++) {
         Point cur = new Point(i, j);
         if (p.getWorkers().containsValue(board.getBox(cur).getItems().peek())) {
           board.getBox(cur).removeTopmost();
@@ -243,7 +242,7 @@ public class Game implements Serializable, GameDataAccessor {
     players = newPlayersArray;
   }
 
-  public void setCurrentPhase(Phase phase){
+  public void setCurrentPhase(Phase phase) {
     this.currentPhase = phase;
     GameEventManager.raise(new PhaseUpdateEvent(this, phase));
     Player lastPlayer = getCurrentPlayer();
@@ -285,9 +284,9 @@ public class Game implements Serializable, GameDataAccessor {
     }
   }
 
-  public void start(){
+  public void start() {
     setupComplete = true;
-    for (Player p: players){
+    for (Player p : players) {
       p.setWorkerSelected(false);
     }
     setCurrentPhase(Phase.Start);
@@ -298,11 +297,13 @@ public class Game implements Serializable, GameDataAccessor {
     return setupComplete;
   }
 
-  public boolean isFull(){
+  public boolean isFull() {
     return Arrays.stream(players).noneMatch(Objects::isNull);
   }
 
-  public boolean isAvailableCardsAlreadySet() { return Arrays.stream(availableGodCards).noneMatch(Objects::isNull); }
+  public boolean isAvailableCardsAlreadySet() {
+    return Arrays.stream(availableGodCards).noneMatch(Objects::isNull);
+  }
 
   public int getInitialNumberOfPlayers() {
     return initialNumberOfPlayers;

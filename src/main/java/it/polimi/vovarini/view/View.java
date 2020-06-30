@@ -17,7 +17,7 @@ public abstract class View implements EventsForViewListener {
 
   protected ViewData data;
 
-  public View(){
+  public View() {
     GameEventManager.bindListeners(this);
     data = new ViewData();
   }
@@ -25,7 +25,7 @@ public abstract class View implements EventsForViewListener {
   @Override
   public void handle(NewPlayerEvent e) {
     client.setSocketTimeout(0);
-    if (data.getOwner().equals(e.getNewPlayer())){
+    if (data.getOwner().equals(e.getNewPlayer())) {
       data.setOwner(e.getNewPlayer());
     }
     data.addPlayer(e.getNewPlayer());
@@ -36,14 +36,14 @@ public abstract class View implements EventsForViewListener {
     if (e.getTargetPlayer().getGodCard() != null) {
       e.getTargetPlayer().getGodCard().setGameData(data);
     }
-    if (data.getOwner().equals(e.getTargetPlayer())){
+    if (data.getOwner().equals(e.getTargetPlayer())) {
       data.setOwner(e.getTargetPlayer());
     }
-    if (data.getCurrentPlayer().equals(e.getTargetPlayer())){
+    if (data.getCurrentPlayer().equals(e.getTargetPlayer())) {
       data.setCurrentPlayer(e.getTargetPlayer());
     }
-    for (int i = 0; i < data.getPlayers().length; i++){
-      if (data.getPlayers()[i].equals(e.getTargetPlayer())){
+    for (int i = 0; i < data.getPlayers().length; i++) {
+      if (data.getPlayers()[i].equals(e.getTargetPlayer())) {
         data.getPlayers()[i] = e.getTargetPlayer();
       }
     }
@@ -58,8 +58,8 @@ public abstract class View implements EventsForViewListener {
     if (data.getCurrentPlayer().equals(e.getOwner())) {
       data.getCurrentPlayer().setGodCard(e.getUpdatedCard());
     }
-    for (int i = 0; i < data.getPlayers().length; i++){
-      if (data.getPlayers()[i].equals(e.getOwner())){
+    for (int i = 0; i < data.getPlayers().length; i++) {
+      if (data.getPlayers()[i].equals(e.getOwner())) {
         data.getPlayers()[i].setGodCard(e.getUpdatedCard());
       }
     }
@@ -72,13 +72,13 @@ public abstract class View implements EventsForViewListener {
 
   @Override
   public void handle(CardAssignmentEvent e) {
-    for (Player p: data.getPlayerSet()){
-      if (p.equals(e.getTargetPlayer())){
+    for (Player p : data.getPlayerSet()) {
+      if (p.equals(e.getTargetPlayer())) {
         e.getAssignedCard().setGameData(data);
         p.setGodCard(e.getAssignedCard());
       }
     }
-    if(data.getOwner().equals(e.getTargetPlayer())) {
+    if (data.getOwner().equals(e.getTargetPlayer())) {
       data.getOwner().setGodCard(e.getAssignedCard());
     }
   }
@@ -91,15 +91,15 @@ public abstract class View implements EventsForViewListener {
   @Override
   public void handle(GodSelectionStartEvent e) {
     Player[] players = e.getPlayers();
-    for (int i = 0; i < players.length; i++){
-      for (Player p: data.getPlayerSet()){
-        if (players[i].equals(p)){
+    for (int i = 0; i < players.length; i++) {
+      for (Player p : data.getPlayerSet()) {
+        if (players[i].equals(p)) {
           players[i] = p;
         }
       }
     }
     data.getPlayerSet().clear();
-    for (Player p: players){
+    for (Player p : players) {
       data.addPlayer(p);
     }
     data.setCurrentPlayer(e.getElectedPlayer());

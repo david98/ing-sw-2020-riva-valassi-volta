@@ -65,7 +65,7 @@ public class Player implements Serializable {
     hasLost = false;
   }
 
-  public Player(Player p){
+  public Player(Player p) {
     workers = new EnumMap<>(Sex.class);
     workers.put(Sex.Male, p.workers.get(Sex.Male));
     workers.put(Sex.Female, p.workers.get(Sex.Female));
@@ -122,15 +122,15 @@ public class Player implements Serializable {
     return isWorkerSelected;
   }
 
-  public void setWorkerSelected (boolean value){
+  public void setWorkerSelected(boolean value) {
     isWorkerSelected = value;
   }
 
-  public Board getBoardStatus(){
+  public Board getBoardStatus() {
     return boardStatus;
   }
 
-  public void setBoardStatus(Board gameBoard){
+  public void setBoardStatus(Board gameBoard) {
     boardStatus = gameBoard;
   }
 
@@ -145,7 +145,7 @@ public class Player implements Serializable {
 
   public void setHasLost(boolean hasLost) {
     this.hasLost = hasLost;
-    if(hasLost){
+    if (hasLost) {
       setWorkerSelected(false);
       GameEventManager.raise(new LossEvent(this, this));
     }
@@ -155,9 +155,9 @@ public class Player implements Serializable {
     return hasLost;
   }
 
-  public boolean hasPlayerRisen(GameDataAccessor gameData){
+  public boolean hasPlayerRisen(GameDataAccessor gameData) {
 
-    for (Movement movement : movementList){
+    for (Movement movement : movementList) {
       if (gameData.getBoard().getBox(movement.getEnd()).getLevel() -
               gameData.getBoard().getBox(movement.getStart()).getLevel() == 1)
         return true;

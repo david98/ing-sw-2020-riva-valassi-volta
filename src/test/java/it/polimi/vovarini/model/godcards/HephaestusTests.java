@@ -27,92 +27,92 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class HephaestusTests {
 
-    private Game game;
-    private GodCard hephaestus;
+  private Game game;
+  private GodCard hephaestus;
 
-    @BeforeEach
-    public void init(){
-        try{
-            game = new Game(2);
+  @BeforeEach
+  public void init() {
+    try {
+      game = new Game(2);
 
-            game.addPlayer("Guest01");
-            game.addPlayer("Guest02");
+      game.addPlayer("Guest01");
+      game.addPlayer("Guest02");
 
-            hephaestus = GodCardFactory.create(GodName.Hephaestus);
-            hephaestus.setGameData(game);
-            for (Player player: game.getPlayers()){
-                player.setGodCard(hephaestus);
-            }
-        } catch (InvalidNumberOfPlayersException e){
-            e.printStackTrace();
-        }
+      hephaestus = GodCardFactory.create(GodName.Hephaestus);
+      hephaestus.setGameData(game);
+      for (Player player : game.getPlayers()) {
+        player.setGodCard(hephaestus);
+      }
+    } catch (InvalidNumberOfPlayersException e) {
+      e.printStackTrace();
+    }
+  }
+
+  private static Stream<Arguments> provideAllPossibleTargetAndLevel() {
+    LinkedList<Arguments> args = new LinkedList<>();
+
+    Board board = new Board(Board.DEFAULT_SIZE);
+    LinkedList<Point> allPoints = new LinkedList<>();
+
+    for (int x = 0; x < board.getSize(); x++) {
+      for (int y = 0; y < board.getSize(); y++) {
+        allPoints.add(new Point(x, y));
+      }
     }
 
-    private static Stream<Arguments> provideAllPossibleTargetAndLevel() {
-        LinkedList<Arguments> args = new LinkedList<>();
-
-        Board board = new Board(Board.DEFAULT_SIZE);
-        LinkedList<Point> allPoints = new LinkedList<>();
-
-        for (int x = 0; x < board.getSize(); x++) {
-            for (int y = 0; y < board.getSize(); y++) {
-                allPoints.add(new Point(x, y));
-            }
+    for (Point start : allPoints) {
+      List<Point> adjacentPositions = board.getAdjacentPositions(start);
+      for (Point firstTarget : adjacentPositions) {
+        for (Point secondTarget : adjacentPositions) {
+          for (int lTarget = 0; lTarget < Block.MAX_LEVEL - 1; lTarget++) {
+            args.add(Arguments.of(start, firstTarget, secondTarget, lTarget));
+          }
         }
-
-        for(Point start : allPoints) {
-            List<Point> adjacentPositions = board.getAdjacentPositions(start);
-            for(Point firstTarget : adjacentPositions) {
-                for(Point secondTarget : adjacentPositions) {
-                    for (int lTarget = 0; lTarget < Block.MAX_LEVEL-1; lTarget++) {
-                        args.add(Arguments.of(start, firstTarget, secondTarget, lTarget));
-                    }
-                }
-            }
-        }
-
-        return args.stream();
+      }
     }
 
-    @Test
-    @DisplayName("Test that a GodCard of type Hephaestus can be instantiated correctly")
-    public void hephaestusCreation() {
-        assertEquals(game.getCurrentPlayer().getGodCard().name, GodName.Hephaestus);
+    return args.stream();
+  }
+
+  @Test
+  @DisplayName("Test that a GodCard of type Hephaestus can be instantiated correctly")
+  public void hephaestusCreation() {
+    assertEquals(game.getCurrentPlayer().getGodCard().name, GodName.Hephaestus);
+  }
+
+  @ParameterizedTest
+  @MethodSource("provideAllPossibleTargetAndLevel")
+  @DisplayName("Test that Hephaestus' construction constraints are correctly applied")
+  public void validSecondConstruction(Point start, Point firstTarget, Point secondTarget, int lTarget) {
+    Board board = game.getBoard();
+
+    try {
+      for (int i = 0; i < lTarget; i++) {
+        board.place(Block.blocks[i], firstTarget);
+      }
+      board.place(game.getCurrentPlayer().getCurrentWorker(), start);
+    } catch (InvalidPositionException ignored) {
+    } catch (BoxFullException ignored) {
     }
 
-    @ParameterizedTest
-    @MethodSource("provideAllPossibleTargetAndLevel")
-    @DisplayName("Test that Hephaestus' construction constraints are correctly applied")
-    public void validSecondConstruction(Point start, Point firstTarget, Point secondTarget, int lTarget) {
-        Board board = game.getBoard();
+    game.getCurrentPlayer().setWorkerSelected(true);
+    game.setCurrentPhase(hephaestus.computeNextPhase(game));
+    assertEquals(Phase.Movement, game.getCurrentPhase());
+    //movimento fittizio altrimenti non mi fa skippare
+    game.getCurrentPlayer().getMovementList().add(new Movement(board, new Point(0, 0), start));
 
-        try {
-            for(int i = 0; i < lTarget; i++) {
-                board.place(Block.blocks[i], firstTarget);
-            }
-            board.place(game.getCurrentPlayer().getCurrentWorker(), start);
-        } catch (InvalidPositionException ignored) {
-        } catch (BoxFullException ignored) {
-        }
+    game.setCurrentPhase(hephaestus.computeNextPhase(game));
+    assertEquals(Phase.Construction, game.getCurrentPhase());
 
-        game.getCurrentPlayer().setWorkerSelected(true);
-        game.setCurrentPhase(hephaestus.computeNextPhase(game));
-        assertEquals(Phase.Movement, game.getCurrentPhase());
-        //movimento fittizio altrimenti non mi fa skippare
-        game.getCurrentPlayer().getMovementList().add(new Movement(board, new Point(0,0) , start));
+    Construction firstConstruction = new Construction(board, Block.blocks[lTarget], firstTarget);
+    assertTrue(hephaestus.validate(hephaestus.computeBuildablePoints(), firstConstruction));
+    game.performMove(firstConstruction);
 
-        game.setCurrentPhase(hephaestus.computeNextPhase(game));
-        assertEquals(Phase.Construction, game.getCurrentPhase());
+    game.setCurrentPhase(hephaestus.computeNextPhase(game));
+    assertEquals(game.getCurrentPhase(), Phase.Construction);
 
-        Construction firstConstruction = new Construction(board, Block.blocks[lTarget], firstTarget);
-        assertTrue(hephaestus.validate(hephaestus.computeBuildablePoints(), firstConstruction));
-        game.performMove(firstConstruction);
-
-        game.setCurrentPhase(hephaestus.computeNextPhase(game));
-        assertEquals(game.getCurrentPhase(), Phase.Construction);
-
-        Construction secondConstruction = new Construction(board, Block.blocks[lTarget+1], secondTarget);
-        assertEquals(firstTarget.equals(secondTarget) && lTarget + 2 != Block.MAX_LEVEL, hephaestus.validate(hephaestus.computeBuildablePoints(), secondConstruction));
-    }
+    Construction secondConstruction = new Construction(board, Block.blocks[lTarget + 1], secondTarget);
+    assertEquals(firstTarget.equals(secondTarget) && lTarget + 2 != Block.MAX_LEVEL, hephaestus.validate(hephaestus.computeBuildablePoints(), secondConstruction));
+  }
 
 }

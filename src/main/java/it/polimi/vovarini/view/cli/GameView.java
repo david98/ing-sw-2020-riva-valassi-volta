@@ -40,18 +40,18 @@ public class GameView extends View {
     running = true;
   }
 
-  private void waitForEvent(){
+  private void waitForEvent() {
     try {
       GameEvent evtFromServer = client.getServerEvents().take();
       GameEventManager.raise(evtFromServer);
-    } catch (InterruptedException e){
+    } catch (InterruptedException e) {
       Thread.currentThread().interrupt();
     }
   }
 
 
   @GameEventListener
-  public void handle(BoardUpdateEvent e){
+  public void handle(BoardUpdateEvent e) {
     super.handle(e);
     if (currentScreen != null) {
       currentScreen.handle(e);
@@ -59,7 +59,7 @@ public class GameView extends View {
   }
 
   @GameEventListener
-  public void handle(CurrentPlayerChangedEvent e){
+  public void handle(CurrentPlayerChangedEvent e) {
     data.setCurrentPlayer(e.getNewPlayer());
     if (currentScreen != null) {
       currentScreen.handle(e);
@@ -67,7 +67,7 @@ public class GameView extends View {
   }
 
   @GameEventListener
-  public void handle(PhaseUpdateEvent e){
+  public void handle(PhaseUpdateEvent e) {
     data.setCurrentPhase(e.getNewPhase());
     if (currentScreen != null) {
       currentScreen.handle(e);
@@ -75,7 +75,7 @@ public class GameView extends View {
   }
 
   @GameEventListener
-  public void handle(GameStartEvent e){
+  public void handle(GameStartEvent e) {
     startMatch();
   }
 
@@ -104,7 +104,7 @@ public class GameView extends View {
   @Override
   @GameEventListener
   public void handle(SelectYourCardEvent e) {
-    if (e.getTargetPlayer().equals(data.getOwner())){
+    if (e.getTargetPlayer().equals(data.getOwner())) {
       currentScreen = new GodCardSelectionScreen(data, client, Arrays.asList(e.getGodsLeft()));
       gameLoop();
     } else {
@@ -124,7 +124,7 @@ public class GameView extends View {
   @Override
   @GameEventListener
   public void handle(PlaceYourWorkersEvent e) {
-    if (e.getTargetPlayer().equals(data.getOwner())){
+    if (e.getTargetPlayer().equals(data.getOwner())) {
       currentScreen = new SpawnWorkersScreen(data, client);
       gameLoop();
     } else {
@@ -175,7 +175,7 @@ public class GameView extends View {
   @Override
   @GameEventListener
   public void handle(AbruptEndEvent e) {
-    currentScreen = new WaitScreen(data, client,"A player disconnected. It's gane over for everyone.");
+    currentScreen = new WaitScreen(data, client, "A player disconnected. It's gane over for everyone.");
   }
 
   @Override
@@ -200,7 +200,7 @@ public class GameView extends View {
     String nickname;
     System.out.print("Type your nickname: ");
     nickname = sc.next();
-    while ((nickname == null) || !nickname.matches("[A-Za-z0-9_]{4,16}$")){
+    while ((nickname == null) || !nickname.matches("[A-Za-z0-9_]{4,16}$")) {
       System.out.print("Invalid nickname, type a new one: ");
       nickname = sc.next();
     }
@@ -212,7 +212,7 @@ public class GameView extends View {
       try {
         GameEvent evtFromServer = client.getServerEvents().take();
         GameEventManager.raise(evtFromServer);
-      } catch (InterruptedException ex){
+      } catch (InterruptedException ex) {
         Thread.currentThread().interrupt();
       }
     }
@@ -222,8 +222,8 @@ public class GameView extends View {
   @GameEventListener
   public void handle(InvalidNicknameEvent e) {
 
-    if(data.getOwner() != null && e.getNickname().equals(data.getOwner().getNickname())) {
-      if(e.getErrorCode() == 0) {
+    if (data.getOwner() != null && e.getNickname().equals(data.getOwner().getNickname())) {
+      if (e.getErrorCode() == 0) {
         //stampare messaggio d'errore Settings.DUPLICATE_NICKNAME
       } else {
         //stampare messaggio d'errore Settings.INVALID_NICKNAME
@@ -231,14 +231,14 @@ public class GameView extends View {
     }
   }
 
-  public void render(){
+  public void render() {
     if (currentScreen.isNeedsRender()) {
       console.clear();
       console.println(currentScreen.render());
     }
   }
 
-  public void handleInput() throws IOException{
+  public void handleInput() throws IOException {
     int input = console.getReader().read();
     Key key = KeycodeToKey.map.get(input);
     if (key != null) {
@@ -251,18 +251,18 @@ public class GameView extends View {
     gameLoop();
   }
 
-  public void gameSetup(){
+  public void gameSetup() {
     // ask for nickname
     console.clear();
     waitForEvent();
   }
 
-  public void gameLoop(){
+  public void gameLoop() {
     //render();
     while (running) {
       GameEvent evt;
       // consume events from the server
-      while ( client.getServerEvents().peek() != null) {
+      while (client.getServerEvents().peek() != null) {
         evt = client.getServerEvents().poll();
         GameEventManager.raise(evt);
       }
@@ -274,15 +274,15 @@ public class GameView extends View {
           // wait for event
           GameEventManager.raise(client.getServerEvents().take());
         }
-      } catch (IOException e){
+      } catch (IOException e) {
         e.printStackTrace();
-      } catch (InterruptedException e){
+      } catch (InterruptedException e) {
         Thread.currentThread().interrupt();
       }
     }
   }
 
-  public void stop(){
+  public void stop() {
     running = false;
   }
 

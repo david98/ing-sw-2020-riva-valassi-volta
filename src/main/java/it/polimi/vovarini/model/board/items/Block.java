@@ -22,21 +22,22 @@ public class Block extends Item {
    * An array of all possible blocks where blocks[i] contains a block of level i+1
    */
   public static final Block[] blocks =
-      IntStream.range(MIN_LEVEL, MAX_LEVEL + 1)
-          .mapToObj(
-              l -> {
-                try {
-                  return new Block(l);
-                } catch (InvalidLevelException ignored) {
-                  return null;
-                }
-              })
-          .toArray(Block[]::new);
+          IntStream.range(MIN_LEVEL, MAX_LEVEL + 1)
+                  .mapToObj(
+                          l -> {
+                            try {
+                              return new Block(l);
+                            } catch (InvalidLevelException ignored) {
+                              return null;
+                            }
+                          })
+                  .toArray(Block[]::new);
 
   protected int level;
 
   /**
    * Creates a block of the given level.
+   *
    * @param level The block level.
    * @throws InvalidLevelException If level is smaller than {@value MIN_LEVEL} or greater than {@value MAX_LEVEL}
    */
@@ -49,9 +50,10 @@ public class Block extends Item {
 
   /**
    * Creates a block which is a clone of b.
+   *
    * @param b The block to be cloned.
    */
-  public Block(Block b){
+  public Block(Block b) {
     level = b.level;
   }
 
@@ -61,7 +63,7 @@ public class Block extends Item {
 
   @Override
   public boolean canBePlacedOn(Item item) {
-    if (item == null){
+    if (item == null) {
       return level == 1;
     } else if (item instanceof Block) {
       Block block = (Block) item;

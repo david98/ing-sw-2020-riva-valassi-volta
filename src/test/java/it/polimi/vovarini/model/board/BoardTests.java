@@ -79,12 +79,12 @@ public class BoardTests {
     for (Point point : adjPointsList) {
       int distance = Math.abs(p.getX() - point.getX()) + Math.abs(p.getY() - point.getY());
       assertTrue(
-          distance > 0
-              && distance < 3
-              && point.getX() >= 0
-              && point.getY() >= 0
-              && point.getX() < board.getSize()
-              && point.getY() < board.getSize());
+              distance > 0
+                      && distance < 3
+                      && point.getX() >= 0
+                      && point.getY() >= 0
+                      && point.getX() < board.getSize()
+                      && point.getY() < board.getSize());
     }
   }
 
@@ -98,13 +98,13 @@ public class BoardTests {
   @ParameterizedTest
   @MethodSource("provideInvalidPoints")
   @DisplayName(
-      "Test that place throws an InvalidPositionException when a Point is outside of the Board")
+          "Test that place throws an InvalidPositionException when a Point is outside of the Board")
   void placeInvalidPoint(Point p) {
     InvalidPositionException e =
-        assertThrows(
-            InvalidPositionException.class,
-            () -> board.place(minLevelBlock, p),
-            "Expected place to throw InvalidPositionException, but it didn't");
+            assertThrows(
+                    InvalidPositionException.class,
+                    () -> board.place(minLevelBlock, p),
+                    "Expected place to throw InvalidPositionException, but it didn't");
   }
 
   @ParameterizedTest

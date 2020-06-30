@@ -16,10 +16,9 @@ public class BuildEvent extends GameEvent {
   private final int level;
 
   /**
-   *
    * @param source The event source (ideally, a {@link it.polimi.vovarini.model.Player} object).
-   * @param point Where the block is to be built.
-   * @param level What level the new block is.
+   * @param point  Where the block is to be built.
+   * @param level  What level the new block is.
    */
   public BuildEvent(Object source, Point point, int level) {
     super(source);

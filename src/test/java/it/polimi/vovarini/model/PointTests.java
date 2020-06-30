@@ -36,7 +36,7 @@ class PointTests {
     assertEquals(3, point.getY());
 
     Point point2 = new Point(point);
-    assertEquals(point,point2);
+    assertEquals(point, point2);
 
   }
 
@@ -52,8 +52,8 @@ class PointTests {
   @Test
   @DisplayName("Test if a Point is adjacent to another one")
   void pointAdjacent() {
-    Point point1 = new Point(1,1);
-    Point point2 = new Point(0,0);
+    Point point1 = new Point(1, 1);
+    Point point2 = new Point(0, 0);
 
     assertTrue(point1.isAdjacent(point2));
   }

@@ -26,7 +26,7 @@ public class SpawnWorkersScreen extends Screen {
   private final BoardElement boardElement;
   private final Text message;
 
-  public SpawnWorkersScreen(ViewData data, GameClient client){
+  public SpawnWorkersScreen(ViewData data, GameClient client) {
     super(data, client);
     boardElement = new BoardElement(data.getBoard(), data.getPlayerSet(), data.getPlayersColors(), Color.Green);
     markFreePoints();
@@ -34,7 +34,7 @@ public class SpawnWorkersScreen extends Screen {
     message = new Text("Place your " + sexes.get(0) + " worker.");
   }
 
-  private void markFreePoints(){
+  private void markFreePoints() {
     boardElement.resetMarkedPoints();
     List<Point> freePoints = IntStream.range(0, data.getBoard().getSize())
             .boxed()
@@ -46,14 +46,14 @@ public class SpawnWorkersScreen extends Screen {
     needsRender = true;
   }
 
-  private void spawnCurrent(){
+  private void spawnCurrent() {
     if (!sexes.isEmpty()) {
       Point cursor = boardElement.getCursorLocation();
       if (boardElement.getMarkedPoints().contains(cursor)) {
         client.raise(new SpawnWorkerEvent(data.getOwner(), cursor));
         sexes.remove(0);
 
-        if (sexes.isEmpty()){
+        if (sexes.isEmpty()) {
           handlesInput = false;
         }
       }
@@ -63,7 +63,7 @@ public class SpawnWorkersScreen extends Screen {
   @Override
   public void handle(BoardUpdateEvent e) {
     boardElement.setBoard(e.getNewBoard());
-    if (!sexes.isEmpty()){
+    if (!sexes.isEmpty()) {
       client.raise(new WorkerSelectionEvent(data.getOwner(), sexes.get(0)));
       message.setContent("Place your " + sexes.get(0) + " worker.");
       markFreePoints();

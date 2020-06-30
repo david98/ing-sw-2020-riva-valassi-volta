@@ -30,7 +30,7 @@ public class MatchScreen extends Screen {
   private final PhasePrompt phasePrompt;
   private final Text message;
 
-  public MatchScreen(ViewData data, GameClient client){
+  public MatchScreen(ViewData data, GameClient client) {
     super(data, client);
 
     playerList = new PlayerList(data.getPlayerSet(), data.getOwner(), data.getPlayersColors());
@@ -94,7 +94,7 @@ public class MatchScreen extends Screen {
     return content.toString();
   }
 
-  private void deSelect(){
+  private void deSelect() {
     data.setSelectedWorker(null);
     data.setCurrentStart(null);
     boardElement.resetMarkedPoints();
@@ -107,13 +107,13 @@ public class MatchScreen extends Screen {
    * This method handles a spacebar press when
    * the current phase is Construction.
    */
-  private void selectWhenConstructionPhase(boolean dome){
+  private void selectWhenConstructionPhase(boolean dome) {
 
     Point dest = boardElement.getCursorLocation();
 
     Collection<Point> buildablePoints = data.getOwner().getGodCard().computeBuildablePoints();
 
-    if (buildablePoints.contains(dest)){
+    if (buildablePoints.contains(dest)) {
       int nextLevel = data.getBoard().getBox(dest).getLevel() + 1;
       var sampleMove = new Construction(data.getBoard(), Block.blocks[(dome ? 4 : nextLevel) - 1], dest);
       if (data.getOwner().getGodCard().validate(new LinkedList<>(buildablePoints), sampleMove)) {
@@ -125,8 +125,8 @@ public class MatchScreen extends Screen {
     }
   }
 
-  private void selectWorker(){
-    if (data.getSelectedWorker() == null){
+  private void selectWorker() {
+    if (data.getSelectedWorker() == null) {
       if (boardElement.getCursorLocation().equals(data.getCurrentStart())) {
         deSelect();
       } else {
@@ -159,16 +159,16 @@ public class MatchScreen extends Screen {
    * This method handles a spacebar press when
    * the current phase is Movement.
    */
-  private void selectWhenMovementPhase(){
+  private void selectWhenMovementPhase() {
     if (data.getSelectedWorker() != null &&
-      boardElement.getMarkedPoints().contains(boardElement.getCursorLocation())){
-        boardElement.resetMarkedPoints();
-        client.raise(new MovementEvent(
-                data.getOwner(),
-                boardElement.getCursorLocation())
-        );
-        needsRender = true;
-        handlesInput = false;
+            boardElement.getMarkedPoints().contains(boardElement.getCursorLocation())) {
+      boardElement.resetMarkedPoints();
+      client.raise(new MovementEvent(
+              data.getOwner(),
+              boardElement.getCursorLocation())
+      );
+      needsRender = true;
+      handlesInput = false;
     }
   }
 
@@ -176,24 +176,21 @@ public class MatchScreen extends Screen {
    * This method handles a spacebar/four press. The outcome depends
    * on the current Phase and the game status.
    */
-  private void select(boolean dome){
-    switch (data.getCurrentPhase()){
-      case Start ->
-              selectWorker();
-      case Movement ->
-              selectWhenMovementPhase();
-      case Construction ->
-              selectWhenConstructionPhase(dome);
+  private void select(boolean dome) {
+    switch (data.getCurrentPhase()) {
+      case Start -> selectWorker();
+      case Movement -> selectWhenMovementPhase();
+      case Construction -> selectWhenConstructionPhase(dome);
     }
   }
 
   /**
    * This method handles a
    */
-  private void confirm(){
-    switch (data.getCurrentPhase()){
+  private void confirm() {
+    switch (data.getCurrentPhase()) {
       case Start -> {
-        if (data.getSelectedWorker() != null){
+        if (data.getSelectedWorker() != null) {
           client.raise(
                   new WorkerSelectionEvent(data.getOwner(), data.getSelectedWorker().getSex()));
           handlesInput = false;
@@ -214,7 +211,7 @@ public class MatchScreen extends Screen {
     message.setContent("");
     phasePrompt.setCurrentPhase(Phase.Start);
 
-    if (e.getNewPlayer().equals(data.getCurrentPlayer())){
+    if (e.getNewPlayer().equals(data.getCurrentPlayer())) {
       handlesInput = true;
     }
     needsRender = true;

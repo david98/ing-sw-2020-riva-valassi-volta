@@ -9,7 +9,8 @@
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.Button?>
 <BorderPane xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
-            fx:controller="it.polimi.vovarini.view.gui.controllers.ConnectionController" fx:id="mainPane" styleClass="mainPane">
+            fx:controller="it.polimi.vovarini.view.gui.controllers.ConnectionController" fx:id="mainPane"
+            styleClass="mainPane">
     <stylesheets>
         <URL value="@../css/connectionScene.css"/>
     </stylesheets>

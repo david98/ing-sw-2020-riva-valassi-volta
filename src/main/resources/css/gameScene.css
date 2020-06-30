@@ -106,12 +106,14 @@
     -fx-stroke-width: 2px;
     -fx-stroke: #ffffff;
 }
+
 #skipButton {
     -fx-font-family: "Dalek Pinpoint";
     -fx-font-weight: bold;
     -fx-font-size: 70px;
     -fx-text-fill: #2786D1;
 }
+
 #skipButton:hover {
     -fx-font-size: 80px;
     -fx-effect: dropshadow(gaussian, #ffffff, 15, 0.2, 0, 0);

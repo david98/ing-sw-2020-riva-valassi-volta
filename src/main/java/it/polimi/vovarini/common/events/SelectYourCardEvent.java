@@ -16,7 +16,7 @@ public class SelectYourCardEvent extends GameEvent {
   private final Player targetPlayer;
   private final GodName[] godsLeft;
 
-  public SelectYourCardEvent(Object source, Player targetPlayer, GodName[] godsLeft){
+  public SelectYourCardEvent(Object source, Player targetPlayer, GodName[] godsLeft) {
     super(source);
     this.targetPlayer = targetPlayer;
     this.godsLeft = godsLeft;

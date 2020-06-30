@@ -16,9 +16,9 @@ public class Construction extends Move {
   /**
    * Creates a construction move.
    *
-   * @param board The board to build on.
-   * @param block Which block should be placed.
-   * @param point Where to place block on board.
+   * @param board  The board to build on.
+   * @param block  Which block should be placed.
+   * @param point  Where to place block on board.
    * @param forced False if the move was voluntarily initiated by a player,
    *               true if this is the result of some card effect.
    */
@@ -55,11 +55,15 @@ public class Construction extends Move {
       board.place(block, target);
       board.place(targetItem, target);
     } else {
-      board.place(block,target);
+      board.place(block, target);
     }
   }
 
-  public Block getBlock() { return block; }
+  public Block getBlock() {
+    return block;
+  }
 
-  public Point getTarget() { return target; }
+  public Point getTarget() {
+    return target;
+  }
 }

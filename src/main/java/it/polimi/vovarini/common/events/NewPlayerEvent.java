@@ -14,11 +14,10 @@ public class NewPlayerEvent extends GameEvent {
   private final Player newPlayer;
 
   /**
-   *
-   * @param source The event source (it should be a {@link it.polimi.vovarini.model.Game object}.
+   * @param source    The event source (it should be a {@link it.polimi.vovarini.model.Game object}.
    * @param newPlayer The new player.
    */
-  public NewPlayerEvent(Object source, Player newPlayer){
+  public NewPlayerEvent(Object source, Player newPlayer) {
     super(source);
     this.newPlayer = newPlayer;
   }

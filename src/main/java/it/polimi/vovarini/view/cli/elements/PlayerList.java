@@ -21,9 +21,9 @@ public class PlayerList extends CLIElement {
   }
 
   @Override
-  public String render(){
+  public String render() {
     StringBuilder content = new StringBuilder();
-    for (Player player : players){
+    for (Player player : players) {
       boolean isOwner = player.equals(owner);
       boolean isCurrent = player.equals(currentPlayer);
       String playerLine = playersColors.get(player).fgWrap(

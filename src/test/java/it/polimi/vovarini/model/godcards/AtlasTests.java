@@ -25,99 +25,99 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class AtlasTests {
 
-    private Game game;
-    private GodCard atlas;
+  private Game game;
+  private GodCard atlas;
 
-    @BeforeEach
-    public void init(){
-        try{
-            game = new Game(2);
+  @BeforeEach
+  public void init() {
+    try {
+      game = new Game(2);
 
-            game.addPlayer("Guest01");
-            game.addPlayer("Guest02");
+      game.addPlayer("Guest01");
+      game.addPlayer("Guest02");
 
-            atlas = GodCardFactory.create(GodName.Atlas);
-            atlas.setGameData(game);
-            for (Player player: game.getPlayers()){
-                player.setGodCard(atlas);
-            }
-        } catch (InvalidNumberOfPlayersException e){
-            e.printStackTrace();
-        }
+      atlas = GodCardFactory.create(GodName.Atlas);
+      atlas.setGameData(game);
+      for (Player player : game.getPlayers()) {
+        player.setGodCard(atlas);
+      }
+    } catch (InvalidNumberOfPlayersException e) {
+      e.printStackTrace();
+    }
+  }
+
+  private static Stream<Arguments> provideAllPossibleConstruction() {
+    LinkedList<Arguments> args = new LinkedList<>();
+
+    for (int lStart = 0; lStart < Block.MAX_LEVEL; lStart++) {
+      for (int lTarget = 0; lTarget <= Block.MAX_LEVEL; lTarget++) {
+        args.add(Arguments.of(lStart, lTarget));
+      }
     }
 
-    private static Stream<Arguments> provideAllPossibleConstruction() {
-        LinkedList<Arguments> args = new LinkedList<>();
+    return args.stream();
+  }
 
-        for (int lStart = 0; lStart < Block.MAX_LEVEL; lStart++) {
-            for (int lTarget = 0; lTarget <= Block.MAX_LEVEL; lTarget++) {
-                args.add(Arguments.of(lStart, lTarget));
-            }
-        }
+  @Test
+  @DisplayName("Test that a GodCard of type Atlas can be instantiated correctly")
+  public void atlasCreation() {
+    assertEquals(game.getCurrentPlayer().getGodCard().name, GodName.Atlas);
+  }
 
-        return args.stream();
+  @ParameterizedTest
+  @MethodSource("provideAllPossibleConstruction")
+  @DisplayName("Test that Atlas' validation rules are correctly applied")
+  public void testValidationCondition(int startLevel, int targetLevel) {
+
+    Board board = game.getBoard();
+    Point start = new Point(0, 1);
+    Point target = new Point(0, 0);
+
+    for (int i = 0; i < startLevel; i++) {
+      try {
+        board.place(Block.blocks[i], start);
+      } catch (InvalidPositionException | BoxFullException e) {
+        e.printStackTrace();
+      }
+    }
+    try {
+      board.place(game.getCurrentPlayer().getCurrentWorker(), start);
+    } catch (InvalidPositionException | BoxFullException e) {
+      e.printStackTrace();
     }
 
-    @Test
-    @DisplayName("Test that a GodCard of type Atlas can be instantiated correctly")
-    public void atlasCreation() {
-        assertEquals(game.getCurrentPlayer().getGodCard().name, GodName.Atlas);
+    for (int i = 0; i < targetLevel; i++) {
+      try {
+        board.place(Block.blocks[i], target);
+      } catch (InvalidPositionException | BoxFullException e) {
+        e.printStackTrace();
+      }
     }
 
-    @ParameterizedTest
-    @MethodSource("provideAllPossibleConstruction")
-    @DisplayName("Test that Atlas' validation rules are correctly applied")
-    public void testValidationCondition(int startLevel, int targetLevel) {
+    Construction construction = new Construction(board, Block.blocks[3], target);
+    assertEquals(Block.MAX_LEVEL != targetLevel, atlas.validate(atlas.computeBuildablePoints(), construction));
+  }
 
-        Board board = game.getBoard();
-        Point start = new Point(0, 1);
-        Point target = new Point(0, 0);
+  @Test
+  @DisplayName("Test an invalid construction with a GodCard of type Atlas")
+  /** status
+   *  startBox: lv 0 + currentWorker
+   *  targetBox: lv 0 + enemy's Worker
+   */
+  public void invalidConstructionTargetOccupied() {
+    Worker enemyWorker = game.getPlayers()[1].getCurrentWorker();
+    Board board = game.getBoard();
+    Point start = new Point(0, 1);
+    Point target = new Point(0, 0);
 
-        for (int i = 0; i < startLevel; i++) {
-            try {
-                board.place(Block.blocks[i], start);
-            } catch (InvalidPositionException | BoxFullException e) {
-                e.printStackTrace();
-            }
-        }
-        try {
-            board.place(game.getCurrentPlayer().getCurrentWorker(), start);
-        } catch (InvalidPositionException | BoxFullException e) {
-            e.printStackTrace();
-        }
-
-        for (int i = 0; i < targetLevel; i++) {
-            try {
-                board.place(Block.blocks[i], target);
-            } catch (InvalidPositionException | BoxFullException e) {
-                e.printStackTrace();
-            }
-        }
-
-        Construction construction = new Construction(board, Block.blocks[3], target);
-        assertEquals(Block.MAX_LEVEL != targetLevel, atlas.validate(atlas.computeBuildablePoints(), construction));
+    try {
+      board.place(game.getCurrentPlayer().getCurrentWorker(), start);
+      board.place(enemyWorker, target);
+    } catch (BoxFullException | InvalidPositionException e) {
+      e.printStackTrace();
     }
 
-    @Test
-    @DisplayName("Test an invalid construction with a GodCard of type Atlas")
-    /** status
-     *  startBox: lv 0 + currentWorker
-     *  targetBox: lv 0 + enemy's Worker
-     */
-    public void invalidConstructionTargetOccupied() {
-        Worker enemyWorker = game.getPlayers()[1].getCurrentWorker();
-        Board board = game.getBoard();
-        Point start = new Point(0, 1);
-        Point target = new Point(0, 0);
-
-        try {
-            board.place(game.getCurrentPlayer().getCurrentWorker(), start);
-            board.place(enemyWorker, target);
-        } catch (BoxFullException | InvalidPositionException e) {
-            e.printStackTrace();
-        }
-
-        Construction construction = new Construction(board, Block.blocks[3], target);
-        assertFalse(atlas.validate(atlas.computeBuildablePoints(), construction));
-    }
+    Construction construction = new Construction(board, Block.blocks[3], target);
+    assertFalse(atlas.validate(atlas.computeBuildablePoints(), construction));
+  }
 }

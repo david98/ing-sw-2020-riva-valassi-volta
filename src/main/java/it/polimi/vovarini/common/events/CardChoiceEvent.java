@@ -7,8 +7,6 @@ import it.polimi.vovarini.model.godcards.GodName;
  *
  * @author Davide Volta
  * @author Mattia Valassi
- *
- * @version 0.2
  * @version 0.1
  */
 public class CardChoiceEvent extends GameEvent {

@@ -67,11 +67,11 @@ public class MoveTests {
   @ParameterizedTest
   @MethodSource("provideAllPossibleTrajectories")
   @DisplayName("Test that a worker can be moved to an empty space")
-  /*
-   * We have to keep in mind that move does not check for its validity.
-   * It is therefore possible, as an example, to move a Worker from one corner
-   * of the Board to the opposite.
-   * */
+    /*
+     * We have to keep in mind that move does not check for its validity.
+     * It is therefore possible, as an example, to move a Worker from one corner
+     * of the Board to the opposite.
+     * */
   void basicMovementTest(Point start, Point end) {
     try {
       board.place(workers.get(Sex.Male), start);
@@ -87,8 +87,8 @@ public class MoveTests {
 
   @Test
   @DisplayName("Test that the reverse method generates a reverse movement")
-  void testReverse(){
-    Movement okMove = new Movement(board, new Point(0,0), new Point(1,1), true);
+  void testReverse() {
+    Movement okMove = new Movement(board, new Point(0, 0), new Point(1, 1), true);
     Move okRev = okMove.reverse();
     Movement rev = (Movement) okRev;
 
@@ -97,7 +97,7 @@ public class MoveTests {
     assertEquals(okMove.getBoard(), rev.getBoard());
     assertEquals(okMove.isForced(), rev.isForced());
 
-    Construction okCon = new Construction(board, new Block(Block.MIN_LEVEL), new Point(1,1), true);
+    Construction okCon = new Construction(board, new Block(Block.MIN_LEVEL), new Point(1, 1), true);
     Move okRevTwo = okCon.reverse();
     Destruction revCon = (Destruction) okRevTwo;
 
@@ -106,7 +106,7 @@ public class MoveTests {
     assertEquals(okCon.getBoard(), revCon.getBoard());
     assertEquals(okCon.isForced(), revCon.isForced());
 
-    Destruction okDes = new Destruction(board, new Block(Block.MAX_LEVEL), new Point(3,3), true);
+    Destruction okDes = new Destruction(board, new Block(Block.MAX_LEVEL), new Point(3, 3), true);
     Move okRevThree = okDes.reverse();
     Construction revDes = (Construction) okRevThree;
 

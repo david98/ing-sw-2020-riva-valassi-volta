@@ -11,13 +11,11 @@ import java.util.EventObject;
  *
  * @author Mattia Valassi
  * @author Marco Riva
- *
- * @version 0.2
  * @version 0.1
  */
 public abstract class GameEvent extends EventObject implements Serializable {
 
-  public GameEvent(Object source){
+  public GameEvent(Object source) {
     super(source);
   }
 

@@ -18,9 +18,9 @@ public class Movement extends Move {
    * Creates a Movement. If end contains a removable item,
    * an exchange between start and end.
    *
-   * @param board Instance of board currently in use
-   * @param start Worker starting Point
-   * @param end Point that the worker wants to reach
+   * @param board  Instance of board currently in use
+   * @param start  Worker starting Point
+   * @param end    Point that the worker wants to reach
    * @param forced False if the move was voluntarily initiated by a player,
    *               true if this is the result of some card effect.
    */
@@ -32,11 +32,11 @@ public class Movement extends Move {
 
   /**
    * Creates a non-forced Movement. If end contains a removable item,
-   *    * an exchange between start and end.
+   * * an exchange between start and end.
    *
    * @param board The board to build on.
    * @param start Where to pick the item to be moved.
-   * @param end Where to move the item picked from start.
+   * @param end   Where to move the item picked from start.
    */
   public Movement(Board board, Point start, Point end) {
     super(board, false);
@@ -55,11 +55,11 @@ public class Movement extends Move {
    *
    * @throws RuntimeException If either start or end were empty/invalid positions.
    */
-  public void execute() throws RuntimeException{
+  public void execute() throws RuntimeException {
     try {
       Item startItem = board.getBox(start).removeTopmost();
 
-      if (startItem == null){
+      if (startItem == null) {
         throw new RuntimeException(); //invalid start
       }
 
@@ -69,7 +69,7 @@ public class Movement extends Move {
         board.place(endItem, start);
       }
       board.place(startItem, end);
-    }  catch (InvalidPositionException e) {
+    } catch (InvalidPositionException e) {
       throw new RuntimeException(); //invalid start or end
     } catch (BoxFullException e) {
       throw new RuntimeException(); //end box is full

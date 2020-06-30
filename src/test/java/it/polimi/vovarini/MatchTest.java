@@ -263,9 +263,9 @@ public class MatchTest {
       }
 
       // wait for CurrentPlayerChangedEvent
-      while (!(davideClient.getServerEvents().take() instanceof CurrentPlayerChangedEvent));
-      while (!(marcoClient.getServerEvents().take() instanceof CurrentPlayerChangedEvent));
-      while (!(mattiaClient.getServerEvents().take() instanceof CurrentPlayerChangedEvent));
+      while (!(davideClient.getServerEvents().take() instanceof CurrentPlayerChangedEvent)) ;
+      while (!(marcoClient.getServerEvents().take() instanceof CurrentPlayerChangedEvent)) ;
+      while (!(mattiaClient.getServerEvents().take() instanceof CurrentPlayerChangedEvent)) ;
     }
   }
 
@@ -293,9 +293,9 @@ public class MatchTest {
       }
 
       // wait for CurrentPlayerChangedEvent
-      while (!(davideClient.getServerEvents().take() instanceof CurrentPlayerChangedEvent));
-      while (!(marcoClient.getServerEvents().take() instanceof CurrentPlayerChangedEvent));
-      while (!(mattiaClient.getServerEvents().take() instanceof CurrentPlayerChangedEvent));
+      while (!(davideClient.getServerEvents().take() instanceof CurrentPlayerChangedEvent)) ;
+      while (!(marcoClient.getServerEvents().take() instanceof CurrentPlayerChangedEvent)) ;
+      while (!(mattiaClient.getServerEvents().take() instanceof CurrentPlayerChangedEvent)) ;
     }
   }
 

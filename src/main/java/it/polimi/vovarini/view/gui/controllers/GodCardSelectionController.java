@@ -20,124 +20,123 @@ import java.util.Arrays;
 
 public class GodCardSelectionController extends GUIController {
 
-    @FXML
-    private ImageView godCard0;
+  @FXML
+  private ImageView godCard0;
 
-    @FXML
-    private ImageView godCard1;
+  @FXML
+  private ImageView godCard1;
 
-    @FXML
-    private ImageView godCard2;
+  @FXML
+  private ImageView godCard2;
 
-    @FXML
-    private Label instruction;
+  @FXML
+  private Label instruction;
 
-    private GuiManager guiManager;
+  private GuiManager guiManager;
 
-    private GodName[] allGods;
+  private GodName[] allGods;
 
-    @FXML
-    public void initialize() {
+  @FXML
+  public void initialize() {
 
-        guiManager = GuiManager.getInstance();
-        bindEvents();
+    guiManager = GuiManager.getInstance();
+    bindEvents();
+  }
+
+  public void addImages(GodName[] availableGodCards) {
+    allGods = availableGodCards;
+    String selector;
+    for (int i = 0; i < availableGodCards.length; i++) {
+
+      selector = "#godCard" + i;
+      ImageView temp = (ImageView) mainPane.lookup(selector);
+
+      temp.setImage(Settings.godImages.get(availableGodCards[i]));
     }
+  }
 
-     public void addImages(GodName[] availableGodCards) {
-        allGods = availableGodCards;
-        String selector;
-        for(int i = 0; i < availableGodCards.length; i++) {
+  /**
+   * Binds click events
+   */
+  private void bindEvents() {
+    godCard0.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> onCardButtonClick(0));
+    godCard1.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> onCardButtonClick(1));
+    godCard2.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> onCardButtonClick(2));
 
-            selector = "#godCard" + i;
-            ImageView temp = (ImageView) mainPane.lookup(selector);
+    godCard0.addEventHandler(MouseEvent.MOUSE_ENTERED, event -> onMouseEntered(godCard0, 0));
+    godCard1.addEventHandler(MouseEvent.MOUSE_ENTERED, event -> onMouseEntered(godCard1, 1));
+    godCard2.addEventHandler(MouseEvent.MOUSE_ENTERED, event -> onMouseEntered(godCard2, 2));
+  }
 
-            temp.setImage(Settings.godImages.get(availableGodCards[i]));
+  /**
+   * @param cardChosen represent the godCard chosen
+   */
+  private void onCardButtonClick(int cardChosen) {
+    godCard0.setDisable(true);
+    godCard1.setDisable(true);
+    godCard2.setDisable(true);
+
+    GameEvent evt = new CardChoiceEvent(guiManager.getData().getOwner(), allGods[cardChosen]);
+    guiManager.getClient().raise(evt);
+  }
+
+  private void onMouseEntered(ImageView godCard, int i) {
+    GodName[] godNames = Arrays.stream(GodName.values()).filter(name -> name != GodName.Nobody).toArray(GodName[]::new);
+    Tooltip tooltip = new Tooltip();
+    tooltip.setText(Settings.descriptions.get(godNames[i]));
+    Tooltip.install(godCard, tooltip);
+  }
+
+  public void changeVisibility(GodName[] godsLeft, boolean disabled) {
+
+    godCard0.setDisable(true);
+    godCard1.setDisable(true);
+    godCard2.setDisable(true);
+
+    for (int k = 0; k < godsLeft.length; k++) {
+      for (int i = 0; i < allGods.length; i++) {
+
+        if (allGods[i].equals(godsLeft[k])) {
+          String selector = "#godCard" + i;
+          Node temp = mainPane.lookup(selector);
+          temp.setDisable(disabled);
         }
+      }
     }
 
-    /**
-     * Binds click events
-     */
-    private void bindEvents() {
-        godCard0.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> onCardButtonClick(0));
-        godCard1.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> onCardButtonClick(1));
-        godCard2.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> onCardButtonClick(2));
+    if (disabled) {
+      instruction.setText("Wait for " + guiManager.getData().getCurrentPlayer().getNickname() + "'s choice...");
+    } else {
+      instruction.setText("It's your turn, choose your card!");
+    }
+  }
 
-        godCard0.addEventHandler(MouseEvent.MOUSE_ENTERED, event -> onMouseEntered(godCard0, 0));
-        godCard1.addEventHandler(MouseEvent.MOUSE_ENTERED, event -> onMouseEntered(godCard1, 1));
-        godCard2.addEventHandler(MouseEvent.MOUSE_ENTERED, event -> onMouseEntered(godCard2, 2));
+  public void showChoice(Player targetPlayer, GodCard assignedCard) {
+    for (int i = 0; i < allGods.length; i++) {
+      if (allGods[i].equals(assignedCard.getName())) {
+        String selector = "#label" + i;
+        Label temp = (Label) mainPane.lookup(selector);
+        temp.setText(targetPlayer.getNickname());
+      }
+    }
+  }
+
+  @Override
+  public void handle(SelectYourCardEvent e) {
+    super.handle(e);
+
+    // solo al primo SelectYourCardEvent stampo a video le immagini delle carte,
+    // poi disabilito quelle scelte e basta (le img a video restano le stesse)
+    if (e.getGodsLeft().length == guiManager.getNumberOfPlayers()) {
+      addImages(e.getGodsLeft());
     }
 
-    /**
-     *
-     * @param cardChosen represent the godCard chosen
-     */
-    private void onCardButtonClick(int cardChosen) {
-        godCard0.setDisable(true);
-        godCard1.setDisable(true);
-        godCard2.setDisable(true);
+    changeVisibility(e.getGodsLeft(), !e.getTargetPlayer().equals(GuiManager.getInstance().getData().getOwner()));
+  }
 
-        GameEvent evt = new CardChoiceEvent(guiManager.getData().getOwner(), allGods[cardChosen]);
-        guiManager.getClient().raise(evt);
-    }
-
-    private void onMouseEntered(ImageView godCard, int i) {
-        GodName[] godNames = Arrays.stream(GodName.values()).filter(name -> name != GodName.Nobody).toArray(GodName[]::new);
-        Tooltip tooltip = new Tooltip();
-        tooltip.setText(Settings.descriptions.get(godNames[i]));
-        Tooltip.install(godCard, tooltip);
-    }
-
-    public void changeVisibility(GodName[] godsLeft, boolean disabled) {
-
-        godCard0.setDisable(true);
-        godCard1.setDisable(true);
-        godCard2.setDisable(true);
-
-        for(int k = 0; k < godsLeft.length; k++) {
-            for(int i = 0; i < allGods.length; i++) {
-
-                if(allGods[i].equals(godsLeft[k])) {
-                    String selector = "#godCard" + i;
-                    Node temp = mainPane.lookup(selector);
-                    temp.setDisable(disabled);
-                }
-            }
-        }
-
-        if(disabled) {
-            instruction.setText("Wait for " + guiManager.getData().getCurrentPlayer().getNickname() + "'s choice...");
-        } else {
-            instruction.setText("It's your turn, choose your card!");
-        }
-    }
-
-    public void showChoice(Player targetPlayer, GodCard assignedCard) {
-        for (int i = 0; i < allGods.length; i++) {
-            if (allGods[i].equals(assignedCard.getName())) {
-                String selector = "#label" + i;
-                Label temp = (Label) mainPane.lookup(selector);
-                temp.setText(targetPlayer.getNickname());
-            }
-        }
-    }
-
-    @Override
-    public void handle(SelectYourCardEvent e) {
-        super.handle(e);
-
-        // solo al primo SelectYourCardEvent stampo a video le immagini delle carte,
-        // poi disabilito quelle scelte e basta (le img a video restano le stesse)
-        if(e.getGodsLeft().length == guiManager.getNumberOfPlayers()) {
-            addImages(e.getGodsLeft());
-        }
-
-        changeVisibility(e.getGodsLeft(), !e.getTargetPlayer().equals(GuiManager.getInstance().getData().getOwner()));
-    }
-
-    @Override
-    public void handle(CardAssignmentEvent e) {
-        super.handle(e);
-        showChoice(e.getTargetPlayer(), e.getAssignedCard());
-    }
+  @Override
+  public void handle(CardAssignmentEvent e) {
+    super.handle(e);
+    showChoice(e.getTargetPlayer(), e.getAssignedCard());
+  }
 }
