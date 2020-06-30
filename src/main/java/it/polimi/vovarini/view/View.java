@@ -24,7 +24,9 @@ public abstract class View implements EventsForViewListener {
 
   @Override
   public void handle(NewPlayerEvent e) {
-    client.setSocketTimeout(0);
+    if (client != null) {
+      client.setSocketTimeout(0);
+    }
     if (data.getOwner().equals(e.getNewPlayer())) {
       data.setOwner(e.getNewPlayer());
     }
@@ -68,6 +70,9 @@ public abstract class View implements EventsForViewListener {
   @Override
   public void handle(LossEvent e) {
     data.removePlayer(e.getLosingPlayer());
+    if (e.getLosingPlayer().equals(data.getOwner()) && !data.getOwner().isHasLost()) {
+      data.getOwner().setHasLost(true);
+    }
   }
 
   @Override
@@ -107,6 +112,8 @@ public abstract class View implements EventsForViewListener {
 
   @Override
   public void handle(FirstPlayerEvent e) {
-    client.setSocketTimeout(0);
+    if (client != null) {
+      client.setSocketTimeout(0);
+    }
   }
 }

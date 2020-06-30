@@ -38,19 +38,6 @@ public class Server implements Runnable {
   private int currentlyConnectedClients = 0;
 
   /**
-   * This method handles an uncaught exception inside a thread and raises
-   * a {@link AbruptEndEvent}.
-   *
-   * @param th The thread in which the exception first originated.
-   * @param e  The exception as a {@link Throwable}.
-   */
-  public static void handleUncaughtExceptions(Thread th, Throwable e) {
-    LOGGER.log(Level.SEVERE, "Uncaught exception in thread " + th.toString() + ": " + e.getMessage());
-    GameEventManager.raise(new AbruptEndEvent("server"));
-    LOGGER.log(Level.SEVERE, "Raised AbruptEndEvent.");
-  }
-
-  /**
    * Constructs a server listening on the specified port.
    *
    * @param port The port to listen on.

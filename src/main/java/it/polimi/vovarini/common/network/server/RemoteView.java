@@ -8,10 +8,7 @@ import it.polimi.vovarini.view.View;
 
 import java.io.IOException;
 import java.net.Socket;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -33,6 +30,32 @@ public class RemoteView extends View implements Runnable {
   private final ExecutorService pool;
 
   /**
+   * This method handles an uncaught exception inside a thread and raises
+   * a {@link AbruptEndEvent} if the thread was related to a player who
+   * hasn't lost yet.
+   *
+   * @param th The thread in which the exception first originated.
+   * @param e  The exception as a {@link Throwable}.
+   */
+  public void handleUncaughtExceptions(Thread th, Throwable e) {
+    LOGGER.log(Level.SEVERE, "Uncaught exception in thread " + th.toString() + ": " + e.getMessage());
+    if (data.getOwner() != null && data.getOwner().isHasLost()) {
+      LOGGER.log(Level.SEVERE, "Connection lost with " + data.getOwner().getNickname() + ", who has lost." +
+              "The game can continue.");
+      pool.shutdownNow();
+      try {
+        pool.awaitTermination(1, TimeUnit.SECONDS);
+      } catch (InterruptedException ignored){
+      }
+    } else {
+      LOGGER.log(Level.SEVERE, "Connection lost with " + data.getOwner().getNickname() + ", who has NOT lost." +
+              "The game shall now end.");
+      GameEventManager.raise(new AbruptEndEvent("server"));
+      LOGGER.log(Level.SEVERE, "Raised AbruptEndEvent.");
+    }
+  }
+
+  /**
    * Constructs a RemoteView for the given client.
    *
    * @param clientSocket An active socket connected with the client.
@@ -47,7 +70,7 @@ public class RemoteView extends View implements Runnable {
 
     pool = Executors.newFixedThreadPool(2, runnable -> {
       Thread t = Executors.defaultThreadFactory().newThread(runnable);
-      t.setUncaughtExceptionHandler(Server::handleUncaughtExceptions);
+      t.setUncaughtExceptionHandler(this::handleUncaughtExceptions);
       return t;
     });
     pool.execute(new SocketWriter<>(clientSocket, serverEvents));
@@ -163,6 +186,7 @@ public class RemoteView extends View implements Runnable {
   @Override
   @GameEventListener
   public void handle(LossEvent e) {
+    super.handle(e);
     serverEvents.add(e);
   }
 

@@ -218,10 +218,6 @@ public class Player implements Serializable {
    */
   public void setHasLost(boolean hasLost) {
     this.hasLost = hasLost;
-    if (hasLost) {
-      setWorkerSelected(false);
-      GameEventManager.raise(new LossEvent(this, this));
-    }
   }
 
   /**
