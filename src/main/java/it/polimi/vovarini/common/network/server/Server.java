@@ -76,28 +76,43 @@ public class Server implements Runnable{
           }
         }
         LOGGER.log(Level.FINE, "Waiting for new connection...");
-        if (game == null && currentlyConnectedClients == 0) {
-          remoteViews[currentlyConnectedClients] = new RemoteView(serverSocket.accept());
-          pool.execute(remoteViews[currentlyConnectedClients]);
-          LOGGER.log(Level.INFO, "First client connected.");
-          GameEventManager.raise(new FirstPlayerEvent("server"));
-          LOGGER.log(Level.INFO, "FirstPlayerEvent raised.");
-          acceptingConnections = false;
-        } else if (currentlyConnectedClients > 0 && game != null && currentlyConnectedClients < game.getInitialNumberOfPlayers()){
-          remoteViews[currentlyConnectedClients] = new RemoteView(serverSocket.accept());
-          pool.execute(remoteViews[currentlyConnectedClients]);
-          LOGGER.log(Level.INFO, "A new client connected.");
-        }
-        currentlyConnectedClients++;
-
+        acceptNewClient();
         if (game != null && currentlyConnectedClients >= game.getInitialNumberOfPlayers()) {
           GameEventManager.raise(new RegistrationStartEvent("server"));
           acceptingConnections = false;
         }
       }
-    } catch (IOException | InterruptedException ex) {
-      pool.shutdown();
-      Thread.currentThread().interrupt();
+    } catch (InterruptedException ex) {
+      shutdownAndAwaitTermination();
+    }
+  }
+
+  private void acceptNewClient() {
+    if (game == null && currentlyConnectedClients == 0) {
+      try {
+        remoteViews[currentlyConnectedClients] = new RemoteView(serverSocket.accept());
+        pool.execute(remoteViews[currentlyConnectedClients]);
+        LOGGER.log(Level.INFO, "First client connected.");
+        GameEventManager.raise(new FirstPlayerEvent("server"));
+        LOGGER.log(Level.INFO, "FirstPlayerEvent raised.");
+        acceptingConnections = false;
+        currentlyConnectedClients++;
+      } catch (IOException ignored) {
+      }
+    } else if (currentlyConnectedClients > 0 && game != null && currentlyConnectedClients < game.getInitialNumberOfPlayers()){
+      try {
+        remoteViews[currentlyConnectedClients] = new RemoteView(serverSocket.accept());
+        pool.execute(remoteViews[currentlyConnectedClients]);
+        LOGGER.log(Level.INFO, "A new client connected.");
+        currentlyConnectedClients++;
+      } catch (IOException ignored) {
+
+      }
+    } else {
+      try {
+        serverSocket.accept().close();
+      } catch (IOException ignored) {
+      }
     }
   }
 
