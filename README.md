@@ -1,4 +1,4 @@
-Prova Finale di Reti Logiche - a.a. 2019-2020
+Prova Finale di Ingegneria del Software - a.a. 2019-2020
 =====
 
 Autori
@@ -12,14 +12,14 @@ Introduzione
 -----
 ![Immagine intro Santorini.](images/santorini.png)
 
-Per l'A.S. 2019-2020 è stato richiesto lo sviluppo in linguaggio Java del gioco da tavolo Santorini di Gordon Hamilton, in particolare sulla versione offerta da Cranio Creations.
-Sviluppato per un ambiente di gioco online da 2-3 giocatori, viene implementato tramite l'architettura progettuale Model-View-Controller combinato ad un approccio di rete basato su multithreading e socket.
+Per l'A.A. 2019-2020 è stato richiesto lo sviluppo in linguaggio Java del gioco da tavolo Santorini di Gordon Hamilton, basandosi sulla versione offerta da Cranio Creations.
+Pensato per un ambiente di gioco online da 2-3 giocatori, viene implementato tramite l'architettura progettuale Model-View-Controller combinata ad un approccio di rete basato su multithreading e socket.
 L'interfaccia di gioco è stata sviluppata interamente mediante JavaFX.
 
 Documentazione
 -----
 Nella documentazione richiesta sono previsti gli schemi UML iniziali e finali del progetto. Gli UML, per miglior comprensione, sono stati divisi per package più rilevanti, ma rimangono comunque presenti schemi con una visione più generale.
-Sono stati anche aggiunti degli schemi ispirati ai Sequence Diagrams per meglio descrivere l'Event Handling e il network all'interno del progetto.
+Sono stati anche aggiunti degli schemi ispirati ai Sequence Diagrams per meglio descrivere la gestione degli eventi e la parte di rete all'interno del progetto.
 Questi file si trovano nei seguenti percorsi:
 
 ### UML
@@ -48,15 +48,34 @@ Il progetto copre i seguenti requisiti tra quelli specificati come richiesti (ba
 Istruzioni per il Setup
 -----
 
-Prima di avviare l'applicativo, sarà necessario installare i seguenti componenti software:
+### Requisiti
 
-* Java 14
-* Altro?
+* JDK 14
 
-Segue dunque una descrizione riguardante come avviare correttamente e dunque usufruire dell'applicativo Santorini:
-(cosa devo scaricare, come devo utilizzare i file scaricati, come avvio la GUI, come avvio la CLI, come inizio una partita...)
+### Utilizzo
+
+#### Server
+
+`java -jar santorini.jar -s`
+
+Altre opzioni disponibili:
+
+* `-p <porta su cui ascoltare>` 
+
+#### Client GUI
+
+`java -jar santorini.jar` (o doppio click sul file .jar, se la versione di Java configurata nell'ambiente é quella corretta)
+
+#### Client CLI
+
+`java -jar santorini.jar -c <indirizzo del server>`
+
+Altre opzioni disponibili:
+
+* `-p <porta a cui connettersi>`
 
 
 Librerie e Plugin Utilizzati
 -----
 
+(TODO)
