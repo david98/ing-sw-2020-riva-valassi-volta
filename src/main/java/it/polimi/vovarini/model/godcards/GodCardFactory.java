@@ -11,6 +11,10 @@ import it.polimi.vovarini.model.godcards.deciders.*;
  */
 public class GodCardFactory {
 
+  /**
+   * Builder method for the GodCardFactory class. It functions as a place where we can inject custom traits of a single GodCards inside a GodCard object,
+   * so it does not have attributes to set. The default builder of Object serves well.
+   */
   private GodCardFactory() {
     super();
   }
@@ -147,6 +151,10 @@ public class GodCardFactory {
     return hestia;
   }
 
+  /**
+   * This method injects a generic GodCard with all the Behaviors modified by the card Limus
+   * @return
+   */
   private static GodCard createLimus() {
     GodCard limus = new GodCard(GodName.Limus);
     limus.nextPhase = FlowDecider::applyMalus;
