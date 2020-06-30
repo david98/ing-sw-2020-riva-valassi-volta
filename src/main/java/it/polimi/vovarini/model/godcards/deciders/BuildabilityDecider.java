@@ -103,6 +103,13 @@ public class BuildabilityDecider extends Decider {
     return false;
   }
 
+  /**
+   * This method adds a Construction Constraint, making the opponent's workers able to build only a dome to complete a tower if they try to build in a position
+   * adjacent to one of the workers possessed by the owner of the Limus GodCard.
+   * @param gameData is the Data of the game all players are currently playing
+   * @param target is the position in the board where the player wants to build
+   * @return true if the point is not adjacent to one of the workers of Limus' owner or if it is adjacent, but you can build a complete tower. False otherwise.
+   */
   public static boolean mustBuildDomes(GameDataAccessor gameData, Point target) {
     Player limusPlayer = null;
 
