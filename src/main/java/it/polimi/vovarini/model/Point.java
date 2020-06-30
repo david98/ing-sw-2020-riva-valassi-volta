@@ -15,11 +15,20 @@ public class Point implements Serializable {
 
   private final static Random random = new Random();
 
+  /**
+   * Builds a geometrical Point
+   * @param x value on the x axis for the Point
+   * @param y value on the y axis for the Point
+   */
   public Point(int x, int y) {
     this.x = x;
     this.y = y;
   }
 
+  /**
+   * Creates a deep clone of a Point
+   * @param p is the Point I want to clone
+   */
   public Point(Point p) {
     x = p.getX();
     y = p.getY();
