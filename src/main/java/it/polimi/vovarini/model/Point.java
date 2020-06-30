@@ -34,23 +34,45 @@ public class Point implements Serializable {
     y = p.getY();
   }
 
+  /**
+   * Getter method for the x coordinate of the point
+   * @return the x coordinate of the point
+   */
   public int getX() {
     return x;
   }
 
+  /**
+   * Getter method for the y coordinate of the point
+   * @return the y coordinate of the point
+   */
   public int getY() {
     return y;
   }
 
+  /**
+   * This method checks if this point is adjacent to another point
+   * @param other the other point
+   * @return true if the two points are adjacent, false otherwise
+   */
   public boolean isAdjacent(Point other) {
     return !equals(other) && Math.abs(x - other.x) <= 1 && Math.abs(y - other.y) <= 1;
   }
 
+  /**
+   * ToString method of the Point class
+   * @return a string representing this Point
+   */
   @Override
   public String toString() {
     return "(" + x + ", " + y + ")";
   }
 
+  /**
+   * equals method of the Point class
+   * @param obj an object to compare with this Point
+   * @return true if obj is an instance of Point and has the same coordinates of this Point, false otherwise
+   */
   @Override
   public boolean equals(Object obj) {
     if (obj instanceof Point) {
@@ -61,6 +83,10 @@ public class Point implements Serializable {
     }
   }
 
+  /**
+   * hashCode method for the Point clas
+   * @return an hashcode representing this Point
+   */
   @Override
   public int hashCode() {
     return x * 17 + y;
