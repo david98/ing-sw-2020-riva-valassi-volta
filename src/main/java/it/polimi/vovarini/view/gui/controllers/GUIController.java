@@ -1,11 +1,17 @@
 package it.polimi.vovarini.view.gui.controllers;
 
 import it.polimi.vovarini.common.events.*;
+import it.polimi.vovarini.common.network.server.Server;
 import it.polimi.vovarini.view.EventsForViewListener;
 import javafx.fxml.FXML;
 import javafx.scene.layout.BorderPane;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 public class GUIController implements EventsForViewListener {
+
+  protected static final Logger LOGGER = Logger.getLogger(Server.class.getName());
 
   @FXML
   protected BorderPane mainPane;
@@ -15,88 +21,92 @@ public class GUIController implements EventsForViewListener {
     /* altre eventuali inizializzazioni */
   }
 
+  private void methodNotImplemented() {
+    LOGGER.log(Level.FINE, "This method hasn't been overridden by this controller");
+  }
+
   @Override
   public void handle(BoardUpdateEvent e) {
-    throw new UnsupportedOperationException();
+    methodNotImplemented();
   }
 
   @Override
   public void handle(CurrentPlayerChangedEvent e) {
-    throw new UnsupportedOperationException();
+    methodNotImplemented();
   }
 
   @Override
   public void handle(PhaseUpdateEvent e) {
-    throw new UnsupportedOperationException();
+    methodNotImplemented();
   }
 
   @Override
   public void handle(GameStartEvent e) {
-    throw new UnsupportedOperationException();
+    methodNotImplemented();
   }
 
   @Override
   public void handle(NewPlayerEvent e) {
-    throw new UnsupportedOperationException();
+    methodNotImplemented();
   }
 
   @Override
   public void handle(GodSelectionStartEvent e) {
-    throw new UnsupportedOperationException();
+    methodNotImplemented();
   }
 
   @Override
   public void handle(SelectYourCardEvent e) {
-    throw new UnsupportedOperationException();
+    methodNotImplemented();
   }
 
   @Override
   public void handle(CardAssignmentEvent e) {
-    throw new UnsupportedOperationException();
+    methodNotImplemented();
   }
 
   @Override
   public void handle(PlaceYourWorkersEvent e) {
-    throw new UnsupportedOperationException();
+    methodNotImplemented();
   }
 
   @Override
   public void handle(PlayerInfoUpdateEvent e) {
-    throw new UnsupportedOperationException();
+    methodNotImplemented();
   }
 
   @Override
   public void handle(GodCardUpdateEvent e) {
-    throw new UnsupportedOperationException();
+    methodNotImplemented();
   }
 
   @Override
   public void handle(VictoryEvent e) {
-    throw new UnsupportedOperationException();
+    methodNotImplemented();
   }
 
   @Override
   public void handle(LossEvent e) {
-    throw new UnsupportedOperationException();
+    methodNotImplemented();
   }
 
   @Override
   public void handle(AbruptEndEvent e) {
-    throw new UnsupportedOperationException();
+    methodNotImplemented();
   }
 
   @Override
   public void handle(FirstPlayerEvent e) {
-    throw new UnsupportedOperationException();
+    methodNotImplemented();
   }
 
   @Override
   public void handle(RegistrationStartEvent e) {
-    throw new UnsupportedOperationException();
+    methodNotImplemented();
   }
 
   @Override
   public void handle(InvalidNicknameEvent e) {
-    throw new UnsupportedOperationException();
+    methodNotImplemented();
   }
 }

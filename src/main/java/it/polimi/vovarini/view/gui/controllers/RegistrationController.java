@@ -55,8 +55,6 @@ public class RegistrationController extends GUIController {
 
   @Override
   public void handle(InvalidNicknameEvent e) {
-    super.handle(e);
-
     if (guiManager.getData().getOwner() != null && e.getNickname().equals(guiManager.getData().getOwner().getNickname())) {
       if (e.getErrorCode() == 0) {
         error.setText(Settings.DUPLICATE_NICKNAME);
@@ -70,7 +68,6 @@ public class RegistrationController extends GUIController {
 
   @Override
   public void handle(NewPlayerEvent e) {
-    super.handle(e);
     if (e.getNewPlayer().equals(guiManager.getData().getOwner())) {
       guiManager.setLayout(Settings.WAIT_SCENE_FXML);
       ((WaitController) guiManager.getCurrentController()).setWaitMessage("Waiting for all players to register...");

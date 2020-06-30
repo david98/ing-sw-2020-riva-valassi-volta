@@ -123,8 +123,6 @@ public class GodCardSelectionController extends GUIController {
 
   @Override
   public void handle(SelectYourCardEvent e) {
-    super.handle(e);
-
     // solo al primo SelectYourCardEvent stampo a video le immagini delle carte,
     // poi disabilito quelle scelte e basta (le img a video restano le stesse)
     if (e.getGodsLeft().length == guiManager.getNumberOfPlayers()) {
@@ -136,7 +134,6 @@ public class GodCardSelectionController extends GUIController {
 
   @Override
   public void handle(CardAssignmentEvent e) {
-    super.handle(e);
     showChoice(e.getTargetPlayer(), e.getAssignedCard());
   }
 }

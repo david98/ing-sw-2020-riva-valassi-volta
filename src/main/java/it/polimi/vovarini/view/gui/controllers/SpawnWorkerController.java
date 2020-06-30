@@ -170,7 +170,6 @@ public class SpawnWorkerController extends GUIController {
 
   @Override
   public void handle(PlaceYourWorkersEvent e) {
-    super.handle(e);
     updateView();
   }
 }

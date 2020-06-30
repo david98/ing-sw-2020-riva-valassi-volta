@@ -406,7 +406,6 @@ public class GameController extends GUIController {
 
   @Override
   public void handle(PhaseUpdateEvent e) {
-    super.handle(e);
     updateView();
     //skip automatico
     if (e.getNewPhase().equals(Phase.End)) {
@@ -418,8 +417,6 @@ public class GameController extends GUIController {
 
   @Override
   public void handle(LossEvent e) {
-    super.handle(e);
-
     Popup popup = new Popup();
     if (e.getLosingPlayer().equals(guiManager.getData().getOwner())) {
       ImageView loss = new ImageView(Settings.loss);
@@ -438,8 +435,6 @@ public class GameController extends GUIController {
 
   @Override
   public void handle(VictoryEvent e) {
-    super.handle(e);
-
     Popup popup = new Popup();
     if (e.getWinningPlayer().equals(guiManager.getData().getOwner())) {
       ImageView victory = new ImageView(Settings.victory);

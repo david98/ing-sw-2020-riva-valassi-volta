@@ -215,7 +215,6 @@ public class ElectedPlayerController extends GUIController {
 
   @Override
   public void handle(GodSelectionStartEvent e) {
-    super.handle(e);
     addImages(e.getAllGods());
   }
 }
