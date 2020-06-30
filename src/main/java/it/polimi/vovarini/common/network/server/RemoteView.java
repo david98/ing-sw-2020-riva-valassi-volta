@@ -15,7 +15,13 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class RemoteView extends View implements ClientConnectionHandler {
+/**
+ * This class represents a client on the server.
+ * Its role is to handle communication between the client and the server.
+ *
+ * @author Davide Volta
+ */
+public class RemoteView extends View implements Runnable {
 
   private static final Logger LOGGER = Logger.getLogger( Server.class.getName() );
 
@@ -26,6 +32,11 @@ public class RemoteView extends View implements ClientConnectionHandler {
 
   private final ExecutorService pool;
 
+  /**
+   * Constructs a RemoteView for the given client.
+   * @param clientSocket An active socket connected with the client.
+   * @throws IOException If I/O streams can't be created.
+   */
   public RemoteView(Socket clientSocket) throws IOException {
     super();
     this.clientSocket = clientSocket;
@@ -133,6 +144,11 @@ public class RemoteView extends View implements ClientConnectionHandler {
     serverEvents.add(e);
   }
 
+  /**
+   * Handles the RegistrationEvent which has been raised by the client.
+   * 
+   * @param e A RegistrationEvent.
+   */
   public void handleRegistrationEvent(RegistrationEvent e) {
     data.setOwner(new Player(e.getNickname()));
   }

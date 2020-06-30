@@ -14,6 +14,11 @@ import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+/**
+ * This is the game server, which is meant to be run as a thread.
+ *
+ * @author Davide Volta
+ */
 public class Server implements Runnable{
 
   private Game game;
