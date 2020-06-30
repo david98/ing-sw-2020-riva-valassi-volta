@@ -70,6 +70,10 @@ public class Game implements Serializable, GameDataAccessor {
     random = new Random();
   }
 
+  /**
+   * Getter method for the Board where the game is played
+   * @return the instance of the Board where the game is played
+   */
   public Board getBoard() {
     return board;
   }
@@ -180,26 +184,50 @@ public class Game implements Serializable, GameDataAccessor {
 
   }
 
+  /**
+   * Getter method for the current Phase the game stands in
+   * @return the instance of the current Phase the game stands in
+   */
   public Phase getCurrentPhase() {
     return currentPhase;
   }
 
+  /**
+   * Setter method to set the Players playing this game
+   * @param players the Players playing this game
+   */
   public void setPlayers(Player[] players) {
     this.players = players;
   }
 
+  /**
+   * Getter method to get the Players playing this game
+   * @return the players playing this game
+   */
   public Player[] getPlayers() {
     return players;
   }
 
+  /**
+   * Getter method to get the Player currently playing
+   * @return the instance of the Player currently playing
+   */
   public Player getCurrentPlayer() {
     return players[currentPlayerIndex];
   }
 
+  /**
+   * Getter method for the set of cards in play in this Game
+   * @return the names of the GodCards in play in this Game
+   */
   public GodName[] getAvailableGodCards() {
     return availableGodCards;
   }
 
+  /**
+   * Setter method for the set of cards in play in this Game
+   * @param availableGodCards the names of the GodCards to be played in this game
+   */
   public void setAvailableGodCards(GodName[] availableGodCards) {
     this.availableGodCards = availableGodCards;
   }
@@ -213,6 +241,10 @@ public class Game implements Serializable, GameDataAccessor {
     GameEventManager.raise(new CurrentPlayerChangedEvent(this, players[currentPlayerIndex]));
   }
 
+  /**
+   * This method checks if the current player has lost
+   * @return true if the current player has lost, false otherwise
+   */
   private boolean currentPlayerHasLost() {
     switch (currentPhase) {
       case Start -> {
@@ -238,6 +270,10 @@ public class Game implements Serializable, GameDataAccessor {
     return false;
   }
 
+  /**
+   * This method removes a player, who probably lost, from the list of players involved in this Game
+   * @param p is the player I want to remove
+   */
   private void removePlayer(Player p) {
     Player[] newPlayersArray = new Player[players.length - 1];
     int k = 0;
@@ -292,7 +328,9 @@ public class Game implements Serializable, GameDataAccessor {
 
   }
 
-  // needs to manage turn flow
+  /**
+   * This method undoes the last move done by the player currently playing
+   */
   public void undoLastMove() {
     try {
       Move opposite = moves.pop().reverse();
@@ -315,18 +353,34 @@ public class Game implements Serializable, GameDataAccessor {
     GameEventManager.raise(new GameStartEvent(this, this.getPlayers()));
   }
 
+  /**
+   * This method returns if the setup of the game is complete
+   * @return true if the setup of the game is complete, false othwerise
+   */
   public boolean isSetupComplete() {
     return setupComplete;
   }
 
+  /**
+   * This method checks if all players entered correctly in the Game
+   * @return true if all players entered correctly in the Game, false otherwise
+   */
   public boolean isFull() {
     return Arrays.stream(players).noneMatch(Objects::isNull);
   }
 
+  /**
+   * This method checks if the cards to play in the Game are already set
+   * @return true if the cards to play in the Game are already set, false otherwise
+   */
   public boolean isAvailableCardsAlreadySet() {
     return Arrays.stream(availableGodCards).noneMatch(Objects::isNull);
   }
 
+  /**
+   * Getter method for the number of players who will play the Game
+   * @return the number of players who will play the Game
+   */
   public int getInitialNumberOfPlayers() {
     return initialNumberOfPlayers;
   }
