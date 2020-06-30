@@ -173,9 +173,4 @@ public class SpawnWorkerController extends GUIController {
     super.handle(e);
     updateView();
   }
-
-  @Override
-  public void handle(CurrentPlayerChangedEvent e) {
-    super.handle(e);
-  }
 }

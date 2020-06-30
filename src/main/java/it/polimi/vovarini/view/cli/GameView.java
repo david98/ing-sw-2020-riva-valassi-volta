@@ -50,6 +50,7 @@ public class GameView extends View {
   }
 
 
+  @Override
   @GameEventListener
   public void handle(BoardUpdateEvent e) {
     super.handle(e);
