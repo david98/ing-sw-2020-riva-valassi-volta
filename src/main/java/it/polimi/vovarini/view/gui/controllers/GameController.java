@@ -7,9 +7,7 @@ import it.polimi.vovarini.model.Point;
 import it.polimi.vovarini.model.board.Board;
 import it.polimi.vovarini.model.board.items.Block;
 import it.polimi.vovarini.model.board.items.Item;
-import it.polimi.vovarini.model.board.items.Sex;
 import it.polimi.vovarini.model.board.items.Worker;
-import it.polimi.vovarini.model.godcards.GodCardFactory;
 import it.polimi.vovarini.model.godcards.GodName;
 import it.polimi.vovarini.model.moves.Construction;
 import it.polimi.vovarini.view.gui.GuiManager;
@@ -18,13 +16,14 @@ import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.Tooltip;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.stage.Popup;
 
-import java.awt.event.ActionEvent;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
@@ -39,6 +38,15 @@ public class GameController extends GUIController {
 
     @FXML
     private Label currentPhase;
+
+   @FXML
+   private ImageView godCard0;
+
+    @FXML
+    private ImageView godCard1;
+
+    @FXML
+    private ImageView godCard2;
 
     @FXML
     private Button skipButton;
@@ -108,6 +116,11 @@ public class GameController extends GUIController {
                 button.addEventHandler(MouseEvent.MOUSE_EXITED, event -> onMouseExited());
             }
         }
+
+
+        godCard0.addEventHandler(MouseEvent.MOUSE_ENTERED, event -> onGodCardEntered(godCard0, 0));
+        godCard1.addEventHandler(MouseEvent.MOUSE_ENTERED, event -> onGodCardEntered(godCard1, 1));
+        godCard2.addEventHandler(MouseEvent.MOUSE_ENTERED, event -> onGodCardEntered(godCard2, 2));
     }
 
     private void onMouseEntered(Point p) {
@@ -123,6 +136,13 @@ public class GameController extends GUIController {
                 highlightPoints(reachablePoints);
             }
         }
+    }
+
+    private void onGodCardEntered(ImageView godCard, int i) {
+        GodName[] godNames = Arrays.stream(GodName.values()).filter(name -> name != GodName.Nobody).toArray(GodName[]::new);
+        Tooltip tooltip = new Tooltip();
+        tooltip.setText(Settings.descriptions.get(godNames[i]));
+        Tooltip.install(godCard, tooltip);
     }
 
     private void highlightPoints(Collection<Point> points) {
