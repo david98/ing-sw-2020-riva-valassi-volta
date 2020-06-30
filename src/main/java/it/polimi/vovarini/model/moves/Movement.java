@@ -44,6 +44,10 @@ public class Movement extends Move {
     this.end = new Point(end);
   }
 
+  /**
+   * Creates a Movement move undoing the effects of this instance of the Move
+   * @return a Movement move with the exact reverse effects of this one
+   */
   @Override
   public Move reverse() {
     return new Movement(board, end, start, forced);
@@ -76,10 +80,18 @@ public class Movement extends Move {
     }
   }
 
+  /**
+   * Getter method for the starting position of the Movement
+   * @return a Point representing the starting position of the Movement
+   */
   public Point getStart() {
     return new Point(start);
   }
 
+  /**
+   * Getter method for the target position of the Movement
+   * @return a Point representing the target of the Movement
+   */
   public Point getEnd() {
     return new Point(end);
   }
