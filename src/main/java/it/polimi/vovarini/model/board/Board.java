@@ -82,6 +82,11 @@ public class Board implements Serializable {
     return adjacentPositions;
   }
 
+  /**
+   * Getter method for a Box belonging to the Board
+   * @param position is a Point, a set of coordinates indicating what is the Box the user is interested to get
+   * @return the instance of Box included in the Board and corresponding to the coordinates specified by the parameter position
+   */
   public Box getBox(Point position) {
     return boxes[position.getY()][position.getX()];
   }
@@ -121,6 +126,10 @@ public class Board implements Serializable {
     throw new ItemNotFoundException();
   }
 
+  /**
+   * Getter method for the size of the Board
+   * @return the size of the Board
+   */
   public int getSize() {
     return size;
   }
