@@ -74,12 +74,14 @@ public class GodCardSelectionController extends GUIController {
      * @param cardChosen represent the godCard chosen
      */
     private void onCardButtonClick(int cardChosen) {
-        godCard0.setDisable(true);
-        godCard1.setDisable(true);
-        godCard2.setDisable(true);
+        if(guiManager.getData().getOwner().equals(guiManager.getData().getCurrentPlayer())) {
+            godCard0.setDisable(true);
+            godCard1.setDisable(true);
+            godCard2.setDisable(true);
 
-        GameEvent evt = new CardChoiceEvent(guiManager.getData().getOwner(), allGods[cardChosen]);
-        guiManager.getClient().raise(evt);
+            GameEvent evt = new CardChoiceEvent(guiManager.getData().getOwner(), allGods[cardChosen]);
+            guiManager.getClient().raise(evt);
+        }
     }
 
     private void onMouseEntered(ImageView godCard, int i) {
@@ -89,23 +91,7 @@ public class GodCardSelectionController extends GUIController {
         Tooltip.install(godCard, tooltip);
     }
 
-    public void changeVisibility(GodName[] godsLeft, boolean disabled) {
-
-        godCard0.setDisable(true);
-        godCard1.setDisable(true);
-        godCard2.setDisable(true);
-
-        for(int k = 0; k < godsLeft.length; k++) {
-            for(int i = 0; i < allGods.length; i++) {
-
-                if(allGods[i].equals(godsLeft[k])) {
-                    String selector = "#godCard" + i;
-                    Node temp = mainPane.lookup(selector);
-                    temp.setDisable(disabled);
-                }
-            }
-        }
-
+    public void changeVisibility(boolean disabled) {
         if(disabled) {
             instruction.setText("Wait for " + guiManager.getData().getCurrentPlayer().getNickname() + "'s choice...");
         } else {
@@ -133,7 +119,7 @@ public class GodCardSelectionController extends GUIController {
             addImages(e.getGodsLeft());
         }
 
-        changeVisibility(e.getGodsLeft(), !e.getTargetPlayer().equals(GuiManager.getInstance().getData().getOwner()));
+        changeVisibility(!e.getTargetPlayer().equals(GuiManager.getInstance().getData().getOwner()));
     }
 
     @Override
