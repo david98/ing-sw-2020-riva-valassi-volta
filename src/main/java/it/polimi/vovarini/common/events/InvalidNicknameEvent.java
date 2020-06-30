@@ -14,6 +14,12 @@ public class InvalidNicknameEvent extends GameEvent {
   public static final int ERROR_DUPLICATE = 0;
   public static final int ERROR_INVALID = 1;
 
+  /**
+   * Builds an InvalidNicknameEvent
+   * @param source is the source object of the event
+   * @param errorCode is a code suggesting what kind of error has been made
+   * @param nickname is the invalid nickname
+   */
   public InvalidNicknameEvent(Object source, int errorCode, String nickname) {
     super(source);
     this.errorCode = errorCode;

@@ -15,9 +15,14 @@ import java.util.EventObject;
  */
 public abstract class GameEvent extends EventObject implements Serializable {
 
+  /**
+   * Builds a GameEvent
+   * @param source is the source object of the event
+   */
   public GameEvent(Object source) {
     super(source);
   }
+
 
   private void writeObject(final ObjectOutputStream out) throws IOException {
     out.defaultWriteObject();

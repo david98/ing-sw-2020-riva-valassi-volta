@@ -64,7 +64,7 @@ public class Board implements Serializable {
 
   /**
    * Computes and returns a list of all points within the board
-   * that are adjacent to p (d(point, p) <= 1).
+   * that are adjacent to p (d(point, p) is minor or equal to 1).
    *
    * @param p The base point.
    * @return A list containing all points adjacent to p.

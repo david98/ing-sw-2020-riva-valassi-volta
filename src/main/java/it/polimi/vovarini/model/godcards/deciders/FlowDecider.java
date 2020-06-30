@@ -27,6 +27,7 @@ public class FlowDecider extends Decider {
    * This method allows you to be in the Construction phase twice in a row, injecting the constraints connected to the player's GodCard
    *
    * @param gameData the gameData all players are currently playing
+   * @param skipIfPossible is a boolean value that is true if the Phase is skippable, false otherwise
    * @return Phase.Construction if you called the method while in your first Construction phase. Otherwise, whatever is the next phase
    * @author Mattia Valassi, Marco Riva
    */
@@ -115,6 +116,7 @@ public class FlowDecider extends Decider {
    * This method allows you to be in the Movement phase twice in a row, injecting the constraints connected to the player's GodCard
    *
    * @param gameData the gameData all players are currently playing
+   * @param skipIfPossible is a boolean value that is true if the Phase is skippable, false otherwise
    * @return Phase.Movement if you called the method while in your first Movement phase. Otherwise, whatever is the next phase
    * @author Mattia Valassi, Marco Riva
    */

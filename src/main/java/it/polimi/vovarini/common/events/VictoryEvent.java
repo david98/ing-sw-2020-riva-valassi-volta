@@ -13,7 +13,11 @@ public class VictoryEvent extends GameEvent {
 
   private final Player winningPlayer;
 
-
+  /**
+   * Builds a VictoryEvent
+   * @param source  is the source object of the event
+   * @param winningPlayer is the player who won
+   */
   public VictoryEvent(Object source, Player winningPlayer) {
     super(source);
     this.winningPlayer = winningPlayer;

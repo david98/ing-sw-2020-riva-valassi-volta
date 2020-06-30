@@ -12,6 +12,11 @@ public class ChangeWorkerEvent extends GameEvent {
 
   private final Worker workerToSelect;
 
+  /**
+   * Builds a ChangeWorkerEvent
+   * @param source is the source object of the event
+   * @param toSelect is the worker I want to select
+   */
   public ChangeWorkerEvent(Object source, Worker toSelect) {
     super(source);
     workerToSelect = toSelect;
