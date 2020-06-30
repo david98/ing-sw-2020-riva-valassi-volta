@@ -18,6 +18,7 @@ public class GodCardUpdateEvent extends GameEvent {
   /**
    * @param source The event source (it should be a {@link it.polimi.vovarini.model.Game} object.
    * @param owner  The player who owns the modified godCard.
+   * @param updatedCard The new card.
    */
   public GodCardUpdateEvent(Object source, GodCard updatedCard, Player owner) {
     super(source);

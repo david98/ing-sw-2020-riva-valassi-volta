@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * This class represents a single player involved in a game
+ * This class represents a player in a {@link Game}.
  */
 public class Player implements Serializable {
 

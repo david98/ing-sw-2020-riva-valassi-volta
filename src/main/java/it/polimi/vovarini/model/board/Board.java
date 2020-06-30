@@ -5,12 +5,9 @@ import it.polimi.vovarini.common.events.GameEventManager;
 import it.polimi.vovarini.common.exceptions.InvalidPositionException;
 import it.polimi.vovarini.common.exceptions.ItemNotFoundException;
 import it.polimi.vovarini.model.Point;
-import it.polimi.vovarini.model.board.items.Block;
 import it.polimi.vovarini.model.board.items.Item;
-import it.polimi.vovarini.model.board.items.Worker;
 
 import java.io.Serializable;
-import java.util.Deque;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;

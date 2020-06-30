@@ -3,19 +3,15 @@ package it.polimi.vovarini.model.godcards.deciders;
 import it.polimi.vovarini.common.events.GameEventManager;
 import it.polimi.vovarini.common.events.GodCardUpdateEvent;
 import it.polimi.vovarini.common.events.PlayerInfoUpdateEvent;
-import it.polimi.vovarini.common.events.WorkerSelectionEvent;
 import it.polimi.vovarini.common.exceptions.InvalidLevelException;
-import it.polimi.vovarini.common.exceptions.ItemNotFoundException;
 import it.polimi.vovarini.model.GameDataAccessor;
 import it.polimi.vovarini.model.Phase;
 import it.polimi.vovarini.model.Player;
 import it.polimi.vovarini.model.Point;
 import it.polimi.vovarini.model.board.items.Block;
-import it.polimi.vovarini.model.board.items.Sex;
 import it.polimi.vovarini.model.godcards.GodCard;
 import it.polimi.vovarini.model.moves.Construction;
 import it.polimi.vovarini.model.moves.Move;
-import it.polimi.vovarini.model.moves.Movement;
 
 /**
  * FlowDecider is an extension of Decider. It decides what is the next phase the player should be into,
@@ -175,6 +171,8 @@ public class FlowDecider extends Decider {
    * This method allows you to be in the Construction phase before and after the Movement phase, if certain conditions connected to the player's GodCard are verified
    *
    * @param gameData the gameData all players are currently playing
+   * @param skipIfPossible If the player wants to skip an optional phase even though
+   *                       they could perform a move.
    * @return Phase.Construction if you are in the Start Phase. Otherwise, whatever is the next phase
    * @author Mattia Valassi
    */
@@ -231,6 +229,8 @@ public class FlowDecider extends Decider {
    * This method allows you to apply a malus to the players following you, all during your End phase, if certain conditions connected to the player's GodCard are verified
    *
    * @param gameData the gameData all players are currently playing
+   * @param skipIfPossible If the player wants to skip an optional phase even though
+   *                        they could perform a move.
    * @return Whatever is the next phase
    * @author Mattia Valassi
    */

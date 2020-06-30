@@ -1,6 +1,8 @@
 package it.polimi.vovarini.view.gui.controllers;
 
-import it.polimi.vovarini.common.events.*;
+import it.polimi.vovarini.common.events.InvalidNicknameEvent;
+import it.polimi.vovarini.common.events.NewPlayerEvent;
+import it.polimi.vovarini.common.events.RegistrationEvent;
 import it.polimi.vovarini.model.Player;
 import it.polimi.vovarini.view.gui.GuiManager;
 import it.polimi.vovarini.view.gui.Settings;

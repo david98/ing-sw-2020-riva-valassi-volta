@@ -285,9 +285,11 @@ public class GodCard implements Serializable {
   }
 
   /**
-   * Function that computes the next phase of the current player's turn
+   * Computes the next phase based on the current game state.
    *
-   * @param gameData is the gameData all players are currently playing
+   * @param gameData An accessor for data pertaining to the game.
+   * @param skipIfPossible If the player wants to skip an optional phase even though
+   *                       they could perform a move.
    * @return the phase subsequent to the one currently in place
    */
   public Phase computeNextPhase(GameDataAccessor gameData, boolean skipIfPossible) {

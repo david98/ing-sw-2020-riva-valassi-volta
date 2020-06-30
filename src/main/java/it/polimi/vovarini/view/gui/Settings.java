@@ -4,7 +4,6 @@ import it.polimi.vovarini.model.board.items.Sex;
 import it.polimi.vovarini.model.godcards.GodName;
 import javafx.scene.image.Image;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 

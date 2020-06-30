@@ -3,7 +3,6 @@ package it.polimi.vovarini;
 import it.polimi.vovarini.common.network.server.Server;
 import it.polimi.vovarini.view.cli.GameView;
 import it.polimi.vovarini.view.gui.GuiManager;
-import it.polimi.vovarini.view.gui.Settings;
 import picocli.CommandLine;
 
 import java.io.IOException;

@@ -106,7 +106,11 @@ public class Game implements Serializable, GameDataAccessor {
     currentPlayerIndex = random.nextInt(players.length);
   }
 
-  // se è rimasta solo una carta, la assegna, altrimenti chiede al prossimo giocatore la carta che vuole (tra quelle rimaste)
+  /**
+   * Rotates the current player to the next one, then it either raises a {@link SelectYourCardEvent}
+   * if they still have to choose a god card or a {@link PlaceYourWorkersEvent} if the worker
+   * placement phase can start.
+   */
   public void setupGodCards() {
 
     nextPlayer();
@@ -127,6 +131,13 @@ public class Game implements Serializable, GameDataAccessor {
     }
   }
 
+  /**
+   * Executes the given movement on this game, raising a {@link PlayerInfoUpdateEvent} to add the move
+   * to the list on the {@link Player} class.
+   *
+   * If this move leads to a win for the current player, this method also raises a {@link VictoryEvent}.
+   * @param move The movement to be performed.
+   */
   public void performMove(Movement move) {
 
     undoneMoves.clear();
@@ -150,6 +161,12 @@ public class Game implements Serializable, GameDataAccessor {
 
   }
 
+  /**
+   * Executes the given construction on this game, raising a {@link PlayerInfoUpdateEvent} to add the move
+   * to the list on the {@link Player} class.
+   *
+   * @param move The construction move to be performed.
+   */
   public void performMove(Construction move) {
 
     undoneMoves.clear();
@@ -187,6 +204,9 @@ public class Game implements Serializable, GameDataAccessor {
     this.availableGodCards = availableGodCards;
   }
 
+  /**
+   * Rotates the current player to the next one, then raises a {@link CurrentPlayerChangedEvent}.
+   */
   public void nextPlayer() {
     currentPlayerIndex = (currentPlayerIndex + 1) % players.length;
     getCurrentPlayer().setWorkerSelected(false);
@@ -242,9 +262,18 @@ public class Game implements Serializable, GameDataAccessor {
     players = newPlayersArray;
   }
 
+  /**
+   * Sets the current phase to the given one, then raises a {@link PhaseUpdateEvent}.
+   *
+   * If the current player can't perform any move in the new phase, if only one other player is left,
+   * it raises a {@link VictoryEvent}, otherwise it uses {@link Player#setHasLost(boolean)} to
+   * signal the player loss.
+   *
+   * @param phase The desired new phase.
+   */
   public void setCurrentPhase(Phase phase) {
     this.currentPhase = phase;
-    GameEventManager.raise(new PhaseUpdateEvent(this, phase));
+    GameEventManager.raise(new PhaseUpdateEvent(this, currentPhase));
     Player lastPlayer = getCurrentPlayer();
     boolean lost = currentPlayerHasLost();
     if (lost) {
@@ -274,16 +303,9 @@ public class Game implements Serializable, GameDataAccessor {
     }
   }
 
-  public void redoMove() {
-    try {
-      Move move = undoneMoves.pop().reverse();
-      moves.push(move);
-      move.execute();
-    } catch (EmptyStackException ignored) {
-
-    }
-  }
-
+  /**
+   * Starts the game and raises a {@link GameStartEvent}.
+   */
   public void start() {
     setupComplete = true;
     for (Player p : players) {

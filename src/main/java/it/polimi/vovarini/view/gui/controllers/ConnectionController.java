@@ -1,19 +1,14 @@
 package it.polimi.vovarini.view.gui.controllers;
 
-import it.polimi.vovarini.common.events.FirstPlayerEvent;
-import it.polimi.vovarini.common.events.NewPlayerEvent;
-import it.polimi.vovarini.common.events.NumberOfPlayersChoiceEvent;
-import it.polimi.vovarini.model.Game;
 import it.polimi.vovarini.view.gui.GuiManager;
-import it.polimi.vovarini.view.gui.Settings;
-import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 
 import java.io.IOException;
-import java.util.stream.IntStream;
 
 public class ConnectionController extends GUIController {
 

@@ -2,7 +2,6 @@ package it.polimi.vovarini.view.gui.controllers;
 
 import it.polimi.vovarini.common.events.*;
 import it.polimi.vovarini.view.EventsForViewListener;
-import it.polimi.vovarini.view.gui.GuiManager;
 import javafx.fxml.FXML;
 import javafx.scene.layout.BorderPane;
 
