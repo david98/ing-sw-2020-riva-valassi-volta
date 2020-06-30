@@ -146,7 +146,7 @@ public class FlowDecider extends Decider {
                     case Artemis:
                         if (size == 0) {
                             return Phase.Movement;
-                        } else if (size == 1) {
+                        } else if (size == 1 && gameData.getCurrentPlayer().getGodCard().computeReachablePoints().size() >1) {
                             currentPlayerGodCard.getMovementConstraints().add(ReachabilityDecider::previousBoxDenied);
                             GameEventManager.raise(new GodCardUpdateEvent(gameData, currentPlayerGodCard, gameData.getCurrentPlayer()));
                             return Phase.Movement;
