@@ -13,8 +13,11 @@ import it.polimi.vovarini.view.gui.Settings;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
+import javafx.scene.control.Tooltip;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
+
+import java.util.Arrays;
 
 public class GodCardSelectionController extends GUIController {
 
@@ -60,6 +63,10 @@ public class GodCardSelectionController extends GUIController {
         godCard0.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> onCardButtonClick(0));
         godCard1.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> onCardButtonClick(1));
         godCard2.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> onCardButtonClick(2));
+
+        godCard0.addEventHandler(MouseEvent.MOUSE_ENTERED, event -> onMouseEntered(godCard0, 0));
+        godCard1.addEventHandler(MouseEvent.MOUSE_ENTERED, event -> onMouseEntered(godCard1, 1));
+        godCard2.addEventHandler(MouseEvent.MOUSE_ENTERED, event -> onMouseEntered(godCard2, 2));
     }
 
     /**
@@ -73,6 +80,13 @@ public class GodCardSelectionController extends GUIController {
 
         GameEvent evt = new CardChoiceEvent(guiManager.getData().getOwner(), allGods[cardChosen]);
         guiManager.getClient().raise(evt);
+    }
+
+    private void onMouseEntered(ImageView godCard, int i) {
+        GodName[] godNames = Arrays.stream(GodName.values()).filter(name -> name != GodName.Nobody).toArray(GodName[]::new);
+        Tooltip tooltip = new Tooltip();
+        tooltip.setText(Settings.descriptions.get(godNames[i]));
+        Tooltip.install(godCard, tooltip);
     }
 
     public void changeVisibility(GodName[] godsLeft, boolean disabled) {
