@@ -150,9 +150,13 @@ public class GameController extends GUIController {
 
     private void onGodCardEntered(ImageView godCard, int i) {
         GodName[] godNames = Arrays.stream(GodName.values()).filter(name -> name != GodName.Nobody).toArray(GodName[]::new);
-        Tooltip tooltip = new Tooltip();
-        tooltip.setText(Settings.descriptions.get(godNames[i]));
-        Tooltip.install(godCard, tooltip);
+        for(int k = 0; k < godNames.length; k++) {
+            if(godNames[k].equals(guiManager.getData().getPlayers()[i].getGodCard().getName())) {
+                Tooltip tooltip = new Tooltip();
+                tooltip.setText(Settings.descriptions.get(godNames[k]));
+                Tooltip.install(godCard, tooltip);
+            }
+        }
     }
 
     private void highlightPoints(Collection<Point> points) {
@@ -198,6 +202,12 @@ public class GameController extends GUIController {
 
             godCard.setImage(Settings.godImages.get(players[i].getGodCard().getName()));
 
+            selector = "#worker" + i + "M";
+            ImageView worker = (ImageView) mainPane.lookup(selector);
+            worker.setImage(Settings.workersImages[i].get(Sex.Male));
+            selector = "#worker" + i + "F";
+            worker = (ImageView) mainPane.lookup(selector);
+            worker.setImage(Settings.workersImages[i].get(Sex.Female));
         }
 
         Board b = guiManager.getData().getBoard();
@@ -464,6 +474,7 @@ public class GameController extends GUIController {
         } else {
             ImageView loss = new ImageView(Settings.loss);
             popup.getContent().add(loss);
+            GuiManager.playBackgroundSound("bgm/loss.wav", true);
         }
 
         popup.setAutoHide(true);

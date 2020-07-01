@@ -63,7 +63,7 @@
 
 .player {
     -fx-font-family: "Romanica";
-    -fx-font-size: 30px;
+    -fx-font-size: 25px;
     -fx-text-fill: #2786D1;
     -fx-effect: innershadow(gaussian, #000000, 1, 0.2, 0, 0);
 }
@@ -95,7 +95,7 @@
 }
 
 .playersBox {
-    -fx-min-width: 1000px;
+    -fx-min-width: 1100px;
     -fx-max-width: 1500px;
     -fx-padding: 10 10 10 10;
     -fx-spacing: 20;

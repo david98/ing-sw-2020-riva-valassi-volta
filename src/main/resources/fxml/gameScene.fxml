@@ -105,11 +105,29 @@
 
     <bottom>
         <HBox styleClass="playersBox">
-            <Label fx:id="player0" styleClass="player" wrapText="true" />
+            <VBox>
+                <Label fx:id="player0" styleClass="player" />
+                <HBox>
+                    <ImageView fx:id="worker0M" fitHeight="75" fitWidth="75" />
+                    <ImageView fx:id="worker0F" fitHeight="75" fitWidth="75" />
+                </HBox>
+            </VBox>
             <ImageView fx:id="godCard0" fitHeight="168.0" fitWidth="100.0" styleClass="godCard" />
-            <Label fx:id="player1" styleClass="player" wrapText="true" />
+            <VBox>
+                <Label fx:id="player1" styleClass="player" />
+                <HBox>
+                    <ImageView fx:id="worker1M" fitHeight="75" fitWidth="75" />
+                    <ImageView fx:id="worker1F" fitHeight="75" fitWidth="75" />
+                </HBox>
+            </VBox>
             <ImageView fx:id="godCard1" fitHeight="168.0" fitWidth="100.0" styleClass="godCard" />
-            <Label fx:id="player2" styleClass="player" wrapText="true" />
+            <VBox>
+                <Label fx:id="player2" styleClass="player" />
+                <HBox>
+                    <ImageView fx:id="worker2M" fitHeight="75" fitWidth="75" />
+                    <ImageView fx:id="worker2F" fitHeight="75" fitWidth="75" />
+                </HBox>
+            </VBox>
             <ImageView fx:id="godCard2" fitHeight="168.0" fitWidth="100.0" styleClass="godCard" />
          <VBox styleClass="phaseBox">
             <children>

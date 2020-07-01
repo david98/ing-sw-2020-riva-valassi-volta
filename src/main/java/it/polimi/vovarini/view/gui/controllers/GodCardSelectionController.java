@@ -86,9 +86,13 @@ public class GodCardSelectionController extends GUIController {
 
     private void onMouseEntered(ImageView godCard, int i) {
         GodName[] godNames = Arrays.stream(GodName.values()).filter(name -> name != GodName.Nobody).toArray(GodName[]::new);
-        Tooltip tooltip = new Tooltip();
-        tooltip.setText(Settings.descriptions.get(godNames[i]));
-        Tooltip.install(godCard, tooltip);
+        for(int k = 0; k < godNames.length; k++) {
+            if(godNames[k].equals(allGods[i])) {
+                Tooltip tooltip = new Tooltip();
+                tooltip.setText(Settings.descriptions.get(godNames[k]));
+                Tooltip.install(godCard, tooltip);
+            }
+        }
     }
 
     public void changeVisibility(boolean disabled) {
