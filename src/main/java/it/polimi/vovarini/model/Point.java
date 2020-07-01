@@ -92,10 +92,20 @@ public class Point implements Serializable {
     return x * 17 + y;
   }
 
+  /**
+   * This method returns a random point in the board
+   * @param xBound the maximum value of the x coordinate
+   * @param yBound the maximum value of the y coordinate
+   * @return a random point in the board respecting the bounds passed as parameters
+   */
   public static Point random(int xBound, int yBound) {
     return new Point(random.nextInt(xBound), random.nextInt(yBound));
   }
 
+  /**
+   * This method checks if a point is part of the perimeter of the board
+   * @return true if the point is a part of the perimeter, false otherwise
+   */
   public boolean isPerimeterSpace() {
     return x == 0 || x == Board.DEFAULT_SIZE - 1 || y == 0 || y == Board.DEFAULT_SIZE - 1;
   }

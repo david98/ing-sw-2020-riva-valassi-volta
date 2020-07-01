@@ -76,6 +76,10 @@ public class Server implements Runnable {
     pool = Executors.newFixedThreadPool(nThreads);
   }
 
+  /**
+   * Initialization of the Server
+   * @param numberOfPlayers the number of players selected to take part in the Game from the first client connected
+   */
   private void init(int numberOfPlayers) {
     try {
       game = new Game(numberOfPlayers);
@@ -86,6 +90,9 @@ public class Server implements Runnable {
     }
   }
 
+  /**
+   * Runs the instance of this Server
+   */
   public void run() {
     LOGGER.log(Level.INFO, "Server is now listening on port {0}.", serverSocket.getLocalPort());
     while (!Thread.currentThread().isInterrupted()) {
@@ -97,6 +104,9 @@ public class Server implements Runnable {
     }
   }
 
+  /**
+   * Accepts a new client that tries a connection
+   */
   private void acceptNewClient() {
     try {
       Socket clientSocket = serverSocket.accept();

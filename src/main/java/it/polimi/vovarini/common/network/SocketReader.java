@@ -36,6 +36,9 @@ public class SocketReader<T> implements Runnable {
     this.objClass = objClass;
   }
 
+  /**
+   * Runs the instance of this SocketReader
+   */
   public void run() {
     while (!Thread.currentThread().isInterrupted()) {
       try {

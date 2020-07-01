@@ -36,6 +36,9 @@ public class GuiManager extends View {
   private GuiEventListener guiEventListener;
   private Thread guiEventListenerThread;
 
+  /**
+   * Builds a new GuiManager
+   */
   private GuiManager() {
     super();
 
@@ -46,11 +49,16 @@ public class GuiManager extends View {
     placeWorkersStarted = false;
   }
 
+  /**
+   * Getter method for the instance of this GuiManager
+   * @return the instance of this GuiManager
+   */
   public static GuiManager getInstance() {
     if (instance == null)
       instance = new GuiManager();
     return instance;
   }
+
 
   @Override
   @GameEventListener
@@ -193,6 +201,9 @@ public class GuiManager extends View {
     });
   }
 
+  /**
+   * Sets up the application launching the GUI and then loading its settings
+   */
   public void gameSetup() {
     javafx.application.Application.launch(Gui.class);
     Settings.load();
@@ -230,6 +241,12 @@ public class GuiManager extends View {
     }
   }
 
+  /**
+   * Sets up a connection between the client and this GUIManager instance
+   * @param serverIP is the ip of Santorini's server, selected by the client
+   * @param serverPort is the port of Santorini's server, selected by the client
+   * @throws IOException if the name/port are illegal values
+   */
   public void createConnection(String serverIP, int serverPort) throws IOException {
     client = new GameClient(serverIP, serverPort);
     guiEventListener = new GuiEventListener(client);
@@ -271,6 +288,9 @@ public class GuiManager extends View {
     return currentController;
   }
 
+  /**
+   * Stops the GuiEventListener from listening and interrupts the associated thread
+   */
   public void stopEventListener() {
     if (guiEventListenerThread != null) {
       guiEventListener.stop();
@@ -278,6 +298,12 @@ public class GuiManager extends View {
     }
   }
 
+  /**
+   * Plays the game's music
+   * @param fileName the path of the audio file
+   * @param looping is a flag to set true if you want the audio to loop once it has ended
+   * @param <MediaPlayer>
+   */
   public static <MediaPlayer> void playBackgroundSound(String fileName, boolean looping) {
     if (currentPlayer != null) {
       stopBackgroundSound();
@@ -296,10 +322,17 @@ public class GuiManager extends View {
     }
   }
 
+  /**
+   * This method checks if the game's audio is playing
+   * @return true if the game's audio is playing, false otherwise
+   */
   public static boolean isPlayingBackground() {
     return currentPlayer != null && currentPlayer.getStatus().equals(MediaPlayer.Status.PLAYING);
   }
 
+  /**
+   * This method stop the game's audio
+   */
   public static void stopBackgroundSound() {
     currentPlayer.stop();
   }
