@@ -2,6 +2,7 @@ package it.polimi.vovarini.controller;
 
 import it.polimi.vovarini.common.events.*;
 import it.polimi.vovarini.common.exceptions.*;
+import it.polimi.vovarini.common.network.server.Server;
 import it.polimi.vovarini.model.Game;
 import it.polimi.vovarini.model.Phase;
 import it.polimi.vovarini.model.Player;
@@ -20,6 +21,8 @@ import java.util.Arrays;
 import java.util.EventListener;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Class that represents the Controller concept of the MVC pattern. Acts as a Listener to events triggered from the View, and updates the Model about it, notifying him
@@ -29,6 +32,8 @@ import java.util.List;
  * @author Marco Riva
  */
 public class Controller implements EventListener {
+
+  private static final Logger LOGGER = Logger.getLogger(Server.class.getName());
 
   private final Game game;
 
@@ -55,12 +60,14 @@ public class Controller implements EventListener {
     for (Player player : game.getPlayers()) {
       if (player == null) break;
       if (player.getNickname().equalsIgnoreCase(evt.getNickname())) {
+        LOGGER.log(Level.INFO, "Raising InvalidNicknameEvent due to a duplication.");
         GameEventManager.raise(new InvalidNicknameEvent(game, InvalidNicknameEvent.ERROR_DUPLICATE, evt.getNickname()));
         return;
       }
     }
 
     if (!Player.validateNickname(evt.getNickname())) {
+      LOGGER.log(Level.SEVERE, "Raising InvalidNicknameEvent due to an invalid nickname.");
       GameEventManager.raise(new InvalidNicknameEvent(game, InvalidNicknameEvent.ERROR_INVALID, evt.getNickname()));
       return;
     }
