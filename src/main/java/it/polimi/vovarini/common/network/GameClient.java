@@ -10,6 +10,10 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
 
+/**
+ * This class is used by a client to communicate with the server
+ * through the use of {@link GameEvent} objects.
+ */
 public class GameClient {
 
   private BlockingQueue<GameEvent> clientEvents;
@@ -19,6 +23,13 @@ public class GameClient {
 
   private final ExecutorService pool;
 
+  /**
+   * Creates a client which connects to the given IP address and port.
+   *
+   * @param ip   The server IPV4 address.
+   * @param port The server port.
+   * @throws IOException If an error occurs during the socket creation.
+   */
   public GameClient(String ip, int port) throws IOException {
     socket = new Socket(ip, port);
     socket.setSoTimeout(1000);
@@ -28,19 +39,27 @@ public class GameClient {
     serverEvents = new LinkedBlockingQueue<>();
 
     pool = Executors.newFixedThreadPool(2);
-    pool.execute(new SocketWriter<>(socket, clientEvents, GameEvent.class));
+    pool.execute(new SocketWriter<>(socket, clientEvents));
     pool.execute(new SocketReader<>(socket, serverEvents, GameEvent.class));
   }
 
+  /**
+   * Sends an event to the server.
+   *
+   * @param evt The event to send.
+   */
   public void raise(GameEvent evt) {
     clientEvents.add(evt);
   }
 
+  /**
+   * @return A queue containing events received from the server.
+   */
   public BlockingQueue<GameEvent> getServerEvents() {
     return serverEvents;
   }
 
-  public String getIPv4Address(){
+  public String getIPv4Address() {
     return socket.getLocalAddress().getHostAddress();
   }
 

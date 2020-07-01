@@ -15,7 +15,13 @@ public class CardAssignmentEvent extends GameEvent {
   private final Player targetPlayer;
   private final GodCard assignedCard;
 
-  public CardAssignmentEvent(Object source, Player targetPlayer, GodCard assignedCard){
+  /**
+   * Builds a CardAssignmentEvent
+   * @param source is the source object of the event
+   * @param targetPlayer is the Player who chose the card
+   * @param assignedCard is the card the Player chose
+   */
+  public CardAssignmentEvent(Object source, Player targetPlayer, GodCard assignedCard) {
     super(source);
     this.targetPlayer = targetPlayer;
     this.assignedCard = assignedCard;

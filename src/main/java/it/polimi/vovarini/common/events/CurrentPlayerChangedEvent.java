@@ -9,16 +9,15 @@ import it.polimi.vovarini.model.Player;
  * @version 0.1
  * @since 0.1
  */
-public class CurrentPlayerChangedEvent extends GameEvent{
+public class CurrentPlayerChangedEvent extends GameEvent {
 
   private Player newPlayer;
 
   /**
-   *
-   * @param source The event source (it should be a {@link it.polimi.vovarini.model.Game} object).
+   * @param source    The event source (it should be a {@link it.polimi.vovarini.model.Game} object).
    * @param newPlayer The new current player.
    */
-  public CurrentPlayerChangedEvent(Object source, Player newPlayer){
+  public CurrentPlayerChangedEvent(Object source, Player newPlayer) {
     super(source);
     this.newPlayer = newPlayer;
   }

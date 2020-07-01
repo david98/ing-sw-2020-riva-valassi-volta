@@ -6,7 +6,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
-import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.*;
 import java.net.ConnectException;
@@ -15,6 +14,9 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
 
 public class CommonTests {
 
@@ -28,14 +30,14 @@ public class CommonTests {
   void serializationAndDeserialization(GodName name) throws IOException, ClassNotFoundException {
     GodCard godCard = GodCardFactory.create(name);
 
-    try(FileOutputStream os=new FileOutputStream(f);
-        ObjectOutputStream oos = new ObjectOutputStream(os)) {
+    try (FileOutputStream os = new FileOutputStream(f);
+         ObjectOutputStream oos = new ObjectOutputStream(os)) {
       oos.writeObject(godCard);
     }
     System.out.println("Written to " + f);
 
-    try(FileInputStream is=new FileInputStream(f);
-        ObjectInputStream ois=new ObjectInputStream(is)) {
+    try (FileInputStream is = new FileInputStream(f);
+         ObjectInputStream ois = new ObjectInputStream(is)) {
       GodCard cardRead = (GodCard) ois.readObject();
       assertEquals(godCard, cardRead);
     }
@@ -48,7 +50,7 @@ public class CommonTests {
   @DisplayName("Tests that a GodCard clone can be serialized and deserialized over a socket")
   void serializationAndDeserializationSocket() throws IOException, ClassNotFoundException {
     pool.execute(() -> {
-      try{
+      try {
         GodCard nb = GodCardFactory.create(GodName.Nobody);
         ServerSocket serverSocket = new ServerSocket(Server.DEFAULT_PORT);
         Socket clientSocket = serverSocket.accept();
@@ -63,11 +65,11 @@ public class CommonTests {
     });
     int count = 0;
     int maxTries = 10;
-    while(true) {
+    while (true) {
       try {
         Socket socket = new Socket("127.0.0.1", Server.DEFAULT_PORT);
 
-        try(ObjectInputStream ois = new ObjectInputStream(socket.getInputStream())) {
+        try (ObjectInputStream ois = new ObjectInputStream(socket.getInputStream())) {
           Object obj = ois.readObject();
           GodCard nb = (GodCard) obj;
         }
@@ -82,7 +84,7 @@ public class CommonTests {
   @ParameterizedTest
   @EnumSource(GodName.class)
   @DisplayName("Test that equals works")
-  void testEquals(GodName name){
+  void testEquals(GodName name) {
     GodCard card = GodCardFactory.create(name);
     assertEquals(card, card);
   }
@@ -90,7 +92,7 @@ public class CommonTests {
   @ParameterizedTest
   @EnumSource(GodName.class)
   @DisplayName("Test that hashCode works")
-  void testHashCode(GodName name){
+  void testHashCode(GodName name) {
     GodCard original = GodCardFactory.create(name);
     GodCard clone = GodCardFactory.clone(original);
 
@@ -102,7 +104,7 @@ public class CommonTests {
   @ParameterizedTest
   @EnumSource(GodName.class)
   @DisplayName("Test that clone works and produces two GodCard that are equal but not the same object")
-  void testClone(GodName name){
+  void testClone(GodName name) {
     GodCard original = GodCardFactory.create(name);
     GodCard clone = GodCardFactory.clone(original);
 

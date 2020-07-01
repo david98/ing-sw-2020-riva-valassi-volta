@@ -17,9 +17,8 @@ public class MovementEvent extends GameEvent {
   private final Point end;
 
   /**
-   *
    * @param source The event source, it should be a {@link it.polimi.vovarini.model.Player} object.
-   * @param end Where the current {@link it.polimi.vovarini.model.board.items.Worker} should be moved to.
+   * @param end    Where the current {@link it.polimi.vovarini.model.board.items.Worker} should be moved to.
    */
   public MovementEvent(Object source, Point end) {
     super(source);

@@ -15,9 +15,15 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class RemoteView extends View implements ClientConnectionHandler {
+/**
+ * This class represents a client on the server.
+ * Its role is to handle communication between the client and the server.
+ *
+ * @author Davide Volta
+ */
+public class RemoteView extends View implements Runnable {
 
-  private static final Logger LOGGER = Logger.getLogger( Server.class.getName() );
+  private static final Logger LOGGER = Logger.getLogger(Server.class.getName());
 
   private final BlockingQueue<GameEvent> clientEvents;
   private final BlockingQueue<GameEvent> serverEvents;
@@ -26,6 +32,12 @@ public class RemoteView extends View implements ClientConnectionHandler {
 
   private final ExecutorService pool;
 
+  /**
+   * Constructs a RemoteView for the given client.
+   *
+   * @param clientSocket An active socket connected with the client.
+   * @throws IOException If I/O streams can't be created.
+   */
   public RemoteView(Socket clientSocket) throws IOException {
     super();
     this.clientSocket = clientSocket;
@@ -38,20 +50,20 @@ public class RemoteView extends View implements ClientConnectionHandler {
       t.setUncaughtExceptionHandler(Server::handleUncaughtExceptions);
       return t;
     });
-    pool.execute(new SocketWriter<>(clientSocket, serverEvents, GameEvent.class));
+    pool.execute(new SocketWriter<>(clientSocket, serverEvents));
     pool.execute(new SocketReader<>(clientSocket, clientEvents, GameEvent.class));
   }
 
   @Override
   public void run() {
-    while (!Thread.currentThread().isInterrupted()){
+    while (!Thread.currentThread().isInterrupted()) {
       try {
         GameEvent evt = clientEvents.take();
         if (evt instanceof RegistrationEvent) { // oh yeah instanceof
           handleRegistrationEvent((RegistrationEvent) evt);
         }
         GameEventManager.raise(evt);
-      } catch (InterruptedException ignored){
+      } catch (InterruptedException ignored) {
         Thread.currentThread().interrupt();
       }
     }
@@ -59,29 +71,29 @@ public class RemoteView extends View implements ClientConnectionHandler {
 
   @Override
   @GameEventListener
-  public void handleBoardUpdate(BoardUpdateEvent e) {
+  public void handle(BoardUpdateEvent e) {
     data.setBoard(e.getNewBoard());
     serverEvents.add(e);
   }
 
   @Override
   @GameEventListener
-  public void handleCurrentPlayerUpdate(CurrentPlayerChangedEvent e) {
+  public void handle(CurrentPlayerChangedEvent e) {
     data.setCurrentPlayer(e.getNewPlayer());
     serverEvents.add(e);
   }
 
   @Override
   @GameEventListener
-  public void handlePhaseUpdate(PhaseUpdateEvent e) {
+  public void handle(PhaseUpdateEvent e) {
     data.setCurrentPhase(e.getNewPhase());
     serverEvents.add(e);
   }
 
   @Override
   @GameEventListener
-  public void handleGameStart(GameStartEvent e) {
-    for (Player p: e.getPlayers()){
+  public void handle(GameStartEvent e) {
+    for (Player p : e.getPlayers()) {
       data.addPlayer(p);
     }
     serverEvents.add(e);
@@ -89,86 +101,95 @@ public class RemoteView extends View implements ClientConnectionHandler {
 
   @Override
   @GameEventListener
-  public void handleNewPlayer(NewPlayerEvent e) {
-    super.handleNewPlayer(e);
+  public void handle(NewPlayerEvent e) {
+    super.handle(e);
     serverEvents.add(e);
   }
 
   @Override
   @GameEventListener
-  public void handleGodSelectionStart(GodSelectionStartEvent e) {
+  public void handle(GodSelectionStartEvent e) {
     serverEvents.add(e);
   }
 
   @Override
   @GameEventListener
-  public void handleSelectYourCard(SelectYourCardEvent e) {
+  public void handle(SelectYourCardEvent e) {
     serverEvents.add(e);
   }
 
   @Override
   @GameEventListener
-  public void handleCardAssignment(CardAssignmentEvent e) {
+  public void handle(CardAssignmentEvent e) {
     serverEvents.add(e);
   }
 
 
   @Override
   @GameEventListener
-  public void handlePlaceYourWorkers(PlaceYourWorkersEvent e) {
+  public void handle(PlaceYourWorkersEvent e) {
     serverEvents.add(e);
   }
 
   @Override
   @GameEventListener
-  public void handlePlayerInfoUpdate(PlayerInfoUpdateEvent e) {
-    super.handlePlayerInfoUpdate(e);
+  public void handle(PlayerInfoUpdateEvent e) {
+    super.handle(e);
     serverEvents.add(e);
   }
 
   @Override
   @GameEventListener
-  public void handleGodCardUpdate(GodCardUpdateEvent e) {
-    super.handleGodCardUpdate(e);
+  public void handle(GodCardUpdateEvent e) {
+    super.handle(e);
     serverEvents.add(e);
   }
 
+  /**
+   * Handles the RegistrationEvent which has been raised by the client.
+   *
+   * @param e A RegistrationEvent.
+   */
   public void handleRegistrationEvent(RegistrationEvent e) {
     data.setOwner(new Player(e.getNickname()));
   }
 
   @Override
   @GameEventListener
-  public void handleVictory(VictoryEvent e) { serverEvents.add(e); }
+  public void handle(VictoryEvent e) {
+    serverEvents.add(e);
+  }
 
   @Override
   @GameEventListener
-  public void handleLoss(LossEvent e) { serverEvents.add(e); }
+  public void handle(LossEvent e) {
+    serverEvents.add(e);
+  }
 
   @Override
   @GameEventListener
-  public void handleAbruptEnd(AbruptEndEvent e) {
+  public void handle(AbruptEndEvent e) {
     LOGGER.log(Level.INFO, "AbruptEndEvent forwarded to client.");
     serverEvents.add(e);
   }
 
   @Override
   @GameEventListener
-  public void handleFirstPlayer(FirstPlayerEvent e) {
+  public void handle(FirstPlayerEvent e) {
     LOGGER.log(Level.INFO, "FirstPlayerEvent forwarded to client.");
     serverEvents.add(e);
   }
 
   @Override
   @GameEventListener
-  public void handleRegistrationStart(RegistrationStartEvent e) {
+  public void handle(RegistrationStartEvent e) {
     LOGGER.log(Level.INFO, "RegistrationStartEvent forwarded to client.");
     serverEvents.add(e);
   }
 
   @Override
   @GameEventListener
-  public void handleInvalidNickname(InvalidNicknameEvent e) {
+  public void handle(InvalidNicknameEvent e) {
     serverEvents.add(e);
   }
 }

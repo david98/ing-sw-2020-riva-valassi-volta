@@ -2,17 +2,18 @@ package it.polimi.vovarini.controller;
 
 import it.polimi.vovarini.common.events.*;
 import it.polimi.vovarini.common.exceptions.*;
-import it.polimi.vovarini.model.*;
+import it.polimi.vovarini.model.Game;
+import it.polimi.vovarini.model.Phase;
+import it.polimi.vovarini.model.Player;
+import it.polimi.vovarini.model.Point;
 import it.polimi.vovarini.model.board.Board;
 import it.polimi.vovarini.model.board.items.Block;
 import it.polimi.vovarini.model.board.items.Sex;
 import it.polimi.vovarini.model.godcards.GodCard;
 import it.polimi.vovarini.model.godcards.GodCardFactory;
 import it.polimi.vovarini.model.godcards.GodName;
-import it.polimi.vovarini.model.moves.Construction;
 import it.polimi.vovarini.model.moves.Movement;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -31,7 +32,7 @@ public class ControllerTests {
 
   private GameEvent lastEvent;
 
-  private static List<Phase> provideAllPhases(){
+  private static List<Phase> provideAllPhases() {
     return Arrays.asList(Phase.values());
   }
 
@@ -105,14 +106,16 @@ public class ControllerTests {
   void cardChoiceTest() {
 
     var evtCardsNotSelected = new CardChoiceEvent(game.getCurrentPlayer(), GodName.Artemis);
-    assertThrows(CardsNotSelectedException.class, () -> { controller.update(evtCardsNotSelected); });
+    assertThrows(CardsNotSelectedException.class, () -> {
+      controller.update(evtCardsNotSelected);
+    });
 
     game.drawElectedPlayer();
 
     Player electedPlayer = game.getCurrentPlayer();
     Player otherPlayer;
 
-    if(game.getPlayers()[0].equals(electedPlayer))
+    if (game.getPlayers()[0].equals(electedPlayer))
       otherPlayer = game.getPlayers()[1];
     else
       otherPlayer = game.getPlayers()[0];
@@ -121,19 +124,27 @@ public class ControllerTests {
 
     GodName[] selectedGods = new GodName[]{GodName.Artemis, GodName.Hephaestus};
     var evtWrongPlayer = new AvailableCardsEvent(otherPlayer, selectedGods);
-    assertThrows(WrongPlayerException.class, () -> { controller.update(evtWrongPlayer); });
+    assertThrows(WrongPlayerException.class, () -> {
+      controller.update(evtWrongPlayer);
+    });
 
     selectedGods = new GodName[]{GodName.Artemis};
     AvailableCardsEvent evtInvalidNumberOfGodCards = new AvailableCardsEvent(electedPlayer, selectedGods);
-    assertThrows(InvalidNumberOfGodCardsException.class, () -> { controller.update(evtInvalidNumberOfGodCards); });
+    assertThrows(InvalidNumberOfGodCardsException.class, () -> {
+      controller.update(evtInvalidNumberOfGodCards);
+    });
 
     selectedGods = new GodName[]{GodName.Artemis, null};
     AvailableCardsEvent evtInvalidGodCard = new AvailableCardsEvent(electedPlayer, selectedGods);
-    assertThrows(InvalidCardException.class, () -> { controller.update(evtInvalidGodCard); });
+    assertThrows(InvalidCardException.class, () -> {
+      controller.update(evtInvalidGodCard);
+    });
 
     selectedGods = new GodName[]{GodName.Artemis, GodName.Artemis};
     AvailableCardsEvent evtDuplicateGodCard = new AvailableCardsEvent(electedPlayer, selectedGods);
-    assertThrows(InvalidCardException.class, () -> { controller.update(evtDuplicateGodCard); });
+    assertThrows(InvalidCardException.class, () -> {
+      controller.update(evtDuplicateGodCard);
+    });
 
     selectedGods = new GodName[]{GodName.Artemis, GodName.Hephaestus};
     AvailableCardsEvent evt = new AvailableCardsEvent(electedPlayer, selectedGods);
@@ -154,17 +165,23 @@ public class ControllerTests {
     assertEquals(selectedGods, game.getAvailableGodCards());
     assertEquals(otherPlayer, game.getCurrentPlayer());
 
-    assertThrows(AvailableCardsAlreadySetException.class, () -> { controller.update(evt); });
+    assertThrows(AvailableCardsAlreadySetException.class, () -> {
+      controller.update(evt);
+    });
 
 
     // scelta della propria carta
     GodName choice = GodName.Artemis;
     CardChoiceEvent evtInvalidPlayer = new CardChoiceEvent(electedPlayer, choice);
-    assertThrows(WrongPlayerException.class, () -> { controller.update(evtInvalidPlayer); });
+    assertThrows(WrongPlayerException.class, () -> {
+      controller.update(evtInvalidPlayer);
+    });
 
     choice = GodName.Minotaur;
     CardChoiceEvent evtInvalidCard = new CardChoiceEvent(otherPlayer, choice);
-    assertThrows(InvalidCardException.class, () -> { controller.update(evtInvalidCard); });
+    assertThrows(InvalidCardException.class, () -> {
+      controller.update(evtInvalidCard);
+    });
 
     choice = GodName.Artemis;
     CardChoiceEvent evtValid = new CardChoiceEvent(otherPlayer, choice);
@@ -339,7 +356,7 @@ public class ControllerTests {
 
     game.setCurrentPhase(game.getCurrentPlayer().getGodCard().computeNextPhase(game));
     // movimento fittizio altrimenti non mi fa skippare
-    game.getCurrentPlayer().getMovementList().add(new Movement(game.getBoard(), new Point(0,0), new Point(1,1)));
+    game.getCurrentPlayer().getMovementList().add(new Movement(game.getBoard(), new Point(0, 0), new Point(1, 1)));
     game.setCurrentPhase(game.getCurrentPlayer().getGodCard().computeNextPhase(game));
 
     assertEquals(Phase.Construction, game.getCurrentPhase());
@@ -357,7 +374,7 @@ public class ControllerTests {
     }
 
 
-    assertEquals(game.getBoard().getItems(target).peek(), Block.blocks[level - 1]);
+    assertEquals(game.getBoard().getBox(target).getItems().peek(), Block.blocks[level - 1]);
 
 
     assertFalse(game.getCurrentPlayer().getConstructionList().isEmpty());
@@ -444,12 +461,11 @@ public class ControllerTests {
 
     game.getCurrentPlayer().setCurrentSex(Sex.Female);
 
-    Point target_two = new Point(3,3);
+    Point target_two = new Point(3, 3);
     SpawnWorkerEvent evt_second = new SpawnWorkerEvent(game.getCurrentPlayer(), target_two);
-    try{
+    try {
       controller.update(evt_second);
-    }
-    catch (WrongPlayerException e) {
+    } catch (WrongPlayerException e) {
       e.printStackTrace();
     } catch (InvalidPositionException e) {
       e.printStackTrace();
@@ -514,12 +530,11 @@ public class ControllerTests {
 
     game.getCurrentPlayer().setCurrentSex(Sex.Female);
 
-    Point player_two_target_two = new Point(4,4);
+    Point player_two_target_two = new Point(4, 4);
     SpawnWorkerEvent p2_evt_second = new SpawnWorkerEvent(game.getCurrentPlayer(), player_two_target_two);
-    try{
+    try {
       controller.update(p2_evt_second);
-    }
-    catch (WrongPlayerException e) {
+    } catch (WrongPlayerException e) {
       e.printStackTrace();
     } catch (InvalidPositionException e) {
       e.printStackTrace();
@@ -542,9 +557,9 @@ public class ControllerTests {
 
   @Test
   @DisplayName("Tests that the game skips the Start phase only if a worker has been selected")
-  void skipStartTest(){
+  void skipStartTest() {
 
-    game.getBoard().place(game.getCurrentPlayer().getCurrentWorker(), new Point(0,0));
+    game.getBoard().place(game.getCurrentPlayer().getCurrentWorker(), new Point(0, 0));
     WorkerSelectionEvent wse_evt = new WorkerSelectionEvent(game.getCurrentPlayer(), Sex.Female);
     controller.update(wse_evt);
 
@@ -554,7 +569,7 @@ public class ControllerTests {
 
     assertEquals(Phase.Movement, game.getCurrentPhase());
 
-    game.getBoard().place(game.getCurrentPlayer().getCurrentWorker(), new Point(0,0));
+    game.getBoard().place(game.getCurrentPlayer().getCurrentWorker(), new Point(0, 0));
     game.setCurrentPhase(Phase.Start);
 
     SkipEvent invalidStartEvt = new SkipEvent(game.getCurrentPlayer());
@@ -562,13 +577,11 @@ public class ControllerTests {
     assertEquals(Phase.Start, game.getCurrentPhase());
 
 
-
-
   }
 
   @Test
   @DisplayName("Tests that the game skips the Movement phase only if a movement has been performed")
-  void skipMovementTest(){
+  void skipMovementTest() {
     game.setCurrentPhase(Phase.Start);
     Point point = new Point(0, 1);
 
@@ -582,10 +595,11 @@ public class ControllerTests {
     controller.update(mv_evt);
 
     SkipEvent evt = new SkipEvent(game.getCurrentPlayer());
-    try{
+    try {
       controller.update(evt);
-    }catch (WrongPlayerException ignored){}
-    catch (UnskippablePhaseException ignored){}
+    } catch (WrongPlayerException ignored) {
+    } catch (UnskippablePhaseException ignored) {
+    }
 
     assertTrue(game.getCurrentPhase().equals(Phase.Construction));
     game.getCurrentPlayer().getMovementList().clear();
@@ -598,7 +612,7 @@ public class ControllerTests {
 
   @Test
   @DisplayName("Tests that the game skips the Construction phase only if a construction has been performed")
-  void skipConstructionTest(){
+  void skipConstructionTest() {
     game.setCurrentPhase(Phase.Start);
 
     game.getCurrentPlayer().setCurrentSex(Sex.Female);
@@ -615,7 +629,7 @@ public class ControllerTests {
 
     game.getCurrentPlayer().setWorkerSelected(true);
     game.setCurrentPhase(game.getCurrentPlayer().getGodCard().computeNextPhase(game));
-    game.getCurrentPlayer().getMovementList().add(new Movement(game.getBoard(), new Point(0,0), new Point(0,0)));
+    game.getCurrentPlayer().getMovementList().add(new Movement(game.getBoard(), new Point(0, 0), new Point(0, 0)));
     game.setCurrentPhase(game.getCurrentPlayer().getGodCard().computeNextPhase(game));
 
     assertEquals(game.getCurrentPhase(), Phase.Construction);
@@ -647,7 +661,7 @@ public class ControllerTests {
   @ParameterizedTest
   @MethodSource("provideAllPhases")
   @DisplayName("Tests that for every phase, if another player tries to skip the controller will always throw a WrongPlayerException")
-  void skipWrongPlayerTest(Phase current){
+  void skipWrongPlayerTest(Phase current) {
     SkipEvent evt = new SkipEvent(game.getPlayers()[1]);
 
     assertThrows(WrongPlayerException.class, () -> {
@@ -656,12 +670,12 @@ public class ControllerTests {
   }
 
   @GameEventListener
-  public void handleVictory(VictoryEvent e){
+  public void handleVictory(VictoryEvent e) {
     lastEvent = e;
   }
 
   @GameEventListener
-  public void handleLoss(LossEvent e){
+  public void handleLoss(LossEvent e) {
     lastEvent = e;
   }
 
@@ -724,7 +738,7 @@ public class ControllerTests {
     game.setPlayers(new Player[]{new Player("playerOne"),
             new Player("playerTwo"),
             new Player("playerThree")});
-    for (Player p: game.getPlayers()) {
+    for (Player p : game.getPlayers()) {
       p.setGodCard(GodCardFactory.create(GodName.Nobody));
       p.getGodCard().setGameData(game);
     }
@@ -784,7 +798,7 @@ public class ControllerTests {
     game.setPlayers(new Player[]{new Player("playerOne"),
             new Player("playerTwo"),
             new Player("playerThree")});
-    for (Player p: game.getPlayers()) {
+    for (Player p : game.getPlayers()) {
       p.setGodCard(GodCardFactory.create(GodName.Nobody));
       p.getGodCard().setGameData(game);
     }

@@ -6,7 +6,7 @@ public class PhasePrompt extends CLIElement {
 
   private Phase currentPhase;
 
-  public PhasePrompt(Phase currentPhase){
+  public PhasePrompt(Phase currentPhase) {
     this.currentPhase = currentPhase;
   }
 

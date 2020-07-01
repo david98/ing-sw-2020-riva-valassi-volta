@@ -1,5 +1,8 @@
 package it.polimi.vovarini.model.godcards;
 
+/**
+ * Enumeration containing all valid/supported GodCard names
+ */
 public enum GodName {
   Apollo,
   Artemis,

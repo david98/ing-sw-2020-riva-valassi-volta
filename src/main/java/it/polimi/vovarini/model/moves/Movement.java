@@ -7,7 +7,7 @@ import it.polimi.vovarini.model.board.Board;
 import it.polimi.vovarini.model.board.items.Item;
 
 /**
- * This class represents a general Movement, a move where the player can decide to shift the position of his worker in a different cell
+ * This class represents a worker movement from one cell to another.
  */
 public class Movement extends Move {
 
@@ -15,11 +15,14 @@ public class Movement extends Move {
   private final Point end;
 
   /**
-   * Constructor method of Movement
-   * @param board Instance of board currently in use
-   * @param start Worker starting Point
-   * @param end Point that the worker wants to reach
-   * @param forced Boolean value stating if the movementMove is forced by the ability of a GodCard
+   * Creates a Movement. If end contains a removable item,
+   * an exchange between start and end.
+   *
+   * @param board  Instance of board currently in use
+   * @param start  Worker starting Point
+   * @param end    Point that the worker wants to reach
+   * @param forced False if the move was voluntarily initiated by a player,
+   *               true if this is the result of some card effect.
    */
   public Movement(Board board, Point start, Point end, boolean forced) {
     super(board, forced);
@@ -28,10 +31,12 @@ public class Movement extends Move {
   }
 
   /**
-   * Constructor method of Movement without forced assignment (forced is false by default)
-   * @param board Instance of board currently in use
-   * @param start Worker starting Point
-   * @param end Point that the worker wants to reach
+   * Creates a non-forced Movement. If end contains a removable item,
+   * * an exchange between start and end.
+   *
+   * @param board The board to build on.
+   * @param start Where to pick the item to be moved.
+   * @param end   Where to move the item picked from start.
    */
   public Movement(Board board, Point start, Point end) {
     super(board, false);
@@ -39,37 +44,54 @@ public class Movement extends Move {
     this.end = new Point(end);
   }
 
+  /**
+   * Creates a Movement move undoing the effects of this instance of the Move
+   * @return a Movement move with the exact reverse effects of this one
+   */
   @Override
   public Move reverse() {
     return new Movement(board, end, start, forced);
   }
 
   @Override
-  public void execute() throws RuntimeException{
+  /**
+   * Executes this Movement.
+   *
+   * @throws RuntimeException If either start or end were empty/invalid positions.
+   */
+  public void execute() throws RuntimeException {
     try {
-      Item startItem = board.remove(start);
+      Item startItem = board.getBox(start).removeTopmost();
 
-      if (startItem == null){
+      if (startItem == null) {
         throw new RuntimeException(); //invalid start
       }
 
-      Item endItem = board.getItems(end).peek();
+      Item endItem = board.getBox(end).getItems().peek();
       if (endItem != null && endItem.canBeRemoved()) {
-        board.remove(end);
+        board.getBox(end).removeTopmost();
         board.place(endItem, start);
       }
       board.place(startItem, end);
-    }  catch (InvalidPositionException e) {
+    } catch (InvalidPositionException e) {
       throw new RuntimeException(); //invalid start or end
     } catch (BoxFullException e) {
       throw new RuntimeException(); //end box is full
     }
   }
 
+  /**
+   * Getter method for the starting position of the Movement
+   * @return a Point representing the starting position of the Movement
+   */
   public Point getStart() {
     return new Point(start);
   }
 
+  /**
+   * Getter method for the target position of the Movement
+   * @return a Point representing the target of the Movement
+   */
   public Point getEnd() {
     return new Point(end);
   }
