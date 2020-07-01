@@ -17,8 +17,7 @@
     </top>
 
     <center>
-        <GridPane fx:id="board" gridLinesVisible="true" onMouseClicked="#onGridClick" prefHeight="500.0"
-                  prefWidth="500.0" styleClass="board">
+        <GridPane fx:id="board" onMouseClicked="#onGridClick" prefHeight="500.0" prefWidth="500.0" styleClass="board">
             <columnConstraints>
                 <ColumnConstraints minWidth="100.0" prefWidth="100.0"/>
                 <ColumnConstraints minWidth="100.0" prefWidth="100.0"/>
@@ -156,19 +155,37 @@
 
     <bottom>
         <HBox styleClass="playersBox">
-            <Label fx:id="player0" styleClass="player" wrapText="true"/>
-            <ImageView fx:id="godCard0" fitHeight="168.0" fitWidth="100.0" styleClass="godCard"/>
-            <Label fx:id="player1" styleClass="player" wrapText="true"/>
-            <ImageView fx:id="godCard1" fitHeight="168.0" fitWidth="100.0" styleClass="godCard"/>
-            <Label fx:id="player2" styleClass="player" wrapText="true"/>
-            <ImageView fx:id="godCard2" fitHeight="168.0" fitWidth="100.0" styleClass="godCard"/>
-            <VBox styleClass="phaseBox">
-                <children>
-                    <Label fx:id="currentPhase" styleClass="phase"/>
-                    <Button fx:id="skipButton" onAction="#onSkipButtonClick">
-                    </Button>
-                </children>
+            <VBox>
+                <Label fx:id="player0" styleClass="player" />
+                <HBox>
+                    <ImageView fx:id="worker0M" fitHeight="75" fitWidth="75" />
+                    <ImageView fx:id="worker0F" fitHeight="75" fitWidth="75" />
+                </HBox>
             </VBox>
+            <ImageView fx:id="godCard0" fitHeight="168.0" fitWidth="100.0" styleClass="godCard" />
+            <VBox>
+                <Label fx:id="player1" styleClass="player" />
+                <HBox>
+                    <ImageView fx:id="worker1M" fitHeight="75" fitWidth="75" />
+                    <ImageView fx:id="worker1F" fitHeight="75" fitWidth="75" />
+                </HBox>
+            </VBox>
+            <ImageView fx:id="godCard1" fitHeight="168.0" fitWidth="100.0" styleClass="godCard" />
+            <VBox>
+                <Label fx:id="player2" styleClass="player" />
+                <HBox>
+                    <ImageView fx:id="worker2M" fitHeight="75" fitWidth="75" />
+                    <ImageView fx:id="worker2F" fitHeight="75" fitWidth="75" />
+                </HBox>
+            </VBox>
+            <ImageView fx:id="godCard2" fitHeight="168.0" fitWidth="100.0" styleClass="godCard" />
+         <VBox styleClass="phaseBox">
+            <children>
+                  <Label fx:id="currentPhase" styleClass="phase" />
+                  <Button fx:id="skipButton" onAction="#onSkipButtonClick">
+                  </Button>
+            </children>
+         </VBox>
         </HBox>
     </bottom>
 

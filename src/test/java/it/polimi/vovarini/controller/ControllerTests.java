@@ -98,6 +98,7 @@ public class ControllerTests {
     evt = new RegistrationEvent(game, "PlayerTwo");
     controller.update(evt);
     assertNotNull(game.getPlayers()[1].getNickname());
+    assertTrue(game.isFull());
   }
 
   @Test

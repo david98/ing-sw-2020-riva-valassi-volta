@@ -49,69 +49,86 @@ public abstract class Screen implements Renderable, EventsForViewListener, KeyPr
 
   @Override
   public void handle(CurrentPlayerChangedEvent e) {
-    methodNotImplemented();  }
+    methodNotImplemented();
+  }
 
   @Override
   public void handle(PhaseUpdateEvent e) {
-    methodNotImplemented();  }
+    methodNotImplemented();
+  }
 
   @Override
   public void handle(GameStartEvent e) {
-    methodNotImplemented();  }
+    methodNotImplemented();
+  }
 
   @Override
   public void handle(NewPlayerEvent e) {
-    methodNotImplemented();  }
+    methodNotImplemented();
+  }
 
   @Override
   public void handle(GodSelectionStartEvent e) {
-    methodNotImplemented();  }
+    methodNotImplemented();
+  }
 
   @Override
   public void handle(SelectYourCardEvent e) {
-    methodNotImplemented();  }
+    methodNotImplemented();
+  }
 
   @Override
   public void handle(CardAssignmentEvent e) {
-    methodNotImplemented();  }
+    methodNotImplemented();
+  }
 
   @Override
   public void handle(PlaceYourWorkersEvent e) {
-    methodNotImplemented();  }
+    methodNotImplemented();
+  }
 
   @Override
   public void handle(VictoryEvent e) {
-    methodNotImplemented();  }
+    methodNotImplemented();
+  }
 
   @Override
   public void handleKeyPress(Key key) {
-    methodNotImplemented();  }
+    methodNotImplemented();
+  }
 
   @Override
   public void handle(PlayerInfoUpdateEvent e) {
-    methodNotImplemented();  }
+    methodNotImplemented();
+  }
 
   @Override
   public void handle(GodCardUpdateEvent e) {
-    methodNotImplemented();  }
+    methodNotImplemented();
+  }
 
   @Override
   public void handle(LossEvent e) {
-    methodNotImplemented();  }
+    methodNotImplemented();
+  }
 
   @Override
   public void handle(AbruptEndEvent e) {
-    methodNotImplemented();  }
+    methodNotImplemented();
+  }
 
   @Override
   public void handle(FirstPlayerEvent e) {
-    methodNotImplemented();  }
+    methodNotImplemented();
+  }
 
   @Override
   public void handle(RegistrationStartEvent e) {
-    methodNotImplemented();  }
+    methodNotImplemented();
+  }
 
   @Override
   public void handle(InvalidNicknameEvent e) {
-    methodNotImplemented();  }
+    methodNotImplemented();
+  }
 }

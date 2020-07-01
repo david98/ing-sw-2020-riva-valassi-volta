@@ -350,6 +350,7 @@ public class GodCard implements Serializable {
   public List<Movement> consequences(Movement movement, GameDataAccessor gameData) {
     return listMovementEffects.apply(this.gameData, movement);
   }
+
   /**
    * This method computes the consequences of a specific action of a GodCard regarding construction
    * @param construction is the Movement move the GodCard's owner wants to perform

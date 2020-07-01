@@ -7,7 +7,9 @@ import it.polimi.vovarini.model.Point;
 import it.polimi.vovarini.model.board.Board;
 import it.polimi.vovarini.model.board.items.Block;
 import it.polimi.vovarini.model.board.items.Item;
+import it.polimi.vovarini.model.board.items.Sex;
 import it.polimi.vovarini.model.board.items.Worker;
+import it.polimi.vovarini.model.godcards.GodCardFactory;
 import it.polimi.vovarini.model.godcards.GodName;
 import it.polimi.vovarini.model.moves.Construction;
 import it.polimi.vovarini.view.gui.GuiManager;
@@ -49,6 +51,15 @@ public class GameController extends GUIController {
   private ImageView godCard2;
 
   @FXML
+  private Label player0;
+
+  @FXML
+  private Label player1;
+
+  @FXML
+  private Label player2;
+
+  @FXML
   private Button skipButton;
 
   private GuiManager guiManager;
@@ -59,34 +70,6 @@ public class GameController extends GUIController {
   @FXML
   public void initialize() {
     guiManager = GuiManager.getInstance();
-
-        /*Player owner = new Player("davide");
-        Player other = new Player("marco");
-        Player other2 = new Player("mattia");
-        owner.setGodCard(GodCardFactory.create(GodName.Apollo));
-        other.setGodCard(GodCardFactory.create(GodName.Artemis));
-        other2.setGodCard(GodCardFactory.create(GodName.Atlas));
-
-        owner.getGodCard().setGameData(guiManager.getData());
-        other.getGodCard().setGameData(guiManager.getData());
-        other2.getGodCard().setGameData(guiManager.getData());
-
-        guiManager.getData().setOwner(owner);
-        guiManager.getData().setCurrentPlayer(owner);
-        guiManager.getData().addPlayer(owner);
-        guiManager.getData().addPlayer(other);
-        guiManager.getData().addPlayer(other2);
-
-        guiManager.getData().setCurrentPhase(Phase.Start);
-
-        Board b = new Board(Board.DEFAULT_SIZE);
-        b.place(owner.getWorkers().get(Sex.Male), new Point(0, 0));
-        b.place(owner.getWorkers().get(Sex.Female), new Point(4, 0));
-        b.place(other.getWorkers().get(Sex.Male), new Point(0, 3));
-        b.place(other.getWorkers().get(Sex.Female), new Point(2, 0));
-        b.place(other2.getWorkers().get(Sex.Male), new Point(0, 1));
-        b.place(Block.blocks[0], new Point(1, 1));*/
-
 
     for (int i = 0; i < guiManager.getData().getBoard().getSize(); i++) {
       for (int j = 0; j < guiManager.getData().getBoard().getSize(); j++) {
@@ -139,13 +122,16 @@ public class GameController extends GUIController {
 
   private void onGodCardEntered(ImageView godCard, int i) {
     GodName[] godNames = Arrays.stream(GodName.values()).filter(name -> name != GodName.Nobody).toArray(GodName[]::new);
-    Tooltip tooltip = new Tooltip();
-    tooltip.setText(Settings.descriptions.get(godNames[i]));
-    Tooltip.install(godCard, tooltip);
+    for (int k = 0; k < godNames.length; k++) {
+      if (godNames[k].equals(guiManager.getData().getPlayers()[i].getGodCard().getName())) {
+        Tooltip tooltip = new Tooltip();
+        tooltip.setText(Settings.descriptions.get(godNames[k]));
+        Tooltip.install(godCard, tooltip);
+      }
+    }
   }
 
   private void highlightPoints(Collection<Point> points) {
-
 
     for (Point point : points) {
 
@@ -188,6 +174,12 @@ public class GameController extends GUIController {
 
       godCard.setImage(Settings.godImages.get(players[i].getGodCard().getName()));
 
+      selector = "#worker" + i + "M";
+      ImageView worker = (ImageView) mainPane.lookup(selector);
+      worker.setImage(Settings.workersImages[i].get(Sex.Male));
+      selector = "#worker" + i + "F";
+      worker = (ImageView) mainPane.lookup(selector);
+      worker.setImage(Settings.workersImages[i].get(Sex.Female));
     }
 
     Board b = guiManager.getData().getBoard();
@@ -429,8 +421,16 @@ public class GameController extends GUIController {
       skipButton.setDisable(true);
     }
 
-    //colorare di rosso il giocatore che ha perso
-
+    if (e.getLosingPlayer().getNickname().equals(player0.getText())) {
+      godCard0.getStyleClass().add("wasted");
+      player0.getStyleClass().add("wasted");
+    } else if (e.getLosingPlayer().getNickname().equals(player1.getText())) {
+      godCard1.getStyleClass().add("wasted");
+      player1.getStyleClass().add("wasted");
+    } else {
+      godCard2.getStyleClass().add("wasted");
+      player2.getStyleClass().add("wasted");
+    }
   }
 
   @Override
@@ -443,6 +443,7 @@ public class GameController extends GUIController {
     } else {
       ImageView loss = new ImageView(Settings.loss);
       popup.getContent().add(loss);
+      GuiManager.playBackgroundSound("bgm/loss.wav", true);
     }
 
     popup.setAutoHide(true);

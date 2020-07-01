@@ -219,12 +219,12 @@ public class Controller implements EventListener {
         )) {
           game.nextPlayer();
           if (game.getCurrentPlayer().getWorkers().values().stream().noneMatch(worker -> {
-                    try {
-                      game.getBoard().getItemPosition(worker);
-                      return false;
-                    } catch (ItemNotFoundException exception) {
-                      return true;
-                    }
+            try {
+              game.getBoard().getItemPosition(worker);
+              return false;
+            } catch (ItemNotFoundException exception) {
+              return true;
+            }
                   }
           )) {
             // tutti hanno piazzato
