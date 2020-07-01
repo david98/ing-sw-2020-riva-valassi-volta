@@ -6,6 +6,7 @@ import it.polimi.vovarini.model.board.Board;
 import it.polimi.vovarini.model.godcards.GodCard;
 import it.polimi.vovarini.model.godcards.GodCardFactory;
 import it.polimi.vovarini.model.godcards.GodName;
+import it.polimi.vovarini.model.godcards.deciders.BuildabilityDecider;
 import it.polimi.vovarini.model.moves.Construction;
 import it.polimi.vovarini.model.moves.Move;
 import it.polimi.vovarini.model.moves.Movement;
@@ -105,6 +106,21 @@ public class Game implements Serializable, GameDataAccessor {
       lastGodCard.setGameData(this);
       getCurrentPlayer().setGodCard(lastGodCard);
       GameEventManager.raise(new CardAssignmentEvent(this, getCurrentPlayer(), lastGodCard));
+
+      for(Player player : getPlayers()){
+        if(player.getGodCard().getName().equals(GodName.Limus)){
+          Player limusPlayer = player;
+          for(Player player1 : getPlayers()){
+            if(!player1.equals(limusPlayer)){
+              player1.getGodCard().getConstructionConstraints().add(BuildabilityDecider::mustBuildDomes);
+              GameEventManager.raise(new PlayerInfoUpdateEvent(this, player1));
+            }
+          }
+        }
+      }
+
+
+
       LinkedList<GodName> availableGods = new LinkedList<>(Arrays.asList(availableGodCards));
       availableGods.remove(lastGodCard.getName());
       availableGodCards = availableGods.toArray(GodName[]::new);

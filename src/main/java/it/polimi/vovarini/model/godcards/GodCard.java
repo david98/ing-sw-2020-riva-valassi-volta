@@ -12,6 +12,7 @@ import it.polimi.vovarini.model.board.Board;
 import it.polimi.vovarini.model.board.Box;
 import it.polimi.vovarini.model.board.items.Block;
 import it.polimi.vovarini.model.board.items.Worker;
+import it.polimi.vovarini.model.godcards.deciders.BuildabilityDecider;
 import it.polimi.vovarini.model.moves.Construction;
 import it.polimi.vovarini.model.moves.Movement;
 
@@ -295,6 +296,14 @@ public class GodCard implements Serializable {
       resetPlayerInfo(gameData);
       gameData.getCurrentPlayer().getGodCard().movementConstraints.clear();
       gameData.getCurrentPlayer().getGodCard().constructionConstraints.clear();
+      for (Player player : gameData.getPlayers()){
+        if(player.getGodCard().getName().equals(GodName.Limus) && !player.isHasLost()){
+          if(!gameData.getCurrentPlayer().getGodCard().getName().equals(GodName.Limus)){
+          gameData.getCurrentPlayer().getGodCard().constructionConstraints.add(BuildabilityDecider::mustBuildDomes);
+        }
+        }
+      }
+
       GameEventManager.raise(new GodCardUpdateEvent(gameData, this, gameData.getCurrentPlayer()));
       gameData.nextPlayer();
     }
