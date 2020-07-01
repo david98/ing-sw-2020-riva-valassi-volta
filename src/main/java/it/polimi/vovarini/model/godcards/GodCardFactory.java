@@ -153,7 +153,7 @@ public class GodCardFactory {
 
   /**
    * This method injects a generic GodCard with all the Behaviors modified by the card Limus
-   * @return
+   * @return an instance of a GodCard in the mold of Santorini's Limus card
    */
   private static GodCard createLimus() {
     GodCard limus = new GodCard(GodName.Limus);
