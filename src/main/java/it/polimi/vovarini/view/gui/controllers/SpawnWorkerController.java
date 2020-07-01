@@ -55,22 +55,27 @@ public class SpawnWorkerController extends GUIController {
                 (sexes.get(0).equals(Sex.Male) ? "M" : "F") + ".png');");
       }
     }
+
     bindEvents();
     addImages(guiManager.getData().getPlayers());
-
   }
+
+  private void onGodCardEntered(ImageView godCard, int i) {
+    GodName[] godNames = Arrays.stream(GodName.values()).filter(name -> name != GodName.Nobody).toArray(GodName[]::new);
+    for (int k = 0; k < godNames.length; k++) {
+      if (godNames[k].equals(guiManager.getData().getPlayers()[i].getGodCard().getName())) {
+        Tooltip tooltip = new Tooltip();
+        tooltip.setText(Settings.descriptions.get(godNames[k]));
+        Tooltip.install(godCard, tooltip);
+      }
+    }
+  }
+
 
   public void bindEvents() {
     godCard0.addEventHandler(MouseEvent.MOUSE_ENTERED, event -> onGodCardEntered(godCard0, 0));
     godCard1.addEventHandler(MouseEvent.MOUSE_ENTERED, event -> onGodCardEntered(godCard1, 1));
     godCard2.addEventHandler(MouseEvent.MOUSE_ENTERED, event -> onGodCardEntered(godCard2, 2));
-  }
-
-  private void onGodCardEntered(ImageView godCard, int i) {
-    GodName[] godNames = Arrays.stream(GodName.values()).filter(name -> name != GodName.Nobody).toArray(GodName[]::new);
-    Tooltip tooltip = new Tooltip();
-    tooltip.setText(Settings.descriptions.get(godNames[i]));
-    Tooltip.install(godCard, tooltip);
   }
 
   public void addImages(Player[] players) {

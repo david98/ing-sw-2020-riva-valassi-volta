@@ -56,6 +56,32 @@ public class GodCardSelectionController extends GUIController {
   }
 
   /**
+   *
+     * @param cardChosen represent the godCard chosen
+     */
+    private void onCardButtonClick(int cardChosen) {
+        if(guiManager.getData().getOwner().equals(guiManager.getData().getCurrentPlayer())) {
+            godCard0.setDisable(true);
+            godCard1.setDisable(true);
+            godCard2.setDisable(true);
+
+            GameEvent evt = new CardChoiceEvent(guiManager.getData().getOwner(), allGods[cardChosen]);
+            guiManager.getClient().raise(evt);
+        }
+    }
+
+    private void onMouseEntered(ImageView godCard, int i) {
+      GodName[] godNames = Arrays.stream(GodName.values()).filter(name -> name != GodName.Nobody).toArray(GodName[]::new);
+      for (int k = 0; k < godNames.length; k++) {
+        if (godNames[k].equals(allGods[i])) {
+          Tooltip tooltip = new Tooltip();
+          tooltip.setText(Settings.descriptions.get(godNames[k]));
+          Tooltip.install(godCard, tooltip);
+        }
+      }
+    }
+
+  /**
    * Binds click events
    */
   private void bindEvents() {
@@ -66,25 +92,6 @@ public class GodCardSelectionController extends GUIController {
     godCard0.addEventHandler(MouseEvent.MOUSE_ENTERED, event -> onMouseEntered(godCard0, 0));
     godCard1.addEventHandler(MouseEvent.MOUSE_ENTERED, event -> onMouseEntered(godCard1, 1));
     godCard2.addEventHandler(MouseEvent.MOUSE_ENTERED, event -> onMouseEntered(godCard2, 2));
-  }
-
-  /**
-   * @param cardChosen represent the godCard chosen
-   */
-  private void onCardButtonClick(int cardChosen) {
-    godCard0.setDisable(true);
-    godCard1.setDisable(true);
-    godCard2.setDisable(true);
-
-    GameEvent evt = new CardChoiceEvent(guiManager.getData().getOwner(), allGods[cardChosen]);
-    guiManager.getClient().raise(evt);
-  }
-
-  private void onMouseEntered(ImageView godCard, int i) {
-    GodName[] godNames = Arrays.stream(GodName.values()).filter(name -> name != GodName.Nobody).toArray(GodName[]::new);
-    Tooltip tooltip = new Tooltip();
-    tooltip.setText(Settings.descriptions.get(godNames[i]));
-    Tooltip.install(godCard, tooltip);
   }
 
   public void changeVisibility(GodName[] godsLeft, boolean disabled) {
@@ -131,6 +138,7 @@ public class GodCardSelectionController extends GUIController {
 
     changeVisibility(e.getGodsLeft(), !e.getTargetPlayer().equals(GuiManager.getInstance().getData().getOwner()));
   }
+
 
   @Override
   public void handle(CardAssignmentEvent e) {
