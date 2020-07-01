@@ -30,6 +30,8 @@ public class ViewData implements Serializable, GameDataAccessor {
 
   private final Random random;
 
+  private boolean correctlyRegistered;
+
   public ViewData() {
     currentPhase = Phase.Start;
     board = new Board(Board.DEFAULT_SIZE);
@@ -37,6 +39,8 @@ public class ViewData implements Serializable, GameDataAccessor {
     playersColors = new HashMap<>();
 
     random = new Random();
+
+    correctlyRegistered = false;
   }
 
   public Phase getCurrentPhase() {
@@ -123,5 +127,13 @@ public class ViewData implements Serializable, GameDataAccessor {
 
   public Map<Player, Color> getPlayersColors() {
     return playersColors;
+  }
+
+  public void setCorrectlyRegistered(boolean correctlyRegistered) {
+    this.correctlyRegistered = correctlyRegistered;
+  }
+
+  public boolean isCorrectlyRegistered() {
+    return correctlyRegistered;
   }
 }

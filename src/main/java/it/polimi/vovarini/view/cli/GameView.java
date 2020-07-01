@@ -90,6 +90,7 @@ public class GameView extends View {
   @GameEventListener
   public void handle(GodSelectionStartEvent e) {
     super.handle(e);
+    console.enterRawMode();
 
     if (e.getElectedPlayer().equals(data.getOwner())) {
       currentScreen = new ElectedPlayerScreen(data, client, Arrays.asList(e.getAllGods()));
@@ -176,7 +177,7 @@ public class GameView extends View {
   @Override
   @GameEventListener
   public void handle(AbruptEndEvent e) {
-    currentScreen = new WaitScreen(data, client, "A player disconnected. It's gane over for everyone.");
+    currentScreen = new WaitScreen(data, client, "A player disconnected. It's game over for everyone.");
   }
 
   @Override
@@ -208,7 +209,6 @@ public class GameView extends View {
     client.raise(new RegistrationEvent(client.getIPv4Address(), nickname));
     data.setOwner(new Player(nickname));
     System.out.println("Now waiting for other players...");
-    console.enterRawMode();
     while (running) {
       try {
         GameEvent evtFromServer = client.getServerEvents().take();
@@ -222,14 +222,12 @@ public class GameView extends View {
   @Override
   @GameEventListener
   public void handle(InvalidNicknameEvent e) {
-
-    if (data.getOwner() != null && e.getNickname().equals(data.getOwner().getNickname())) {
-      if (e.getErrorCode() == 0) {
-        //stampare messaggio d'errore Settings.DUPLICATE_NICKNAME
-      } else {
-        //stampare messaggio d'errore Settings.INVALID_NICKNAME
-      }
+    if (e.getErrorCode() == 0) {
+      System.out.println("This nickname is already in use. Choose a different one.");
+    } else {
+      System.out.println("This nickname contains invalid character or is too short/long. Choose a different one.");
     }
+    handle(new RegistrationStartEvent("client"));
   }
 
   public void render() {
