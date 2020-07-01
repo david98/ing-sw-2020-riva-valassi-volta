@@ -30,6 +30,8 @@ public class ViewData implements Serializable, GameDataAccessor {
 
   private final Random random;
 
+  private boolean correctlyRegistered;
+
   /**
    * Builds a new ViewData object
    */
@@ -40,6 +42,8 @@ public class ViewData implements Serializable, GameDataAccessor {
     playersColors = new HashMap<>();
 
     random = new Random();
+
+    correctlyRegistered = false;
   }
 
   /**
@@ -200,5 +204,13 @@ public class ViewData implements Serializable, GameDataAccessor {
    */
   public Map<Player, Color> getPlayersColors() {
     return playersColors;
+  }
+
+  public void setCorrectlyRegistered(boolean correctlyRegistered) {
+    this.correctlyRegistered = correctlyRegistered;
+  }
+
+  public boolean isCorrectlyRegistered() {
+    return correctlyRegistered;
   }
 }

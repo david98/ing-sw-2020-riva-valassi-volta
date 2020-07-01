@@ -31,9 +31,12 @@ public abstract class View implements EventsForViewListener {
    */
   @Override
   public void handle(NewPlayerEvent e) {
-    client.setSocketTimeout(0);
-    if (data.getOwner().equals(e.getNewPlayer())) {
+    if (client != null) {
+      client.setSocketTimeout(0);
+    }
+    if (data.getOwner() != null && data.getOwner().equals(e.getNewPlayer())) {
       data.setOwner(e.getNewPlayer());
+      data.setCorrectlyRegistered(true);
     }
     data.addPlayer(e.getNewPlayer());
   }
@@ -150,6 +153,8 @@ public abstract class View implements EventsForViewListener {
 
   @Override
   public void handle(FirstPlayerEvent e) {
-    client.setSocketTimeout(0);
+    if (client != null) {
+      client.setSocketTimeout(0);
+    }
   }
 }

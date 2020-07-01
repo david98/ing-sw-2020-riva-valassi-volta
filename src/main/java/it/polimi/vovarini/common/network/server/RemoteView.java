@@ -193,6 +193,9 @@ public class RemoteView extends View implements Runnable {
   @Override
   @GameEventListener
   public void handle(InvalidNicknameEvent e) {
-    serverEvents.add(e);
+    if (!data.isCorrectlyRegistered()) {
+      LOGGER.log(Level.INFO, "Forwarding InvalidNicknameEvent.");
+      serverEvents.add(e);
+    }
   }
 }
