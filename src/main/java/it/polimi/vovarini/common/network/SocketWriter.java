@@ -32,6 +32,9 @@ public class SocketWriter<T> implements Runnable {
     this.objectsToBeWritten = objectsToBeWritten;
   }
 
+  /**
+   * Runs the instance of this SocketWriter
+   */
   public void run() {
     while (!Thread.currentThread().isInterrupted()) {
       try {

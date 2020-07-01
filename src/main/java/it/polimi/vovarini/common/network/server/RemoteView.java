@@ -54,6 +54,9 @@ public class RemoteView extends View implements Runnable {
     pool.execute(new SocketReader<>(clientSocket, clientEvents, GameEvent.class));
   }
 
+  /**
+   * Runs this instance of RemoteView
+   */
   @Override
   public void run() {
     while (!Thread.currentThread().isInterrupted()) {

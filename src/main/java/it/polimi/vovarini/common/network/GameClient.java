@@ -59,10 +59,18 @@ public class GameClient {
     return serverEvents;
   }
 
+  /**
+   * Getter method for the host's IP Address
+   * @return the owner of this GameClient object's IP address
+   */
   public String getIPv4Address() {
     return socket.getLocalAddress().getHostAddress();
   }
 
+  /**
+   * Setter method for the timeout value of the Socket
+   * @param milliseconds the number of milliseconds after which the timeout clocks
+   */
   public void setSocketTimeout(int milliseconds) {
     try {
       socket.setSoTimeout(milliseconds);
@@ -71,6 +79,10 @@ public class GameClient {
     }
   }
 
+  /**
+   * Geter for the timeout value of the Socket
+   * @return the timeout value of the Socket in milliseconds
+   */
   public int getSocketTimeout() {
     try {
       return socket.getSoTimeout();
