@@ -13,9 +13,14 @@ import javafx.stage.Stage;
 
 public class Gui extends Application {
 
+
   private final KeyCombination FullScreenKeyCombo =
           new KeyCodeCombination(KeyCode.ENTER, KeyCombination.ALT_DOWN);
 
+  /**
+   * Initialization and start of the GUI Application
+   * @param stage the Stage of the GUI application I want to play my scenes in
+   */
   @Override
   public void start(Stage stage) {
     stage.setScene(new Scene(new Pane()));
@@ -53,6 +58,10 @@ public class Gui extends Application {
     });
   }
 
+  /**
+   * Stops my GUI application
+   * @throws Exception
+   */
   @Override
   public void stop() throws Exception {
     super.stop();

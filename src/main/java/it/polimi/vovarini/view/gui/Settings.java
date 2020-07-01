@@ -65,6 +65,9 @@ public class Settings {
   public static final String INVALID_NICKNAME = "Invalid nickname, type a new one";
 
 
+  /**
+   * This method loads the settings inside the GUI application
+   */
   public static void load() {
     // needed to load images
     for (var img : godImages.values()) {

@@ -18,15 +18,25 @@ public class GuiEventListener implements Runnable {
   private boolean running;
   private final GameClient client;
 
+  /**
+   * Builds a new GuiEventListner and sets it as running
+   * @param client is the client host who triggers the events
+   */
   public GuiEventListener(GameClient client) {
     running = true;
     this.client = client;
   }
 
+  /**
+   * Sets running as false, stopping the GameEventListener from listening
+   */
   public void stop() {
     running = false;
   }
 
+  /**
+   * Runs the GameEventListner
+   */
   @Override
   public void run() {
     while (running) {
