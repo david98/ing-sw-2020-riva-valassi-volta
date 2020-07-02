@@ -1,6 +1,14 @@
 Prova Finale di Ingegneria del Software - a.a. 2019-2020
 =====
 
+[![SonarCloud](https://sonarcloud.io/images/project_badges/sonarcloud-white.svg)](https://sonarcloud.io/dashboard?id=david98_ing-sw-2020-riva-valassi-volta)
+
+![Analyse and build](https://github.com/david98/ing-sw-2020-riva-valassi-volta/workflows/Analyse%20and%20build/badge.svg)
+
+![Analysis on push (or PR merge)](https://github.com/david98/ing-sw-2020-riva-valassi-volta/workflows/Analysis%20on%20push%20(or%20PR%20merge)/badge.svg)
+
+
+
 Autori
 -----
 
@@ -51,8 +59,21 @@ Istruzioni per il Setup
 ### Requisiti
 
 * JDK 14
+* Maven (per la compilazione)
+
+### Compilazione
+
+```bash
+git clone https://github.com/david98/ing-sw-2020-riva-valassi-volta.git
+cd ing-sw-2020-riva-valassi-volta
+mvn clean package
+```
+
+Gli archivi .jar (`santorini.jar` e `santorini-jar-with-dependencies.jar`) verranno generati nella cartella `target`.
 
 ### Utilizzo
+
+Nelle istruzioni seguenti, in caso di problemi di dipendenze, provare a sostituire `santorini.jar` con `santorini-jar-with-dependencies.jar`, che include tutte le dipendenze che potrebbero non essere installate sulla vostra macchina.
 
 #### Server
 
