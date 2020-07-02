@@ -41,6 +41,7 @@ public class BoardElement extends CLIElement {
     ownerMap = new HashMap<>();
   }
 
+  @Override
   public String render() {
     StringBuilder boardRep = new StringBuilder();
     for (int y = 0; y < board.getSize(); y++) {
@@ -66,6 +67,11 @@ public class BoardElement extends CLIElement {
     return boardRep.toString();
   }
 
+  /**
+   * Moves the cursor one step in the given direction, if possible.
+   *
+   * @param direction The direction to move the cursor in.
+   */
   public void moveCursor(Direction direction) {
     int newX = cursorLocation.getX();
     int newY = cursorLocation.getY();
