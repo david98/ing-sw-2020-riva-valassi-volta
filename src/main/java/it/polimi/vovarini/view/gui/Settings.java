@@ -7,6 +7,11 @@ import javafx.scene.image.Image;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * This is kind of a repository for values and resources used throughout the whole game.
+ * The idea is that all of this could be loaded from some file on disk in the future
+ * without breaking stuff.
+ */
 public class Settings {
 
   public static final HashMap<GodName, Image> godImages = new HashMap<>();
@@ -65,6 +70,10 @@ public class Settings {
   public static final String INVALID_NICKNAME = "Invalid nickname, type a new one";
 
 
+  /**
+   * This tries to force load the images in order for them
+   * to get cached and load faster in subsequent uses.
+   */
   public static void load() {
     // needed to load images
     for (var img : godImages.values()) {

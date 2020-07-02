@@ -30,6 +30,11 @@ public class ViewData implements Serializable, GameDataAccessor {
 
   private final Random random;
 
+  private boolean correctlyRegistered;
+
+  /**
+   * Builds a new ViewData object
+   */
   public ViewData() {
     currentPhase = Phase.Start;
     board = new Board(Board.DEFAULT_SIZE);
@@ -37,6 +42,8 @@ public class ViewData implements Serializable, GameDataAccessor {
     playersColors = new HashMap<>();
 
     random = new Random();
+
+    correctlyRegistered = false;
   }
 
   public Phase getCurrentPhase() {
@@ -65,6 +72,7 @@ public class ViewData implements Serializable, GameDataAccessor {
     this.owner = owner;
   }
 
+
   public Player getCurrentPlayer() {
     return currentPlayer;
   }
@@ -77,22 +85,39 @@ public class ViewData implements Serializable, GameDataAccessor {
     return players;
   }
 
+  /**
+   * Converts the player set to an array and returns it.
+   * @return An array containing all players in this game.
+   */
   @Override
   public Player[] getPlayers() {
     return players.toArray(Player[]::new);
   }
 
+  /**
+   * Adds a new player.
+   * @param player The new player.
+   * @param color The color to be associated with this player.
+   */
   public void addPlayer(Player player, Color color) {
     this.players.add(player);
     playersColors.put(player, color);
   }
 
+  /**
+   * Adds a new player with a random color associated.
+   * @param player The new player.
+   */
   public void addPlayer(Player player) {
     addPlayer(player, new Color(random.nextInt(255),
             random.nextInt(255),
             random.nextInt(255)));
   }
 
+  /**
+   * Removes a player.
+   * @param player The player to be removed.
+   */
   public void removePlayer(Player player) {
     players.remove(player);
   }
@@ -104,6 +129,7 @@ public class ViewData implements Serializable, GameDataAccessor {
   public void setBoard(Board board) {
     this.board = board;
   }
+
 
   public Worker getSelectedWorker() {
     return selectedWorker;
@@ -123,5 +149,13 @@ public class ViewData implements Serializable, GameDataAccessor {
 
   public Map<Player, Color> getPlayersColors() {
     return playersColors;
+  }
+
+  public void setCorrectlyRegistered(boolean correctlyRegistered) {
+    this.correctlyRegistered = correctlyRegistered;
+  }
+
+  public boolean isCorrectlyRegistered() {
+    return correctlyRegistered;
   }
 }

@@ -43,7 +43,7 @@ public class GodCardSelectionController extends GUIController {
     bindEvents();
   }
 
-  public void addImages(GodName[] availableGodCards) {
+  private void addImages(GodName[] availableGodCards) {
     allGods = availableGodCards;
     String selector;
     for (int i = 0; i < availableGodCards.length; i++) {
@@ -94,7 +94,7 @@ public class GodCardSelectionController extends GUIController {
     godCard2.addEventHandler(MouseEvent.MOUSE_ENTERED, event -> onMouseEntered(godCard2, 2));
   }
 
-  public void changeVisibility(GodName[] godsLeft, boolean disabled) {
+  private void changeVisibility(GodName[] godsLeft, boolean disabled) {
 
     godCard0.setDisable(true);
     godCard1.setDisable(true);
@@ -118,7 +118,7 @@ public class GodCardSelectionController extends GUIController {
     }
   }
 
-  public void showChoice(Player targetPlayer, GodCard assignedCard) {
+  private void showChoice(Player targetPlayer, GodCard assignedCard) {
     for (int i = 0; i < allGods.length; i++) {
       if (allGods[i].equals(assignedCard.getName())) {
         String selector = "#label" + i;

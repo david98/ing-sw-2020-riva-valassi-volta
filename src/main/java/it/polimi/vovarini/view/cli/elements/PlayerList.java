@@ -6,6 +6,9 @@ import it.polimi.vovarini.view.cli.styling.Color;
 import java.util.Map;
 import java.util.Set;
 
+/**
+ * A list of all players in the game which highlights the owner and the current player.
+ */
 public class PlayerList extends CLIElement {
 
   private final Set<Player> players;

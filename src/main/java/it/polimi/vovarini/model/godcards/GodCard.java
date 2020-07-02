@@ -462,6 +462,10 @@ public class GodCard implements Serializable {
     return winningConditions;
   }
 
+  /**
+   * Method that returns a Set containing all the WinningConstraints injected by GodCards
+   * @return
+   */
   public Set<SerializablePredicate<Movement>> getWinningConstraints() {
     return winningConstraints;
   }

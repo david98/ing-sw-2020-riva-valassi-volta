@@ -8,6 +8,10 @@ import picocli.CommandLine;
 import java.io.IOException;
 import java.util.concurrent.Callable;
 
+/**
+ * This is the entry point for Santorini, parsing command line parameters
+ * and launching either the GUI client, the CLI client or the server.
+ */
 @CommandLine.Command(name = "santorini", mixinStandardHelpOptions = true, version = "santorini 1.0",
         description = "Starts Santorini")
 public class Application implements Callable<Integer> {
@@ -24,7 +28,7 @@ public class Application implements Callable<Integer> {
   private boolean useCLI;
 
 
-  public void launchServer(int port) throws IOException {
+  private void launchServer(int port) throws IOException {
     Server server = new Server(port);
     Thread thread = new Thread(server);
     thread.start();
@@ -35,7 +39,7 @@ public class Application implements Callable<Integer> {
     }
   }
 
-  public void launchClient(ClientMode mode, String serverIP, int serverPort) throws IOException {
+  private void launchClient(ClientMode mode, String serverIP, int serverPort) throws IOException {
     switch (mode) {
       case CLI -> {
         GameView view = new GameView(serverIP, serverPort);

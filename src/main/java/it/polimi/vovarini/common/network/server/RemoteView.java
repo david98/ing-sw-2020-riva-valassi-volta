@@ -54,6 +54,9 @@ public class RemoteView extends View implements Runnable {
     pool.execute(new SocketReader<>(clientSocket, clientEvents, GameEvent.class));
   }
 
+  /**
+   * Runs this instance of RemoteView
+   */
   @Override
   public void run() {
     while (!Thread.currentThread().isInterrupted()) {
@@ -190,6 +193,9 @@ public class RemoteView extends View implements Runnable {
   @Override
   @GameEventListener
   public void handle(InvalidNicknameEvent e) {
-    serverEvents.add(e);
+    if (!data.isCorrectlyRegistered()) {
+      LOGGER.log(Level.INFO, "Forwarding InvalidNicknameEvent.");
+      serverEvents.add(e);
+    }
   }
 }

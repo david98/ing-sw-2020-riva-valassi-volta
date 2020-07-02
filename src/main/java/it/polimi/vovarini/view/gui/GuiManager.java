@@ -19,6 +19,12 @@ import javafx.util.Duration;
 
 import java.io.IOException;
 
+/**
+ * This class manages the GUI, listening for game events and
+ * forwarding them to the current {@link GUIController}.
+ *
+ * It also exposes methods to change the current scene.
+ */
 public class GuiManager extends View {
 
   private static javafx.scene.media.MediaPlayer currentPlayer;
@@ -36,6 +42,10 @@ public class GuiManager extends View {
   private GuiEventListener guiEventListener;
   private Thread guiEventListenerThread;
 
+  /**
+   * Private constructor that is only called by
+   * {@link #getInstance()}.
+   */
   private GuiManager() {
     super();
 
@@ -46,11 +56,15 @@ public class GuiManager extends View {
     placeWorkersStarted = false;
   }
 
+  /**
+   * @return The one and only instance of this class.
+   */
   public static GuiManager getInstance() {
     if (instance == null)
       instance = new GuiManager();
     return instance;
   }
+
 
   @Override
   @GameEventListener
@@ -193,15 +207,19 @@ public class GuiManager extends View {
     });
   }
 
+  /**
+   * Sets up the application launching the GUI and then loading its settings
+   */
   public void gameSetup() {
     javafx.application.Application.launch(Gui.class);
     Settings.load();
   }
 
   /**
-   * Sets a layout from FXML file
+   * Loads the given FXML file and uses its content
+   * to replace the current scene.
    *
-   * @param path path of the FXML file
+   * @param path Absolute path to the FXML file.
    */
   public void setLayout(String path) {
 
@@ -230,6 +248,14 @@ public class GuiManager extends View {
     }
   }
 
+  /**
+   * Creates a {@link GameClient} and a {@link GuiEventListener} to enable client-server communication,
+   * then changes the current scene to a wait scene.
+   *
+   * @param serverIP The IPV4 address of the server.
+   * @param serverPort The port to connect to.
+   * @throws IOException If a connection can't be established for any reason.
+   */
   public void createConnection(String serverIP, int serverPort) throws IOException {
     client = new GameClient(serverIP, serverPort);
     guiEventListener = new GuiEventListener(client);
@@ -271,6 +297,9 @@ public class GuiManager extends View {
     return currentController;
   }
 
+  /**
+   * Tries to stop the event listener thread.
+   */
   public void stopEventListener() {
     if (guiEventListenerThread != null) {
       guiEventListener.stop();
@@ -278,7 +307,13 @@ public class GuiManager extends View {
     }
   }
 
-  public static <MediaPlayer> void playBackgroundSound(String fileName, boolean looping) {
+  /**
+   * Plays the given file.
+   *
+   * @param fileName The path to the music file relative to /audio/
+   * @param looping Whether the audio should loop indefinitely.
+   */
+  public static void playBackgroundSound(String fileName, boolean looping) {
     if (currentPlayer != null) {
       stopBackgroundSound();
     }
@@ -296,12 +331,22 @@ public class GuiManager extends View {
     }
   }
 
+  /**
+   * Checks if there is a media player currently playing audio.
+   *
+   * @return True if there is a media player currently playing audio, false otherwise.
+   */
   public static boolean isPlayingBackground() {
     return currentPlayer != null && currentPlayer.getStatus().equals(MediaPlayer.Status.PLAYING);
   }
 
+  /**
+   * Stops reproduction on the current media player, if there is one.
+   */
   public static void stopBackgroundSound() {
-    currentPlayer.stop();
+
+    if (currentPlayer != null)
+      currentPlayer.stop();
   }
 
 }

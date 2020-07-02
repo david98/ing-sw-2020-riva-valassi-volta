@@ -1,6 +1,14 @@
 Prova Finale di Ingegneria del Software - a.a. 2019-2020
 =====
 
+[![SonarCloud](https://sonarcloud.io/images/project_badges/sonarcloud-white.svg)](https://sonarcloud.io/dashboard?id=david98_ing-sw-2020-riva-valassi-volta)
+
+![Analyse and build](https://github.com/david98/ing-sw-2020-riva-valassi-volta/workflows/Analyse%20and%20build/badge.svg)
+
+![Analysis on push (or PR merge)](https://github.com/david98/ing-sw-2020-riva-valassi-volta/workflows/Analysis%20on%20push%20(or%20PR%20merge)/badge.svg)
+
+
+
 Autori
 -----
 
@@ -20,13 +28,6 @@ Documentazione
 -----
 Nella documentazione richiesta sono previsti gli schemi UML iniziali e finali del progetto. Gli UML, per miglior comprensione, sono stati divisi per package più rilevanti, ma rimangono comunque presenti schemi con una visione più generale.
 Sono stati anche aggiunti degli schemi ispirati ai Sequence Diagrams per meglio descrivere la gestione degli eventi e la parte di rete all'interno del progetto.
-Questi file si trovano nei seguenti percorsi:
-
-### UML
-(elenco file)
-
-### Sequence Diagrams
-(elenco file)
 
 Requisiti Coperti
 -----
@@ -51,8 +52,21 @@ Istruzioni per il Setup
 ### Requisiti
 
 * JDK 14
+* Maven (per la compilazione)
+
+### Compilazione
+
+```bash
+git clone https://github.com/david98/ing-sw-2020-riva-valassi-volta.git
+cd ing-sw-2020-riva-valassi-volta
+mvn clean package
+```
+
+Gli archivi .jar (`santorini.jar` e `santorini-jar-with-dependencies.jar`) verranno generati nella cartella `target`.
 
 ### Utilizzo
+
+Nelle istruzioni seguenti, in caso di problemi di dipendenze, provare a sostituire `santorini.jar` con `santorini-jar-with-dependencies.jar`, che include tutte le dipendenze che potrebbero non essere installate sulla vostra macchina.
 
 #### Server
 
@@ -74,8 +88,18 @@ Altre opzioni disponibili:
 
 * `-p <porta a cui connettersi>`
 
+### Particolaritá da considerare
+
+1. Il server non accetta piú connessioni finché non viene scelto il numero dei giocatori.
+2. Per muoversi nella CLI, utilizzare WASD, Spazio per selezionare, O per confermare, N per saltare fase/turno, 4 per costruire una cupola con Atlas.
+3. Per costruire una cupola con Atlas nella GUI, cliccare con il tasto destro del mouse.
+
 
 Librerie e Plugin Utilizzati
 -----
 
-(TODO)
+* [picocli](https://picocli.info/)
+* [JUnit 5](https://junit.org/junit5/)
+* [JLine](https://github.com/jline/jline3)
+* [jna](https://github.com/java-native-access/jna)
+* [SonarScanner](https://docs.sonarqube.org/latest/analysis/scan/sonarscanner-for-maven/)

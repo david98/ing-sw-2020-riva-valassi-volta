@@ -9,7 +9,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * Manager to bind listeners and raise events when necessary
+ * Handles event raising and listening through the use of reflection.
  *
  * @author Davide Volta
  * @version 0.1
@@ -72,6 +72,11 @@ public class GameEventManager {
     eventClassListeners.add(new AbstractMap.SimpleEntry<>(obj, method));
   }
 
+  /**
+   * Calls all registered listeners for the given event.
+   *
+   * @param e The event to be raised.
+   */
   public static synchronized void raise(GameEvent e) {
     LOGGER.setLevel(Level.FINE);
     LOGGER.log(Level.FINE, "GameEvent of class {0} was raised.", new Object[]{e.getClass().getName()});

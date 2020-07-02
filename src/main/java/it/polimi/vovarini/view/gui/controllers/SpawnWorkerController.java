@@ -72,13 +72,13 @@ public class SpawnWorkerController extends GUIController {
   }
 
 
-  public void bindEvents() {
+  private void bindEvents() {
     godCard0.addEventHandler(MouseEvent.MOUSE_ENTERED, event -> onGodCardEntered(godCard0, 0));
     godCard1.addEventHandler(MouseEvent.MOUSE_ENTERED, event -> onGodCardEntered(godCard1, 1));
     godCard2.addEventHandler(MouseEvent.MOUSE_ENTERED, event -> onGodCardEntered(godCard2, 2));
   }
 
-  public void addImages(Player[] players) {
+  private void addImages(Player[] players) {
     String selector;
     for (int i = 0; i < players.length; i++) {
       selector = "#player" + i;
@@ -93,7 +93,7 @@ public class SpawnWorkerController extends GUIController {
   }
 
   @FXML
-  public void onGridClick(MouseEvent event) {
+  private void onGridClick(MouseEvent event) {
     Node clickedNode = event.getPickResult().getIntersectedNode();
 
     Integer x = GridPane.getColumnIndex(clickedNode);
@@ -113,7 +113,7 @@ public class SpawnWorkerController extends GUIController {
     guiManager.getClient().raise(new SpawnWorkerEvent(guiManager.getData().getOwner(), p));
   }
 
-  public void updateView() {
+  private void updateView() {
 
     boolean disabled = !guiManager.getData().getOwner().equals(guiManager.getData().getCurrentPlayer());
 

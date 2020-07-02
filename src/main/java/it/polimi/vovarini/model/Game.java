@@ -329,19 +329,6 @@ public class Game implements Serializable, GameDataAccessor {
   }
 
   /**
-   * This method undoes the last move done by the player currently playing
-   */
-  public void undoLastMove() {
-    try {
-      Move opposite = moves.pop().reverse();
-      undoneMoves.push(opposite);
-      opposite.execute();
-    } catch (EmptyStackException ignored) {
-
-    }
-  }
-
-  /**
    * Starts the game and raises a {@link GameStartEvent}.
    */
   public void start() {
