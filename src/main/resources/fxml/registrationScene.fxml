@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import java.net.URL?>
+<BorderPane xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
+            fx:controller="it.polimi.vovarini.view.gui.controllers.RegistrationController" fx:id="mainPane"
+            styleClass="mainPane">
+    <stylesheets>
+        <URL value="@../css/registrationScene.css"/>
+    </stylesheets>
+
+    <top>
+        <VBox styleClass="topBox">
+            <Label text="Registration" styleClass="menuTitle"/>
+        </VBox>
+    </top>
+
+    <center>
+        <HBox styleClass="voteHBox">
+            <VBox styleClass="allGodsBox">
+
+                <Label fx:id="error" styleClass="menuLabel"/>
+
+                <Label text="Enter your nickname:" styleClass="menuLabel"/>
+                <TextField fx:id="nicknameField" text="" styleClass="menuTextField"/>
+
+                <Button fx:id="submit" onAction="#onButtonClick">
+                </Button>
+            </VBox>
+        </HBox>
+    </center>
+
+</BorderPane>

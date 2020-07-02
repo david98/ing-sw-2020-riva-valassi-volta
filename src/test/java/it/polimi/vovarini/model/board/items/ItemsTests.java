@@ -51,7 +51,7 @@ public class ItemsTests {
 
   @Test
   @DisplayName("Tests that two equal Workers are acknowledged as that")
-  void workerEquals(){
+  void workerEquals() {
     Player testPlayer = new Player("test_player");
     Worker workerOne = new Worker(Sex.Male, testPlayer);
     Worker workerTwo = new Worker(Sex.Male, testPlayer);
@@ -77,8 +77,8 @@ public class ItemsTests {
 
   @Test
   @DisplayName("Test that InvalidLevelException is thrown when trying to give a level bigger than 4")
-  void invalidLevelCreation(){
-    assertThrows(InvalidLevelException.class, ()-> new Block(5));
+  void invalidLevelCreation() {
+    assertThrows(InvalidLevelException.class, () -> new Block(5));
   }
 
   @Test
@@ -122,19 +122,19 @@ public class ItemsTests {
 
   @Test
   @DisplayName("Test copy constructor on Block")
-  void testBlockCopy(){
+  void testBlockCopy() {
     try {
       Block original = new Block(Block.MIN_LEVEL);
       Block clone = new Block(original);
       assertNotSame(original, clone);
       assertEquals(original, clone);
-    } catch (InvalidLevelException ignored){
+    } catch (InvalidLevelException ignored) {
     }
   }
 
   @Test
   @DisplayName("Test correct behavior of canBePlacedOn method")
-  void canBePlacedOnTest(){
+  void canBePlacedOnTest() {
     Block levelOneBlock = new Block(Block.MIN_LEVEL);
     assertTrue(levelOneBlock.canBePlacedOn(null));
 
@@ -154,7 +154,7 @@ public class ItemsTests {
 
   @Test
   @DisplayName("Test of toString")
-  void toStringTest(){
+  void toStringTest() {
     Block levelOneBlock = new Block(Block.MIN_LEVEL);
     Block levelTwoBlock = new Block(Block.MIN_LEVEL + 1);
     Block levelThreeBlock = new Block(Block.WIN_LEVEL);

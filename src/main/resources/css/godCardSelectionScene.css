@@ -1,0 +1,94 @@
+@font-face {
+    src: url("../fonts/DalekPinpointBold.ttf");
+}
+
+@font-face {
+    src: url("../fonts/Romanica.ttf");
+}
+
+.mainPane {
+    -fx-background-image: url("../img/selection_bg.png");
+    -fx-alignment: CENTER;
+}
+
+.topBox {
+    -fx-padding: 50 20 50 20;
+    -fx-alignment: CENTER;
+}
+
+.centerBox {
+    -fx-max-width: 400px;
+    -fx-spacing: 10;
+    -fx-alignment: CENTER;
+}
+
+.godCard:hover {
+    -fx-effect: dropshadow(gaussian, #F44336, 15, 0.2, 0, 0);
+}
+
+.godCard:pressed {
+    -fx-scale-y: 0.95;
+    -fx-scale-x: 0.95;
+}
+
+.allGodsBox {
+    -fx-min-width: 900px;
+    -fx-max-width: 900px;
+    -fx-min-height: 500px;
+    -fx-padding: 10 10 10 10;
+    -fx-spacing: 20;
+    -fx-alignment: CENTER;
+}
+
+.godsPane {
+    -fx-text-alignment: center;
+    -fx-hgap: 50;
+    -fx-vgap: 20;
+    -fx-alignment: CENTER;
+}
+
+.labelsPane {
+    -fx-text-alignment: center;
+    -fx-hgap: 50;
+    -fx-vgap: 20;
+    -fx-alignment: CENTER;
+}
+
+.menuTitle {
+    -fx-font-family: "Dalek Pinpoint";
+    -fx-font-weight: bold;
+    -fx-font-size: 90px;
+    -fx-text-fill: #2786D1;
+}
+
+.menuTitle .text {
+    -fx-effect: dropshadow(gaussian, #000000, 15, 0.2, 0, 0);
+    -fx-stroke-width: 2px;
+    -fx-stroke: #ffffff;
+}
+
+.prompt {
+    -fx-font-family: "Romanica";
+    -fx-font-size: 40px;
+    -fx-text-fill: #2786D1;
+    -fx-alignment: center;
+    -fx-text-alignment: center;
+}
+
+.prompt .text {
+    -fx-stroke-width: 1px;
+    -fx-stroke: #ffffff;
+}
+
+.cardLabel {
+    -fx-font-family: "Romanica";
+    -fx-font-size: 30px;
+    -fx-text-fill: #2786D1;
+    -fx-alignment: center;
+    -fx-text-alignment: center;
+}
+
+.cardLabel .text {
+    -fx-stroke-width: 1px;
+    -fx-stroke: #ffffff;
+}

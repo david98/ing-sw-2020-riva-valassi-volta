@@ -1,0 +1,192 @@
+@font-face {
+    src: url("../fonts/DalekPinpointBold.ttf");
+}
+
+@font-face {
+    src: url("../fonts/Romanica.ttf");
+}
+
+.mainPane {
+    -fx-background-image: url("../img/match_bg.png");
+    -fx-alignment: CENTER;
+}
+
+.topBox {
+    -fx-padding: 50 0 0 0;
+    -fx-alignment: CENTER;
+}
+
+.centerBox {
+    -fx-max-width: 900px;
+    -fx-spacing: 10;
+    -fx-alignment: CENTER;
+}
+
+.box {
+
+}
+
+.box:hover {
+    /*-fx-effect: dropshadow(gaussian, #008000, 15, 0.2, 0, 0);*/
+}
+
+.box:pressed {
+    -fx-scale-y: 0.95;
+    -fx-scale-x: 0.95;
+}
+
+.level.highlighted-empty {
+    -fx-background-color: rgba(255, 255, 255, 0.4);
+}
+
+.level.highlighted {
+    /*-fx-background-color: rgba(255, 0, 0, 0.2);*/
+    -fx-effect: innershadow(gaussian, #ffffff, 200, 0.2, 0, 0);
+}
+
+.botBox {
+    -fx-padding: 0 0 50 0;
+    -fx-alignment: CENTER;
+}
+
+.board {
+    -fx-alignment: CENTER;
+    -fx-background-image: url("/img/bg.png");
+    -fx-background-size: contain;
+    -fx-background-repeat: no-repeat;
+    -fx-background-position: center center;
+    -fx-min-width: 500px;
+    -fx-max-width: 500px;
+    -fx-min-height: 500px;
+    -fx-max-height: 500px;
+}
+
+.player {
+    -fx-font-family: "Romanica";
+    -fx-font-size: 25px;
+    -fx-text-fill: #2786D1;
+    -fx-effect: innershadow(gaussian, #000000, 1, 0.2, 0, 0);
+}
+
+.player.current {
+    -fx-font-size: 50px;
+    -fx-effect: dropshadow(gaussian, #ffffff, 15, 0.2, 0, 0);
+}
+
+.godCard {
+    -fx-effect: innershadow(gaussian, #000000, 200, 0.2, 0, 0);
+}
+
+.godCard.current {
+    -fx-effect: dropshadow(gaussian, #ffffff, 15, 0.2, 0, 0);
+}
+
+.godCard.wasted {
+    -fx-effect: innershadow(gaussian, #ff0000, 200, 0.1, 0, 0);
+}
+
+.player .text {
+    -fx-stroke-width: 1px;
+    -fx-stroke: #ffffff;
+}
+
+.player.wasted {
+    -fx-effect: innershadow(gaussian, #FF0000, 200, 0.8, 0, 0);
+}
+
+.playersBox {
+    -fx-min-width: 1100px;
+    -fx-max-width: 1500px;
+    -fx-padding: 10 10 10 10;
+    -fx-spacing: 20;
+    -fx-alignment: CENTER;
+}
+
+.menuTitle {
+    -fx-font-family: "Dalek Pinpoint";
+    -fx-font-weight: bold;
+    -fx-font-size: 90px;
+    -fx-text-fill: #2786D1;
+}
+
+.menuTitle .text {
+    -fx-effect: dropshadow(gaussian, #000000, 15, 0.2, 0, 0);
+    -fx-stroke-width: 2px;
+    -fx-stroke: #ffffff;
+}
+
+#skipButton {
+    -fx-font-family: "Dalek Pinpoint";
+    -fx-font-weight: bold;
+    -fx-font-size: 70px;
+    -fx-text-fill: #2786D1;
+}
+
+#skipButton:hover {
+    -fx-font-size: 80px;
+    -fx-effect: dropshadow(gaussian, #ffffff, 15, 0.2, 0, 0);
+}
+
+#skipButton:pressed {
+    -fx-font-size: 70px;
+}
+
+.phaseBox {
+    -fx-hgap: 50;
+}
+
+#skipButton .text {
+    -fx-effect: dropshadow(gaussian, #000000, 15, 0.2, 0, 0);
+    -fx-stroke-width: 2px;
+    -fx-stroke: #ffffff;
+}
+
+.menuLabel {
+    -fx-font-family: "Romanica";
+    -fx-font-size: 40px;
+    -fx-text-fill: #2786D1;
+}
+
+.menuLabel .text {
+    -fx-stroke-width: 1px;
+    -fx-stroke: #ffffff;
+}
+
+#instruction {
+    -fx-padding: 0 20 0 0;
+}
+
+.phase {
+    -fx-padding: 0 20 0 0;
+    -fx-font-family: "Romanica";
+    -fx-font-size: 20px;
+    -fx-text-fill: #2786D1;
+}
+
+.phase .text {
+    -fx-stroke-width: 1px;
+    -fx-stroke: #ffffff;
+}
+
+#skipButton {
+    -fx-scale-x: -1;
+    -fx-background-image: url("/img/btn_back.png");
+    -fx-background-color: transparent;
+    -fx-background-size: 90px;
+    -fx-background-repeat: no-repeat;
+    -fx-background-position: center;
+    -fx-base: transparent;
+    -fx-min-width: 100;
+    -fx-min-height: 100;
+}
+
+#skipButton:hover {
+    -fx-base: transparent;
+    -fx-background-color: transparent;
+}
+
+#skipButton:pressed {
+    -fx-background-image: url("/img/btn_back_pressed.png");
+    -fx-background-color: transparent;
+    -fx-base: transparent;
+}

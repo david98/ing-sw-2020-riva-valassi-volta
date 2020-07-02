@@ -7,6 +7,12 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+/**
+ * A list of elements where you can move up and down with W/S and
+ * select a number of elements with space.
+ * The list uses the {@link T#toString()} method to print each element.
+ * @param <T> The class of objects in the list.
+ */
 public class MultiChoiceList<T> extends CLIElement {
 
   private final List<T> options;
@@ -15,7 +21,12 @@ public class MultiChoiceList<T> extends CLIElement {
   private final Set<T> selectedOptions;
   private final int maxChoices;
 
-  public MultiChoiceList(List<T> options, int maxChoices){
+  /**
+   * Creates a MultiChoiceList where you can select at most {@code maxChoices} elements.
+   * @param options A list of all options.
+   * @param maxChoices The maximum number of choices.
+   */
+  public MultiChoiceList(List<T> options, int maxChoices) {
     this.options = options;
     this.maxChoices = maxChoices;
 
@@ -27,25 +38,34 @@ public class MultiChoiceList<T> extends CLIElement {
     return new HashSet<>(selectedOptions);
   }
 
-  public void moveUp(){
+  /**
+   * Moves the cursor up.
+   */
+  public void moveUp() {
     currentOptionIndex--;
-    if (currentOptionIndex < 0){
+    if (currentOptionIndex < 0) {
       currentOptionIndex = options.size() - 1;
     }
   }
 
-  public void moveDown(){
+  /**
+   * Moves the cursor down.
+   */
+  public void moveDown() {
     currentOptionIndex++;
-    if (currentOptionIndex >= options.size()){
+    if (currentOptionIndex >= options.size()) {
       currentOptionIndex = 0;
     }
   }
 
-  public void select(){
+  /**
+   * Selects the element currently under the cursor.
+   */
+  public void select() {
     T current = options.get(currentOptionIndex);
-    if (selectedOptions.contains(current)){
+    if (selectedOptions.contains(current)) {
       selectedOptions.remove(current);
-    } else if (selectedOptions.size() < maxChoices){
+    } else if (selectedOptions.size() < maxChoices) {
       selectedOptions.add(current);
     }
   }
@@ -54,18 +74,21 @@ public class MultiChoiceList<T> extends CLIElement {
   public String render() {
     StringBuilder content = new StringBuilder();
 
-    for (T option: options){
+    for (T option : options) {
       String line = options.get(currentOptionIndex).equals(option) ?
               Color.Black.fgWrap(Color.White.bgWrap(option.toString())) : option.toString();
       content.append(selectedOptions.contains(option) ?
-                    TextStyle.bold(line) : line)
+              TextStyle.bold(line) : line)
               .append("\n");
     }
 
     return content.toString();
   }
 
-  public boolean maxSelected(){
+  /**
+   * @return Whether the maximum number of choices has been reached.
+   */
+  public boolean maxSelected() {
     return selectedOptions.size() >= maxChoices;
   }
 }

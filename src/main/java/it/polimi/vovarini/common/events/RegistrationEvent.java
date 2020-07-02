@@ -16,8 +16,7 @@ public class RegistrationEvent extends GameEvent {
   private final String nickname;
 
   /**
-   *
-   * @param source The event source (ideally, a {@link GameView} object).
+   * @param source   The event source (ideally, a {@link GameView} object).
    * @param nickname The desired nickname (which has already been validated: an invalid nickname
    *                 should result in an exception being thrown by the handler).
    */

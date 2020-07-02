@@ -1,5 +1,8 @@
 package it.polimi.vovarini.model.godcards;
 
+/**
+ * Enumeration containing all valid/supported GodCard names
+ */
 public enum GodName {
   Apollo,
   Artemis,
@@ -9,9 +12,9 @@ public enum GodName {
   Hephaestus,
   Hera,
   Hestia,
+  Limus,
   Minotaur,
   Pan,
-  Poseidon,
   Prometheus,
   Triton,
   Zeus,

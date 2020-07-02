@@ -16,7 +16,7 @@ public class ElectedPlayerScreen extends Screen {
   private final MultiChoiceList<GodName> godNameMultiChoiceList;
   private final Text confirmationPrompt;
 
-  public ElectedPlayerScreen(ViewData data, GameClient client, List<GodName> allGods){
+  public ElectedPlayerScreen(ViewData data, GameClient client, List<GodName> allGods) {
     super(data, client);
     explanation = new Text(
             "You are the chosen one. Choose which cards will be available during this game.\n\n"
@@ -25,7 +25,7 @@ public class ElectedPlayerScreen extends Screen {
     confirmationPrompt = new Text("Press O to confirm your choice.");
   }
 
-  private void confirm(){
+  private void confirm() {
     System.out.println("ooooi");
     if (godNameMultiChoiceList.maxSelected()) {
       client.raise(new AvailableCardsEvent(data.getOwner(),
@@ -36,7 +36,7 @@ public class ElectedPlayerScreen extends Screen {
 
   @Override
   public void handleKeyPress(Key key) {
-    switch (key){
+    switch (key) {
       case W -> godNameMultiChoiceList.moveUp();
       case S -> godNameMultiChoiceList.moveDown();
       case SPACEBAR -> godNameMultiChoiceList.select();
@@ -46,7 +46,7 @@ public class ElectedPlayerScreen extends Screen {
   }
 
   @Override
-  public String render(){
+  public String render() {
     needsRender = false;
     return explanation.render() +
             godNameMultiChoiceList.render() +

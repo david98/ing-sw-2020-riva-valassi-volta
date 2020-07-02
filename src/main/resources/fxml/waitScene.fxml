@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.VBox?>
+<?import java.net.URL?>
+<BorderPane fx:id="mainPane" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="it.polimi.vovarini.view.gui.controllers.WaitController">
+    <stylesheets>
+        <URL value="@../css/waitScene.css"/>
+    </stylesheets>
+
+    <top>
+        <VBox styleClass="topBox">
+            <Label styleClass="menuTitle" text="Waiting..."/>
+        </VBox>
+    </top>
+
+    <center>
+        <Label fx:id="label" alignment="TOP_CENTER" contentDisplay="CENTER" styleClass="menuLabel">
+            Waiting for all players to register...
+        </Label>
+    </center>
+
+</BorderPane>

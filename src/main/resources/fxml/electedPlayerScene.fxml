@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import java.net.URL?>
+<BorderPane fx:id="mainPane" styleClass="mainPane" xmlns="http://javafx.com/javafx/10.0.2-internal"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="it.polimi.vovarini.view.gui.controllers.ElectedPlayerController">
+    <stylesheets>
+        <URL value="@../css/electedPlayerScene.css"/>
+    </stylesheets>
+
+    <top>
+        <VBox styleClass="topBox">
+            <Label styleClass="menuTitle" text="Pregame"/>
+        </VBox>
+    </top>
+
+    <center>
+        <HBox styleClass="allGodsBox">
+            <VBox styleClass="allGodsBox">
+                <Label styleClass="menuLabel" text="Choose the godCards for the game"/>
+                <FlowPane styleClass="voteInnerBox">
+                    <ImageView fx:id="godCard0" fitHeight="168" fitWidth="100" styleClass="godCard"/>
+                    <ImageView fx:id="godCard1" fitHeight="168" fitWidth="100" styleClass="godCard"/>
+                    <ImageView fx:id="godCard2" fitHeight="168" fitWidth="100" styleClass="godCard"/>
+                    <ImageView fx:id="godCard3" fitHeight="168" fitWidth="100" styleClass="godCard"/>
+                    <ImageView fx:id="godCard4" fitHeight="168" fitWidth="100" styleClass="godCard"/>
+                    <ImageView fx:id="godCard5" fitHeight="168" fitWidth="100" styleClass="godCard"/>
+                    <ImageView fx:id="godCard6" fitHeight="168" fitWidth="100" styleClass="godCard"/>
+                    <ImageView fx:id="godCard7" fitHeight="168" fitWidth="100" styleClass="godCard"/>
+                    <ImageView fx:id="godCard8" fitHeight="168" fitWidth="100" styleClass="godCard"/>
+                    <ImageView fx:id="godCard9" fitHeight="168" fitWidth="100" styleClass="godCard"/>
+                    <ImageView fx:id="godCard10" fitHeight="168" fitWidth="100" styleClass="godCard"/>
+                    <ImageView fx:id="godCard11" fitHeight="168" fitWidth="100" styleClass="godCard"/>
+                    <ImageView fx:id="godCard12" fitHeight="168" fitWidth="100" styleClass="godCard"/>
+                    <ImageView fx:id="godCard13" fitHeight="168" fitWidth="100" styleClass="godCard"/>
+                </FlowPane>
+            </VBox>
+        </HBox>
+    </center>
+
+    <bottom>
+        <VBox styleClass="selectionBox">
+            <Label alignment="CENTER" contentDisplay="CENTER" styleClass="menuLabel" text="Your selection"/>
+            <FlowPane alignment="CENTER" columnHalignment="CENTER" styleClass="voteInnerBox">
+                <ImageView fx:id="selectedGodCard1" fitHeight="168" fitWidth="100" styleClass="selectedGodCard"/>
+                <ImageView fx:id="selectedGodCard2" fitHeight="168" fitWidth="100" styleClass="selectedGodCard"/>
+                <ImageView fx:id="selectedGodCard3" fitHeight="168" fitWidth="100" styleClass="selectedGodCard"/>
+            </FlowPane>
+            <Button fx:id="submit" alignment="CENTER" contentDisplay="CENTER" onAction="#submit" text="Confirm"
+                    textAlignment="CENTER">SUBMIT
+            </Button>
+        </VBox>
+    </bottom>
+
+</BorderPane>

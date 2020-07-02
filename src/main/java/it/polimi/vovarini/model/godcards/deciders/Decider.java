@@ -1,12 +1,9 @@
 package it.polimi.vovarini.model.godcards.deciders;
 
 /**
- * @class Decider represents a general behavior influenced by card effects. It should represent a general rule-conditioned aspect of the game
+ * A container for methods that implement a certain part of the rules in a different way,
+ * as described by a God Card.
+ *
  * @author Mattia Valassi
  */
-public abstract class Decider {
-
-
-
-
-}
+public abstract class Decider {}

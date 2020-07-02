@@ -12,8 +12,8 @@ import java.io.Serializable;
 public class Color implements Serializable {
 
   public final static Color Red = new Color(255, 0, 0);
-  public final static Color Green = new Color(0, 255,  0);
-  public final static Color Blue = new Color(0, 0,  255);
+  public final static Color Green = new Color(0, 255, 0);
+  public final static Color Blue = new Color(0, 0, 255);
   public final static Color White = new Color(255, 255, 255);
   public final static Color Black = new Color(0, 0, 0);
 
@@ -60,7 +60,7 @@ public class Color implements Serializable {
     return (char) 27 + "[48;2;" + r + ";" + g + ";" + b + "m" + s + (char) 27 + "[0m";
   }
 
-  public static void main(String[] args){
+  public static void main(String[] args) {
     Color c = new Color(255, 0, 0);
     System.out.println(c.bgWrap(Color.Green.fgWrap("hey")));
   }

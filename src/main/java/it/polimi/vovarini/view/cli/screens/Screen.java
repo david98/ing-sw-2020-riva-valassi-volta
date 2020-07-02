@@ -2,13 +2,26 @@ package it.polimi.vovarini.view.cli.screens;
 
 import it.polimi.vovarini.common.events.*;
 import it.polimi.vovarini.common.network.GameClient;
+import it.polimi.vovarini.common.network.server.Server;
 import it.polimi.vovarini.view.EventsForViewListener;
 import it.polimi.vovarini.view.ViewData;
 import it.polimi.vovarini.view.cli.elements.Renderable;
 import it.polimi.vovarini.view.cli.input.Key;
 import it.polimi.vovarini.view.cli.input.KeyPressListener;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+
+/**
+ * Kinda like a scene in JavaFX, a Screen can contain {@link it.polimi.vovarini.view.cli.elements.CLIElement} objects,
+ * can handle events and can be rendered on screen.\
+ *
+ * @author Davide Volta
+ */
 public abstract class Screen implements Renderable, EventsForViewListener, KeyPressListener {
+
+  protected static final Logger LOGGER = Logger.getLogger(Server.class.getName());
 
   protected final GameClient client;
 
@@ -32,73 +45,97 @@ public abstract class Screen implements Renderable, EventsForViewListener, KeyPr
     return needsRender;
   }
 
-  @Override
-  public void handleBoardUpdate(BoardUpdateEvent e) {
-
+  private void methodNotImplemented() {
+    LOGGER.log(Level.FINE, "This method hasn\'t been overridden by this controller");
   }
 
   @Override
-  public void handleCurrentPlayerUpdate(CurrentPlayerChangedEvent e) {
-
+  public void handle(BoardUpdateEvent e) {
+    methodNotImplemented();
   }
 
   @Override
-  public void handlePhaseUpdate(PhaseUpdateEvent e) {
-
+  public void handle(CurrentPlayerChangedEvent e) {
+    methodNotImplemented();
   }
 
   @Override
-  public void handleGameStart(GameStartEvent e) {
-
+  public void handle(PhaseUpdateEvent e) {
+    methodNotImplemented();
   }
 
   @Override
-  public void handleNewPlayer(NewPlayerEvent e) {
-
+  public void handle(GameStartEvent e) {
+    methodNotImplemented();
   }
 
   @Override
-  public void handleGodSelectionStart(GodSelectionStartEvent e) {
-
+  public void handle(NewPlayerEvent e) {
+    methodNotImplemented();
   }
 
   @Override
-  public void handleSelectYourCard(SelectYourCardEvent e) {
-
+  public void handle(GodSelectionStartEvent e) {
+    methodNotImplemented();
   }
 
   @Override
-  public void handleCardAssignment(CardAssignmentEvent e) {
-
+  public void handle(SelectYourCardEvent e) {
+    methodNotImplemented();
   }
 
   @Override
-  public void handlePlaceYourWorkers(PlaceYourWorkersEvent e) {
-
+  public void handle(CardAssignmentEvent e) {
+    methodNotImplemented();
   }
 
   @Override
-  public void handleVictory(VictoryEvent e) {
+  public void handle(PlaceYourWorkersEvent e) {
+    methodNotImplemented();
+  }
 
+  @Override
+  public void handle(VictoryEvent e) {
+    methodNotImplemented();
   }
 
   @Override
   public void handleKeyPress(Key key) {
-
+    methodNotImplemented();
   }
 
   @Override
-  public void handlePlayerInfoUpdate(PlayerInfoUpdateEvent e) {
-
+  public void handle(PlayerInfoUpdateEvent e) {
+    methodNotImplemented();
   }
 
   @Override
-  public void handleGodCardUpdate(GodCardUpdateEvent e) {
-
+  public void handle(GodCardUpdateEvent e) {
+    methodNotImplemented();
   }
 
   @Override
-  public void handleLoss(LossEvent e) {
-  
+  public void handle(LossEvent e) {
+    methodNotImplemented();
+  }
+
+  @Override
+  public void handle(AbruptEndEvent e) {
+    methodNotImplemented();
+  }
+
+  @Override
+  public void handle(FirstPlayerEvent e) {
+    methodNotImplemented();
+  }
+
+  @Override
+  public void handle(RegistrationStartEvent e) {
+    methodNotImplemented();
+  }
+
+  @Override
+  public void handle(InvalidNicknameEvent e) {
+    methodNotImplemented();
   }
 }

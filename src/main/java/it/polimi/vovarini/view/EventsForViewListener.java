@@ -2,30 +2,44 @@ package it.polimi.vovarini.view;
 
 import it.polimi.vovarini.common.events.*;
 
+/**
+ * This interface contains all the event listeners
+ * that any kind of view should implement.
+ *
+ * @author Davide Volta
+ */
 public interface EventsForViewListener {
-  void handleBoardUpdate(BoardUpdateEvent e);
+  void handle(BoardUpdateEvent e);
 
-  void handleCurrentPlayerUpdate(CurrentPlayerChangedEvent e);
+  void handle(CurrentPlayerChangedEvent e);
 
-  void handlePhaseUpdate(PhaseUpdateEvent e);
+  void handle(PhaseUpdateEvent e);
 
-  void handleGameStart(GameStartEvent e);
+  void handle(GameStartEvent e);
 
-  void handleNewPlayer(NewPlayerEvent e);
+  void handle(NewPlayerEvent e);
 
-  void handleGodSelectionStart(GodSelectionStartEvent e);
+  void handle(GodSelectionStartEvent e);
 
-  void handleSelectYourCard(SelectYourCardEvent e);
+  void handle(SelectYourCardEvent e);
 
-  void handleCardAssignment(CardAssignmentEvent e);
+  void handle(CardAssignmentEvent e);
 
-  void handlePlaceYourWorkers(PlaceYourWorkersEvent e);
+  void handle(PlaceYourWorkersEvent e);
 
-  void handlePlayerInfoUpdate(PlayerInfoUpdateEvent e);
+  void handle(PlayerInfoUpdateEvent e);
 
-  void handleGodCardUpdate(GodCardUpdateEvent e);
+  void handle(GodCardUpdateEvent e);
 
-  void handleVictory(VictoryEvent e);
+  void handle(VictoryEvent e);
 
-  void handleLoss(LossEvent e);
+  void handle(LossEvent e);
+
+  void handle(AbruptEndEvent e);
+
+  void handle(FirstPlayerEvent e);
+
+  void handle(RegistrationStartEvent e);
+
+  void handle(InvalidNicknameEvent e);
 }

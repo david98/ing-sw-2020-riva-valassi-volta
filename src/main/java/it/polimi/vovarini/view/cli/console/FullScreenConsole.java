@@ -12,6 +12,13 @@ import java.util.Scanner;
 
 import static com.sun.jna.platform.win32.Wincon.ENABLE_LINE_INPUT;
 
+/**
+ * A console meant to work in raw mode with colors and whose content is updatable,
+ * by virtue of return carriage and similar tricks.
+ * Supports Windows, too, which is kinda neat.
+ *
+ * @author Davide Volta
+ */
 public class FullScreenConsole implements Console {
 
   private int printedLineCount;
@@ -19,15 +26,20 @@ public class FullScreenConsole implements Console {
   private final Terminal terminal;
   private final Reader reader;
 
+  /**
+   * Creates a full screen console.
+   * If running on windows, it also uses the Win32 API to enable colors and raw mode.
+   *
+   * @throws IOException If a terminal can't be created.
+   */
   public FullScreenConsole() throws IOException {
     printedLineCount = 0;
 
-    if(System.getProperty("os.name").startsWith("Windows"))
-    {
+    if (System.getProperty("os.name").startsWith("Windows")) {
       // Set output mode to handle virtual terminal sequences
       Function GetStdHandleFunc = Function.getFunction("kernel32", "GetStdHandle");
       WinDef.DWORD STD_OUTPUT_HANDLE = new WinDef.DWORD(-11);
-      WinNT.HANDLE hOut = (WinNT.HANDLE)GetStdHandleFunc.invoke(WinNT.HANDLE.class, new Object[]{STD_OUTPUT_HANDLE});
+      WinNT.HANDLE hOut = (WinNT.HANDLE) GetStdHandleFunc.invoke(WinNT.HANDLE.class, new Object[]{STD_OUTPUT_HANDLE});
 
       WinDef.DWORDByReference p_dwMode = new WinDef.DWORDByReference(new WinDef.DWORD(0));
       Function GetConsoleModeFunc = Function.getFunction("kernel32", "GetConsoleMode");
@@ -35,7 +47,7 @@ public class FullScreenConsole implements Console {
 
       int ENABLE_VIRTUAL_TERMINAL_PROCESSING = 4;
       WinDef.DWORD dwMode = p_dwMode.getValue();
-      dwMode.setValue((dwMode.intValue() | ENABLE_VIRTUAL_TERMINAL_PROCESSING) &~ENABLE_LINE_INPUT);
+      dwMode.setValue((dwMode.intValue() | ENABLE_VIRTUAL_TERMINAL_PROCESSING) & ~ENABLE_LINE_INPUT);
       Function SetConsoleModeFunc = Function.getFunction("kernel32", "SetConsoleMode");
       SetConsoleModeFunc.invoke(WinDef.BOOL.class, new Object[]{hOut, dwMode});
     }

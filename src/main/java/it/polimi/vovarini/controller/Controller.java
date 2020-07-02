@@ -2,6 +2,7 @@ package it.polimi.vovarini.controller;
 
 import it.polimi.vovarini.common.events.*;
 import it.polimi.vovarini.common.exceptions.*;
+import it.polimi.vovarini.common.network.server.Server;
 import it.polimi.vovarini.model.Game;
 import it.polimi.vovarini.model.Phase;
 import it.polimi.vovarini.model.Player;
@@ -20,12 +21,19 @@ import java.util.Arrays;
 import java.util.EventListener;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
- * Class that represents the Controller concept of the MVC pattern. Acts as a Listener to events triggered from the View, and updates the Model about it, notifying him
- * of what he has to change
+ * Acts as an intermediary between remote views and the model: it listens for events raised by remote views and
+ * acts accordingly on the model.
+ *
+ * @author Mattia Valassi
+ * @author Marco Riva
  */
 public class Controller implements EventListener {
+
+  private static final Logger LOGGER = Logger.getLogger(Server.class.getName());
 
   private final Game game;
 
@@ -33,33 +41,43 @@ public class Controller implements EventListener {
     return game;
   }
 
-  // Scelta del numero di giocatori fatta su Server, Game precedentemente istanziato
+  /**
+   * Creates a Controller acting on the given instance of {@link Game}.
+   * @param game The instance of game to be handled by this controller.
+   */
   public Controller(Game game) {
     GameEventManager.bindListeners(this);
     this.game = game;
   }
 
   /**
+   * Adds a player to the game, if possible.
+   * Raises {@link InvalidNicknameEvent} if the chosen nickname is invalid or already in use
+   * by another player.
    *
-   * @param evt is the RegistrationEvent the view generates when a player wants to log into the game
-   * @throws InvalidNicknameException if the nickname is not validated (length, special characters...) or if is already in use inside the current played game
-   * @throws InvalidNumberOfPlayersException if another player wants to log into the game, but the game already has all its players
+   * @param evt Raised by a player when they choose a nickname.
+   * @throws InvalidNumberOfPlayersException If the game is already full.
    */
   @GameEventListener
-  public void update(RegistrationEvent evt) throws InvalidNicknameException {
+  public void update(RegistrationEvent evt) {
     for (Player player : game.getPlayers()) {
-      if(player == null) break ;
+      if (player == null) break;
       if (player.getNickname().equalsIgnoreCase(evt.getNickname())) {
-        throw new InvalidNicknameException(InvalidNicknameException.ERROR_DUPLICATE);
+        LOGGER.log(Level.INFO, "Raising InvalidNicknameEvent due to a duplication.");
+        GameEventManager.raise(new InvalidNicknameEvent(game, InvalidNicknameEvent.ERROR_DUPLICATE, evt.getNickname()));
+        return;
       }
     }
+
     if (!Player.validateNickname(evt.getNickname())) {
-      throw new InvalidNicknameException(InvalidNicknameException.ERROR_INVALID);
+      LOGGER.log(Level.SEVERE, "Raising InvalidNicknameEvent due to an invalid nickname.");
+      GameEventManager.raise(new InvalidNicknameEvent(game, InvalidNicknameEvent.ERROR_INVALID, evt.getNickname()));
+      return;
     }
 
     try {
       game.addPlayer(evt.getNickname());
-      if (game.isFull()){
+      if (game.isFull()) {
         game.drawElectedPlayer();
         GodName[] godNames = Arrays.stream(GodName.values()).filter(name -> name != GodName.Nobody).toArray(GodName[]::new);
         GameEventManager.raise(new BoardUpdateEvent(game, game.getBoard())); //this is normally not needed
@@ -70,32 +88,43 @@ public class Controller implements EventListener {
     }
   }
 
+  /**
+   * Sets the available cards on game, then starts the card selection phase.
+   *
+   * @param evt Raised by the elected player after they have chosen the available cards.
+   * @throws AvailableCardsAlreadySetException If the available cards have already been chosen.
+   * @throws WrongPlayerException If the event hasn't been raised by the elected player.
+   * @throws InvalidNumberOfGodCardsException If the number of godcards is not the same as the number of players.
+   * @throws InvalidCardException If one of the chosen cards is null, doesn't exist or there are duplicate cards.
+   */
   @GameEventListener
   public void update(AvailableCardsEvent evt) {
 
     // ho già ricevuto le carte scelte per questa partita
-    if(game.isAvailableCardsAlreadySet())
+    if (game.isAvailableCardsAlreadySet())
       throw new AvailableCardsAlreadySetException();
 
     Player currentPlayer = game.getCurrentPlayer();
     if (!currentPlayer.equals(evt.getSource())) throw new WrongPlayerException();
 
     // mi hai dato più carte (o meno) del dovuto
-    if(evt.getSelectedGods().length != game.getAvailableGodCards().length) throw new InvalidNumberOfGodCardsException();
+    if (evt.getSelectedGods().length != game.getAvailableGodCards().length)
+      throw new InvalidNumberOfGodCardsException();
 
     List<GodName> values = Arrays.asList(GodName.values());
 
-    for (int i = 0; i < evt.getSelectedGods().length-1; i++) {
+    for (int i = 0; i < evt.getSelectedGods().length - 1; i++) {
 
       // la carta scelta è nulla
-      if(evt.getSelectedGods()[i] == null || evt.getSelectedGods()[i+1] == null) throw new InvalidCardException();
+      if (evt.getSelectedGods()[i] == null || evt.getSelectedGods()[i + 1] == null) throw new InvalidCardException();
 
       // la carta scelta non esiste
-      if(!values.contains(evt.getSelectedGods()[i]) || !values.contains(evt.getSelectedGods()[i+1])) throw new InvalidCardException();
+      if (!values.contains(evt.getSelectedGods()[i]) || !values.contains(evt.getSelectedGods()[i + 1]))
+        throw new InvalidCardException();
 
       // ci sono due carte uguali
-      for(int k = i+1; k < evt.getSelectedGods().length; k++)
-        if(evt.getSelectedGods()[i].equals(evt.getSelectedGods()[k])) {
+      for (int k = i + 1; k < evt.getSelectedGods().length; k++)
+        if (evt.getSelectedGods()[i].equals(evt.getSelectedGods()[k])) {
           throw new InvalidCardException();
         }
     }
@@ -104,13 +133,21 @@ public class Controller implements EventListener {
     game.setupGodCards();
   }
 
+  /**
+   * Registers the choice of a card made by a player, then raises a {@link CardAssignmentEvent}.
+   *
+   * @param evt Raised by a player when they select their card.
+   * @throws CardsNotSelectedException If the available cards haven't been chosen yet.
+   * @throws WrongPlayerException If the event hasn't been raised by the current player.
+   * @throws InvalidCardException If the chosen card isn't in the available cards list.
+   */
   @GameEventListener
   public void update(CardChoiceEvent evt) {
     // carte non ancora scelte
-    if(!game.isAvailableCardsAlreadySet()) throw new CardsNotSelectedException();
+    if (!game.isAvailableCardsAlreadySet()) throw new CardsNotSelectedException();
 
     // carte già assegnate ai players (se length = 1, devo assegnarla in automatico)
-    if(game.getAvailableGodCards().length <= 1) {
+    if (game.getAvailableGodCards().length <= 1) {
       // throw new SalcazzoException();
     }
 
@@ -135,10 +172,12 @@ public class Controller implements EventListener {
   }
 
   /**
+   * Selects a worker as the current one for the current player, then
+   * moves the game to the next phase if it is in progress.
    *
-   * @param evt is the WorkerSelectionEvent the view generates when a player selects the Worker he wants to use
-   * @throws InvalidPhaseException The selection of the Worker must be performed during Phase.Start. If the controller receives this event in another phase, something is wrong
-   * @throws WrongPlayerException Another player must not be able to select a Worker when he's not playing
+   * @param evt Raised by a player when they select their current worker.
+   * @throws InvalidPhaseException If the current phase isn't {@code Phase.Start}
+   * @throws WrongPlayerException If the event hasn't been raised by the current player.
    */
   @GameEventListener
   public void update(WorkerSelectionEvent evt) {
@@ -156,11 +195,14 @@ public class Controller implements EventListener {
   }
 
   /**
+   * Tries to spawn a worker at a given position, then raises a {@link PlaceYourWorkersEvent} for the next worker to be
+   * placed, or, if everyone has placed their workers, it starts the game.
    *
-   * @param evt is the SpawnWorkerEvent the view generates when a player has to place a Worker for the first time
-   * @throws WrongPlayerException Another player must not be able to choose the starting position of the current player's own Worker
-   * @throws InvalidPositionException If the player tries to put his Worker outside the board
-   * @throws OverwrittenWorkerException If the player tries to put his Worker on top of another Worker (of any player)
+   * @param evt Raised by a player when they try to place a worker at a given position for the first time.
+   * @throws WrongPlayerException       If the event hasn't been raised by the current player.
+   * @throws InvalidPositionException   If the target position would be outside of the board.
+   * @throws WorkerAlreadySpawnedException If the selected worker has already been placed on the board.
+   * @throws OverwrittenWorkerException If the target position is already occupied by another worker.
    */
   @GameEventListener
   public void update(SpawnWorkerEvent evt) {
@@ -179,8 +221,8 @@ public class Controller implements EventListener {
       throw new WorkerAlreadySpawnedException();
 
     } catch (ItemNotFoundException e) {
-      Item targetItem = game.getBoard().getItems(target).peek();
-      if (targetItem != null && !currentWorker.canBePlacedOn(game.getBoard().getItems(target).peek())){
+      Item targetItem = game.getBoard().getBox(target).getItems().peek();
+      if (targetItem != null && !currentWorker.canBePlacedOn(game.getBoard().getBox(target).getItems().peek())) {
         // Worker sopra altro worker
         throw new OverwrittenWorkerException();
       } else {
@@ -191,22 +233,22 @@ public class Controller implements EventListener {
          * giocatore successivo
          */
         if (currentPlayer.getWorkers().values().stream().noneMatch(worker -> {
-          try {
-            game.getBoard().getItemPosition(worker);
-            return false;
-          } catch (ItemNotFoundException exception){
-            return true;
-          }
-        }
+                  try {
+                    game.getBoard().getItemPosition(worker);
+                    return false;
+                  } catch (ItemNotFoundException exception) {
+                    return true;
+                  }
+                }
         )) {
           game.nextPlayer();
           if (game.getCurrentPlayer().getWorkers().values().stream().noneMatch(worker -> {
-                    try {
-                      game.getBoard().getItemPosition(worker);
-                      return false;
-                    } catch (ItemNotFoundException exception){
-                      return true;
-                    }
+            try {
+              game.getBoard().getItemPosition(worker);
+              return false;
+            } catch (ItemNotFoundException exception) {
+              return true;
+            }
                   }
           )) {
             // tutti hanno piazzato
@@ -220,12 +262,13 @@ public class Controller implements EventListener {
   }
 
   /**
+   * Tries to perform a construction for the current player and their current worker.
    *
-   * @param evt is the BuildEvent the view generates when a player wants to perform a Construction move
-   * @throws InvalidPositionException If the box selected by the player as the construction target is not inside the valid boxes computed by computeBuildablePoints
-   * @throws InvalidPhaseException If the player triggers a Construction move in a phase that is not Phase.Construction
-   * @throws WrongPlayerException If a construction move is triggered by a player which is not the one currently playing
-   * @throws InvalidMoveException If a player selects a valid Box, but tries to build an invalid block in terms of level
+   * @param evt Raised by the player when they try to perform a construction.
+   * @throws InvalidPositionException If the target position would be outside of the board.
+   * @throws InvalidPhaseException If the current phase is not {@code Phase.Construction}.
+   * @throws WrongPlayerException If the event hasn't been raised by the current player.
+   * @throws InvalidMoveException If the player's current worker can't actually build on the target position.
    */
   @GameEventListener
   public void update(BuildEvent evt) {
@@ -254,12 +297,13 @@ public class Controller implements EventListener {
   }
 
   /**
+   * Tries to perform a movement for the current player and their current worker.
    *
-   * @param evt is the MovementEvent the view generates when a player wants to perform a Movement move
-   * @throws InvalidPhaseException If the player triggers a Movement move in a phase that is not Phase.Movement
-   * @throws WrongPlayerException If a movement move is triggered by a player which is not the one currently playing
-   * @throws InvalidPositionException If the box selected by the player as the movement target is not inside the valid boxes computed by computeReachablePoints
-   * @throws InvalidMoveException This should never happen, as there are not other controls to perform other than reach.
+   * @param evt Raised by the player when they try to perform a movement.
+   * @throws InvalidPhaseException If the current phase is not {@code Phase.Movement}.
+   * @throws WrongPlayerException If the event hasn't been raised by the current player.
+   * @throws InvalidPositionException If the target position would be outside of the board.
+   * @throws InvalidMoveException If the target position isn't reachable.
    */
   @GameEventListener
   public void update(MovementEvent evt) {
@@ -277,37 +321,23 @@ public class Controller implements EventListener {
 
       Movement movement = new Movement(game.getBoard(), start, end);
 
-        if (!game.getCurrentPlayer().getGodCard().validate(game.getCurrentPlayer().getGodCard().computeReachablePoints(), movement))
-          throw new InvalidMoveException();
-
+      if (!game.getCurrentPlayer()
+          .getGodCard()
+          .validate(game.getCurrentPlayer().getGodCard().computeReachablePoints(), movement))
+        throw new InvalidMoveException();
 
       game.performMove(movement);
       game.setCurrentPhase(game.getCurrentPlayer().getGodCard().computeNextPhase(game));
     } catch (ItemNotFoundException e) {
       throw new RuntimeException(e);
     }
-
   }
 
   /**
+   * Tries to skip to the next phase, if possible.
    *
-   * @param evt is the UndoEvent the view generates when a player wants to undo a move he just performed
-   * @throws WrongPlayerException if another player tries to undo the last move performed, a move that he did not perform
-   */
-  @GameEventListener
-  public void update(UndoEvent evt) {
-
-    Player currentPlayer = game.getCurrentPlayer();
-    if (!currentPlayer.equals(evt.getSource())) throw new WrongPlayerException();
-
-    game.undoLastMove();
-  }
-
-  /**
-   *
-   * @param evt is the SkipEvent the view generates when a player wants to skip to the next phase
-   * @throws WrongPlayerException if another players tries to skip a phase when he's not currently playing
-   * @throws UnskippablePhaseException if the current player tries to skip a phase while he did not perform the required actions of that phase
+   * @param evt Raised by the player when they want to skip the current phase without doing anything.
+   * @throws WrongPlayerException If the event hasn't been raised by the current player.
    */
   @GameEventListener
   public void update(SkipEvent evt) {
@@ -315,18 +345,7 @@ public class Controller implements EventListener {
     Player currentPlayer = game.getCurrentPlayer();
     if (!currentPlayer.equals(evt.getSource())) throw new WrongPlayerException();
 
-    /*
-     * Prometheus can build before moving and this check will fail for him.
-     */
-    if ((game.getCurrentPhase().equals(Phase.Start) && !currentPlayer.isWorkerSelected()) ||
-            (game.getCurrentPhase().equals(Phase.Movement) && currentPlayer.getMovementList().isEmpty()) ||
-            (game.getCurrentPhase().equals(Phase.Construction) && currentPlayer.getConstructionList().isEmpty())){
-      // otherwise clients get stuck waiting for an event
-      GameEventManager.raise(new PhaseUpdateEvent(game, game.getCurrentPhase()));
-      throw new UnskippablePhaseException();
-    }
-
-    if (game.getCurrentPhase().equals(Phase.End)){
+    if (game.getCurrentPhase().equals(Phase.End)) {
       game.getCurrentPlayer().setWorkerSelected(false);
     }
     game.setCurrentPhase(game.getCurrentPlayer().getGodCard().computeNextPhase(game, true));

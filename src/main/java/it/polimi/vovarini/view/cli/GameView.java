@@ -2,6 +2,7 @@ package it.polimi.vovarini.view.cli;
 
 import it.polimi.vovarini.common.events.*;
 import it.polimi.vovarini.common.network.GameClient;
+import it.polimi.vovarini.model.Game;
 import it.polimi.vovarini.model.Player;
 import it.polimi.vovarini.view.View;
 import it.polimi.vovarini.view.ViewData;
@@ -39,67 +40,57 @@ public class GameView extends View {
     running = true;
   }
 
-  private void waitForEvent(){
+  private void waitForEvent() {
     try {
       GameEvent evtFromServer = client.getServerEvents().take();
       GameEventManager.raise(evtFromServer);
-    } catch (InterruptedException e){
+    } catch (InterruptedException e) {
       Thread.currentThread().interrupt();
     }
   }
 
 
+  @Override
   @GameEventListener
-  public void handleBoardUpdate(BoardUpdateEvent e){
-    data.setBoard(e.getNewBoard());
+  public void handle(BoardUpdateEvent e) {
+    super.handle(e);
     if (currentScreen != null) {
-      currentScreen.handleBoardUpdate(e);
+      currentScreen.handle(e);
     }
   }
 
   @GameEventListener
-  public void handleCurrentPlayerUpdate(CurrentPlayerChangedEvent e){
+  public void handle(CurrentPlayerChangedEvent e) {
     data.setCurrentPlayer(e.getNewPlayer());
     if (currentScreen != null) {
-      currentScreen.handleCurrentPlayerUpdate(e);
+      currentScreen.handle(e);
     }
   }
 
   @GameEventListener
-  public void handlePhaseUpdate(PhaseUpdateEvent e){
+  public void handle(PhaseUpdateEvent e) {
     data.setCurrentPhase(e.getNewPhase());
     if (currentScreen != null) {
-      currentScreen.handlePhaseUpdate(e);
+      currentScreen.handle(e);
     }
   }
 
   @GameEventListener
-  public void handleGameStart(GameStartEvent e){
+  public void handle(GameStartEvent e) {
     startMatch();
   }
 
   @Override
   @GameEventListener
-  public void handleNewPlayer(NewPlayerEvent e) {
-    super.handleNewPlayer(e);
+  public void handle(NewPlayerEvent e) {
+    super.handle(e);
   }
 
   @Override
   @GameEventListener
-  public void handleGodSelectionStart(GodSelectionStartEvent e) {
-    Player[] players = e.getPlayers();
-    for (int i = 0; i < players.length; i++){
-      for (Player p: data.getPlayerSet()){
-        if (players[i].equals(p)){
-          players[i] = p;
-        }
-      }
-    }
-    data.getPlayerSet().clear();
-    for (Player p: players){
-      data.addPlayer(p);
-    }
-    data.setCurrentPlayer(e.getElectedPlayer());
+  public void handle(GodSelectionStartEvent e) {
+    super.handle(e);
+    console.enterRawMode();
 
     if (e.getElectedPlayer().equals(data.getOwner())) {
       currentScreen = new ElectedPlayerScreen(data, client, Arrays.asList(e.getAllGods()));
@@ -114,8 +105,8 @@ public class GameView extends View {
 
   @Override
   @GameEventListener
-  public void handleSelectYourCard(SelectYourCardEvent e) {
-    if (e.getTargetPlayer().equals(data.getOwner())){
+  public void handle(SelectYourCardEvent e) {
+    if (e.getTargetPlayer().equals(data.getOwner())) {
       currentScreen = new GodCardSelectionScreen(data, client, Arrays.asList(e.getGodsLeft()));
       gameLoop();
     } else {
@@ -128,19 +119,14 @@ public class GameView extends View {
 
   @Override
   @GameEventListener
-  public void handleCardAssignment(CardAssignmentEvent e) {
-    for (Player p: data.getPlayerSet()){
-      if (p.equals(e.getTargetPlayer())){
-        e.getAssignedCard().setGameData(data);
-        p.setGodCard(e.getAssignedCard());
-      }
-    }
+  public void handle(CardAssignmentEvent e) {
+    super.handle(e);
   }
 
   @Override
   @GameEventListener
-  public void handlePlaceYourWorkers(PlaceYourWorkersEvent e) {
-    if (e.getTargetPlayer().equals(data.getOwner())){
+  public void handle(PlaceYourWorkersEvent e) {
+    if (e.getTargetPlayer().equals(data.getOwner())) {
       currentScreen = new SpawnWorkersScreen(data, client);
       gameLoop();
     } else {
@@ -155,21 +141,21 @@ public class GameView extends View {
 
   @Override
   @GameEventListener
-  public void handlePlayerInfoUpdate(PlayerInfoUpdateEvent e) {
-    super.handlePlayerInfoUpdate(e);
-    currentScreen.handlePlayerInfoUpdate(e);
+  public void handle(PlayerInfoUpdateEvent e) {
+    super.handle(e);
+    currentScreen.handle(e);
   }
 
   @Override
   @GameEventListener
-  public void handleGodCardUpdate(GodCardUpdateEvent e) {
-    super.handleGodCardUpdate(e);
-    currentScreen.handleGodCardUpdate(e);
+  public void handle(GodCardUpdateEvent e) {
+    super.handle(e);
+    currentScreen.handle(e);
   }
 
   @Override
   @GameEventListener
-  public void handleVictory(VictoryEvent e) {
+  public void handle(VictoryEvent e) {
     if (e.getWinningPlayer().equals(data.getOwner())) {
       currentScreen = new WaitScreen(data, client, "VICTORY ROYALE!");
       playAudio("/audio/bgm/victory.wav", true);
@@ -181,21 +167,77 @@ public class GameView extends View {
 
   @Override
   @GameEventListener
-  public void handleLoss(LossEvent e) {
-    super.handleLoss(e);
+  public void handle(LossEvent e) {
+    super.handle(e);
     if (e.getLosingPlayer().equals(data.getOwner())) {
       currentScreen = new SpectScreen(data, client);
     }
   }
 
-  public void render(){
+  @Override
+  @GameEventListener
+  public void handle(AbruptEndEvent e) {
+    currentScreen = new WaitScreen(data, client, "A player disconnected. It's game over for everyone.");
+  }
+
+  @Override
+  @GameEventListener
+  public void handle(FirstPlayerEvent e) {
+    Scanner sc = console.getScanner();
+    int numberOfPlayers;
+    do {
+      System.out.print("You're the first! Choose between 2 or 3 players mode: ");
+      numberOfPlayers = sc.nextInt();
+    } while (numberOfPlayers < Game.MIN_PLAYERS || numberOfPlayers > Game.MAX_PLAYERS);
+    client.raise(new NumberOfPlayersChoiceEvent("firstPlayer", numberOfPlayers));
+    System.out.println("Now waiting for all other players to connect...");
+    waitForEvent();
+  }
+
+  @Override
+  @GameEventListener
+  public void handle(RegistrationStartEvent e) {
+    System.out.println("Registrations are open!");
+    Scanner sc = console.getScanner();
+    String nickname;
+    System.out.print("Type your nickname: ");
+    nickname = sc.next();
+    while ((nickname == null) || !nickname.matches("[A-Za-z0-9_]{4,16}$")) {
+      System.out.print("Invalid nickname, type a new one: ");
+      nickname = sc.next();
+    }
+    client.raise(new RegistrationEvent(client.getIPv4Address(), nickname));
+    data.setOwner(new Player(nickname));
+    System.out.println("Now waiting for other players...");
+    while (running) {
+      try {
+        GameEvent evtFromServer = client.getServerEvents().take();
+        GameEventManager.raise(evtFromServer);
+      } catch (InterruptedException ex) {
+        Thread.currentThread().interrupt();
+      }
+    }
+  }
+
+  @Override
+  @GameEventListener
+  public void handle(InvalidNicknameEvent e) {
+    if (e.getErrorCode() == 0) {
+      System.out.println("This nickname is already in use. Choose a different one.");
+    } else {
+      System.out.println("This nickname contains invalid character or is too short/long. Choose a different one.");
+    }
+    handle(new RegistrationStartEvent("client"));
+  }
+
+  public void render() {
     if (currentScreen.isNeedsRender()) {
       console.clear();
       console.println(currentScreen.render());
     }
   }
 
-  public void handleInput() throws IOException{
+  public void handleInput() throws IOException {
     int input = console.getReader().read();
     Key key = KeycodeToKey.map.get(input);
     if (key != null) {
@@ -208,57 +250,38 @@ public class GameView extends View {
     gameLoop();
   }
 
-  public void gameSetup(){
+  public void gameSetup() {
     // ask for nickname
-    Scanner sc = console.getScanner();
     console.clear();
-    String nickname;
-    System.out.print("Type your nickname: ");
-    nickname = sc.next();
-    while ((nickname == null) || !nickname.matches("[A-Za-z0-9_]{4,16}$")){
-      System.out.print("Invalid nickname, type a new one: ");
-      nickname = sc.next();
-    }
-    client.raise(new RegistrationEvent(client.getIPv4Address(), nickname));
-    data.setOwner(new Player(nickname));
-    System.out.println("Now waiting for other players...");
-    console.enterRawMode();
-    while (running) {
-      try {
-        GameEvent evtFromServer = client.getServerEvents().take();
-        GameEventManager.raise(evtFromServer);
-      } catch (InterruptedException e){
-        Thread.currentThread().interrupt();
-      }
-    }
+    waitForEvent();
   }
 
-  public void gameLoop(){
-    render();
+  public void gameLoop() {
+    //render();
     while (running) {
       GameEvent evt;
       // consume events from the server
-      while ( client.getServerEvents().peek() != null) {
+      while (client.getServerEvents().peek() != null) {
         evt = client.getServerEvents().poll();
         GameEventManager.raise(evt);
       }
       try {
         render();
-        if (data.getOwner().equals(data.getCurrentPlayer()) && currentScreen.isHandlesInput()) {
+        if (data.getOwner().equals(data.getCurrentPlayer())) { // && currentScreen.isHandlesInput()) {
           handleInput();
         } else {
           // wait for event
           GameEventManager.raise(client.getServerEvents().take());
         }
-      } catch (IOException e){
+      } catch (IOException e) {
         e.printStackTrace();
-      } catch (InterruptedException e){
+      } catch (InterruptedException e) {
         Thread.currentThread().interrupt();
       }
     }
   }
 
-  public void stop(){
+  public void stop() {
     running = false;
   }
 

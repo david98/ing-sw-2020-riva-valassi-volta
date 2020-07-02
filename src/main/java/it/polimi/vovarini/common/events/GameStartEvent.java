@@ -11,11 +11,16 @@ import it.polimi.vovarini.model.Player;
  * @version 0.1
  * @since 0.1
  */
-public class GameStartEvent extends GameEvent{
+public class GameStartEvent extends GameEvent {
 
   private final Player[] players;
 
-  public GameStartEvent(Object source, Player[] players){
+  /**
+   * This method creates a GameStartEvent
+   * @param source the source of the event
+   * @param players the players taking part in the game
+   */
+  public GameStartEvent(Object source, Player[] players) {
     super(source);
     this.players = players;
   }

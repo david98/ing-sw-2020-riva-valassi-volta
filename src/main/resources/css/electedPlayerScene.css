@@ -1,0 +1,103 @@
+@font-face {
+    src: url("../fonts/DalekPinpointBold.ttf");
+}
+
+@font-face {
+    src: url("../fonts/Romanica.ttf");
+}
+
+.mainPane {
+    -fx-background-image: url("../img/elected_bg.png");
+    -fx-alignment: CENTER;
+}
+
+.topBox {
+    -fx-padding: 10 0 0 0;
+    -fx-alignment: CENTER;
+}
+
+.godCard:hover {
+    -fx-effect: dropshadow(gaussian, #f44336, 15, 0.2, 0, 0);
+    -fx-tooltip-visible: true;
+}
+
+.godCard:pressed {
+    -fx-scale-y: 0.95;
+    -fx-scale-x: 0.95;
+}
+
+.allGodsBox {
+    -fx-min-width: 900px;
+    -fx-min-height: 300px;
+    -fx-max-height: 400px;
+    -fx-padding: 30 10 10 10;
+    -fx-spacing: 20;
+    -fx-alignment: CENTER;
+}
+
+.selectionBox {
+    -fx-max-height: 250px;
+    -fx-padding: 50 10 10 10;
+    -fx-spacing: 20;
+    -fx-alignment: CENTER;
+}
+
+.voteInnerBox {
+    -fx-hgap: 20;
+    -fx-vgap: 20;
+    -fx-alignment: CENTER;
+}
+
+.menuTitle {
+    -fx-font-family: "Dalek Pinpoint";
+    -fx-font-weight: bold;
+    -fx-font-size: 50px;
+    -fx-text-fill: #2786D1;
+}
+
+.menuTitle .text {
+    -fx-stroke-width: 1px;
+    -fx-stroke: #ffffff;
+}
+
+.menuLabel {
+    -fx-font-family: "Romanica";
+    -fx-font-size: 40px;
+    -fx-text-fill: #2786D1;
+    -fx-alignment: center;
+    -fx-text-alignment: center;
+}
+
+.menuLabel .text {
+    -fx-stroke-width: 1px;
+    -fx-stroke: #ffffff;
+}
+
+#submit {
+    -fx-background-image: url("/img/btn_blue.png");
+    -fx-background-color: transparent;
+    -fx-background-size: 148px;
+    -fx-background-repeat: no-repeat;
+    -fx-background-position: center;
+    -fx-base: transparent;
+    -fx-min-width: 200;
+    -fx-min-height: 50;
+    -fx-font-size: 15px;
+    -fx-text-fill: #ffffff;
+    -fx-text-alignment: center;
+    -fx-alignment: center;
+}
+
+#submit:hover {
+    -fx-background-size: 200;
+    -fx-base: transparent;
+    -fx-background-color: transparent;
+    -fx-font-size: 20px;
+}
+
+#submit:pressed {
+    -fx-background-image: url("/img/btn_blue_pressed.png");
+    -fx-background-color: transparent;
+    -fx-base: transparent;
+    -fx-font-size: 18px;
+}

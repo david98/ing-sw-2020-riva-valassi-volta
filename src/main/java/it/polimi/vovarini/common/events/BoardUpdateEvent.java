@@ -10,16 +10,15 @@ import it.polimi.vovarini.model.board.Board;
  * @version 0.1
  * @since 0.1
  */
-public class BoardUpdateEvent extends GameEvent{
+public class BoardUpdateEvent extends GameEvent {
 
   private final Board newBoard;
 
   /**
-   *
-   * @param source The event source (it should be a {@link it.polimi.vovarini.model.board.Board} object.
+   * @param source   The event source (it should be a {@link it.polimi.vovarini.model.board.Board} object.
    * @param newBoard The new board.
    */
-  public BoardUpdateEvent(Object source, Board newBoard){
+  public BoardUpdateEvent(Object source, Board newBoard) {
     super(source);
     this.newBoard = new Board(newBoard);
   }

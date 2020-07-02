@@ -2,11 +2,14 @@ package it.polimi.vovarini.view.cli.elements;
 
 import it.polimi.vovarini.model.Phase;
 
+/**
+ * A prompt to tell the user what to do based on the current phase.
+ */
 public class PhasePrompt extends CLIElement {
 
   private Phase currentPhase;
 
-  public PhasePrompt(Phase currentPhase){
+  public PhasePrompt(Phase currentPhase) {
     this.currentPhase = currentPhase;
   }
 

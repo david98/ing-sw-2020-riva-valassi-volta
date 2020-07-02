@@ -1,0 +1,62 @@
+@font-face {
+    src: url("../fonts/DalekPinpointBold.ttf");
+}
+
+@font-face {
+    src: url("../fonts/Romanica.ttf");
+}
+
+#mainPane {
+    -fx-background-image: url("/img/wait_bg.png");
+    -fx-background-repeat: stretch;
+    -fx-background-size: cover;
+    -fx-alignment: CENTER;
+    -fx-text-alignment: center;
+    -fx-padding: 0 20 0 20;
+}
+
+.topBox {
+    -fx-padding: 50 0 0 0;
+    -fx-alignment: CENTER;
+}
+
+.centerBox {
+    -fx-max-width: 900px;
+    -fx-spacing: 10;
+    -fx-alignment: CENTER;
+}
+
+.voteHBox {
+    -fx-min-width: 900px;
+    -fx-max-width: 900px;
+    -fx-padding: 10 10 10 10;
+    -fx-spacing: 20;
+    -fx-alignment: CENTER;
+}
+
+.menuTitle {
+    -fx-font-family: "Dalek Pinpoint";
+    -fx-font-weight: bold;
+    -fx-font-size: 100px;
+    -fx-text-fill: #2786D1;
+}
+
+.menuTitle .text {
+    -fx-stroke-width: 1px;
+    -fx-stroke: #ffffff;
+}
+
+.menuLabel {
+    -fx-start-margin: 10s;
+    -fx-font-family: "Romanica";
+    -fx-font-size: 30px;
+    -fx-text-fill: #2786D1;
+    -fx-alignment: center;
+    -fx-text-alignment: center;
+    -fx-min-width: 1200px;
+}
+
+.menuLabel .text {
+    -fx-stroke-width: 1px;
+    -fx-stroke: #ffffff;
+}

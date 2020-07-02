@@ -6,6 +6,9 @@ import it.polimi.vovarini.view.cli.styling.Color;
 import java.util.Map;
 import java.util.Set;
 
+/**
+ * A list of all players in the game which highlights the owner and the current player.
+ */
 public class PlayerList extends CLIElement {
 
   private final Set<Player> players;
@@ -21,9 +24,9 @@ public class PlayerList extends CLIElement {
   }
 
   @Override
-  public String render(){
+  public String render() {
     StringBuilder content = new StringBuilder();
-    for (Player player : players){
+    for (Player player : players) {
       boolean isOwner = player.equals(owner);
       boolean isCurrent = player.equals(currentPlayer);
       String playerLine = playersColors.get(player).fgWrap(

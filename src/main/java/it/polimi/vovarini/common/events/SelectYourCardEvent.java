@@ -16,7 +16,13 @@ public class SelectYourCardEvent extends GameEvent {
   private final Player targetPlayer;
   private final GodName[] godsLeft;
 
-  public SelectYourCardEvent(Object source, Player targetPlayer, GodName[] godsLeft){
+  /**
+   * Builds a SelectYourCardEvent
+   * @param source is the source object of the event
+   * @param targetPlayer is the player who should select his card next
+   * @param godsLeft are the GodCards that have not been chosen
+   */
+  public SelectYourCardEvent(Object source, Player targetPlayer, GodName[] godsLeft) {
     super(source);
     this.targetPlayer = targetPlayer;
     this.godsLeft = godsLeft;

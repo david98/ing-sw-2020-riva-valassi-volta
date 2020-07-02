@@ -11,9 +11,9 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 import java.io.IOException;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class MatchTest {
 
@@ -263,9 +263,9 @@ public class MatchTest {
       }
 
       // wait for CurrentPlayerChangedEvent
-      while (!(davideClient.getServerEvents().take() instanceof CurrentPlayerChangedEvent));
-      while (!(marcoClient.getServerEvents().take() instanceof CurrentPlayerChangedEvent));
-      while (!(mattiaClient.getServerEvents().take() instanceof CurrentPlayerChangedEvent));
+      while (!(davideClient.getServerEvents().take() instanceof CurrentPlayerChangedEvent)) ;
+      while (!(marcoClient.getServerEvents().take() instanceof CurrentPlayerChangedEvent)) ;
+      while (!(mattiaClient.getServerEvents().take() instanceof CurrentPlayerChangedEvent)) ;
     }
   }
 
@@ -293,9 +293,9 @@ public class MatchTest {
       }
 
       // wait for CurrentPlayerChangedEvent
-      while (!(davideClient.getServerEvents().take() instanceof CurrentPlayerChangedEvent));
-      while (!(marcoClient.getServerEvents().take() instanceof CurrentPlayerChangedEvent));
-      while (!(mattiaClient.getServerEvents().take() instanceof CurrentPlayerChangedEvent));
+      while (!(davideClient.getServerEvents().take() instanceof CurrentPlayerChangedEvent)) ;
+      while (!(marcoClient.getServerEvents().take() instanceof CurrentPlayerChangedEvent)) ;
+      while (!(mattiaClient.getServerEvents().take() instanceof CurrentPlayerChangedEvent)) ;
     }
   }
 

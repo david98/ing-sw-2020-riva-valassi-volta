@@ -5,16 +5,16 @@ import it.polimi.vovarini.common.events.GameEventManager;
 import it.polimi.vovarini.common.exceptions.InvalidPositionException;
 import it.polimi.vovarini.common.exceptions.ItemNotFoundException;
 import it.polimi.vovarini.model.Point;
-import it.polimi.vovarini.model.board.items.Block;
 import it.polimi.vovarini.model.board.items.Item;
-import it.polimi.vovarini.model.board.items.Worker;
 
 import java.io.Serializable;
-import java.util.Deque;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * This class represents the board where the game is played.
+ */
 public class Board implements Serializable {
 
   public static final int DEFAULT_SIZE = 5;
@@ -22,9 +22,11 @@ public class Board implements Serializable {
   private final Box[][] boxes;
   private final int size;
 
-  /*
-   * Si presuppone che la plancia sia quadrata
-   * */
+  /**
+   * Creates a square board of the given size.
+   *
+   * @param size The size of the board.
+   */
   public Board(int size) {
     this.size = size;
     boxes = new Box[size][size];
@@ -35,7 +37,12 @@ public class Board implements Serializable {
     }
   }
 
-  public Board(Board b){
+  /**
+   * Creates a board which is a clone of b.
+   *
+   * @param b The board to be cloned.
+   */
+  public Board(Board b) {
     size = b.size;
     boxes = new Box[size][size];
     for (int i = 0; i < size; i++) {
@@ -45,10 +52,23 @@ public class Board implements Serializable {
     }
   }
 
+  /**
+   * Checks if p is within the board.
+   *
+   * @param p The point to check.
+   * @return Whether p is within the board.
+   */
   public boolean isPositionValid(Point p) {
     return (p.getX() >= 0 && p.getY() >= 0 && p.getX() < size && p.getY() < size);
   }
 
+  /**
+   * Computes and returns a list of all points within the board
+   * that are adjacent to p (d(point, p) is minor or equal to 1).
+   *
+   * @param p The base point.
+   * @return A list containing all points adjacent to p.
+   */
   public List<Point> getAdjacentPositions(Point p) {
     LinkedList<Point> adjacentPositions = new LinkedList<>();
     for (int i = p.getY() - 1; i <= p.getY() + 1; i++) {
@@ -62,10 +82,23 @@ public class Board implements Serializable {
     return adjacentPositions;
   }
 
+  /**
+   * Getter method for a Box belonging to the Board
+   * @param position is a Point, a set of coordinates indicating what is the Box the user is interested to get
+   * @return the instance of Box included in the Board and corresponding to the coordinates specified by the parameter position
+   */
   public Box getBox(Point position) {
     return boxes[position.getY()][position.getX()];
   }
 
+  /**
+   * Places item on the board at position p, if possible.
+   *
+   * @param item The item to be placed on the board.
+   * @param p    Where the item should be placed.
+   * @throws InvalidPositionException                              If p is outside of the board.
+   * @throws it.polimi.vovarini.common.exceptions.BoxFullException If the box at position p is full.
+   */
   public void place(Item item, Point p) {
     if (!isPositionValid(p)) {
       throw new InvalidPositionException();
@@ -75,28 +108,17 @@ public class Board implements Serializable {
     GameEventManager.raise(new BoardUpdateEvent(this, this));
   }
 
-  public Deque<Item> getItems(Point p) {
-    if (!isPositionValid(p)) {
-      throw new InvalidPositionException();
-    }
-    return getBox(p).getItems();
-  }
-
-  public Item remove(Point p) {
-    if (!isPositionValid(p)) {
-      throw new InvalidPositionException();
-    }
-    Box box = getBox(p);
-    Item item = box.removeTopmost();
-    GameEventManager.raise(new BoardUpdateEvent(this, this));
-    return item;
-  }
-
-  public Point getItemPosition(Block block) {
+  /**
+   * Returns the item position after searching on top of all the boxes.
+   *
+   * @param item The item to search for.
+   * @return Where the first occurrence of item was found.
+   * @throws ItemNotFoundException If item was not found.
+   */
+  public Point getItemPosition(Item item) {
     for (int i = 0; i < boxes.length; i++) {
       for (int j = 0; j < boxes.length; j++) {
-        if (Objects.equals(boxes[j][i].getItems().peek(), block))
-        {
+        if (Objects.equals(boxes[j][i].getItems().peek(), item)) {
           return new Point(i, j);
         }
       }
@@ -104,20 +126,10 @@ public class Board implements Serializable {
     throw new ItemNotFoundException();
   }
 
-  public Point getItemPosition(Worker worker) {
-    for (int i = 0; i < boxes.length; i++) {
-      for (int j = 0; j < boxes.length; j++) {
-        if (boxes[j][i].getItems().peek() != null && boxes[j][i].getItems().peek().canBeRemoved()) {
-          Worker peekedWorker = (Worker) boxes[j][i].getItems().peek();
-          if (Objects.equals(peekedWorker, worker)) {
-            return new Point(i, j);
-          }
-        }
-      }
-    }
-    throw new ItemNotFoundException();
-  }
-
+  /**
+   * Getter method for the size of the Board
+   * @return the size of the Board
+   */
   public int getSize() {
     return size;
   }
