@@ -10,6 +10,9 @@ import javafx.scene.input.KeyCode;
 
 import java.io.IOException;
 
+/**
+ * Controller for the connection scene.
+ */
 public class ConnectionController extends GUIController {
 
   @FXML
@@ -27,6 +30,7 @@ public class ConnectionController extends GUIController {
   private GuiManager guiManager;
 
   @FXML
+  @Override
   public void initialize() {
     guiManager = GuiManager.getInstance();
 

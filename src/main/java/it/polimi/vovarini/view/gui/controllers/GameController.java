@@ -162,7 +162,7 @@ public class GameController extends GUIController {
     }
   }
 
-  public void addImages(Player[] players) {
+  private void addImages(Player[] players) {
     String selector;
     for (int i = 0; i < players.length; i++) {
       selector = "#player" + i;
@@ -207,7 +207,7 @@ public class GameController extends GUIController {
   }
 
   @FXML
-  public void onGridClick(MouseEvent event) {
+  private void onGridClick(MouseEvent event) {
 
     Node clickedNode = event.getPickResult().getIntersectedNode();
 
@@ -262,7 +262,7 @@ public class GameController extends GUIController {
     }
   }
 
-  public void updateView() {
+  private void updateView() {
 
     // aggiorno a video currentPhase
     currentPhase.setText("Current phase: " + guiManager.getData().getCurrentPhase().name().toUpperCase());

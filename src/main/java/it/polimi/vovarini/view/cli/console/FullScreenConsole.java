@@ -12,6 +12,13 @@ import java.util.Scanner;
 
 import static com.sun.jna.platform.win32.Wincon.ENABLE_LINE_INPUT;
 
+/**
+ * A console meant to work in raw mode with colors and whose content is updatable,
+ * by virtue of return carriage and similar tricks.
+ * Supports Windows, too, which is kinda neat.
+ *
+ * @author Davide Volta
+ */
 public class FullScreenConsole implements Console {
 
   private int printedLineCount;
@@ -19,6 +26,12 @@ public class FullScreenConsole implements Console {
   private final Terminal terminal;
   private final Reader reader;
 
+  /**
+   * Creates a full screen console.
+   * If running on windows, it also uses the Win32 API to enable colors and raw mode.
+   *
+   * @throws IOException If a terminal can't be created.
+   */
   public FullScreenConsole() throws IOException {
     printedLineCount = 0;
 

@@ -18,6 +18,9 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
+/**
+ * Controller for the elected player scene.
+ */
 public class ElectedPlayerController extends GUIController {
 
   @FXML
@@ -76,6 +79,7 @@ public class ElectedPlayerController extends GUIController {
 
   private final List<GodName> selectedCards = new LinkedList<>();
 
+  @FXML
   @Override
   public void initialize() {
     super.initialize();
@@ -83,7 +87,7 @@ public class ElectedPlayerController extends GUIController {
     addImages(Arrays.stream(GodName.values()).filter(name -> name != GodName.Nobody).toArray(GodName[]::new));
   }
 
-  public void addImages(GodName[] allGods) {
+  private void addImages(GodName[] allGods) {
     // aggiungo le carte alla grafica
     String selector;
     for (int i = 0; i < allGods.length; i++) {
@@ -96,7 +100,7 @@ public class ElectedPlayerController extends GUIController {
   }
 
   /**
-   * Binds click events
+   * Binds events to scene objects.
    */
   private void bindEvents() {
     //ImageView non sono Button, quindi non hanno eventi su click o simili, ergo li aggiungo io

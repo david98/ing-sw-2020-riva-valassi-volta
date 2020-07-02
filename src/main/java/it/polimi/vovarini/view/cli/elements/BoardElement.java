@@ -11,6 +11,11 @@ import it.polimi.vovarini.view.cli.styling.Color;
 
 import java.util.*;
 
+/**
+ * Renders a {@link Board} object.
+ *
+ * @author Davide Volta
+ */
 public class BoardElement extends CLIElement {
 
   private Board board;

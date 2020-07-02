@@ -27,6 +27,10 @@ public class WaitController extends GUIController {
     }
   }
 
+  /**
+   * Sets the wait message displayed.
+   * @param message The new message.
+   */
   public void setWaitMessage(String message) {
     label.setText(message);
   }
