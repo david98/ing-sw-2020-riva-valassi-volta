@@ -28,13 +28,6 @@ Documentazione
 -----
 Nella documentazione richiesta sono previsti gli schemi UML iniziali e finali del progetto. Gli UML, per miglior comprensione, sono stati divisi per package più rilevanti, ma rimangono comunque presenti schemi con una visione più generale.
 Sono stati anche aggiunti degli schemi ispirati ai Sequence Diagrams per meglio descrivere la gestione degli eventi e la parte di rete all'interno del progetto.
-Questi file si trovano nei seguenti percorsi:
-
-### UML
-(elenco file)
-
-### Sequence Diagrams
-(elenco file)
 
 Requisiti Coperti
 -----
@@ -99,4 +92,8 @@ Altre opzioni disponibili:
 Librerie e Plugin Utilizzati
 -----
 
-(TODO)
+* [picocli](https://picocli.info/)
+* [JUnit 5](https://junit.org/junit5/)
+* [JLine](https://github.com/jline/jline3)
+* [jna](https://github.com/java-native-access/jna)
+* [https://docs.sonarqube.org/latest/analysis/scan/sonarscanner-for-maven/](SonarScanner)
