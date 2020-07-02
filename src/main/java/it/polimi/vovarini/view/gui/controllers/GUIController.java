@@ -9,6 +9,9 @@ import javafx.scene.layout.BorderPane;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+/**
+ * Represents a generic controller to be used in a FXML file.
+ */
 public class GUIController implements EventsForViewListener {
 
   protected static final Logger LOGGER = Logger.getLogger(Server.class.getName());

@@ -12,6 +12,13 @@ import it.polimi.vovarini.view.cli.input.KeyPressListener;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+
+/**
+ * Kinda like a scene in JavaFX, a Screen can contain {@link it.polimi.vovarini.view.cli.elements.CLIElement} objects,
+ * can handle events and can be rendered on screen.\
+ *
+ * @author Davide Volta
+ */
 public abstract class Screen implements Renderable, EventsForViewListener, KeyPressListener {
 
   protected static final Logger LOGGER = Logger.getLogger(Server.class.getName());

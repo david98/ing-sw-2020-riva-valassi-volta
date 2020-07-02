@@ -425,22 +425,6 @@ public class ControllerTests {
   }
 
   @Test
-  @DisplayName("Tests the undo function that undoes the last performed move.")
-  void undoTest() {
-
-    UndoEvent evt = new UndoEvent(game.getCurrentPlayer());
-    try {
-      controller.update(evt);
-    } catch (WrongPlayerException ignored) {
-    }
-
-    UndoEvent evtWrongPlayer = new UndoEvent(game.getPlayers()[1]);
-    assertThrows(WrongPlayerException.class, () -> {
-      controller.update(evtWrongPlayer);
-    });
-  }
-
-  @Test
   @DisplayName("Tests that a correct SpwanWorkerEvent places the currentWorker in the right place, which is the target parameter")
   void spawnWorkerTest() {
 

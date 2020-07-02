@@ -18,7 +18,8 @@ public class Gui extends Application {
           new KeyCodeCombination(KeyCode.ENTER, KeyCombination.ALT_DOWN);
 
   /**
-   * Initialization and start of the GUI Application
+   * Starts the GUI on the given stage, adding event listeners for closing
+   * and resizing.
    * @param stage the Stage of the GUI application I want to play my scenes in
    */
   @Override
@@ -58,10 +59,6 @@ public class Gui extends Application {
     });
   }
 
-  /**
-   * Stops my GUI application
-   * @throws Exception
-   */
   @Override
   public void stop() throws Exception {
     super.stop();

@@ -10,6 +10,8 @@ import java.util.logging.Logger;
 
 /**
  * Listens for events from the server.
+ *
+ * @author Davide Volta
  */
 public class GuiEventListener implements Runnable {
 
@@ -19,8 +21,8 @@ public class GuiEventListener implements Runnable {
   private final GameClient client;
 
   /**
-   * Builds a new GuiEventListner and sets it as running
-   * @param client is the client host who triggers the events
+   * Creates a new GuiEventListener using the given client.
+   * @param client The client through which communication with the server happens.
    */
   public GuiEventListener(GameClient client) {
     running = true;
@@ -28,15 +30,12 @@ public class GuiEventListener implements Runnable {
   }
 
   /**
-   * Sets running as false, stopping the GameEventListener from listening
+   * Stops the GameEventListener.
    */
   public void stop() {
     running = false;
   }
 
-  /**
-   * Runs the GameEventListner
-   */
   @Override
   public void run() {
     while (running) {
