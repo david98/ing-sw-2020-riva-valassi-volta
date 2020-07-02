@@ -96,4 +96,4 @@ Librerie e Plugin Utilizzati
 * [JUnit 5](https://junit.org/junit5/)
 * [JLine](https://github.com/jline/jline3)
 * [jna](https://github.com/java-native-access/jna)
-* [https://docs.sonarqube.org/latest/analysis/scan/sonarscanner-for-maven/](SonarScanner)
+* [SonarScanner](https://docs.sonarqube.org/latest/analysis/scan/sonarscanner-for-maven/)
