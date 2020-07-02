@@ -88,6 +88,12 @@ Altre opzioni disponibili:
 
 * `-p <porta a cui connettersi>`
 
+### Particolaritá da considerare
+
+1. Il server non accetta piú connessioni finché non viene scelto il numero dei giocatori.
+2. Per muoversi nella CLI, utilizzare WASD, Spazio per selezionare, O per confermare, N per saltare fase/turno, 4 per costruire una cupola con Atlas.
+3. Per costruire una cupola con Atlas nella GUI, cliccare con il tasto destro del mouse.
+
 
 Librerie e Plugin Utilizzati
 -----
